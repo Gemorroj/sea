@@ -59,9 +59,16 @@ $filename = pathinfo($v['path']);
 $ext = strtolower($filename['extension']);
 $dir = $filename['dirname'].'/';
 $basename = $filename['basename'];
+$seo = unserialize($v['seo']);
 
 $filename = $_SESSION['langpack'] == 'russian' ? $v['rus_name'] : $v['name'];
-$title .= htmlspecialchars($filename, ENT_NOQUOTES);
+
+if ($seo['title']) {
+    $title .= htmlspecialchars($seo['title'], ENT_NOQUOTES);
+} else {
+    $title .= htmlspecialchars($filename, ENT_NOQUOTES);
+}
+
 $sql_dir = mysql_real_escape_string($dir, $mysql);
 
 $back = mysql_fetch_assoc(mysql_query("SELECT `id` FROM `files` WHERE `path` = '" . $sql_dir . "' LIMIT 1", $mysql));

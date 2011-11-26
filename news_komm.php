@@ -104,7 +104,7 @@ if ($_GET['act'] == 'add') {
 
     // капча
     if ($setup['komments_captcha']) {
-    	$captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $_SESSION['language']['code'] . '<input type="text" name="keystring" size="4" maxlength="4"/><br/>';
+    	$captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $_SESSION['language']['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
     } else {
     	$captcha = '';
     }

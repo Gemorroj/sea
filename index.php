@@ -46,7 +46,8 @@ if ($sort == 'data') {
 if ($id) {
     $d = mysql_fetch_assoc(mysql_query('
         SELECT `t1`.`path`,
-        COUNT(`t2`.`id`) AS `all`
+        `t1`.`seo`,
+        COUNT(1) AS `all`
         FROM `files` AS `t1`
         LEFT JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path`
         WHERE `t1`.`id` = ' . $id . '
@@ -54,7 +55,10 @@ if ($id) {
         GROUP BY `t1`.`id`
         ORDER BY NULL',
     $mysql));
+    $seo = unserialize($d['seo']);
+    $title .= htmlspecialchars($seo['title'], ENT_NOQUOTES);
 } else {
+    $seo = array();
     $d['path'] = $setup['path'] . '/';
     $d['all'] = mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '" AND `hidden` = "0"', $mysql), 0);
 }
@@ -69,8 +73,8 @@ mysql_query('DELETE FROM `online` WHERE `time` < (NOW() - INTERVAL ' . $setup['o
 
 $online = mysql_fetch_row(mysql_query('SELECT COUNT(1) FROM online', $mysql));
 if ($online[0] > $setup['online_max']) {
-    mysql_query("REPLACE INTO `setting`(`name`, `value`) VALUES('online_max', '" . $online[0] . "');", $mysql);
-    mysql_query("REPLACE INTO `setting`(`name`, `value`) VALUES('online_max_time', NOW());", $mysql);
+    mysql_query('REPLACE INTO `setting`(`name`, `value`) VALUES("online_max", "' . $online[0] . '");', $mysql);
+    mysql_query('REPLACE INTO `setting`(`name`, `value`) VALUES("online_max_time", NOW());', $mysql);
 }
 
 
@@ -108,7 +112,9 @@ if ($ex) {
 	$q = mysql_query(rtrim($implode, ',') . ')', $mysql);
 	while ($s = mysql_fetch_row($q)) {
 		$put .= '<a href="' . DIRECTORY . $s[0] . '">' . htmlspecialchars($s[1], ENT_NOQUOTES) . '</a> &#187; ';
-		$title .= '/' . htmlspecialchars($s[1], ENT_NOQUOTES);
+		if (!$seo['title']) {
+            $title .= '/' . htmlspecialchars($s[1], ENT_NOQUOTES);
+        }
 	}
 }
 

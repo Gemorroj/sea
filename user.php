@@ -65,7 +65,7 @@ if ($setup['preview_change']) {
 }
 
 if ($setup['lib_change']) {
-    echo '<form action="' . DIRECTORY . 'user/' . $id . '" method="post"><div class="row">' . $_SESSION['language']['lib'] . ':<br/><input type="text" name="lib" value="' . (isset($_SESSION['lib']) ? $_SESSION['lib'] : $setup['lib']) . '"/><br/><input type="submit" value="' . $_SESSION['language']['go'] . '"/></div></form>';
+    echo '<form action="' . DIRECTORY . 'user/' . $id . '" method="post"><div class="row">' . $_SESSION['language']['lib'] . ':<br/><input class="enter" type="text" name="lib" value="' . (isset($_SESSION['lib']) ? $_SESSION['lib'] : $setup['lib']) . '"/><br/><input type="submit" value="' . $_SESSION['language']['go'] . '"/></div></form>';
 }
 
 

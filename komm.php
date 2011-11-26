@@ -35,10 +35,11 @@ if ($onpage < 3) {
 
 
 ###############Инфа о файле#####################
-$file_info_real = mysql_fetch_assoc(mysql_query('SELECT `path`, `loads` FROM `files` WHERE `id` = ' . $id, $mysql));
+$file_info_real = mysql_fetch_assoc(mysql_query('SELECT `path`, `loads`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
 if (!file_exists($file_info_real['path'])) {
 	error('File not found!');
 }
+$seo = unserialize($file_info_real['seo']);
 ###############Получаем комменты###############
 $all = mysql_fetch_row(mysql_query('SELECT COUNT(1) FROM `komments` WHERE `file_id` = ' . $id, $mysql));
 $all = $all[0];
@@ -50,6 +51,14 @@ $sql = mysql_query('SELECT * FROM `komments` WHERE `file_id` = ' . $id . ' ORDER
 
 $filepath = pathinfo($file_info_real['path']);
 $namefile = $filepath['basename'];
+
+
+if ($seo['title']) {
+    $title .= ' ' . htmlspecialchars($seo['title'], ENT_NOQUOTES);
+} else {
+    $title .= ' ' . htmlspecialchars($namefile, ENT_NOQUOTES);
+}
+
 #######Получаем имя файла и обратный каталог#####
 $dir = $filepath['dirname'] . '/';
 $back = mysql_fetch_assoc(mysql_query("SELECT `id` FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql));
@@ -119,7 +128,7 @@ if ($_GET['act'] == 'add') {
 
     // капча
     if ($setup['komments_captcha']) {
-    	$captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $_SESSION['language']['code'] . '<input type="text" name="keystring" size="4" maxlength="4"/><br/>';
+    	$captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $_SESSION['language']['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
     } else {
     	$captcha = '';
     }

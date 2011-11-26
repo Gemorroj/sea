@@ -906,16 +906,48 @@ if ($err) {
 break;
 
 
+#########################################SEO########################################
+case 'seo':
+if (!$_POST) {
+    $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
+    $seo = unserialize($file['seo']);
+
+    echo '<div class="mainzag">SEO <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
+<div class="row">
+<form action="apanel.php?action=seo&amp;id=' . $id . '" method="post">
+<div class="row">Title<br/>
+<input style="width: 95%" type="text" name="title" value="' . htmlspecialchars($seo['title']) . '"/><br/>
+Keywords<br/>
+<input style="width: 95%" type="text" name="keywords" value="' . htmlspecialchars($seo['keywords']) . '"/><br/>
+Description<br/>
+<input style="width: 95%" type="text" name="description" value="' . htmlspecialchars($seo['description']) . '"/><br/>
+<input class="buttom" type="submit" value="Изменить"/>
+</div>
+</form></div>';
+} else {
+    $seo = serialize(array(
+        'title' => $_POST['title'],
+        'keywords' => $_POST['keywords'],
+        'description' => $_POST['description']
+    ));
+    if (mysql_query('UPDATE `files` SET `seo` = "' . mysql_real_escape_string($seo, $mysql) . '" WHERE `id` = ' . $id, $mysql)) {
+        echo 'Данные изменены<br/>';
+    } else {
+        error('Данные не изменены');
+    }
+
+    echo '<a href="apanel_index.php?id=' . $back['id'] . '">Файл-менеджер</a>';
+}
+break;
+
+
 #########################################ДОБАВЛЕНИЕ И ИЗМЕНЕНИЕ ОПИСАНИЯ########################################
 case 'about':
-
 $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-
 $about = $setup['opath'] . iconv_substr($file['path'], iconv_strlen($setup['path'])) . '.txt';
 
-if (!$_POST)
-{
-echo '<div class="mainzag">Описание файла <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
+if (!$_POST) {
+    echo '<div class="mainzag">Описание файла/директории <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
 <div class="row">
 <form action="apanel.php?action=about&amp;id=' . $id . '" method="post">
 <div class="row">

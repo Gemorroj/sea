@@ -30,15 +30,15 @@ if ($setup['service_change']) {
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 if ($setup['style_change']) {
-	if (isset($_POST['style'])) {
+	if (isset($_POST['style']) && parse_url($_POST['style'])) {
 		$style = htmlspecialchars(rawurldecode($_POST['style']), ENT_COMPAT);
 		setcookie('style', $_POST['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
-	} elseif (isset($_GET['style'])) {
+	} else if (isset($_GET['style']) && parse_url($_GET['style'])) {
 		$style = htmlspecialchars(rawurldecode($_GET['style']), ENT_COMPAT);
 		setcookie('style', $_GET['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
-	} elseif (isset($_COOKIE['style'])) {
+	} else if (isset($_COOKIE['style'])) {
 		$style = htmlspecialchars($_COOKIE['style'], ENT_COMPAT);
-	} elseif (isset($_SESSION['style'])) {
+	} else if (isset($_SESSION['style'])) {
 		$style = $_SESSION['style'];
 	} else {
 		$style = $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['css'] . '.css';
@@ -49,10 +49,22 @@ if ($setup['style_change']) {
 
 
 
-// функция замены title в буфере
-function callback($buff)
+// функция замены title, keywords, description в буфере
+function callback($buffer)
 {
-    return str_replace('</title>', ' - ' . (isset($GLOBALS['title']) ? $GLOBALS['title'] : '/') . '</title>', $buff);
+    if ($GLOBALS['title']) {
+        $buffer = str_replace('</title>', ' - ' . $GLOBALS['title'] . '</title>', $buffer);
+    }
+    if ($GLOBALS['seo']) {
+        if ($GLOBALS['seo']['keywords']) {
+            $buffer = str_replace('</title>', '</title><meta name="keywords" content="' . htmlspecialchars($GLOBALS['seo']['keywords']) . '"/>', $buffer);
+        }
+        if ($GLOBALS['seo']['description']) {
+            $buffer = str_replace('</title>', '</title><meta name="description" content="' . htmlspecialchars($GLOBALS['seo']['description']) . '"/>', $buffer);
+        }
+    }
+
+    return $buffer;
 }
 
 ob_start('callback');
@@ -68,5 +80,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 <div>';
 
 $title = '';
+$seo = array();
 
 ?>

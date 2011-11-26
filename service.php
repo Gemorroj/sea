@@ -19,9 +19,9 @@ echo '<form action="' . DIRECTORY . 'service.php" method="get">
 <div class="row">
 <input type="hidden" name="act" value="enter"/>
 ID:<br/>
-<input type="text" name="id"/><br/>
+<input class="enter" type="text" name="id"/><br/>
 ' . $_SESSION['language']['pass'] . '<br/>
-<input type="password" name="pass"/><br/>
+<input class="enter" type="password" name="pass"/><br/>
 <input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/>
 </div>
 </form>
@@ -29,7 +29,7 @@ ID:<br/>
 <form action="' . DIRECTORY . 'service.php?act=pass" method="post">
 <div class="row">
 ' . $_SESSION['language']['lost password'] . '<br/>
-ID:<input type="text" name="id"/><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/>
+ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/>
 </div>
 </form>';
 } else if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
@@ -82,9 +82,9 @@ ID:<input type="text" name="id"/><input type="submit" value="' . $_SESSION['lang
 		$style = mysql_real_escape_string($_POST['style'], $mysql);
 
 		if (mysql_num_rows(mysql_query('
-        SELECT 1
-		FROM `users_profiles`
-		WHERE `url` = "' . $url . '"'
+            SELECT 1
+		    FROM `users_profiles`
+		    WHERE `url` = "' . $url . '"'
 		, $mysql))) {
 			// Такой URL уже есть
 			error($_SESSION['language']['duplicate url']);
@@ -104,11 +104,11 @@ echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post"
 <div class="row">
 <table><tr>
 <th>' . $_SESSION['language']['your site'] . '</th><th>' . $_SESSION['language']['name'] . '</th>
-</tr><tr><td>http://<input type="text" name="url"/></td><td><input type="text" name="name" style="width:96%;"/></td></tr>
-<tr><td>' . $_SESSION['language']['style'] . ':</td><td>http://<input type="text" name="style"/></td></tr>
-<tr><td>Email:</td><td><input type="text" name="mail" style="width:96%;"/></td></tr>
-<tr><td>' . $_SESSION['language']['pass'] . '</td><td><input type="password" name="pass" style="width:96%;"/></td></tr>
-<tr><th><img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /></th><td><input type="text" name="keystring" maxlength="4" style="width:96%;"/></td></tr>
+</tr><tr><td>http://<input class="enter" type="text" name="url"/></td><td><input class="enter" type="text" name="name" style="width:96%;"/></td></tr>
+<tr><td>' . $_SESSION['language']['style'] . ':</td><td>http://<input class="enter" type="text" name="style"/></td></tr>
+<tr><td>Email:</td><td><input class="enter" type="text" name="mail" style="width:96%;"/></td></tr>
+<tr><td>' . $_SESSION['language']['pass'] . '</td><td><input class="enter" type="password" name="pass" style="width:96%;"/></td></tr>
+<tr><th><img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /></th><td><input class="enter" type="text" name="keystring" maxlength="4" style="width:96%;"/></td></tr>
 <tr><th colspan="2"><input type="submit" value="'.$_SESSION['language']['go'].'" class="buttom"/></th></tr>
 </table>
 </div>
@@ -137,7 +137,7 @@ echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post"
         	$q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "0"', $mysql);
         	for ($i = 1; $i <= $setup['service_head']; ++$i) {
         		$assoc = mysql_fetch_assoc($q);
-        		echo '<tr><td>' . $i . '</td><td><input type="text" name="head[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input type="text" name="head[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
+        		echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="head[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="head[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
         	}
         }
         if ($setup['service_foot']) {
@@ -145,17 +145,17 @@ echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post"
         	$q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "1"', $mysql);
         	for ($i = 1; $i <= $setup['service_foot']; ++$i) {
         		$assoc = mysql_fetch_assoc($q);
-        		echo '<tr><td>' . $i . '</td><td><input type="text" name="foot[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input type="text" name="foot[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
+        		echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="foot[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="foot[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
         	}
         }
 echo '<tr><th colspan="3">URL</th></tr>
-<tr><td>&#187;</td><td><input type="text" name="name" value="' . htmlspecialchars($_SESSION['name']) . '"/></td><td><input type="text" name="url" value="' . htmlspecialchars($_SESSION['url']) . '"/></td></tr>
-<tr><td>Email</td><td colspan="2"><input type="text" name="mail" value="' . htmlspecialchars($_SESSION['mail']) . '" style="width:98%;"/></td></tr>
-<tr><td>' . $_SESSION['language']['style'] . '</td><td colspan="2"><input type="text" name="style" value="' . htmlspecialchars($_SESSION['style']) . '" style="width:98%;"/></td></tr>
+<tr><td>&#187;</td><td><input class="enter" type="text" name="name" value="' . htmlspecialchars($_SESSION['name']) . '"/></td><td><input class="enter" type="text" name="url" value="' . htmlspecialchars($_SESSION['url']) . '"/></td></tr>
+<tr><td>Email</td><td colspan="2"><input class="enter" type="text" name="mail" value="' . htmlspecialchars($_SESSION['mail']) . '" style="width:98%;"/></td></tr>
+<tr><td>' . $_SESSION['language']['style'] . '</td><td colspan="2"><input class="enter" type="text" name="style" value="' . htmlspecialchars($_SESSION['style']) . '" style="width:98%;"/></td></tr>
 <tr><th colspan="3"><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/></th></tr>
 </table>
 </div></form>
-<div class="row"><form action=""><div>' . $_SESSION['language']['service'] . '<br/><input type="text" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . '?user=' . $_SESSION['id'] . '"/></div></form></div>';
+<div class="row"><form action=""><div>' . $_SESSION['language']['service'] . '<br/><input class="enter" type="text" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . '?user=' . $_SESSION['id'] . '"/></div></form></div>';
 
 		break;
 

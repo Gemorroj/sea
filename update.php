@@ -68,6 +68,8 @@ mysql_query("ALTER TABLE `users_settings` ROW_FORMAT = FIXED;", $mysql);
 
 mysql_query("ALTER TABLE `files` ADD COLUMN `attach` TEXT DEFAULT NULL;", $mysql);
 
+mysql_query("ALTER TABLE `files` ADD COLUMN `seo` TEXT DEFAULT NULL;", $mysql);
+
 header('Location: http://' . $_SERVER['HTTP_HOST'] . str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) . '/');
 
 ?>

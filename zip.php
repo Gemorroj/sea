@@ -44,6 +44,7 @@ if (!file_exists($d['path'])) {
 	error('File not found');
 }
 ###############Получаем каталог#############
+$seo = unserialize($d['seo']);
 $filename = pathinfo($d['path']);
 $ext = strtolower($filename['extension']);
 if ($ext != 'zip') {
@@ -52,9 +53,13 @@ if ($ext != 'zip') {
 $dir = $filename['dirname'] . '/';
 $back = mysql_fetch_assoc(mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql));
 ###############Заголовок###################
-echo '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $_SESSION['language']['view archive'] . ' <a href="' . DIRECTORY . 'zip/' . $id . '">' . $filename['basename'] . '</a></strong></div><div class="iblock">';
+if ($seo['title']) {
+    $title .= htmlspecialchars($seo['title'], ENT_NOQUOTES);
+} else {
+    $title .= htmlspecialchars($filename['basename'], ENT_NOQUOTES);
+}
 
-$title .= $filename['basename'];
+echo '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $_SESSION['language']['view archive'] . ' <a href="' . DIRECTORY . 'zip/' . $id . '">' . $filename['basename'] . '</a></strong></div><div class="iblock">';
 ###############Содержимое###################
 if (!isset($_GET['action'])) {
     $zip = new PclZip($d['path']);

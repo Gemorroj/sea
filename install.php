@@ -46,6 +46,7 @@ if (!@$_GET['level']) {
       `no` mediumint(4) unsigned NOT NULL default '0',
       `hidden` enum('0','1') NOT NULL default '0',
       `attach` text,
+      `seo` text,
       PRIMARY KEY  (`id`),
       UNIQUE KEY `path` (`path`),
       KEY `loads` (`loads`),

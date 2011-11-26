@@ -210,7 +210,7 @@ while ($v = mysql_fetch_assoc($query)) {
         	$new_all = '';
         }
 
-        echo $ico . '<strong><a href="apanel_index.php?id=' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>(' . $v['dir_count'] . ')' . $new_all . ' [<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=flash">F</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=rename">R</a>][<a class="no" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]' . $dl . $addico . $updown;
+        echo $ico . '<strong><a href="apanel_index.php?id=' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>(' . $v['dir_count'] . ')' . $new_all . ' [<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=flash">F</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=rename">R</a>][<a class="no" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]' . $dl . $addico . $updown;
 
         // описания
         if ($setup['desc']) {
@@ -273,13 +273,13 @@ while ($v = mysql_fetch_assoc($query)) {
 
         
         /////////////
-        echo $row . $ico . '<strong><a href="apanel_view.php?id=' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>' . $extension . $v['size'] . '[<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=rename">R</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]' . $unzip . $dl . '[' . $add_screen . ']' . $desc;
+        echo $row . $ico . '<strong><a href="apanel_view.php?id=' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>' . $extension . $v['size'] . '[<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=rename">R</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]' . $unzip . $dl . '[' . $add_screen . ']' . $desc;
         
         if ($sort == 'data') {
         	echo '<br/>Добавлен: ' . $v['timeupload'];
-        } elseif ($sort == 'load') {
+        } else if ($sort == 'load') {
         	echo '<br/>Скачано ' . $v['loads'] . ' раз(а)';
-        } elseif ($sort == 'eval' && $setup['eval_change'] == 1) {
+        } else if ($sort == 'eval' && $setup['eval_change'] == 1) {
         	echo '<br/>Рейтинг(+/-): <span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no'] . '</span><br/>';
         }
         echo '</div>';
@@ -331,7 +331,7 @@ if ($pages > 1) {
     }
 }
 //------------------------------------------------------------------------------------------
-echo '<code>[R] - переименование, [O] - описание, [D] - удаление, [S] - скриншот, [F] - обновить в БД, [U] - распаковать архив, [I] - иконка, [Up/Down] - выше/ниже</code>
+echo '<code>[R] - переименование, [O] - описание, [K] - SEO, [D] - удаление, [S] - скриншот, [F] - обновить в БД, [U] - распаковать архив, [I] - иконка, [Up/Down] - выше/ниже</code>
 <div class="iblock"><a href="apanel.php">Админка</a></div>';
 
 require 'moduls/foot.php';

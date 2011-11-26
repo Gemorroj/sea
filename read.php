@@ -30,7 +30,9 @@ if ($_SESSION['langpack'] == 'russian') {
     $filename = $v['rus_name'];
 }
 
-$title .= $_SESSION['language']['read'] . ' - ' . $filename . ' / ' . $page;
+$seo = unserialize($v['seo']);
+
+$title .= $_SESSION['language']['read'] . ' - ' . htmlspecialchars($seo['title'] ? $seo['title'] : $filename, ENT_NOQUOTES) . ' / ' . $page;
 
 if (isset($_SESSION['lib'])) {
 	$setup['lib'] = $_SESSION['lib'];
