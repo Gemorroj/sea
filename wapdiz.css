@@ -1,0 +1,117 @@
+body {
+background-color : #fff;
+color : #000000;
+font-size : 12px;
+font-family : Arial;
+margin : 1px;
+}
+.buttom {
+color : #ffffff;
+background-color : #0097ce;
+padding : 1px;
+margin-top : 1px;
+margin-bottom : 1px;
+border-color : #00bcff #007ba8 #007ba8 #00bcff;
+border-style : solid;
+border-width : 1px;
+}
+.enter {
+color : #4eadce;
+background-color : #f8f8f8;
+padding : 1px;
+border : 1px solid;
+font-size : 11px;
+margin-top : 1px;
+margin-bottom : 1px;
+}
+.ik {
+padding : 2px 2px 2px 2px;
+margin-bottom : 1px;
+margin-top : 1px;
+border : 1px solid #ffffff;
+background-color : #c5e5f0;
+color : #00254a;
+}
+.iblock {
+padding : 2px;
+margin-bottom : 1px;
+margin-top : 1px;
+background-color : #c5e5f0;
+color : #00254a;
+border-color : #e1eff4 #a2ccdb #a2ccdb #e1eff4;
+border-style : solid;
+border-width : 1px;
+}
+.mblock {
+background-color : #0097ce;
+color : #fdffff;
+padding : 2px;
+margin-bottom : 1px;
+margin-top : 1px;
+font-weight : bold;
+border-color : #00b9fd #006c93 #006c93 #00b9fd;
+border-style : solid;
+border-width : 1px;
+}
+.mainzag {
+background-color : #45b6df;
+color : #fff;
+padding : 2px 0 2px 2px;
+margin-bottom : 1px;
+border-color : #70d1f4 #39a6ce #39a6ce #70d1f4;
+border-style : solid;
+border-width : 1px;
+}
+img {
+position : relative;
+top : 1px;
+margin : -1px;
+margin-right : 2px;
+}
+.row {
+background-color : #74ccec;
+color : #fdffff;
+padding : 1px 2px 3px;
+margin-bottom : 1px;
+border-color : #ace1f4 #62b8d7 #62b8d7 #ace1f4;
+border-style : solid;
+border-width : 1px;
+}
+.hr {
+background-color : #004080;
+padding : 0;
+margin : 4px 0 2px 0;
+}
+a, a:visited {
+color : #005c7e;
+text-decoration : none;
+}
+a:active {
+color : #004080;
+text-decoration : none;
+}
+a:hover {
+color : #fff;
+text-decoration : none;
+font-weight : bold;
+}
+form {
+margin : 0;
+}
+textarea {
+width : 95%;
+}
+.yes {
+color : #b1ffbb;
+font-weight : bold;
+}
+.no {
+font-weight : bold;
+color : #d70000;
+}
+.row a, .mainzag a {
+color : #fff;
+}
+table,td,th{
+border: 1px solid #000033;
+}

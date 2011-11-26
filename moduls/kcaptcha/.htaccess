@@ -1,0 +1,7 @@
+php_value session.auto_start 0
+Deny from all
+
+<Files ~ "^index\.php$">
+Order deny,allow
+allow from All
+</Files>

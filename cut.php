@@ -1,0 +1,146 @@
+<?php
+#-----------------------------------------------------#
+# ============ЗАГРУЗ-ЦЕНТР============= #
+# 	 Автор : Sea #
+# E-mail : x-sea-x@ya.ru #
+# ICQ : 355152215 #
+# Вы не имеете права распространять данный скрипт. #
+# 		По всем вопросам пишите в ICQ. #
+#-----------------------------------------------------#
+
+// mod Gemorroj
+
+require 'moduls/config.php';
+require 'moduls/PEAR/Id.php';
+require 'moduls/header.php';
+
+###############Если нарезка выключенa##########
+if (!$setup['cut_change']) {
+	error('Not found!');
+}
+###############Проверка переменных#############
+
+$id = intval($_GET['id']);
+$s = isset($_POST['s']) ? intval($_POST['s']) : 0;
+$p = isset($_POST['p']) ? intval($_POST['p']) : 0;
+
+if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') {
+	error($setup['hackmess']);
+}
+
+$title .= $_SESSION['language']['splitting'];
+
+
+###############Получаем инфу о файле###########
+$file_info = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+if (!is_file($file_info['path'])) {
+    error('Not found!');
+}
+#######Получаем имя файла и обратный каталог#####
+$filename = pathinfo($file_info['path']);
+$ext = $filename['extension'];
+$dir = $filename['dirname'] . '/';
+$filename = $filename['basename'];
+$back = mysql_fetch_assoc(mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql));
+//------------------------------------------------------------------------------------------
+if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
+    $id3 = new MP3_Id();
+    $result = $id3->read($file_info['path']);
+    $result = $id3->study();
+    // ------------------------Форма ввода параметров---------------------------
+    echo '<div class="mblock">' . $_SESSION['language']['splitting'] . '</div><div class="iblock">
+' . $_SESSION['language']['size'] . ': ' . round(($id3->getTag('filesize') / 1024), 0) . ' Kb<br/>
+' . $_SESSION['language']['length'] . ': ' . $id3->getTag('lengths') . ' ' . $_SESSION['language']['sec'] . '</div><div class="row">
+<form action="' . DIRECTORY . 'cut/' . $id . '" method="post">
+<div class="row">
+' . $_SESSION['language']['method slicing'] . ':<br/>
+<select class="enter" name="way">
+<option value="size">' . $_SESSION['language']['size'] . '</option>
+<option value="time">' . $_SESSION['language']['time'] . '</option>
+</select><br/>
+' . $_SESSION['language']['start slicing'] . ':<br/>
+<input maxlength="5" class="enter" type="text" name="s"/><br/>
+' . $_SESSION['language']['stop slicing'] . ':<br/>
+<input maxlength="5" class="enter" type="text" name="p"/><br/>
+<input class="buttom" type="submit" name="a" value="' . $_SESSION['language']['go'] . '"/>
+</div>
+</form></div>';
+} else {
+
+    $list = glob($setup['mp3path'] . '/*');
+    $all = sizeof($list);
+    foreach ($list as $key => $string) {
+        $allsize += round(filesize($string) / 1024 / 1024, 1);
+        if ($allsize > $setup['limit']) {
+            $dire = opendir($setup['mp3path'] . '/');
+            while (($file = readdir($dire)) !== false) {
+                if ($file != '.' && $file != '..'){
+                    unlink($setup['mp3path'] . '/' . $file);
+                }
+            }
+            break;
+        }
+    }
+
+    $randname = mt_rand(10000, mt_getrandmax()) . '_' . $filename;
+    $randintval = rawurldecode($setup['mp3path'] . '/' . $randname);
+    if (copy($file_info['path'], $randintval)) {
+        $fp = fopen($randintval, 'rb');
+        $raz = filesize($randintval);
+
+        if ($_POST['way'] == 'size') {
+            $s *= 1024;
+            $p *= 1024;
+            if ($s > $raz || $s < 0) {
+                $s = 0;
+            }
+            if ($p > $raz || $p < $s) {
+                $p = $raz;
+            }
+        } else {
+            $id3 = new MP3_Id();
+            $result = $id3->read($randintval);
+            $result = $id3->study();
+            $byterate = $id3->getTag('bitrate') / 8;
+            $secbit = $raz / 1024 / $byterate;
+            if ($s > $secbit || $s < 0) {
+                $s = 0;
+            }
+            if ($p > $secbit || $p < $s) {
+                $p = $secbit;
+            }
+            $s *= $byterate * 1024;
+            $p *= $byterate * 1024;
+        }
+        $p -= $s;
+        fseek($fp, $s);
+        $filefp = fread($fp, $p);
+        fclose($fp);
+        unlink($randintval);
+        $fp = fopen($randintval, 'xb');
+        if (fwrite($fp, $filefp)) {
+            $fp = fopen($randintval, 'rb');
+            $ras = round(filesize($randintval) / 1024);
+            fclose($fp);
+            $all++;
+
+            mysql_query('UPDATE `files` SET `loads`=`loads` + 1, `timeload` = "' . $_SERVER['REQUEST_TIME'] . '" WHERE `id` = ' . $id, $mysql);
+
+            echo '<div class="mblock">' . $_SESSION['language']['the file has been successfully cut'] . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $_SESSION['language']['download'] . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $randintval . '"/></div>';
+        } else {
+            echo '<div class="iblock">' . $_SESSION['language']['error'] . '</div>';
+        }
+    } else{
+        echo '<div class="mblock">' . $_SESSION['language']['error'] . '</div>';
+    }
+}
+echo '<div class="iblock">
+- <a href="' . DIRECTORY . 'view/' . $id . '">' . $_SESSION['language']['go to the description of the file'] . '</a><br/>
+- <a href="' . DIRECTORY . '/' . $back['id'] . '">' . $_SESSION['language']['go to the category'] . '</a><br/>
+- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>
+- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a>
+</div>';
+
+require 'moduls/foot.php';
+
+?>

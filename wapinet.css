@@ -1,0 +1,22 @@
+body{background-color:#f7feff;color:#003;font-size:9pt;margin:0;padding:1px;border:2px solid #ebebeb;}
+hr{text-align:left;background-color:#bf0000;height:1px;width:12%;margin:2pt;}
+textarea{width:80%;font-family:Times New Roman,Arial;}
+table{background-color:#c00;width:98%;margin:1%;}
+a{color:#000;text-decoration:none;}
+a:visited{color:#003;}
+a:hover{text-decoration:underline;color:#bf0000;}
+a:active{color:#bbb;}
+code{font-size:10pt;font-family:Courier New;}
+pre{overflow:auto;}
+
+.mblock, .row, .mainzag, .iblock{border-radius:2pt;background-color:#007090;color:#fff;font-size:10pt;border:1px solid #003;margin:1px;}
+
+.yes{color:#0b0;font-weight:bold;}
+.no{color:#e00;font-weight:bold;}
+
+.buttom{}
+.enter{}
+.hr{}
+
+.ik{box-shadow:-4px 4px 4px #ddd;border-radius:2pt;color:#333;background-color:#e3ebeb;padding:2pt 1pt 2pt 3pt;margin:1%;border:1px solid #079;overflow:auto;}
+.ik:hover{box-shadow:-6px 6px 6px #ddd;}

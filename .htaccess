@@ -1,0 +1,259 @@
+#CharsetDisable on
+
+
+RewriteEngine On
+Options +FollowSymlinks -MultiViews
+#RewriteBase /
+
+RewriteRule ^([0-9]+)/*$ ./index.php?id=$1 [QSA,NC]
+RewriteRule ^([0-9]+)/([0-9]+)/*$ ./index.php?id=$1&page=$2 [QSA,NC]
+RewriteRule ^onpage/([0-9]+)/([0-9]+)/*$ ./index.php?onpage=$1&id=$2 [QSA,NC]
+RewriteRule ^sort/([a-z]+)/([0-9]+)/*$ ./index.php?sort=$1&id=$2 [QSA,NC]
+RewriteRule ^prew/([0-9]+)/([0-9]+)/*$ ./index.php?prew=$1&id=$2 [QSA,NC]
+
+RewriteRule ^view/([0-9]+)/*$ ./view.php?id=$1 [QSA,NC]
+RewriteRule ^view/([0-9]+)/frame([0-9]*)/*$ ./view.php?id=$1&frame=$2 [QSA,NC]
+RewriteRule ^view/([0-9]+)/([0-9]+)/*$ ./view.php?id=$1&eval=$2 [QSA,NC]
+RewriteRule ^view/([0-9]+)/abuse/*$ ./view.php?id=$1&abuse=1 [QSA,NC]
+RewriteRule ^view/([0-9]+)/email/*$ ./view.php?id=$1&email=1 [QSA,NC]
+
+RewriteRule ^ffmpeg/([0-9]+)/*([0-9]*)/*$ ./ffmpeg.php?id=$1&frame=$2 [QSA,NC]
+
+RewriteRule ^apic/([0-9]+)/*$ ./apic.php?id=$1 [QSA,NC]
+RewriteRule ^im/([0-9]+)/*$ ./im.php?id=$1 [QSA,NC]
+RewriteRule ^theme/([0-9]+)/*$ ./theme.php?id=$1 [QSA,NC]
+RewriteRule ^load/([0-9]+)/*$ ./load.php?id=$1 [QSA,NC]
+RewriteRule ^user/([0-9]+)/*$ ./user.php?id=$1 [QSA,NC]
+RewriteRule ^rate/([0-9]+)/*$ ./rate.php?i=$1 [QSA,NC]
+RewriteRule ^cut/([0-9]+)/*$ ./cut.php?id=$1 [QSA,NC]
+RewriteRule ^txt_zip/([0-9]+)/*$ ./txt_zip.php?id=$1 [QSA,NC]
+RewriteRule ^txt_jar/([0-9]+)/*$ ./txt_jar.php?id=$1 [QSA,NC]
+RewriteRule ^jad/([0-9]+)/*$ ./jad.php?id=$1 [QSA,NC]
+
+RewriteRule ^search/([0-9]+)/([0-9]+)/([0-9]+)/(.*)/*$ ./search.php?act=search&page=$1&onpage=$2&prew=$3&word=$4 [QSA,NC]
+
+RewriteRule ^top/([a-z]+)/*([0-9]*)/*$ ./top.php?sort=$1&page=$2 [QSA,NC]
+
+RewriteRule ^zip/([0-9]+)/*([0-9]*)/*$ ./zip.php?id=$1&page=$2 [QSA,NC]
+RewriteRule ^zip/preview/([0-9]+)/(.+)/([0-9]*)/*$ ./zip.php?action=preview&id=$1&open=$2&page=$3 [QSA,NC]
+RewriteRule ^zip/down/([0-9]+)/(.+)/*$ ./zip.php?action=down&id=$1&open=$2 [QSA,NC]
+
+RewriteRule ^komm/([0-9]+)/*([0-9]*)/*(add)*/*$ ./komm.php?id=$1&page=$2&act=$3 [QSA,NC]
+
+RewriteRule ^news_komm/([0-9]+)/*([0-9]*)/*(add)*/*$ ./news_komm.php?id=$1&page=$2&act=$3 [QSA,NC]
+RewriteRule ^news/([0-9]+)/*$ ./news.php?page=$1 [QSA,NC]
+
+RewriteRule ^read/([0-9]+)/*([0-9]*)/*$ ./read.php?id=$1&page=$2 [QSA,NC]
+
+
+<Files ~ ".dat$|.htaccess$|.htpasswd$|.log$|.cfg$|.inc$|.ini$|.inc.php$|.class.php$|config.php$|^functions.php$|^header.php$">
+Order allow,deny
+Deny from All
+Satisfy All
+</Files>
+
+
+<Limit GET POST>
+Order allow,deny
+Allow from all
+</Limit>
+
+DirectoryIndex index.php index.htm index.wml index.xhtml index.html index.phtml
+
+# PHP
+#AddHandler application/x-httpd-php .php .phtml
+
+AddType text/vnd.wap.wml .wml
+AddType text/vnd.wap.wmlscript .wmls
+AddType text/vnd.wap.si .si
+AddType text/vnd.wap.sl .sl
+AddType text/vnd.sun.j2me.app-descriptor .jad
+AddType text/vnd.sun.j2me.app-descriptor .db
+AddType text/x-vcard .vcf
+AddType text/x-vcalendar .vcs
+AddType text/x-vmel .mel
+AddType text/x-vmel .emy
+AddType text/x-co-desc .cod
+AddType text/x-emelody .emy
+AddType text/calendar .ics
+AddType text/x-imelody .imy
+AddType text/plain .txt
+AddType text/plain .dat
+AddType text/xml .xml
+AddType text/css .css
+AddType text/javascript .js
+
+AddType application/vnd.android.package-archive .apk
+AddType application/java-archive .jar
+AddType application/vnd.wap.wmlc .wmlc
+AddType application/vnd.wap.wmlscriptc .wmlsc
+AddType application/vnd.wap.slc .slc
+AddType application/vnd.wap.sic .sic
+AddType application/octet-stream .tsk
+AddType application/vnd.eri.thm .thm
+AddType application/vnd.nok-s40theme .nth
+AddType application/vnd.Nokie.ringing-tone .rng
+AddType application/vnd.nokia.gamedata .nqd
+AddType application/x-nokiagamedata .ngd
+AddType application/vnd.alcatel.SEQ .seq
+AddType application/vnd.uiq.thm .utz
+AddType application/vnd.mophun.application .mpn
+AddType application/vnd.mophun.certificate .mpc
+AddType application/vnd.sonyericsson.mms-template tpl
+AddType application/vnd.siemens-mp.theme .sdt
+AddType application/vnd.siemens-mp.skin .scs
+AddType application/vnd.siemens-mp.t9db .ldb
+AddType application/vnd.ms-cab-compressed .cab
+AddType application/vnd.symbian.install .sis
+AddType application/octet-stream .sisx
+AddType application/vnd.symbian.install .app
+#AddType application/x-httpd-php .rss
+AddType application/x-shockwave-flash .swf
+AddType application/x-compress .z
+AddType application/x-7z-compressed .7z
+AddType application/x-rar-compressed .rar
+AddType application/x-zip .zip
+AddType application/x-gzip .gz
+AddType application/x-gzip .tgz
+AddType application/x-tar .tar
+AddType application/x-bzip .bz
+AddType application/x-bzip .bz2
+AddType application/x-tar .hid
+AddType application/x-pmd .pmd
+AddType application/x-dvi .dvi
+AddType application/x-tex .tex
+AddType application/chm .chm
+AddType application/smil .smil
+AddType application/smil .smi
+AddType application/vnd.smaf .mmf
+AddType application/vnd .smaf
+AddType application/vnd.wap.mms-message .mms
+AddType application/vnd.oma.drm.message .dm
+AddType application/msword .doc
+AddType application/pdf .pdf
+AddType application/postscript .ps
+AddType application/postscript .eps
+AddType application/octet-stream .com
+AddType application/octet-stream .exe
+AddType application/octet-stream .bat
+
+AddType audio/basic .au
+AddType audio/basic .snd
+AddType audio/imelody .imy
+AddType audio/mid .srt
+AddType audio/mid .midi
+AddType audio/mid .mid
+AddType audio/mid .col
+AddType audio/mpeg .mp3
+AddType audio/aac .aac
+AddType audio/amr .amr
+AddType audio/amr-wb .awb
+AddType audio/rmf .rmf
+AddType audio/vnd.qcelp .qcp
+AddType audio/aiff .aiff
+AddType audio/x-wav .wav
+AddType audio/x-ms-wma .wma
+
+AddType image/vnd.wap.wbmp .wbmp
+AddType image/bmp .bmx
+AddType image/png .png
+AddType image/jpeg .jpg
+AddType image/jpeg .jpe
+AddType image/jpeg .jpeg
+AddType image/gif .gif
+AddType image/bmp .bmp
+AddType image/x-epoc-mbm .mbm
+AddType image/vnd.nok-3dscreensaver .n3a
+AddType image/x-epoc-mbm .mbm
+AddType image/vnd.nok-3dscreensaver .n3a
+AddType image/vnd.nok-oplogo-colornokia-op-logo .nok
+AddType image/x-jg .art
+AddType image/tiff .tiff
+
+AddType video/3gpp .3gp
+AddType video/mp4 .mp4
+AddType video/mpeg .mpeg
+AddType video/mpeg .mpg
+AddType video/mpeg .mpe
+AddType video/quicktime .mov
+AddType video/quicktime .qt
+AddType video/x-msvideo .avi
+AddType video/x-ms-wmv .wmv
+AddType video/x-ms-asf .asf
+AddType video/x-ivf .ivf
+
+AddType x-world/x-vrml .wrl
+
+
+# MIME тип по умолчанию
+php_value default_mimetype text/html
+
+php_flag magic_quotes_gpc Off
+php_flag magic_quotes_runtime Off
+php_flag magic_quotes_sybase Off
+
+# Не создаются переменные argc и argv
+php_flag register_argc_argv Off
+
+# Глобальные переменные!
+php_flag register_globals Off
+
+
+#Отладка
+php_flag display_errors Off
+php_value error_reporting -1
+php_flag log_errors On
+#php_value error_log error_log
+
+# Автоматический запуск сессии
+php_value session.auto_start 1
+# Имя сессии
+php_value session.name "lid"
+# Автоматическое подставление идентификатора сессии к ссылкам
+php_value session.use_trans_sid 1
+# Разделитель переменных в URI
+php_value arg_separator.output "&amp;"
+
+
+php_value session.gc_probability 1
+php_value session.gc_maxlifetime 86400
+php_value session.cookie_lifetime 86400
+php_value session.use_cookies 1
+php_value session.use_only_cookies 0
+
+# желательно заменить, для улучшения быстродействия
+#php_value session.save_path "/user/home/sea/moduls/cache"
+
+
+# Компрессия
+php_value zlib.output_compression 4096
+php_value zlib.output_compression_level 6
+
+
+Options -Indexes
+AddDefaultCharset UTF-8
+php_value default_charset UTF-8
+
+# максимальный размер файлов для аплоада
+php_value upload_max_filesize 99M
+php_value post_max_size 99M
+
+# временная зона. Только Apache 2
+#php_value date.timezone "Europe/Moscow"
+
+
+
+# mbstring
+# Автозамена на мультибайтную кодировку!!!
+# Конфликтует с PclZIP
+php_value mbstring.func_overload 0
+
+php_value iconv.internal_encoding UTF-8
+
+#ErrorDocument 304 /?
+#ErrorDocument 400 /?
+#ErrorDocument 403 /?
+ErrorDocument 404 /?
+#ErrorDocument 406 /?
+#ErrorDocument 500 /?
+#ErrorDocument 502 /?

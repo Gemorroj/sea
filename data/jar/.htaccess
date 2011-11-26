@@ -1,0 +1,6 @@
+deny from all
+
+<Files ~ "\.jar$">
+Order deny,allow
+allow from All
+</Files>
