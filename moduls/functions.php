@@ -345,6 +345,10 @@ function scaner($path = '', $cont = 'folder.png')
     $tmp = 0;
 
 	foreach (array_diff(scandir($path, 0), array('.', '..')) as $file) {
+        if ($file[0] == '.') {
+            continue;
+        }
+
         $f = str_replace('//', '/', $path . '/' . $file);
 
         $tmp++;
