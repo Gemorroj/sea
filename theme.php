@@ -57,7 +57,7 @@ if ($file_info[1] == '.nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } else if ($file_info[1] == '.thm') {
-    require_once 'moduls/PEAR/Tar.php';
+    require_once 'moduls/PEAR/Archive/Tar.php';
 
     $thm = new Archive_Tar($file_info[0]);
 

@@ -250,7 +250,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
     	if (file_exists('moduls/cache/' . $id . '.dat')) {
     		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
     	} else {
-            include 'moduls/PEAR/Ogg.php';
+            include 'moduls/PEAR/File/Ogg.php';
             try{
                 $ogg = new File_Ogg($v['path']);
                 $obj = & current($ogg->_streams);

@@ -559,7 +559,7 @@ function thm($path = '')
         'UIQ3' => 'M600, P1, W950, W960, P990',
     );
 
-    require_once DIR . '/PEAR/Tar.php';
+    require_once DIR . '/PEAR/Archive/Tar.php';
 
     $thm = new Archive_Tar($path);
 
@@ -580,7 +580,7 @@ function thm($path = '')
     }
 
 
-    // fix bug in tar.php
+    // fix bug in Tar.php
     if (!$file) {
     	preg_match('/<\?\s*xml\s*version\s*=\s*"1\.0"\s*\?>(.*)<\/.+>/isU', file_get_contents($path), $arr);
     	$file = trim($arr[0]);

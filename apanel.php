@@ -316,7 +316,7 @@ break;
 
 // редактор MP3 тегов
 case 'id3':
-include 'moduls/PEAR/Id.php';
+include 'moduls/PEAR/MP3/Id.php';
 include 'moduls/mp3.class.php';
 $id3 = new MP3_Id();
 
@@ -1204,6 +1204,9 @@ if ($_POST) {
     if (!preg_match('/^[A-Z0-9_\-]+$/i', $_POST['realname'])) {
         error('Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Z0-9_-]');
     }
+    if ($_POST['new']['english'] == '' || $_POST['new']['russian'] == '') {
+        error('Укажите отображаемые названия папки на русском и английском языках');
+    }
 
     // берем корень
     if ($id) {
@@ -1261,7 +1264,7 @@ if ($_POST) {
     <form action="apanel.php?action=newdir&amp;id=' . $id . '" method="post">
     <div class="row">
     Имя новой папки [A-Z0-9_-]:<br/>
-    <input type="text" name="realname" size="70"/><br/>';
+    <input type="text" name="realname" size="70" class="enter" /><br/>';
     language_dir('', '');
     echo '<input class="buttom" type="submit" value="Добавить"/>
     </div>

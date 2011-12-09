@@ -23,7 +23,14 @@ while ($set = mysql_fetch_assoc($setting)) {
     $setup[$set['name']] = $set['value'];
 }
 
+
 define('DIR', dirname(__FILE__));
+set_include_path(
+    get_include_path() . PATH_SEPARATOR .
+    DIR . DIRECTORY_SEPARATOR . 'PEAR'
+);
+
+
 
 require_once DIR . '/functions.php';
 

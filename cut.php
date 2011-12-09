@@ -11,7 +11,7 @@
 // mod Gemorroj
 
 require 'moduls/config.php';
-require 'moduls/PEAR/Id.php';
+require 'moduls/PEAR/MP3/Id.php';
 require 'moduls/header.php';
 
 ###############Если нарезка выключенa##########
@@ -82,8 +82,8 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
         }
     }
 
-    $randname = mt_rand(10000, mt_getrandmax()) . '_' . $filename;
-    $randintval = rawurldecode($setup['mp3path'] . '/' . $randname);
+    $randname = mt_rand(10000, mt_getrandmax());
+    $randintval = $setup['mp3path'] . '/' . $randname . '_' . $filename;
     if (copy($file_info['path'], $randintval)) {
         $fp = fopen($randintval, 'rb');
         $raz = filesize($randintval);
@@ -126,7 +126,7 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
 
             mysql_query('UPDATE `files` SET `loads`=`loads` + 1, `timeload` = "' . $_SERVER['REQUEST_TIME'] . '" WHERE `id` = ' . $id, $mysql);
 
-            echo '<div class="mblock">' . $_SESSION['language']['the file has been successfully cut'] . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $_SESSION['language']['download'] . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $randintval . '"/></div>';
+            echo '<div class="mblock">' . $_SESSION['language']['the file has been successfully cut'] . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $_SESSION['language']['download'] . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['mp3path'] . '/' . $randname . '_' . rawurlencode($filename) . '"/></div>';
         } else {
             echo '<div class="iblock">' . $_SESSION['language']['error'] . '</div>';
         }

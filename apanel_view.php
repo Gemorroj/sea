@@ -289,7 +289,7 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
     	if (file_exists('moduls/cache/' . $id . '.dat')) {
     		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
     	} else {
-            include 'moduls/PEAR/Ogg.php';
+            include 'moduls/PEAR/File/Ogg.php';
             try{
                 $ogg = new File_Ogg($file_info['path']);
                 $obj = & current($ogg->_streams);

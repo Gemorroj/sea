@@ -22,7 +22,7 @@ header('Pragma: no-cache');
 if ($setup['service_change']) {
 	if (isset($_GET['url'])) {
 		$_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($_GET['url']);
-	} elseif (isset($_SESSION['site_url'])) {
+	} else if (isset($_SESSION['site_url'])) {
 		$setup['site_url'] = $_SESSION['site_url'];
 	}
 }
@@ -44,7 +44,7 @@ if ($setup['style_change']) {
 		$style = $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['css'] . '.css';
 	}
 } else {
-	$style = $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['css'] . '.css';
+	$style = $_SERVER['HTTP_HOST'] . DIRECTORY . ($setup['css'] ? $setup['css'] : 'style') . '.css';
 }
 
 
