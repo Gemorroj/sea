@@ -15,7 +15,7 @@ if (!$setup['service_change_advanced']) {
 }
 
 if (!isset($_SESSION['id']) && !isset($_GET['act'])) {
-echo '<form action="' . DIRECTORY . 'service.php" method="get">
+    echo '<form action="' . DIRECTORY . 'service.php" method="get">
 <div class="row">
 <input type="hidden" name="act" value="enter"/>
 ID:<br/>
@@ -58,7 +58,7 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 	    	$error .= $_SESSION['language']['not a valid code'] . '<br/>';
 		}
 		unset($_SESSION['captcha_keystring']);
-		
+
 		if (strlen($_POST['pass']) < 4) {
 			$error .= $_SESSION['language']['short password'] . '<br/>';
 		}
@@ -94,13 +94,13 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 			$_SESSION['url'] = $_POST['url'];
 			$_SESSION['mail'] = $_POST['mail'];
 			$_SESSION['style'] = $_POST['style'];
-			mail($mail, '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'].DIRECTORY) . '?=', 'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'], 'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8");
+			mail($mail, '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=', 'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'], 'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8");
 			echo '<div class="row">' . $_SESSION['language']['registered'] . '<br/></div><div class="row"><a href="' . DIRECTORY . 'service.php">' . $_SESSION['language']['go'] . '</a><br/></div>';
 		} else {
 			error($_SESSION['language']['error']);
 		}
 	} else {
-echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post">
+        echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post">
 <div class="row">
 <table><tr>
 <th>' . $_SESSION['language']['your site'] . '</th><th>' . $_SESSION['language']['name'] . '</th>
@@ -109,7 +109,7 @@ echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post"
 <tr><td>Email:</td><td><input class="enter" type="text" name="mail" style="width:96%;"/></td></tr>
 <tr><td>' . $_SESSION['language']['pass'] . '</td><td><input class="enter" type="password" name="pass" style="width:96%;"/></td></tr>
 <tr><th><img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /></th><td><input class="enter" type="text" name="keystring" maxlength="4" style="width:96%;"/></td></tr>
-<tr><th colspan="2"><input type="submit" value="'.$_SESSION['language']['go'].'" class="buttom"/></th></tr>
+<tr><th colspan="2"><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/></th></tr>
 </table>
 </div>
 </form>';
@@ -130,34 +130,34 @@ echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post"
 
 	switch($act) {
 		default:
-        echo '<form action="' . DIRECTORY . 'service.php?act=save" method="post"><div class="row"><table><tr><th>N</th><th>' . $_SESSION['language']['name'] . '</th><th>' . $_SESSION['language']['link'] . '</th></tr>';
+            echo '<form action="' . DIRECTORY . 'service.php?act=save" method="post"><div class="row"><table><tr><th>N</th><th>' . $_SESSION['language']['name'] . '</th><th>' . $_SESSION['language']['link'] . '</th></tr>';
 
-        if ($setup['service_head']) {
-        	echo '<tr><th colspan="3">' . $_SESSION['language']['head'] . '</th></tr>';
-        	$q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "0"', $mysql);
-        	for ($i = 1; $i <= $setup['service_head']; ++$i) {
-        		$assoc = mysql_fetch_assoc($q);
-        		echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="head[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="head[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
-        	}
-        }
-        if ($setup['service_foot']) {
-        	echo '<tr><th colspan="3">' . $_SESSION['language']['foot'] . '</th></tr>';
-        	$q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "1"', $mysql);
-        	for ($i = 1; $i <= $setup['service_foot']; ++$i) {
-        		$assoc = mysql_fetch_assoc($q);
-        		echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="foot[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="foot[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
-        	}
-        }
-echo '<tr><th colspan="3">URL</th></tr>
+            if ($setup['service_head']) {
+        	   echo '<tr><th colspan="3">' . $_SESSION['language']['head'] . '</th></tr>';
+        	   $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "0"', $mysql);
+        	   for ($i = 1; $i <= $setup['service_head']; ++$i) {
+                    $assoc = mysql_fetch_assoc($q);
+                    echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="head[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="head[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
+        	   }
+            }
+            if ($setup['service_foot']) {
+            	echo '<tr><th colspan="3">' . $_SESSION['language']['foot'] . '</th></tr>';
+            	$q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "1"', $mysql);
+            	for ($i = 1; $i <= $setup['service_foot']; ++$i) {
+            		$assoc = mysql_fetch_assoc($q);
+            		echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="foot[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="foot[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
+            	}
+            }
+            echo '<tr><th colspan="3">URL</th></tr>
 <tr><td>&#187;</td><td><input class="enter" type="text" name="name" value="' . htmlspecialchars($_SESSION['name']) . '"/></td><td><input class="enter" type="text" name="url" value="' . htmlspecialchars($_SESSION['url']) . '"/></td></tr>
 <tr><td>Email</td><td colspan="2"><input class="enter" type="text" name="mail" value="' . htmlspecialchars($_SESSION['mail']) . '" style="width:98%;"/></td></tr>
-<tr><td>' . $_SESSION['language']['style'] . '</td><td colspan="2"><input class="enter" type="text" name="style" value="' . htmlspecialchars($_SESSION['style']) . '" style="width:98%;"/></td></tr>
+<tr><td>' . $_SESSION['language']['style'] . '</td><td colspan="2"><input class="enter" type="text" name="style" value="' . htmlspecialchars($style) . '" style="width:98%;"/></td></tr>
 <tr><th colspan="3"><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/></th></tr>
 </table>
 </div></form>
 <div class="row"><form action=""><div>' . $_SESSION['language']['service'] . '<br/><input class="enter" type="text" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . '?user=' . $_SESSION['id'] . '"/></div></form></div>';
 
-		break;
+            break;
 
 		case 'save':
 			$_SESSION['url'] = $_POST['url'];
@@ -210,13 +210,13 @@ echo '<tr><th colspan="3">URL</th></tr>
 			} else {
 				error($_SESSION['language']['error']);
 			}
-			
-		break;
+            break;
+
 
 		case 'exit':
 			session_destroy();
 			error($_SESSION['language']['signed out']);
-		break;
+            break;
 	}
 	
 	echo '<div class="iblock">- <a href="' . DIRECTORY . 'service.php?act=exit">' . $_SESSION['language']['exit'] . '</a><br/></div>';

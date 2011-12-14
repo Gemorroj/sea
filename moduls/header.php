@@ -36,7 +36,7 @@ if ($setup['style_change']) {
 	} else if (isset($_GET['style']) && parse_url($_GET['style'])) {
 		$style = htmlspecialchars(rawurldecode($_GET['style']), ENT_COMPAT);
 		setcookie('style', $_GET['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
-	} else if (isset($_COOKIE['style'])) {
+	} else if (isset($_COOKIE['style']) && parse_url($_COOKIE['style'])) {
 		$style = htmlspecialchars($_COOKIE['style'], ENT_COMPAT);
 	} else if (isset($_SESSION['style'])) {
 		$style = $_SESSION['style'];
