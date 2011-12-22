@@ -5,7 +5,7 @@ var Apanel = {
 
         tpl.style.display = "block";
         tpl.removeAttribute("id");
-        tpl.childNodes[0].name = "userfile[" + div.length + "]";
+        tpl.firstChild.name = "userfile[" + div.length + "]";
 
         if (type == 1) {
             fl.insertBefore(tpl, null);
@@ -24,7 +24,7 @@ var Apanel = {
 
         tpl.style.display = "inline";
         tpl.removeAttribute("id");
-        tpl.childNodes[0].name = "attach_" + fl.childNodes[0].name + "[]";
+        tpl.firstChild.name = "attach_" + fl.firstChild.name + "[]";
 
         if (type == 1) {
             fl.insertBefore(tpl, null);
