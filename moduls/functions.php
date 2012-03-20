@@ -96,7 +96,7 @@ function bbcode($text = '')
  * Из html в ббкод
  * 
  * @param string $text
- * @retirn string
+ * @return string
  */
 function antibb($text = '')
 {
@@ -148,11 +148,7 @@ function is_num($txt, $name)
  */
 function check($value)
 {
-    if (!$value) {
-        return;
-    } else {
-        return 'checked="checked"';
-    }
+    return $value ? 'checked="checked"' : '';
 }
 
 
@@ -161,11 +157,7 @@ function check($value)
  */
 function sel($value, $real)
 {
-    if ($value != $real) {
-        return;
-    } else {
-        return 'selected="selected"';
-    }
+    return $value == $real ? 'selected="selected"' : '';
 }
 
 
@@ -192,10 +184,10 @@ function get2ses($name)
  * @param resource $watermark
  * @return resource
  */
-function marker($image = '', $watermark = '')
+function marker($image, $watermark)
 {
     if (!is_resource($image) || !is_resource($watermark)) {
-        return;
+        return null;
     }
 
 
@@ -391,7 +383,7 @@ function scaner($path = '', $cont = 'folder.png')
             }
         	chmod($attach, 0777);
 
-            sleep(0.01); // =///
+            sleep(0.005); // =///
             if (!mysql_query('
                 INSERT IGNORE INTO `files`
                 (`dir`, `path`, `name`, `rus_name`, `infolder`, `size` ,`timeupload`)
@@ -416,7 +408,7 @@ function scaner($path = '', $cont = 'folder.png')
             if ($pathinfo['basename'] == $cont) {
                 continue;
             } else {
-                sleep(0.01); // =///
+                sleep(0.005); // =///
                 if (!mysql_query('
                     INSERT IGNORE INTO `files`
                     (`dir`, `path`, `name`, `rus_name`, `infolder`, `size` ,`timeupload`)
@@ -443,8 +435,9 @@ function scaner($path = '', $cont = 'folder.png')
 /**
  * Изменение количества файлов в директориях
  * 
- * @param string директория
- * @param bool инкремент или декремент
+ * @param string $path директория
+ * @param bool $increment инкремент или декремент
+ * @return bool
  */
 function dir_count($path = '', $increment = true)
 {
@@ -457,7 +450,11 @@ function dir_count($path = '', $increment = true)
             $in[$i] = mysql_real_escape_string($arr[$i], $GLOBALS['mysql']) . '/';
         }
     }
-    return mysql_query('UPDATE `files` SET `dir_count` = `dir_count` ' . ($increment ? '+' : '-') . ' 1 WHERE `path` IN ("' . implode('","', $in) . '")', $GLOBALS['mysql']);
+    return mysql_query('
+        UPDATE `files`
+        SET `dir_count` = `dir_count` ' . ($increment ? '+' : '-') . ' 1
+        WHERE `path` IN ("' . implode('","', $in) . '")', $GLOBALS['mysql']
+    );
 }
 
 
@@ -484,8 +481,7 @@ function size($int = 0)
 /**
  * Создает файл
  * Последний элемент в path считается файлом. Директория согласно функции pathinfo
- * 
- * @path string
+ *
  * @return bool
  */
 function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
@@ -589,6 +585,7 @@ function thm($path = '')
 
     $load = simplexml_load_string($file);
 
+    $str = '';
     if ($load->Author_organization['Value']) {
     	$str .= $_SESSION['language']['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
     }
@@ -863,10 +860,10 @@ function str_to_utf8($str)
 /**
  * Постраничная навигация
  * 
- * @param int       текущая страница
- * @param int       всего страниц
- * @param string    url страницы, к нему прибавится /номер
- * @return string   html с навигацией
+ * @param int     $pg  текущая страница
+ * @param int     $all всего страниц
+ * @param string  $str url страницы, к нему прибавится /номер
+ * @return string      html с навигацией
  */
 function go($pg = 0, $all = 0, $str)
 {
@@ -913,8 +910,8 @@ function go($pg = 0, $all = 0, $str)
 /**
  * Возвращает MIME файла по его расширению
  * 
- * @param  string   расширение
- * @return string   MIME тип
+ * @param  string $ext  расширение
+ * @return string       MIME тип
  */
 function ext_to_mime($ext = '')
 {

@@ -49,7 +49,7 @@ if ($id) {
         `t1`.`seo`,
         COUNT(1) AS `all`
         FROM `files` AS `t1`
-        LEFT JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path`
+        INNER JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path` AND `t2`.`hidden` = "0"
         WHERE `t1`.`id` = ' . $id . '
         AND `t1`.`hidden` = "0"
         GROUP BY `t1`.`id`
@@ -60,7 +60,12 @@ if ($id) {
 } else {
     $seo = array();
     $d['path'] = $setup['path'] . '/';
-    $d['all'] = mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '" AND `hidden` = "0"', $mysql), 0);
+    $d['all'] = mysql_result(mysql_query('
+        SELECT COUNT(1)
+        FROM `files`
+        WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
+        AND `hidden` = "0"
+    ', $mysql), 0);
 }
 
 if (!is_dir($d['path'])) {
@@ -427,7 +432,7 @@ if ($pages > 1) {
     	$out .= '<a href="' . DIRECTORY . $id . '/1">1</a> ... ';
     }
     for ($i = $asd; $i < $asd2; ++$i) {
-        if($i < $d['all'] && $i > 0) {
+        if ($i < $d['all'] && $i > 0) {
             if ($i > $pages ) {
             	break;
             }
