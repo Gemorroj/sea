@@ -26,7 +26,7 @@ if (!is_file($v['path'])) {
 
 
 // Всего комментириев
-$all_komments = mysql_result(mysql_query('SELECT COUNT(`id`) FROM `komments` WHERE `file_id` = ' . $id, $mysql), 0);
+$all_komments = mysql_result(mysql_query('SELECT COUNT(1) FROM `komments` WHERE `file_id` = ' . $id, $mysql), 0);
 
 // Система голосований
 if (isset($_GET['eval']) && $setup['eval_change']) {
@@ -46,7 +46,7 @@ if (isset($_GET['eval']) && $setup['eval_change']) {
     		$str = 'UPDATE `files` SET `yes`=`yes` + 1,`ips` = "' . $ipp . '" WHERE `id` = ' . $v['id'];
     	}
 
-    	mysql_query($str, $mysql);
+    	mysql_unbuffered_query($str, $mysql);
     } else {
     	$vote = 2;
     }
@@ -459,6 +459,7 @@ if ($setup['prev_next']) {
         FROM `files`
         WHERE `infolder` = "' . $sql_dir . '"
         AND `dir` = "0"
+        AND `hidden` = "0"
     ', $mysql), 0);
 
     if ($count > 1) {
@@ -467,6 +468,7 @@ if ($setup['prev_next']) {
             FROM `files`
             WHERE `infolder` = "' . $sql_dir . '"
             AND `dir` = "0"
+            AND `hidden` = "0"
             AND `id` > ' . $id
         , $mysql));
 
@@ -475,6 +477,7 @@ if ($setup['prev_next']) {
             FROM `files`
             WHERE `infolder` = "' . $sql_dir . '"
             AND `dir` = "0"
+            AND `hidden` = "0"
             AND `id` < ' . $id
         , $mysql));
 

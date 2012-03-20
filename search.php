@@ -62,8 +62,9 @@ if (isset($_GET['act'])) {
             `t1`.`no`,
             `t2`.`id` AS `back`
             FROM `files` AS `t1`
-            LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder`
-            WHERE `t1`.`rus_name` LIKE "%' . str_replace(array('%', '_'), array('\%', '\_'), $word) . '%" AND `t1`.`hidden` = "0"
+            LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
+            WHERE `t1`.`rus_name` LIKE "%' . str_replace(array('%', '_'), array('\%', '\_'), $word) . '%"
+            AND `t1`.`hidden` = "0"
             LIMIT ' . $start . ', ' . $onpage,
         $mysql);
     } else {
@@ -81,8 +82,9 @@ if (isset($_GET['act'])) {
             `t1`.`no`,
             `t2`.`id` AS `back`
             FROM `files` AS `t1`
-            LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder`
-            WHERE `t1`.`name` LIKE "%' . str_replace(array('%', '_'), array('\%', '\_'), $word) . '%" AND `t1`.`hidden` = "0"
+            LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
+            WHERE `t1`.`name` LIKE "%' . str_replace(array('%', '_'), array('\%', '\_'), $word) . '%"
+            AND `t1`.`hidden` = "0"
             LIMIT ' . $start . ', ' . $onpage,
         $mysql);
     }
@@ -126,7 +128,7 @@ if (isset($_GET['act'])) {
             	$out .= '<img src="' . DIRECTORY . 'ext/dir.png" alt=""/>';
             }
 
-            $out .= '<strong><a href="' . DIRECTORY . $v['id'] . '">' . htmlspecialchars(str_ireplace($word, '<span class="yes">' . $word . '</span>', $v['name']), ENT_NOQUOTES) . '</a></strong>(' . $v['dir_count'] . ')<br/></div>';
+            $out .= '<strong><a href="' . DIRECTORY . $v['id'] . '">' . str_ireplace(htmlspecialchars($word, ENT_NOQUOTES), '<span class="yes">' . htmlspecialchars($word, ENT_NOQUOTES) . '</span>', htmlspecialchars($v['name'], ENT_NOQUOTES)) . '</a></strong>(' . $v['dir_count'] . ')<br/></div>';
         } else {
 
             $ext = strtolower(pathinfo($v['path'], PATHINFO_EXTENSION));

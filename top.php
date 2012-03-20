@@ -74,7 +74,7 @@ if ($_SESSION['langpack'] == 'russian') {
         `t1`.`no`,
         `t2`.`id` AS `back`
         FROM `files` AS `t1`
-        LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder`
+        LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
         WHERE ' . $mode . ' DESC
         LIMIT ' . (($page * $onpage) - $onpage) . ', ' . $onpage,
     $mysql);
@@ -91,7 +91,7 @@ if ($_SESSION['langpack'] == 'russian') {
         `t1`.`no`,
         `t2`.`id` AS `back`
         FROM `files` AS `t1`
-        LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder`
+        LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
         WHERE ' . $mode . ' DESC
         LIMIT ' . (($page * $onpage) - $onpage) . ', ' . $onpage,
     $mysql);
