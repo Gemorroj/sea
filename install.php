@@ -266,6 +266,7 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jad_change',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'cut_change',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'audio_player_change',  '1');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'video_player_change',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy_change',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_time',  '60');", $mysql);

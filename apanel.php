@@ -1285,6 +1285,7 @@ echo '<div class="mainzag">Управления модулями:</div>
 <input name="jad_change" type="checkbox" value="1" ' . check($setup['jad_change']) . '/>Генератор Jad<br/>
 <input name="cut_change" type="checkbox" value="1" ' . check($setup['cut_change']) . '/>Нарезчик MP3<br/>
 <input name="audio_player_change" type="checkbox" value="1" ' . check($setup['audio_player_change']) . '/>Flash плеер MP3<br/>
+<input name="video_player_change" type="checkbox" value="1" ' . check($setup['video_player_change']) . '/>Flash плеер FLV<br/>
 <input name="zip_change" type="checkbox" value="1" ' . check($setup['zip_change']) . '/>Просмотр архивов<br/>
 <input name="zakaz_change" type="checkbox" value="1" ' . check($setup['zakaz_change']) . '/>Стол заказов<br/>
 <input name="buy_change" type="checkbox" value="1" ' . check($setup['buy_change']) . '/>Рекламный блок<br/>
@@ -1334,6 +1335,7 @@ echo '<div class="mainzag">Управления модулями:</div>
     $_POST['buy_change'] = $_POST['buy_change'] ? 1 : 0;
     $_POST['cut_change'] = $_POST['cut_change'] ? 1 : 0;
     $_POST['audio_player_change'] = $_POST['audio_player_change'] ? 1 : 0;
+    $_POST['video_player_change'] = $_POST['video_player_change'] ? 1 : 0;
     $_POST['lib_change'] = $_POST['lib_change'] ? 1 : 0;
 
     $_POST['screen_change'] = $_POST['screen_change'] ? 1 : 0;

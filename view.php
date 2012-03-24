@@ -543,6 +543,13 @@ if ($setup['audio_player_change'] && $ext == 'mp3') {
     <param name="FlashVars" value="mp3=' . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])) . '&amp;width=180&amp;volume=50&amp;showvolume=1&amp;buttonwidth=20&amp;sliderheight=8&amp;volumewidth=50&amp;volumeheight=8" />
 </object><br/>';
 }
+if ($setup['video_player_change'] && $ext == 'flv') {
+    // Видео плеер
+    $out .= '<object type="application/x-shockwave-flash" data="' . DIRECTORY . 'moduls/flash/player_flv_maxi.swf" width="240" height="180">
+       <param name="allowFullScreen" value="true" />
+       <param name="FlashVars" value="flv=' . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])) . '&amp;title=' . htmlspecialchars(htmlspecialchars($filename)) . '&amp;startimage=' . DIRECTORY . 'ffmpeg/' . $id . '/' . $setup['ffmpeg_frame'] . '&amp;width=240&amp;height=180&amp;margin=3&amp;volume=100&amp;showvolume=1&amp;showtime=1&amp;showplayer=always&amp;showloading=always&amp;showfullscreen=1&amp;showiconplay=1" />
+   </object><br/>';
+}
 if ($setup['zip_change'] && $ext == 'zip') {
     // ZIP архивы
     $out .= '<strong><a href="' . DIRECTORY . 'zip/' . $id . '">' . $_SESSION['language']['view archive'] . '</a></strong><br/>';
