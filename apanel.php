@@ -425,7 +425,7 @@ echo '</select><br/>
 
         // записываем Idv1 теги
         $id3->name = $name;
-        $id3->artists = $artists;
+        $id3->artists = $artist;
         $id3->album = $album;
         $id3->year = $year;
         $id3->track = $track;
@@ -512,7 +512,7 @@ if (!is_dir($file_info['path'])) {
 //$file_info['name'] = str_replace('*','',$file_info['name']);
 if ($_GET['to'] == 'down') {
 	$query = 'UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ' . $id;
-} else if ($_GET['to'] == 'up') {
+} else {
 	$query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
 }
 if (mysql_query($query, $mysql)) {
@@ -629,8 +629,8 @@ break;
 ######################################РАСПАКОВЩИК###############################################
 case 'unpack':
 $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-$dir = dirname($file['path']).'/';
-chmod($folder['path'], 0777);
+$dir = dirname($file['path']) . '/';
+chmod($dir, 0777);
 
 include 'moduls/PEAR/pclzip.lib.php';
 $zip = new PclZip($file['path']);
@@ -936,7 +936,7 @@ Description<br/>
         error('Данные не изменены');
     }
 
-    echo '<a href="apanel_index.php?id=' . $back['id'] . '">Файл-менеджер</a>';
+    echo '<a href="apanel_index.php">Файл-менеджер</a>';
 }
 break;
 
@@ -972,7 +972,7 @@ if (!$_POST) {
     	}
     }
 
-    echo '<a href="apanel_index.php?id=' . $back['id'] . '">Файл-менеджер</a><br/><a href="apanel_view.php?id=' . $id . '">К описанию</a>';
+    echo '<a href="apanel_view.php?id=' . $id . '">К описанию</a>';
 }
 break;
 

@@ -69,6 +69,7 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
 
     $list = glob($setup['mp3path'] . '/*');
     $all = sizeof($list);
+    $allsize = 0;
     foreach ($list as $key => $string) {
         $allsize += round(filesize($string) / 1024 / 1024, 1);
         if ($allsize > $setup['limit']) {

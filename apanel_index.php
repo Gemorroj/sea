@@ -127,6 +127,8 @@ if ($sort == 'name') {
 	$sortlink = '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>' . $eval;
 } else if ($sort == 'eval' && $setup['eval_change']) {
 	$sortlink = '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>,<a href="apanel_index.php?sort=load">популярность</a>';
+} else {
+    $sortlink = '';
 }
 
 echo 'Сортировать по:<br/>' . $sortlink . '<br/><a href="apanel.php?id=' . $id . '&amp;action=newdir">Новая папка</a></div>';

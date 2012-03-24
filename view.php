@@ -40,13 +40,11 @@ if (isset($_GET['eval']) && $setup['eval_change']) {
 
     	if ($_GET['eval'] < 1) {
     		$v['no'] += 1;
-    		$str = 'UPDATE `files` SET `no`=`no` + 1,`ips` = "' . $ipp . '" WHERE `id` = ' . $v['id'];
+            mysql_unbuffered_query('UPDATE `files` SET `no`=`no` + 1,`ips` = "' . $ipp . '" WHERE `id` = ' . $v['id'], $mysql);
     	} else {
     		$v['yes'] += 1;
-    		$str = 'UPDATE `files` SET `yes`=`yes` + 1,`ips` = "' . $ipp . '" WHERE `id` = ' . $v['id'];
+            mysql_unbuffered_query('UPDATE `files` SET `yes`=`yes` + 1,`ips` = "' . $ipp . '" WHERE `id` = ' . $v['id'], $mysql);
     	}
-
-    	mysql_unbuffered_query($str, $mysql);
     } else {
     	$vote = 2;
     }
@@ -141,6 +139,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
     }
     $out .= '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="' . $_SESSION['language']['download'] . '"/></div></form>';
 } else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
+    $tmpa = array();
     if ($ext == 'mp3' || $ext == 'wav') {
         if (file_exists('moduls/cache/' . $id . '.dat')) {
     		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
@@ -326,8 +325,9 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
                         'APIC' => false
     				)
     			);
+            } catch(Exception $e){
+                //
             }
-            catch(Exception $e){}
         }
     }
 
@@ -356,6 +356,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
         $out .= '<img src="' . DIRECTORY . 'apic/' . $id . '" alt=""/>';
     }
 } else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4') && extension_loaded('ffmpeg')) {
+    $tmpa = array();
 	if (file_exists('moduls/cache/' . $id . '.dat')) {
 		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
 	} else {
@@ -413,7 +414,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
     if ($ext == 'thm' && $thm) {
     	$out .= '<br/>' . $thm;
     }
-} else if($setup['swf_file_change'] && $ext == 'swf') {
+} else if ($setup['swf_file_change'] && $ext == 'swf') {
 	$out .= '<br/><object style="width:128px; height:128px;"><param name="movie" value="' . DIRECTORY . htmlspecialchars($v['path']) . '"><embed src="' . DIRECTORY . htmlspecialchars($v['path']) . '" style="width:128px; height:128px;"></embed></param></object>';
 } else if ($setup['jar_file_change'] && $ext == 'jar') {
 	if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
@@ -544,10 +545,10 @@ if ($setup['cut_change'] && $ext == 'mp3') {
 // txt файлы
 if ($ext == 'txt') {
 	if ($setup['lib_change']) {
-		$str = '<strong><a href="' . DIRECTORY . 'read/' . $id . '">' . $_SESSION['language']['read'] . '</a></strong><br/>';
+		echo '<strong><a href="' . DIRECTORY . 'read/' . $id . '">' . $_SESSION['language']['read'] . '</a></strong><br/>';
 	}
 
-    $out .= $str . '<a href="' . DIRECTORY . 'txt_zip/' . $id . '">' . $_SESSION['language']['download'] . ' [ZIP]</a><br/><a href="' . DIRECTORY . 'txt_jar/' . $id . '">' . $_SESSION['language']['download'] . ' [JAR]</a><br/>';
+    $out .= '<a href="' . DIRECTORY . 'txt_zip/' . $id . '">' . $_SESSION['language']['download'] . ' [ZIP]</a><br/><a href="' . DIRECTORY . 'txt_jar/' . $id . '">' . $_SESSION['language']['download'] . ' [JAR]</a><br/>';
 }
 
 

@@ -107,7 +107,10 @@ $path = $setup['path'] . '/';
 
 $put = '';
 if ($ex) {
-	$implode = 'SELECT ' . ($_SESSION['langpack'] == 'russian' ? '`id`, `rus_name`' : '`id`, `name`') . ' FROM `files` WHERE `path` IN(';
+	$implode = '
+	    SELECT ' . ($_SESSION['langpack'] == 'russian' ? '`id`, `rus_name`' : '`id`, `name`') . '
+	    FROM `files`
+	    WHERE `path` IN(';
 	foreach ($ex as $v) {
 		$path .= $v . '/';
 		$implode .= '"' . mysql_real_escape_string($path, $mysql) . '",';
@@ -132,7 +135,7 @@ if ($setup['buy_change']) {
 		$out .= '<div class="iblock">';
 		if ($setup['randbuy']) {
 			$list = explode("\n", $setup['buy']);
-			shuffle ($list);
+			shuffle($list);
 			for ($i = 0; $i < $setup['countbuy']; ++$i) {
 				$out .= $list[$i] . '<br/>';
 			}
@@ -168,7 +171,11 @@ if ($setup['service_change_advanced']) {
 	if ($user) {
 		$_SESSION['user'] = $user;
 
-		$q = mysql_fetch_row(mysql_query('SELECT `url`, `name`, `style` FROM `users_profiles` WHERE `id` = ' . $_SESSION['user'], $mysql));
+        $q = mysql_fetch_row(mysql_query('
+		    SELECT `url`, `name`, `style`
+		    FROM `users_profiles`
+		    WHERE `id` = ' . $_SESSION['user']
+        , $mysql));
 		$_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($q[0]);
 		//$_SESSION['site_name'] = $setup['site_name'] = $q[1];
 		$q[2] = htmlspecialchars($q[2]);
@@ -181,7 +188,12 @@ if ($setup['service_change_advanced']) {
 		}
 
 		if ($setup['service_head']) {
-			$head = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $user . ' AND `position` = "0"', $mysql);
+			$head = mysql_query('
+			    SELECT `name`, `value`
+			    FROM `users_settings`
+			    WHERE `parent_id` = ' . $user . '
+			    AND `position` = "0"
+			', $mysql);
 			$all = mysql_num_rows($head);
 			$all = $all < $setup['service_head'] ? $all : $setup['service_head'];
 			if ($all) {
@@ -194,7 +206,12 @@ if ($setup['service_change_advanced']) {
 			}
 		}
 		if ($setup['service_foot']) {
-			$foot = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $user . ' AND `position` = "1"', $mysql);
+			$foot = mysql_query('
+			    SELECT `name`, `value`
+			    FROM `users_settings`
+			    WHERE `parent_id` = ' . $user . '
+			    AND `position` = "1"
+			', $mysql);
 			$all = mysql_num_rows($foot);
 			$all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
 			if ($all) {
@@ -214,7 +231,12 @@ if ($setup['service_change_advanced']) {
 if ($id < 1) {
     $str = '';
     /// новости													// кол-во символов
-    $news = mysql_fetch_row(mysql_query('SELECT `time`, LEFT(`' . ($_SESSION['langpack'] == 'russian' ? 'rus_news' : 'news') . '`,64) FROM `news` ORDER BY `id` DESC LIMIT 1', $mysql));
+    $news = mysql_fetch_row(mysql_query('
+        SELECT `time`, LEFT(`' . ($_SESSION['langpack'] == 'russian' ? 'rus_news' : 'news') . '`,64)
+        FROM `news`
+        ORDER BY `id` DESC
+        LIMIT 1
+    ', $mysql));
 
     if ($news) {
     	$str.= '<a href="' . DIRECTORY . 'news.php">' . $_SESSION['language']['news'] . '</a> (' . tm($news[0]) . ')<br/><span style="font-size:9px;">' . $news[1] . '</span><br/>';

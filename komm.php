@@ -46,7 +46,13 @@ $all = $all[0];
 $onpage = ($onpage > $all) ? $all : $onpage;
 $start = ($onpage * $page) - $onpage;
 
-$sql = mysql_query('SELECT * FROM `komments` WHERE `file_id` = ' . $id . ' ORDER BY `id` DESC LIMIT ' . $start . ', ' . $onpage, $mysql);
+$sql = mysql_query('
+    SELECT *
+    FROM `komments`
+    WHERE `file_id` = ' . $id . '
+    ORDER BY `id` DESC
+    LIMIT ' . $start . ', ' . $onpage
+, $mysql);
 
 
 $filepath = pathinfo($file_info_real['path']);
@@ -61,7 +67,11 @@ if ($seo['title']) {
 
 #######Получаем имя файла и обратный каталог#####
 $dir = $filepath['dirname'] . '/';
-$back = mysql_fetch_assoc(mysql_query("SELECT `id` FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql));
+$back = mysql_fetch_assoc(mysql_query("
+    SELECT `id`
+    FROM `files`
+    WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'
+", $mysql));
 ###############Запись###########################
 if ($_GET['act'] == 'add') {
     //Проверка на ошибки
@@ -93,7 +103,13 @@ if ($_GET['act'] == 'add') {
     if ($error) {
     	error($error);
     }
-    mysql_query("INSERT INTO `komments` (`file_id`, `name`, `text`, `time`) VALUES (" . $id . ", '" . $_POST['name'] . "', '" . $_POST['msg'] . "', " . $_SERVER['REQUEST_TIME'] . ");", $mysql);
+    mysql_query("
+        INSERT INTO `komments` (
+            `file_id`, `name`, `text`, `time`
+        ) VALUES (
+            " . $id . ", '" . $_POST['name'] . "', '" . $_POST['msg'] . "', " . $_SERVER['REQUEST_TIME'] . "
+        )
+    ", $mysql);
 
     $out .= '<div class="iblock">' . $_SESSION['language']['your comment has been successfully added'] . '</div>';
 } else {
@@ -181,8 +197,10 @@ require 'moduls/foot.php';
 
 //Авточистка комментов
 if ($all > $setup['klimit']) {
-    mysql_query('DELETE FROM `komments` WHERE `id` = ' . mysql_result(mysql_query('SELECT MIN(`id`) FROM komments WHERE `file_id` = ' . $id, $mysql), 0), $mysql);
-    $page = 1;
+    mysql_query('
+        DELETE FROM `komments`
+        WHERE `id` = ' . mysql_result(mysql_query('SELECT MIN(`id`) FROM komments WHERE `file_id` = ' . $id, $mysql), 0)
+    , $mysql);
 }
 
 ?>

@@ -195,11 +195,12 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
 
 ###############Инфа о mp3###########################
 else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
+    $tmpa = array();
+
     if ($ext == 'mp3' || $ext == 'wav') {
         if (file_exists('moduls/cache/' . $id . '.dat')) {
     		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
     	} else {
-
             include 'moduls/classAudioFile.php';
 
             $audio = new AudioFile;
@@ -364,8 +365,9 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
     				    'COMMENT' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT']))
     				)
     			);
+            } catch(Exception $e){
+                //
             }
-            catch(Exception $e){}
         }
     }
 
@@ -421,7 +423,8 @@ else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4') && extension_loaded('
 		);
         file_put_contents('moduls/cache/' . $id . '.dat', serialize($tmpa));
     }
- 
+
+    $i = 0;
     foreach (explode(',', $setup['ffmpeg_frames']) as $fr) {
         $out .= '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&amp;frame=' . $fr . '">[' . (++$i) . ']</a>, ';
     }
@@ -533,9 +536,9 @@ if ($setup['komments_change']) {
 // txt файлы
 if ($ext == 'txt') {
 	if ($setup['lib_change']) {
-		$str = '<strong><a href="read.php?id=' . $id . '">Читать</a></strong><br/>';
+		echo '<strong><a href="read.php?id=' . $id . '">Читать</a></strong><br/>';
 	}
-    echo $str . '<a href="txt_zip.php?id=' . $id . '">Скачать [ZIP]</a><br/><a href="txt_jar.php?id=' . $id . '">Скачать [JAR]</a><br/>';
+    echo '<a href="txt_zip.php?id=' . $id . '">Скачать [ZIP]</a><br/><a href="txt_jar.php?id=' . $id . '">Скачать [JAR]</a><br/>';
 }
 
 

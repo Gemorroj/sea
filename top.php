@@ -133,6 +133,8 @@ while ($v = mysql_fetch_assoc($sql)) {
     	$info = '[<span class="yes">' . $v['loads'] . '</span>]';
     } elseif ($sort == 'eval' && $setup['eval_change']) {
     	$info = '[<span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no'] . '</span>]';
+    } else {
+        $info = '';
     }
 
     //Красивый размер
