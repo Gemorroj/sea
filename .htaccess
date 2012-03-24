@@ -181,6 +181,7 @@ AddType video/x-msvideo .avi
 AddType video/x-ms-wmv .wmv
 AddType video/x-ms-asf .asf
 AddType video/x-ivf .ivf
+AddType video/x-flv .flv
 
 AddType x-world/x-vrml .wrl
 

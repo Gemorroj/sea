@@ -355,7 +355,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
     if ($tmpa['comments']['APIC']) {
         $out .= '<img src="' . DIRECTORY . 'apic/' . $id . '" alt=""/>';
     }
-} else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4') && extension_loaded('ffmpeg')) {
+} else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && extension_loaded('ffmpeg')) {
     $tmpa = array();
 	if (file_exists('moduls/cache/' . $id . '.dat')) {
 		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));

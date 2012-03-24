@@ -397,7 +397,7 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
 }
 
 // Видео (ffmpeg)
-else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4') && extension_loaded('ffmpeg')) {
+else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && extension_loaded('ffmpeg')) {
     if ($_GET['frame'] < 1) {
     	$frame = 5;
     } else {

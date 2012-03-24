@@ -230,7 +230,7 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_notice', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_hidden', '0');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_name', '[a-zA-Z0-9_]');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_extensions', 'jpg,gif,png,3gp,avi,mp3,thm,nth,zip,txt');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_extensions', 'jpg,gif,png,3gp,mp4,flv,avi,mp3,thm,nth,zip,txt');", $mysql);
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'send_email', '1');", $mysql);
 

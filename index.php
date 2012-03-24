@@ -353,7 +353,7 @@ while ($v = mysql_fetch_assoc($query)) {
                 } else {
                     $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . 'im/' . $v['id'] . '" alt=""/>';
                 }
-            } else if ($setup['screen_change'] && ($ext == 'avi' || $ext == '3gp' || $ext == 'mp4') && extension_loaded('ffmpeg')) {
+            } else if ($setup['screen_change'] && ($ext == 'avi' || $ext == '3gp' || $ext == 'mp4' || $ext == 'flv') && extension_loaded('ffmpeg')) {
                 $wh = explode('*', $setup['prev_size']);
                 if (file_exists($setup['ffmpegpath'] . '/' . htmlspecialchars($prev_pic) . '_frame_' . $setup['ffmpeg_frame'] . '.gif')) {
                     $pre .= '<img style="margin: 1px; width:' . $wh[0] . '; height:' . $wh[1] . ';" src="' . DIRECTORY . $setup['ffmpegpath'] . '/' . htmlspecialchars($prev_pic) . '_frame_' . $setup['ffmpeg_frame'] . '.gif" alt=""/>';

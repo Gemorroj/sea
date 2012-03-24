@@ -1049,6 +1049,10 @@ function ext_to_mime($ext = '')
             break;
 
 
+        case 'flv':
+            return 'video/x-flv';
+            break;
+
         case 'avi':
             return 'video/x-msvideo';
             break;
@@ -1074,6 +1078,10 @@ function ext_to_mime($ext = '')
 
         case 'swf':
             return 'application/x-shockwave-flash';
+            break;
+
+        case 'apk':
+            return 'application/vnd.android.package-archive';
             break;
     }
 }
