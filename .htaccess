@@ -236,8 +236,8 @@ AddDefaultCharset UTF-8
 php_value default_charset UTF-8
 
 # максимальный размер файлов для аплоада
-php_value upload_max_filesize 99M
-php_value post_max_size 99M
+php_value upload_max_filesize 999M
+php_value post_max_size 999M
 
 # временная зона. Только Apache 2
 #php_value date.timezone "Europe/Moscow"

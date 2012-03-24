@@ -543,7 +543,7 @@ if ($setup['audio_player_change'] && $ext == 'mp3') {
     <param name="FlashVars" value="mp3=' . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])) . '&amp;width=180&amp;volume=50&amp;showvolume=1&amp;buttonwidth=20&amp;sliderheight=8&amp;volumewidth=50&amp;volumeheight=8" />
 </object><br/>';
 }
-if ($setup['video_player_change'] && $ext == 'flv') {
+if ($setup['video_player_change'] && ($ext == 'flv' || $ext == 'mp4')) {
     // Видео плеер
     $out .= '<object type="application/x-shockwave-flash" data="' . DIRECTORY . 'moduls/flash/player_flv_maxi.swf" width="240" height="180">
        <param name="allowFullScreen" value="true" />
