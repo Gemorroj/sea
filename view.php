@@ -536,7 +536,14 @@ if ($setup['komments_change']) {
 if ($setup['cut_change'] && $ext == 'mp3') {
     // Нарезка MP3
     $out .= '<strong><a href="' . DIRECTORY . 'cut/' . $id . '">' . $_SESSION['language']['splitting'] . '</a></strong><br/>';
-} else if ($setup['zip_change'] && $ext == 'zip') {
+}
+if ($setup['audio_player_change'] && $ext == 'mp3') {
+    // Аудио плеер
+    $out .= '<object type="application/x-shockwave-flash" data="' . DIRECTORY . 'moduls/flash/player_mp3_maxi.swf" width="180" height="20">
+    <param name="FlashVars" value="mp3=' . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])) . '&amp;width=180&amp;volume=50&amp;showvolume=1&amp;buttonwidth=20&amp;sliderheight=8&amp;volumewidth=50&amp;volumeheight=8" />
+</object><br/>';
+}
+if ($setup['zip_change'] && $ext == 'zip') {
     // ZIP архивы
     $out .= '<strong><a href="' . DIRECTORY . 'zip/' . $id . '">' . $_SESSION['language']['view archive'] . '</a></strong><br/>';
 }
