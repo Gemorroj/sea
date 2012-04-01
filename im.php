@@ -36,7 +36,7 @@ if (!$w || !$h) {
 }
 
 $pic = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
-$prev_pic = str_replace('/', '--', iconv_substr(strstr($pic, '/'), 1));
+$prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
 
 if ($resize) {
     $prev_pic = $w . 'x' . $h . '_' . $prev_pic;

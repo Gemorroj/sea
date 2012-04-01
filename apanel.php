@@ -285,7 +285,7 @@ echo '<form action="apanel.php?action=mark" method="post">
                 /*
                 imagestring($pic, $_POST['size'], ($w/2)-(strlen($_POST['text'])*3), $y, $_POST['text'], $color);
                 */
-                imagettftext($pic, $_POST['size'], 0, ($w/2) - (iconv_strlen($_POST['text']) * 3), $y, $color, 'moduls/font.ttf', $_POST['text']);
+                imagettftext($pic, $_POST['size'], 0, ($w/2) - (mb_strlen($_POST['text']) * 3), $y, $color, 'moduls/font.ttf', $_POST['text']);
 
                 switch ($type) {
                     case 1:
@@ -407,13 +407,13 @@ echo '</select><br/>
         chmod($tmp[0], 0666); // fix
         $id3->read($tmp[0]);
         
-        $name = iconv('utf-8', 'windows-1251', $_POST['name']);
-        $artist = iconv('utf-8', 'windows-1251', $_POST['artists']);
-        $album = iconv('utf-8', 'windows-1251', $_POST['album']);
-        $year = iconv('utf-8', 'windows-1251', $_POST['year']);
-        $track = iconv('utf-8', 'windows-1251', $_POST['track']);
-        $genre = iconv('utf-8', 'windows-1251', $_POST['genre']);
-        $comment = iconv('utf-8', 'windows-1251', $_POST['comment']);
+        $name = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
+        $artist = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
+        $album = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
+        $year = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
+        $track = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
+        $genre = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
+        $comment = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
 
 
         // Записываем Idv2 теги
@@ -437,25 +437,25 @@ echo '</select><br/>
     } else {
 
         if ($_POST['name'] != '') {
-        	$_POST['name'] = iconv('utf-8', 'windows-1251', $_POST['name']);
+        	$_POST['name'] = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
         }
         if ($_POST['artists'] != '') {
-        	$_POST['artists'] = iconv('utf-8', 'windows-1251', $_POST['artists']);
+        	$_POST['artists'] = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
         }
         if ($_POST['album'] != '') {
-        	$_POST['album'] = iconv('utf-8', 'windows-1251', $_POST['album']);
+        	$_POST['album'] = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
         }
         if ($_POST['year'] != '') {
-        	$_POST['year'] = iconv('utf-8', 'windows-1251', $_POST['year']);
+        	$_POST['year'] = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
         }
         if ($_POST['track'] != '') {
-        	$_POST['track'] = iconv('utf-8', 'windows-1251', $_POST['track']);
+        	$_POST['track'] = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
         }
         if ($_POST['genre'] != '') {
-        	$_POST['genre'] = iconv('utf-8', 'windows-1251', $_POST['genre']);
+        	$_POST['genre'] = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
         }
         if ($_POST['comment'] != '') {
-        	$_POST['comment'] = iconv('utf-8', 'windows-1251', $_POST['comment']);
+        	$_POST['comment'] = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
         }
 
         $all = 0;
@@ -944,7 +944,7 @@ break;
 #########################################ДОБАВЛЕНИЕ И ИЗМЕНЕНИЕ ОПИСАНИЯ########################################
 case 'about':
 $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-$about = $setup['opath'] . iconv_substr($file['path'], iconv_strlen($setup['path'])) . '.txt';
+$about = $setup['opath'] . mb_substr($file['path'], mb_strlen($setup['path'])) . '.txt';
 
 if (!$_POST) {
     echo '<div class="mainzag">Описание файла/директории <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
@@ -1221,7 +1221,7 @@ if ($_POST) {
     $directory = $d['path'] . $_POST['realname'] . '/';
     //print $directory;
 
-    $temp = iconv_substr($directory, iconv_strlen($setup['path']), iconv_strlen($directory));
+    $temp = mb_substr($directory, mb_strlen($setup['path']), mb_strlen($directory));
 
     //скриншоты
     $screen = $setup['spath'] . '/' . $temp;

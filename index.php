@@ -336,12 +336,12 @@ while ($v = mysql_fetch_assoc($query)) {
 
         // описания
         if ($setup['desc'] && file_exists($setup['opath'] . $screen . '.txt')) {
-            $out .= '<br/>' . iconv_substr(trim(file_get_contents($setup['opath'] . $screen . '.txt')), 0, $setup['desc']);
+            $out .= '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . $screen . '.txt')), 0, $setup['desc']);
         }
 
         $out .= '</div>';
     } else {
-        $prev_pic = str_replace('/', '--', iconv_substr($screen, 1));
+        $prev_pic = str_replace('/', '--', mb_substr($screen, 1));
         $ext = strtolower(pathinfo($v['v'], PATHINFO_EXTENSION));
         $pre = '';
 
@@ -436,7 +436,7 @@ while ($v = mysql_fetch_assoc($query)) {
 
 
         if ($setup['desc'] && file_exists($setup['opath'] . $screen . '.txt')) {
-        	$desc .= '<br/>' . iconv_substr(trim(file_get_contents($setup['opath'] . $screen . '.txt')), 0, $setup['desc']);
+        	$desc .= '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . $screen . '.txt')), 0, $setup['desc']);
         }
 
 

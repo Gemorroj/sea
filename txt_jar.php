@@ -15,14 +15,10 @@ if (file_exists($d[0])) {
 
     $nm = array_reverse(explode('.', basename($d[0])));
     $nm = $nm[1];
-    $tmp = $setup['jpath'] . '/' . str_replace('/', '--', iconv_substr(strstr($d[0], '/'), 1)) . '.jar';
+    $tmp = $setup['jpath'] . '/' . str_replace('/', '--', mb_substr(strstr($d[0], '/'), 1)) . '.jar';
 
     if (!file_exists($tmp)) {
-
-        $f = file_get_contents($d[0]);
-        if (@iconv('UTF-8', 'UTF-8//IGNORE', $f) == $f) {
-            $f = @iconv('UTF-8', 'Windows-1251//TRANSLIT//IGNORE', $f);
-        }
+        $f = str_to_utf8(file_get_contents($d[0]));
 
         copy('moduls/book.zip', $tmp);
         copy('moduls/props.ini', $setup['jpath'] . '/props.ini');
@@ -47,7 +43,7 @@ MIDlet-Name: ' . $nm . '
 MIDlet-Vendor: Gemor Reader
 MIDlet-1: ' . $nm . ', /icon.png, br.BookReader
 MIDlet-Version: 1.6
-MIDlet-Info-URL: http://' . $_SERVER['HTTP_HOST'].'
+MIDlet-Info-URL: http://' . $_SERVER['HTTP_HOST'] . '
 MIDlet-Delete-Confirm: GoodBye =)');
 
         include 'moduls/PEAR/pclzip.lib.php';

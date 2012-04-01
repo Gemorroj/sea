@@ -10,7 +10,7 @@ $id = intval($_GET['id']);
 $file_info = mysql_fetch_row(mysql_query('SELECT `path`, LOWER(RIGHT(`path`,4)) FROM `files` WHERE `id` = ' . $id, $mysql));
 
 
-$name = $setup['tpath'] . '/' . str_replace('/', '--', iconv_substr(strstr($file_info[0], '/'), 1)) . '.gif';
+$name = $setup['tpath'] . '/' . str_replace('/', '--', mb_substr(strstr($file_info[0], '/'), 1)) . '.gif';
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $name;
 
 

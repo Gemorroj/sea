@@ -218,7 +218,7 @@ while ($v = mysql_fetch_assoc($query)) {
         if ($setup['desc']) {
             $screen = strstr($v['v'], '/'); // убираем папку с загрузками
             if (is_file($setup['opath'] . '/' . $screen . '.txt')){
-                echo '<br/>' . iconv_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
+                echo '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
             }
         }
 
@@ -269,7 +269,7 @@ while ($v = mysql_fetch_assoc($query)) {
             $screen = strstr($v['v'], '/'); // убираем папку с загрузками
 
             if (is_file($setup['opath'] . '/' . $screen . '.txt')){
-                $desc = '<br/>' . iconv_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
+                $desc = '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
             }
         }
 

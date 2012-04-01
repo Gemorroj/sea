@@ -13,7 +13,7 @@ $d = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $i
 if (file_exists($d[0])) {
     mysql_query('UPDATE `files` SET `loads` = `loads` + 1, `timeload` = ' . $_SERVER['REQUEST_TIME'] . ' WHERE `id` = ' . $id, $mysql);
 
-    $tmp = $setup['zpath'] . '/' . str_replace('/', '--', iconv_substr(strstr($d[0], '/'), 1)) . '.zip';
+    $tmp = $setup['zpath'] . '/' . str_replace('/', '--', mb_substr(strstr($d[0], '/'), 1)) . '.zip';
 
     if (!file_exists($tmp)) {
         include 'moduls/PEAR/pclzip.lib.php';

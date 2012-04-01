@@ -143,7 +143,7 @@ while ($v = mysql_fetch_assoc($sql)) {
     //Предосмотр
     $pre = '';
     if ($prew) {
-        $prev_pic = str_replace('/', '--', iconv_substr(strstr($v['path'], '/'), 1));
+        $prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
 
         if ($setup['screen_change'] && ($ext == 'gif' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'bmp')) {
             if (file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {

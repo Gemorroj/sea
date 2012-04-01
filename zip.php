@@ -166,7 +166,7 @@ if (!isset($_GET['action'])) {
     $mime = ext_to_mime(pathinfo($_GET['open'], PATHINFO_EXTENSION));
 
     if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/jpeg' || $mime == 'image/bmp') {
-    	$f = $setup['zppath'] . '/' . str_replace('/', '--', iconv_substr(strstr($d['path'], '/'), 1) . '_' . strtolower($_GET['open']));
+    	$f = $setup['zppath'] . '/' . str_replace('/', '--', mb_substr(strstr($d['path'], '/'), 1) . '_' . strtolower($_GET['open']));
     	if (!file_exists($f)) {
     		$zip = new PclZip($d['path']);
     		$content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
@@ -176,11 +176,13 @@ if (!isset($_GET['action'])) {
     } else if ($mime == 'text/plain') {
         $zip = new PclZip($d['path']);
         $content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
+
+        $startDebug = microtime(true);
         $content = str_to_utf8($content[0]['content']);
         echo $_SESSION['language']['lines'] . ': ' . substr_count($content, "\n");
 
-        $pages = floor(iconv_strlen($content) / $setup['lib']);
-        $content = iconv_substr($content, $page * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
+        $pages = floor(mb_strlen($content) / $setup['lib']);
+        $content = mb_substr($content, $page * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
 
         if ($page > 1) {
         	$i = 0;
@@ -192,7 +194,6 @@ if (!isset($_GET['action'])) {
         	}
         	$content = substr($content, $i);
         }
-
 
         if ($setup['lib_str']) {
             echo '<pre class="ik">' . wordwrap(htmlspecialchars($content, ENT_NOQUOTES), $setup['lib_str'], "\n", false) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);

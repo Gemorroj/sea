@@ -41,7 +41,7 @@ if ($_GET['act'] == 'add') {
     if (!$_POST['msg'] || !$_POST['name']) {
     	$error .= $_SESSION['language']['not filled one of the fields'] . '<br/>';
     }
-    if (iconv_strlen($_POST['msg']) < 4) {
+    if (mb_strlen($_POST['msg']) < 4) {
     	$error .= $_SESSION['language']['you have not written a comment or he is too short'] . '<br/>';
     }
     if ($setup['komments_captcha']) {
@@ -51,8 +51,8 @@ if ($_GET['act'] == 'add') {
     	unset($_SESSION['captcha_keystring']);
     }
 
-    $_POST['msg'] = mysql_real_escape_string(nl2br(bbcode(htmlspecialchars(iconv_substr($_POST['msg'], 0, 32512), ENT_NOQUOTES))), $mysql);
-    $_POST['name'] = mysql_real_escape_string(iconv_substr($_POST['name'], 0, 24), $mysql);
+    $_POST['msg'] = mysql_real_escape_string(nl2br(bbcode(htmlspecialchars(mb_substr($_POST['msg'], 0, 32512), ENT_NOQUOTES))), $mysql);
+    $_POST['name'] = mysql_real_escape_string(mb_substr($_POST['name'], 0, 24), $mysql);
 
 
     if (mysql_fetch_row(mysql_query("SELECT 1 FROM `news_komments` WHERE `text` = '" . $_POST['msg'] . "' LIMIT 1", $mysql))) {

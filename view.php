@@ -113,7 +113,7 @@ $out .= '<strong>' . $_SESSION['language']['time additions'] . ':</strong><br/>'
 
 // убираем папку с загрузками
 $screen = strstr($v['path'], '/');
-$prev_pic = str_replace('/', '--', iconv_substr($screen, 1));
+$prev_pic = str_replace('/', '--', mb_substr($screen, 1));
 
 
 if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext == 'png' || $ext == 'bmp') {
@@ -166,65 +166,32 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
            		$comments['APIC'] = false;
       		}
             if (isset($audio->id3_title)) {
-            	if ($audio->id3_title != iconv('UTF-8', 'UTF-8', $audio->id3_title)) {
-            		$comments['TITLE'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $audio->id3_title);
-           		} else {
-           			$comments['TITLE'] = $audio->id3_title;
-				}
-           	} else {
-           		$comments['TITLE'] = '';
-      		}
-            if (isset($audio->id3_title)) {
-            	if ($audio->id3_title != iconv('UTF-8', 'UTF-8', $audio->id3_title)) {
-            		$comments['TITLE'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $audio->id3_title);
-           		} else {
-           			$comments['TITLE'] = $audio->id3_title;
-				}
+                $comments['TITLE'] = str_to_utf8($audio->id3_title);
            	} else {
            		$comments['TITLE'] = '';
       		}
       		if (isset($audio->id3_artist)) {
-            	if ($audio->id3_artist != iconv('UTF-8', 'UTF-8', $audio->id3_artist)) {
-            		$comments['ARTIST'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $audio->id3_artist);
-           		} else {
-           			$comments['ARTIST'] = $audio->id3_artist;
-				}
+            	$comments['ARTIST'] = str_to_utf8($audio->id3_artist);
            	} else {
            		$comments['ARTIST'] = '';
       		}
       		if (isset($audio->id3_album)) {
-            	if ($audio->id3_album != iconv('UTF-8', 'UTF-8', $audio->id3_album)) {
-            		$comments['ALBUM'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $audio->id3_album);
-           		} else {
-           			$comments['ALBUM'] = $audio->id3_album;
-				}
+            	$comments['ALBUM'] = str_to_utf8($audio->id3_album);
            	} else {
            		$comments['ALBUM'] = '';
       		}
       		if (isset($audio->id3_year)) {
-            	if ($audio->id3_year != iconv('UTF-8', 'UTF-8', $audio->id3_year)) {
-            		$comments['DATE'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $audio->id3_year);
-           		} else {
-           			$comments['DATE'] = $audio->id3_year;
-				}
+            	$comments['DATE'] = str_to_utf8($audio->id3_year);
            	} else {
            		$comments['DATE'] = '';
       		}
       		if (isset($audio->id3_genre)) {
-            	if ($audio->id3_genre != iconv('UTF-8', 'UTF-8', $audio->id3_genre)) {
-            		$comments['GENRE'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $audio->id3_genre);
-           		} else {
-           			$comments['GENRE'] = $audio->id3_genre;
-				}
+            	$comments['GENRE'] = str_to_utf8($audio->id3_genre);
            	} else {
            		$comments['GENRE'] = '';
       		}
       		if (isset($audio->id3_comment)) {
-            	if ($audio->id3_comment != iconv('UTF-8', 'UTF-8', $audio->id3_comment)) {
-            		$comments['COMMENT'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $audio->id3_comment);
-           		} else {
-           			$comments['COMMENT'] = $audio->id3_comment;
-				}
+            	$comments['COMMENT'] = str_to_utf8($audio->id3_comment);
            	} else {
            		$comments['COMMENT'] = '';
       		}
@@ -256,56 +223,32 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
                 $comments = array();
 
                 if (isset($obj->_comments['TITLE'])) {
-                	if ($obj->_comments['TITLE'] != iconv('UTF-8', 'UTF-8', $obj->_comments['TITLE'])) {
-                		$comments['TITLE'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $obj->_comments['TITLE']);
-               		} else {
-               			$comments['TITLE'] = $obj->_comments['TITLE'];
-    				}
+                	$comments['TITLE'] = str_to_utf8($obj->_comments['TITLE']);
                	} else {
                		$comments['TITLE'] = '';
           		}
           		if (isset($obj->_comments['ARTIST'])) {
-                	if ($obj->_comments['ARTIST'] != iconv('UTF-8', 'UTF-8', $obj->_comments['ARTIST'])) {
-                		$comments['ARTIST'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $obj->_comments['ARTIST']);
-               		} else {
-               			$comments['ARTIST'] = $obj->_comments['ARTIST'];
-    				}
+                	$comments['ARTIST'] = str_to_utf8($obj->_comments['ARTIST']);
                	} else {
                		$comments['ARTIST'] = '';
           		}
           		if (isset($obj->_comments['ALBUM'])) {
-                	if ($obj->_comments['ALBUM'] != iconv('UTF-8', 'UTF-8', $obj->_comments['ALBUM'])) {
-                		$comments['ALBUM'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $obj->_comments['ALBUM']);
-               		} else {
-               			$comments['ALBUM'] = $obj->_comments['ALBUM'];
-    				}
+                	$comments['ALBUM'] = str_to_utf8($obj->_comments['ALBUM']);
                	} else {
                		$comments['ALBUM'] = '';
           		}
           		if (isset($obj->_comments['DATE'])) {
-                	if ($obj->_comments['DATE'] != iconv('UTF-8', 'UTF-8', $obj->_comments['DATE'])) {
-                		$comments['DATE'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $obj->_comments['DATE']);
-               		} else {
-               			$comments['DATE'] = $obj->_comments['DATE'];
-    				}
+                	$comments['DATE'] = str_to_utf8($obj->_comments['DATE']);
                	} else {
                		$comments['DATE'] = '';
           		}
           		if (isset($obj->_comments['GENRE'])) {
-                	if ($obj->_comments['GENRE'] != iconv('UTF-8', 'UTF-8', $obj->_comments['GENRE'])) {
-                		$comments['GENRE'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $obj->_comments['GENRE']);
-               		} else {
-               			$comments['GENRE'] = $obj->_comments['GENRE'];
-    				}
+                	$comments['GENRE'] = str_to_utf8($obj->_comments['GENRE']);
                	} else {
                		$comments['GENRE'] = '';
           		}
           		if (isset($obj->_comments['COMMENT'])) {
-                	if ($obj->_comments['COMMENT'] != iconv('UTF-8', 'UTF-8', $obj->_comments['COMMENT'])) {
-                		$comments['COMMENT'] = iconv('Windows-1251', 'UTF-8//TRANSLIT', $obj->_comments['COMMENT']);
-               		} else {
-               			$comments['COMMENT'] = $obj->_comments['COMMENT'];
-    				}
+                	$comments['COMMENT'] = str_to_utf8($obj->_comments['COMMENT']);
                	} else {
                		$comments['COMMENT'] = '';
           		}

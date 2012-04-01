@@ -245,11 +245,10 @@ php_value post_max_size 999M
 
 
 # mbstring
-# Автозамена на мультибайтную кодировку!!!
-# Конфликтует с PclZIP
+# Автозамена на мультибайтную кодировку конфликтует с PclZIP
 php_value mbstring.func_overload 0
+php_value mbstring.internal_encoding UTF-8
 
-php_value iconv.internal_encoding UTF-8
 
 #ErrorDocument 304 /?
 #ErrorDocument 400 /?

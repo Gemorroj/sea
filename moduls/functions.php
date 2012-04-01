@@ -272,7 +272,7 @@ function marker($image, $watermark)
  */
 function add_attach ($folder, $id, $files)
 {
-    $attach = $GLOBALS['setup']['apath'] . iconv_substr($folder . '/', iconv_strlen($GLOBALS['setup']['path']));
+    $attach = $GLOBALS['setup']['apath'] . mb_substr($folder . '/', mb_strlen($GLOBALS['setup']['path']));
     foreach ($files as $k => $v) {
         move_uploaded_file($v['tmp_name'], $attach . $id . '_' . $k . '_' . $v['name']);
     }
@@ -291,7 +291,7 @@ function add_attach ($folder, $id, $files)
  */
 function del_attach ($folder, $id, $files)
 {
-    $attach = $GLOBALS['setup']['apath'] . iconv_substr($folder . '/', iconv_strlen($GLOBALS['setup']['path']));
+    $attach = $GLOBALS['setup']['apath'] . mb_substr($folder . '/', mb_strlen($GLOBALS['setup']['path']));
     foreach ($files as $k => $v) {
         unlink($attach . $id . '_' . $k . '_' . $v);
     }
@@ -363,21 +363,21 @@ function scaner($path = '', $cont = 'folder.png')
         if (is_dir($f)) {
 
             // скриншоты
-        	$screen = $GLOBALS['setup']['spath'] . iconv_substr($f . '/', iconv_strlen($GLOBALS['setup']['path']));
+        	$screen = $GLOBALS['setup']['spath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($screen)) {
                 mkdir($screen, 0777);
             }
             chmod($screen, 0777);
 
         	// описания
-        	$desc = $GLOBALS['setup']['opath'] . iconv_substr($f . '/', iconv_strlen($GLOBALS['setup']['path']));
+        	$desc = $GLOBALS['setup']['opath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($desc)) {
                 mkdir($desc, 0777);
             }
         	chmod($desc, 0777);
 
             // вложения
-        	$attach = $GLOBALS['setup']['apath'] . iconv_substr($f . '/', iconv_strlen($GLOBALS['setup']['path']));
+        	$attach = $GLOBALS['setup']['apath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($attach)) {
                 mkdir($attach, 0777);
             }
@@ -850,8 +850,8 @@ function pass($min = 6, $max = 8)
  */
 function str_to_utf8($str)
 {
-	if (@iconv('UTF-8', 'UTF-8//IGNORE', $str) != $str) {
-		$str = iconv('Windows-1251', 'UTF-8//TRANSLIT', $str);
+	if (@mb_convert_encoding($str, 'UTF-8', 'UTF-8') != $str) {
+		$str = mb_convert_encoding($str, 'UTF-8', 'Windows-1251');
 	}
     return $str;
 }

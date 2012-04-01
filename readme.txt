@@ -61,17 +61,17 @@ mod by Gemorroj
 
 mysql_connect('хост', 'юзер', 'пароль');
 mysql_select_db('БД');
-echo mysql_result(mysql_query('SELECT COUNT(*) FROM `files` WHERE `dir` = "0"'), 0);
+echo mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0"'), 0);
 
 то же самое но с ограничением на какую-либо папку 
-echo mysql_result(mysql_query('SELECT COUNT(*) FROM `files` WHERE `dir` = "0" AND `infolder` LIKE("files/dir/%")'), 0);
+echo mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0" AND `infolder` LIKE("files/dir/%")'), 0);
 где "files/dir/%" - маска поиска.
 
 
 Требуется:
-PHP 5.2 или выше, собранный как модуль Apache
-SimpleXML, GD2, FFMPEG (работает и без него, но не будет скринов видео)
-MySQL5
+PHP 5.2.3 или выше, собранный как модуль Apache
+PHP модули: mbstring, SimpleXML, GD2, FFMPEG (работает и без него, но не будет скринов видео)
+MySQL 5.0.7 или выше
 
 После установки/обновления загруз-центра не забудьте удалить файлы install.php и update.php
 
@@ -573,6 +573,12 @@ MySQL5
 Добавлена поддержка flv файлов
 Добавлен flash плеер для mp3, flv и mp4 файлов
 Мелкие исправления
+
+--------
+01.04.2012
+Исправлено графическое отображение рейтинга
+Исправлено возможное проседание производительности при чтении текстовых файлов из архивов
+Все вызовы iconv заменены на mbstring
 
 
 --------

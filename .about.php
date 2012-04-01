@@ -49,10 +49,10 @@ switch ($act) {
         
         $i = 0;
         while ($file = mysql_fetch_assoc($q)) {
-        	$about = iconv_substr($file['path'], iconv_strlen($setup['path']));
+        	$about = mb_substr($file['path'], mb_strlen($setup['path']));
         
         	if ($file['dir']) {
-                mkdir($setup['opath'] . iconv_substr($about, 0, -iconv_strlen(strrchr($about, '/'))), 0777, true);
+                mkdir($setup['opath'] . mb_substr($about, 0, -mb_strlen(strrchr($about, '/'))), 0777, true);
         	}
         
         	if (trim($file['about'])) {
@@ -73,13 +73,13 @@ switch ($act) {
             $ext = strtolower(pathinfo($_POST['about_folder'] . '/' . $f, PATHINFO_EXTENSION));
             if ($ext == 'txt' && is_file($_POST['about_folder'] . '/' . $f)) {
                 $name = substr($f, 0, -4); // отрезаем .txt
-                $path = mysql_query('SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . iconv_strlen($name) . ') = "' . mysql_real_escape_string($name, $mysql) . '"');
+                $path = mysql_query('SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . mb_strlen($name) . ') = "' . mysql_real_escape_string($name, $mysql) . '"');
                 if (mysql_num_rows($path)) {
                     
                     $about = mysql_result($path, 0);
-                    $about = iconv_substr($about, iconv_strlen($setup['path']));
+                    $about = mb_substr($about, mb_strlen($setup['path']));
 
-                    mkdir($setup['opath'] . iconv_substr($about, 0, -iconv_strlen(strrchr($about, '/'))), 0777, true);
+                    mkdir($setup['opath'] . mb_substr($about, 0, -mb_strlen(strrchr($about, '/'))), 0777, true);
 
                     if (rename($_POST['about_folder'] . '/' . $f, $setup['opath'] . $about . '.' . $ext)) {
                         $i++;
@@ -102,13 +102,13 @@ switch ($act) {
                 
                 $name = substr($f, 0, -4); // отрезаем расширение
                 
-                $path = mysql_query('SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . iconv_strlen($name) . ') = "' . mysql_real_escape_string($name, $mysql) . '"');
+                $path = mysql_query('SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . mb_strlen($name) . ') = "' . mysql_real_escape_string($name, $mysql) . '"');
                 if (mysql_num_rows($path)) {
                     
                     $about = mysql_result($path, 0);
-                    $about = iconv_substr($about, iconv_strlen($setup['path']));
+                    $about = mb_substr($about, mb_strlen($setup['path']));
 
-                    mkdir($setup['spath'] . iconv_substr($about, 0, -iconv_strlen(strrchr($about, '/'))), 0777, true);
+                    mkdir($setup['spath'] . mb_substr($about, 0, -mb_strlen(strrchr($about, '/'))), 0777, true);
 
                     if (rename($_POST['screen_folder'] . '/' . $f, $setup['spath'] . $about . '.' . $ext)) {
                         $i++;
