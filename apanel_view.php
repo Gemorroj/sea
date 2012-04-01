@@ -506,10 +506,10 @@ echo '</select><br/>
 if ($setup['eval_change']) {
     $i = $file_info['yes'] + $file_info['no'];
     if ($i) {
-        $i = round($file_info['yes'] / $i *100, 0);
+        $i = round($file_info['yes'] / $i * 100, 0);
     }
 
-echo '<hr class="hr"/>
+    echo '<hr class="hr"/>
 <strong>Рейтинг файла(+/-)</strong>: <span class="yes">' . $file_info['yes'] . '</span>/<span class="no">' . $file_info['no'] . '</span>[<a href="apanel.php?id=' . $file_info['id'] . '&amp;action=cleareval">Сбросить</a>]<br/>
 <img src="rate.php?i=' . $i . '" alt=""/><br/>
 Полезный файл?: <span class="yes"><a href="view.php?id=' . $id . '&amp;eval=1">Да</a></span>/<span class="no"><a href="view.php?id=' . $id . '&amp;eval=0">Нет</a></span>';

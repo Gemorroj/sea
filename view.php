@@ -500,7 +500,7 @@ if ($setup['prev_next']) {
 if ($setup['eval_change']) {
     $i = $v['yes'] + $v['no'];
     if ($i) {
-        $i = round($v['yes'] / ($i * 100), 0);
+        $i = round($v['yes'] / $i * 100, 0);
     }
     $out .= '<hr class="hr"/><strong>' . $_SESSION['language']['rating'] . '</strong>: (<span class="yes">+' . $v['yes'] . '</span>/<span class="no">-' . $v['no'] . '</span>)<br/><img src="' . DIRECTORY . 'rate/' . $i . '" alt="" style="margin: 1px;"/><br/>';
     if (!$vote) {
