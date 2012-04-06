@@ -42,13 +42,17 @@ class rss2 extends DOMDocument
 }
 
 
-$rss = new rss2($_SESSION['language']['news'], $link, $_SESSION['language']['news']);
+$rss = new rss2($language['news'], $link, $language['news']);
 
-if ($_SESSION['langpack'] == 'russian') {
-	$q = mysql_query('SELECT `rus_news` as `news`, `time` FROM `news` ORDER BY `id` DESC LIMIT 0, 10', $mysql);
-} else {
-	$q = mysql_query('SELECT `news`, `time` FROM `news` ORDER BY `id` DESC LIMIT 0, 10', $mysql);
-}
+
+$q = mysql_query('
+    SELECT ' . Language::getInstance()->buildNewsQuery() . ',
+    `time`
+    FROM `news`
+    ORDER BY `id` DESC
+    LIMIT 0, 10
+', $mysql);
+
 
 while ($arr = mysql_fetch_assoc($q)) {
     $rss->addItem(

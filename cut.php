@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -28,7 +28,7 @@ if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') 
 	error($setup['hackmess']);
 }
 
-$title .= $_SESSION['language']['splitting'];
+$title .= $language['splitting'];
 
 
 ###############Получаем инфу о файле###########
@@ -48,21 +48,21 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
     $result = $id3->read($file_info['path']);
     $result = $id3->study();
     // ------------------------Форма ввода параметров---------------------------
-    echo '<div class="mblock">' . $_SESSION['language']['splitting'] . '</div><div class="iblock">
-' . $_SESSION['language']['size'] . ': ' . round(($id3->getTag('filesize') / 1024), 0) . ' Kb<br/>
-' . $_SESSION['language']['length'] . ': ' . $id3->getTag('lengths') . ' ' . $_SESSION['language']['sec'] . '</div><div class="row">
+    echo '<div class="mblock">' . $language['splitting'] . '</div><div class="iblock">
+' . $language['size'] . ': ' . round(($id3->getTag('filesize') / 1024), 0) . ' Kb<br/>
+' . $language['length'] . ': ' . $id3->getTag('lengths') . ' ' . $language['sec'] . '</div><div class="row">
 <form action="' . DIRECTORY . 'cut/' . $id . '" method="post">
 <div class="row">
-' . $_SESSION['language']['method slicing'] . ':<br/>
+' . $language['method slicing'] . ':<br/>
 <select class="enter" name="way">
-<option value="size">' . $_SESSION['language']['size'] . '</option>
-<option value="time">' . $_SESSION['language']['time'] . '</option>
+<option value="size">' . $language['size'] . '</option>
+<option value="time">' . $language['time'] . '</option>
 </select><br/>
-' . $_SESSION['language']['start slicing'] . ':<br/>
+' . $language['start slicing'] . ':<br/>
 <input maxlength="5" class="enter" type="text" name="s"/><br/>
-' . $_SESSION['language']['stop slicing'] . ':<br/>
+' . $language['stop slicing'] . ':<br/>
 <input maxlength="5" class="enter" type="text" name="p"/><br/>
-<input class="buttom" type="submit" name="a" value="' . $_SESSION['language']['go'] . '"/>
+<input class="buttom" type="submit" name="a" value="' . $language['go'] . '"/>
 </div>
 </form></div>';
 } else {
@@ -127,19 +127,19 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
 
             mysql_query('UPDATE `files` SET `loads`=`loads` + 1, `timeload` = "' . $_SERVER['REQUEST_TIME'] . '" WHERE `id` = ' . $id, $mysql);
 
-            echo '<div class="mblock">' . $_SESSION['language']['the file has been successfully cut'] . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $_SESSION['language']['download'] . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['mp3path'] . '/' . $randname . '_' . rawurlencode($filename) . '"/></div>';
+            echo '<div class="mblock">' . $language['the file has been successfully cut'] . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $language['download'] . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['mp3path'] . '/' . $randname . '_' . rawurlencode($filename) . '"/></div>';
         } else {
-            echo '<div class="iblock">' . $_SESSION['language']['error'] . '</div>';
+            echo '<div class="iblock">' . $language['error'] . '</div>';
         }
     } else{
-        echo '<div class="mblock">' . $_SESSION['language']['error'] . '</div>';
+        echo '<div class="mblock">' . $language['error'] . '</div>';
     }
 }
 echo '<div class="iblock">
-- <a href="' . DIRECTORY . 'view/' . $id . '">' . $_SESSION['language']['go to the description of the file'] . '</a><br/>
-- <a href="' . DIRECTORY . '/' . $back['id'] . '">' . $_SESSION['language']['go to the category'] . '</a><br/>
-- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>
-- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a>
+- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>
+- <a href="' . DIRECTORY . '/' . $back['id'] . '">' . $language['go to the category'] . '</a><br/>
+- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
+- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a>
 </div>';
 
 require 'moduls/foot.php';

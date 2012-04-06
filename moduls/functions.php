@@ -5,12 +5,11 @@
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.        #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
 
-require_once DIR . '/language.php';
 
 
 /**
@@ -352,11 +351,11 @@ function scaner($path = '', $cont = 'folder.png')
 		}
 
         $pathinfo = pathinfo($f);
-        $rus_name = $name = $pathinfo['filename'];
+        $aze_name = $tur_name = $rus_name = $name = $pathinfo['filename'];
 
         // транслит
         if ($name[0] == '!') {
-            $name = $rus_name = substr($name, 1);
+            $aze_name = $tur_name = $name = $rus_name = substr($name, 1);
             $rus_name = trans($rus_name);
         }
 
@@ -386,12 +385,14 @@ function scaner($path = '', $cont = 'folder.png')
             sleep(0.005); // =///
             if (!mysql_query('
                 INSERT IGNORE INTO `files`
-                (`dir`, `path`, `name`, `rus_name`, `infolder`, `size` ,`timeupload`)
+                (`dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`)
                 VALUES(
                 "1",
                 "' . mysql_real_escape_string($f . '/', $GLOBALS['mysql']) . '",
                 "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
                 "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
+                "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
+                "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
                 "' . mysql_real_escape_string($pathinfo['dirname'] . '/', $GLOBALS['mysql']) . '",
                 0,
                 "' . filectime($f) . '"
@@ -411,12 +412,14 @@ function scaner($path = '', $cont = 'folder.png')
                 sleep(0.005); // =///
                 if (!mysql_query('
                     INSERT IGNORE INTO `files`
-                    (`dir`, `path`, `name`, `rus_name`, `infolder`, `size` ,`timeupload`)
+                    (`dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`)
                     VALUES(
                     "0",
                     "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '",
                     "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
                     "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
                     "' . mysql_real_escape_string($pathinfo['dirname'] . '/', $GLOBALS['mysql']) . '",
                     "' . filesize($f) . '",
                     "' . filectime($f) . '"
@@ -500,10 +503,12 @@ function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
  */
 function tm($t)
 {
+    $language = Language::getInstance()->getLanguage();
+
     if (date('Y.m.d', $t) == date('Y.m.d', $_SERVER['REQUEST_TIME'])) {
-        return $_SESSION['language']['today'] . ' ' . date('H:i', $t);
+        return $language['today'] . ' ' . date('H:i', $t);
     } else if (date('Y.m.d', $t) == date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
-        return $_SESSION['language']['yesterday'] . ' ' . date('H:i', $t);
+        return $language['yesterday'] . ' ' . date('H:i', $t);
     } else {
         return date('Y.m.d H:i', $t);
     }
@@ -583,18 +588,19 @@ function thm($path = '')
     }
 
 
+    $language = Language::getInstance()->getLanguage();
     $load = simplexml_load_string($file);
 
     $str = '';
     if ($load->Author_organization['Value']) {
-    	$str .= $_SESSION['language']['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
+    	$str .= $language['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
     }
 
     if ($load['version']) {
-    	$str .= $_SESSION['language']['version'] . ': ' . htmlspecialchars($load['version'], ENT_NOQUOTES) . '<br/>';
+    	$str .= $language['version'] . ': ' . htmlspecialchars($load['version'], ENT_NOQUOTES) . '<br/>';
 
     	if (in_array($load['version'], array_keys($ver_thm))) {
-    		$str .= $_SESSION['language']['models'] . ': ' . $ver_thm[(string)$load['version']] . '<br/>';
+    		$str .= $language['models'] . ': ' . $ver_thm[(string)$load['version']] . '<br/>';
     	}            
     }
 
@@ -824,8 +830,9 @@ function jar_ico($jar, $f)
  */
 function error($str = '')
 {
+    $language = Language::getInstance()->getLanguage();
 	require_once DIR . '/header.php';
-	echo '<div class="no">' . $str . '</div><div class="iblock">- <a href="javascript:history.back();">' . $_SESSION['language']['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $GLOBALS['setup']['site_url'] . '">' . $_SESSION['language']['home'] . '</a><br/></div>';
+	echo '<div class="no">' . $str . '</div><div class="iblock">- <a href="javascript:history.back();">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $GLOBALS['setup']['site_url'] . '">' . $language['home'] . '</a><br/></div>';
 	require_once DIR . '/foot.php';
 	exit;
 }

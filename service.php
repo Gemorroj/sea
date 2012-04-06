@@ -20,16 +20,16 @@ if (!isset($_SESSION['id']) && !isset($_GET['act'])) {
 <input type="hidden" name="act" value="enter"/>
 ID:<br/>
 <input class="enter" type="text" name="id"/><br/>
-' . $_SESSION['language']['pass'] . '<br/>
+' . $language['pass'] . '<br/>
 <input class="enter" type="password" name="pass"/><br/>
-<input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/>
+<input type="submit" value="' . $language['go'] . '" class="buttom"/>
 </div>
 </form>
-<div class="row"><a href="' . DIRECTORY . 'service.php?act=registration">' . $_SESSION['language']['registration'] . '</a><br/></div>
+<div class="row"><a href="' . DIRECTORY . 'service.php?act=registration">' . $language['registration'] . '</a><br/></div>
 <form action="' . DIRECTORY . 'service.php?act=pass" method="post">
 <div class="row">
-' . $_SESSION['language']['lost password'] . '<br/>
-ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/>
+' . $language['lost password'] . '<br/>
+ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $language['go'] . '" class="buttom"/>
 </div>
 </form>';
 } else if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
@@ -47,28 +47,28 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 		$_SESSION['url'] = $assoc['url'];
 		$_SESSION['mail'] = $assoc['mail'];
 		$_SESSION['style'] = $assoc['style'];
-		echo '<div class="row"><a href="' . DIRECTORY . 'service.php">' . $_SESSION['language']['go'] . '</a><br/></div>';
+		echo '<div class="row"><a href="' . DIRECTORY . 'service.php">' . $language['go'] . '</a><br/></div>';
 	} else {
-		error($_SESSION['language']['user not found']);
+		error($language['user not found']);
 	}
 } else if (isset($_GET['act']) && $_GET['act'] == 'registration') {
 	if ($_POST) {
 		$error = '';
 		if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
-	    	$error .= $_SESSION['language']['not a valid code'] . '<br/>';
+	    	$error .= $language['not a valid code'] . '<br/>';
 		}
 		unset($_SESSION['captcha_keystring']);
 
 		if (strlen($_POST['pass']) < 4) {
-			$error .= $_SESSION['language']['short password'] . '<br/>';
+			$error .= $language['short password'] . '<br/>';
 		}
 
 		if (strlen($_POST['url']) < 4 || !strpos($_POST['url'], '.')) {
-			$error .= $_SESSION['language']['not a valid url'] . '<br/>';
+			$error .= $language['not a valid url'] . '<br/>';
 		}
 
 		if (strlen($_POST['mail']) < 4 || !strpos($_POST['mail'], '@')) {
-			$error .= $_SESSION['language']['not a valid mail'] . '<br/>';
+			$error .= $language['not a valid mail'] . '<br/>';
 		}
 
 		if ($error) {
@@ -87,7 +87,7 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 		    WHERE `url` = "' . $url . '"'
 		, $mysql))) {
 			// Такой URL уже есть
-			error($_SESSION['language']['duplicate url']);
+			error($language['duplicate url']);
 		} else if (mysql_query('INSERT INTO `users_profiles` SET `name` = "' . $name . '", `url` = "' . $url . '", `pass` = "' . $pass . '", `mail` = "' . $mail . '", `style` = "' . $style . '"', $mysql)) {
 			$_SESSION['id'] = mysql_insert_id($mysql);
 			$_SESSION['name'] = $_POST['name'];
@@ -95,21 +95,21 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 			$_SESSION['mail'] = $_POST['mail'];
 			$_SESSION['style'] = $_POST['style'];
 			mail($mail, '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=', 'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'], 'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8");
-			echo '<div class="row">' . $_SESSION['language']['registered'] . '<br/></div><div class="row"><a href="' . DIRECTORY . 'service.php">' . $_SESSION['language']['go'] . '</a><br/></div>';
+			echo '<div class="row">' . $language['registered'] . '<br/></div><div class="row"><a href="' . DIRECTORY . 'service.php">' . $language['go'] . '</a><br/></div>';
 		} else {
-			error($_SESSION['language']['error']);
+			error($language['error']);
 		}
 	} else {
         echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post">
 <div class="row">
 <table><tr>
-<th>' . $_SESSION['language']['your site'] . '</th><th>' . $_SESSION['language']['name'] . '</th>
+<th>' . $language['your site'] . '</th><th>' . $language['name'] . '</th>
 </tr><tr><td>http://<input class="enter" type="text" name="url"/></td><td><input class="enter" type="text" name="name" style="width:96%;"/></td></tr>
-<tr><td>' . $_SESSION['language']['style'] . ':</td><td>http://<input class="enter" type="text" name="style"/></td></tr>
+<tr><td>' . $language['style'] . ':</td><td>http://<input class="enter" type="text" name="style"/></td></tr>
 <tr><td>Email:</td><td><input class="enter" type="text" name="mail" style="width:96%;"/></td></tr>
-<tr><td>' . $_SESSION['language']['pass'] . '</td><td><input class="enter" type="password" name="pass" style="width:96%;"/></td></tr>
+<tr><td>' . $language['pass'] . '</td><td><input class="enter" type="password" name="pass" style="width:96%;"/></td></tr>
 <tr><th><img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /></th><td><input class="enter" type="text" name="keystring" maxlength="4" style="width:96%;"/></td></tr>
-<tr><th colspan="2"><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/></th></tr>
+<tr><th colspan="2"><input type="submit" value="' . $language['go'] . '" class="buttom"/></th></tr>
 </table>
 </div>
 </form>';
@@ -122,7 +122,7 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 		mysql_query('UPDATE `users_profiles` SET `pass` = "' . md5($pass) . '" WHERE `id` = ' . $id, $mysql);
 		mail($mail, '=?utf-8?B?' . base64_encode('Change Password ' . $_SERVER['HTTP_HOST'].DIRECTORY) . '?=', 'Your new password: ' . $pass . "\r\n" . 'ID: ' . $id, 'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8");
 	} else {
-		error($_SESSION['language']['email not found']);
+		error($language['email not found']);
 	}
 } else {
 	// если пользователь вошел в кабинет
@@ -130,10 +130,10 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 
 	switch($act) {
 		default:
-            echo '<form action="' . DIRECTORY . 'service.php?act=save" method="post"><div class="row"><table><tr><th>N</th><th>' . $_SESSION['language']['name'] . '</th><th>' . $_SESSION['language']['link'] . '</th></tr>';
+            echo '<form action="' . DIRECTORY . 'service.php?act=save" method="post"><div class="row"><table><tr><th>N</th><th>' . $language['name'] . '</th><th>' . $language['link'] . '</th></tr>';
 
             if ($setup['service_head']) {
-        	   echo '<tr><th colspan="3">' . $_SESSION['language']['head'] . '</th></tr>';
+        	   echo '<tr><th colspan="3">' . $language['head'] . '</th></tr>';
         	   $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "0"', $mysql);
         	   for ($i = 1; $i <= $setup['service_head']; ++$i) {
                     $assoc = mysql_fetch_assoc($q);
@@ -141,7 +141,7 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
         	   }
             }
             if ($setup['service_foot']) {
-            	echo '<tr><th colspan="3">' . $_SESSION['language']['foot'] . '</th></tr>';
+            	echo '<tr><th colspan="3">' . $language['foot'] . '</th></tr>';
             	$q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "1"', $mysql);
             	for ($i = 1; $i <= $setup['service_foot']; ++$i) {
             		$assoc = mysql_fetch_assoc($q);
@@ -151,11 +151,11 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
             echo '<tr><th colspan="3">URL</th></tr>
 <tr><td>&#187;</td><td><input class="enter" type="text" name="name" value="' . htmlspecialchars($_SESSION['name']) . '"/></td><td><input class="enter" type="text" name="url" value="' . htmlspecialchars($_SESSION['url']) . '"/></td></tr>
 <tr><td>Email</td><td colspan="2"><input class="enter" type="text" name="mail" value="' . htmlspecialchars($_SESSION['mail']) . '" style="width:98%;"/></td></tr>
-<tr><td>' . $_SESSION['language']['style'] . '</td><td colspan="2"><input class="enter" type="text" name="style" value="' . htmlspecialchars($style) . '" style="width:98%;"/></td></tr>
-<tr><th colspan="3"><input type="submit" value="' . $_SESSION['language']['go'] . '" class="buttom"/></th></tr>
+<tr><td>' . $language['style'] . '</td><td colspan="2"><input class="enter" type="text" name="style" value="' . htmlspecialchars($style) . '" style="width:98%;"/></td></tr>
+<tr><th colspan="3"><input type="submit" value="' . $language['go'] . '" class="buttom"/></th></tr>
 </table>
 </div></form>
-<div class="row"><form action=""><div>' . $_SESSION['language']['service'] . '<br/><input class="enter" type="text" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . '?user=' . $_SESSION['id'] . '"/></div></form></div>';
+<div class="row"><form action=""><div>' . $language['service'] . '<br/><input class="enter" type="text" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . '?user=' . $_SESSION['id'] . '"/></div></form></div>';
 
             break;
 
@@ -206,20 +206,20 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 			mysql_query('ANALYZE TABLE `users_profiles`, `users_settings`', $mysql);
 
 			if ($r) {
-				echo '<div class="row">' . $_SESSION['language']['settings saved'] . '<br/></div>';
+				echo '<div class="row">' . $language['settings saved'] . '<br/></div>';
 			} else {
-				error($_SESSION['language']['error']);
+				error($language['error']);
 			}
             break;
 
 
 		case 'exit':
 			session_destroy();
-			error($_SESSION['language']['signed out']);
+			error($language['signed out']);
             break;
 	}
 	
-	echo '<div class="iblock">- <a href="' . DIRECTORY . 'service.php?act=exit">' . $_SESSION['language']['exit'] . '</a><br/></div>';
+	echo '<div class="iblock">- <a href="' . DIRECTORY . 'service.php?act=exit">' . $language['exit'] . '</a><br/></div>';
 }
 
 
@@ -227,8 +227,8 @@ ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $
 
 
 echo '<div class="iblock">
-- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>
-- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a></div>';
+- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
+- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
 

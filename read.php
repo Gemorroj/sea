@@ -16,7 +16,13 @@ if ($page < 1) {
 }
 
 // Получаем инфу о файле
-$v = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+$v = mysql_fetch_assoc(mysql_query('
+    SELECT *,
+    ' . Language::getInstance()->buildFilesQuery() . '
+    FROM `files`
+    WHERE `id` = ' . $id
+    , $mysql
+));
 $pathinfo = pathinfo($v['path']);
 
 if (!is_file($v['path']) || strtolower($pathinfo['extension']) != 'txt') {
@@ -25,14 +31,10 @@ if (!is_file($v['path']) || strtolower($pathinfo['extension']) != 'txt') {
 
 $back = mysql_fetch_assoc(mysql_query("SELECT `id` FROM `files` WHERE `path` = '" . mysql_real_escape_string($pathinfo['dirname'] . '/', $mysql) . "'", $mysql));
 
-$filename = $v['name'];
-if ($_SESSION['langpack'] == 'russian') {
-    $filename = $v['rus_name'];
-}
 
 $seo = unserialize($v['seo']);
 
-$title .= $_SESSION['language']['read'] . ' - ' . htmlspecialchars($seo['title'] ? $seo['title'] : $filename, ENT_NOQUOTES) . ' / ' . $page;
+$title .= $language['read'] . ' - ' . htmlspecialchars($seo['title'] ? $seo['title'] : $v['name'], ENT_NOQUOTES) . ' / ' . $page;
 
 if (isset($_SESSION['lib'])) {
 	$setup['lib'] = $_SESSION['lib'];
@@ -68,11 +70,11 @@ if ($setup['lib_str']) {
 }
 
 if ($back['id']) {
-	$str = '- <a href="' . DIRECTORY . $back['id'] . '">' . $_SESSION['language']['go to the category'] . '</a><br/>';
+	$str = '- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>';
 } else {
     $str = '';
 }
-echo '<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $_SESSION['language']['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a><br/></div>';
+echo '<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
 
 require 'moduls/foot.php';
 

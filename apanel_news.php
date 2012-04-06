@@ -33,29 +33,41 @@ if ($_GET['action'] == 'del') {
 }
 
 
-if (trim($_POST['news']) && trim($_POST['rus_news'])) {
-	$news = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['news'], ENT_NOQUOTES)), $mysql);
-	$rus_news = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['rus_news'], ENT_NOQUOTES)), $mysql);
-	
-	mysql_query("INSERT INTO `news` VALUES(0,'" . $news . "','" . $rus_news . "'," . $_SERVER['REQUEST_TIME'] . ")", $mysql);
-	
-	if ($err = mysql_error($mysql)) {
-		error('При добавлении новости произошла ошибка!<br/>' . $err);
-	} else {
-		echo '<div class="iblock">Новость успешно добавлена!</div>';
-	}
+if (isset($_POST['new'])) {
+    foreach ($_POST['new'] as $k => $v) {
+        if ($v == '') {
+            error('Введите текст новости на ' . htmlspecialchars($k, ENT_NOQUOTES));
+        }
+    }
+
+    $eng = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['english'], ENT_NOQUOTES)), $mysql);
+    $rus = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['russian'], ENT_NOQUOTES)), $mysql);
+    $aze = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['azerbaijan'], ENT_NOQUOTES)), $mysql);
+    $tur = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['turkey'], ENT_NOQUOTES)), $mysql);
+
+    mysql_query("
+        INSERT INTO `news` (
+            `news`, `rus_news`, `aze_news`, `tur_news`, `time`
+        ) VALUES (
+            '" . $eng . "', '" . $rus . "', '" . $aze . "', '" . $tur . "', " . $_SERVER['REQUEST_TIME'] . "
+        )", $mysql
+    );
+
+    if ($err = mysql_error($mysql)) {
+        error('При добавлении новости произошла ошибка!<br/>' . $err);
+    } else {
+        echo '<div class="iblock">Новость успешно добавлена!</div>';
+    }
 }
+
 
 
 echo '<div class="mblock"><a href="news.php">Новости</a></div>
 <div class="mblock"><a href="apanel_news.php?action=del">Очистка</a></div>
 <form action="' . $_SERVER['PHP_SELF'] . '" method="post">
-<div class="row">
-Новость на Английском<br/>
-<textarea name="news" rows="4" cols="64"></textarea><br/>
-Новость на Русском<br/>
-<textarea name="rus_news" rows="4" cols="64"></textarea><br/>
-<input type="submit" value="Добавить"/>
+<div class="row">Введите текст новости:</div><div class="row">';
+echo Language::getInstance()->newsLangpacks();
+echo '<input type="submit" value="Добавить"/>
 </div>
 </form>
 <div class="row"><a href="apanel.php">Админка</a></div>';

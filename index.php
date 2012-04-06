@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -49,7 +49,7 @@ if ($id) {
         `t1`.`seo`,
         COUNT(1) AS `all`
         FROM `files` AS `t1`
-        INNER JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path` AND `t2`.`hidden` = "0"
+        LEFT JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path` AND `t2`.`hidden` = "0"
         WHERE `t1`.`id` = ' . $id . '
         AND `t1`.`hidden` = "0"
         GROUP BY `t1`.`id`
@@ -67,6 +67,7 @@ if ($id) {
         AND `hidden` = "0"
     ', $mysql), 0);
 }
+
 
 if (!is_dir($d['path'])) {
 	error('Folder not found.');
@@ -108,7 +109,8 @@ $path = $setup['path'] . '/';
 $put = '';
 if ($ex) {
 	$implode = '
-	    SELECT ' . ($_SESSION['langpack'] == 'russian' ? '`id`, `rus_name`' : '`id`, `name`') . '
+	    SELECT `id`,
+	    ' . Language::getInstance()->buildFilesQuery() . '
 	    FROM `files`
 	    WHERE `path` IN(';
 	foreach ($ex as $v) {
@@ -127,7 +129,7 @@ if ($ex) {
 }
 
 ##############Заголовок##########################
-$out .= '<div class="mainzag"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a> &#187; ' . $put . '</div>';
+$out .= '<div class="mainzag"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><a href="' . DIRECTORY . '">' . $language['downloads'] . '</a> &#187; ' . $put . '</div>';
 ###############Вывод рекламы###############
 $banner = '';
 if ($setup['buy_change']) {
@@ -230,23 +232,24 @@ if ($setup['service_change_advanced']) {
 // только если корень
 if ($id < 1) {
     $str = '';
-    /// новости													// кол-во символов
-    $news = mysql_fetch_row(mysql_query('
-        SELECT `time`, LEFT(`' . ($_SESSION['langpack'] == 'russian' ? 'rus_news' : 'news') . '`,64)
+    /// новости
+    $news = mysql_fetch_assoc(mysql_query('
+        SELECT `time`,
+        ' . Language::getInstance()->buildNewsQuery() . '
         FROM `news`
         ORDER BY `id` DESC
         LIMIT 1
     ', $mysql));
 
     if ($news) {
-    	$str.= '<a href="' . DIRECTORY . 'news.php">' . $_SESSION['language']['news'] . '</a> (' . tm($news[0]) . ')<br/><span style="font-size:9px;">' . $news[1] . '</span><br/>';
+    	$str.= '<a href="' . DIRECTORY . 'news.php">' . $language['news'] . '</a> (' . tm($news['time']) . ')<br/><span style="font-size:9px;">' . $news['news'] . '</span><br/>';
     }
 
     if ($setup['search_change']) {
-    	$str.= '<a href="' . DIRECTORY . 'search.php">' . $_SESSION['language']['search'] . '</a><br/>';
+    	$str.= '<a href="' . DIRECTORY . 'search.php">' . $language['search'] . '</a><br/>';
     }
     if ($setup['top_change']) {
-    	$str.= '<a href="' . DIRECTORY . 'top.php">' . str_replace('%files%', $setup['top_num'], $_SESSION['language']['top20']) . '</a><br/>';
+    	$str.= '<a href="' . DIRECTORY . 'top.php">' . str_replace('%files%', $setup['top_num'], $language['top20']) . '</a><br/>';
     }
 
     if ($str) {
@@ -258,54 +261,32 @@ if ($id < 1) {
 
 ###############Список фалов и папок###############
 if (!$d['all']) {
-	$out .= '<div class="mainzag"><strong>[' . $_SESSION['language']['empty'] . ']</strong></div>';
+	$out .= '<div class="mainzag"><strong>[' . $language['empty'] . ']</strong></div>';
 }
 
 
 $dn = 86400 * $setup['day_new'];
 $key = false;
 
-if ($_SESSION['langpack'] == 'russian') {
-	$query = mysql_query('
-    	SELECT
-	    `id`,
-		`dir`,
-		`dir_count`,
-		`path` as `v`,
-		`rus_name` AS `name`,
-		`size`,
-		`loads`,
-		`timeupload`,
-		`yes`,
-		`no`,
-		(SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - $dn) . ' AND `hidden` = "0") AS `count`
-		FROM `files`
-		WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
-        AND `hidden` = "0"
-		ORDER BY ' . $mode . '
-		LIMIT ' . $start . ', ' . $onpage,
-	$mysql);
-} else {
-	$query = mysql_query('
-        SELECT
-    	`id`,
-    	`dir`,
-    	`dir_count`,
-    	`path` as `v`,
-    	`name`,
-    	`size`,
-    	`loads`,
-    	`timeupload`,
-    	`yes`,
-    	`no`,
-    	(SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - $dn) . ' AND `hidden` = "0") AS `count`
-    	FROM `files`
-    	WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
-        AND `hidden` = "0"
-    	ORDER BY ' . $mode . '
-    	LIMIT ' . $start . ', ' . $onpage,
-	$mysql);
-}
+$query = mysql_query('
+    SELECT
+    `id`,
+    `dir`,
+    `dir_count`,
+    `path` as `v`,
+    ' . Language::getInstance()->buildFilesQuery() . ',
+    `size`,
+    `loads`,
+    `timeupload`,
+    `yes`,
+    `no`,
+    (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - $dn) . ' AND `hidden` = "0") AS `count`
+    FROM `files`
+    WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
+    AND `hidden` = "0"
+    ORDER BY ' . $mode . '
+    LIMIT ' . $start . ', ' . $onpage,
+$mysql);
 
 while ($v = mysql_fetch_assoc($query)) {
     $pre = $desc = $info = $new_info = '';
@@ -392,7 +373,7 @@ while ($v = mysql_fetch_assoc($query)) {
 
         //Новизна файла
         if (($v['timeupload'] + $dn) >= $_SERVER['REQUEST_TIME'] && $setup['day_new']) {
-        	$new_info = '<span class="yes">' . $_SESSION['language']['new'] . '</span>';
+        	$new_info = '<span class="yes">' . $language['new'] . '</span>';
         } else {
         	$new_info = '';
         }
@@ -447,7 +428,7 @@ while ($v = mysql_fetch_assoc($query)) {
 
 ###############Постраничная навигация########
 if ($pages > 1) {
-    $out .= '<div class="iblock">' . $_SESSION['language']['pages'] . ': ';
+    $out .= '<div class="iblock">' . $language['pages'] . ': ';
     $asd = $page - 2;
     $asd2 = $page + 3;
     if ($asd < $d['all'] && $asd > 0 && $page > 3) {
@@ -474,24 +455,24 @@ if ($pages > 1) {
 
     ###############Ручной ввод страниц###############
     if ($pages > $setup['pagehand'] && $setup['pagehand_change']) {
-        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $_SESSION['language']['page']) . ':<br/><form action="' . DIRECTORY . 'index.php?" method="get"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="8" size="8"/>&#160;<input class="buttom" type="submit" value="' . $_SESSION['language']['go'] . '"/></div></form>';
+        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="' . DIRECTORY . 'index.php?" method="get"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="8" size="8"/>&#160;<input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
     }
 }
 
 
 
-$out .= '<div class="iblock">- <a href="' . DIRECTORY . 'user/' . $id . '">' . $_SESSION['language']['settings'] . '</a><br/>';
+$out .= '<div class="iblock">- <a href="' . DIRECTORY . 'user/' . $id . '">' . $language['settings'] . '</a><br/>';
 
 if ($setup['stat_change']) {
-	$out .= '- <a href="' . DIRECTORY . 'stat.php">' . $_SESSION['language']['statistics'] . '</a><br/>';
+	$out .= '- <a href="' . DIRECTORY . 'stat.php">' . $language['statistics'] . '</a><br/>';
 }
 if ($setup['zakaz_change']) {
-	$out .= '- <a href="' . DIRECTORY . 'table.php">' . $_SESSION['language']['orders'] . '</a><br/>';
+	$out .= '- <a href="' . DIRECTORY . 'table.php">' . $language['orders'] . '</a><br/>';
 }
 if ($setup['exchanger_change']) {
-	$out .= '- <a href="' . DIRECTORY . 'exchanger.php">' . $_SESSION['language']['add file'] . '</a><br/>';
+	$out .= '- <a href="' . DIRECTORY . 'exchanger.php">' . $language['add file'] . '</a><br/>';
 }
-$out .= '- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a>';
+$out .= '- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a>';
 if ($setup['online']) {
 	$out .= '<br/>- Online: <strong>' . $online[0] . '</strong><br/>';
 }

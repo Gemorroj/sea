@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -66,7 +66,7 @@ if ($page) {
 
 /*
 $valid_sort = array('name' => '', 'data' => '', 'load' => '', 'size' => '', 'eval' =>'');
-if(!isset($valid_sort[$sort])){
+if (!isset($valid_sort[$sort])) {
     error($setup['hackmess']);
 }
 */
@@ -95,21 +95,21 @@ $path = $setup['path'] . '/';
 
 $put = '';
 if ($ex) {
-	$implode = 'SELECT ' . ($_SESSION['langpack'] == 'russian' ? '`id`, `rus_name`' : '`id`, `name`') . ' FROM `files` WHERE `path` IN(';
+	$implode = 'SELECT `id`, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` IN(';
 	foreach ($ex as $v) {
 		$path .= $v . '/';
 		$implode .= '"' . mysql_real_escape_string($path, $mysql) . '",';
 	}
 
 	$q = mysql_query(rtrim($implode, ',') . ')', $mysql);
-	while ($s = mysql_fetch_row($q)) {
-		$put .= '<a href="index.php?id=' . $s[0] . '">' . htmlspecialchars($s[1], ENT_NOQUOTES) . '</a> &#187; ';
-		$title .= '/' . htmlspecialchars($s[1], ENT_NOQUOTES);
+	while ($s = mysql_fetch_assoc($q)) {
+		$put .= '<a href="index.php?id=' . $s['id'] . '">' . htmlspecialchars($s['name'], ENT_NOQUOTES) . '</a> &#187; ';
+		$title .= '/' . htmlspecialchars($s['name'], ENT_NOQUOTES);
 	}
 }
 
 ##############Заголовок##########################
-echo '<div class="mainzag"><img src="dis/load.png" alt=""/><a href="apanel_index.php">' . $_SESSION['language']['downloads'] . '</a> &#187; ' . $put . '</div><div class="iblock">';
+echo '<div class="mainzag"><img src="dis/load.png" alt=""/><a href="apanel_index.php">' . $language['downloads'] . '</a> &#187; ' . $put . '</div><div class="iblock">';
 
 //------------------------------------------------------------------------------------------
 if ($setup['eval_change']) {
@@ -141,43 +141,25 @@ if (!$all) {
 $dn = 86400 * $setup['day_new'];
 $key = false;
 
-if ($_SESSION['langpack'] == 'russian') {
-	$query = mysql_query('
-	   SELECT `id`,
-		`dir`,
-		`dir_count`,
-		`path` AS `v`,
-		`rus_name` AS `name`,
-		`size`,
-		`loads`,
-		`timeupload`,
-		`yes`,
-		`no`,
-		(SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - $dn) . ') AS `count`
-		FROM `files`
-		WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
-		ORDER BY ' . $MODE . '
-		LIMIT ' . $start . ', ' . $onpage,
-	$mysql);
-} else {
-	$query = mysql_query('
-        SELECT `id`,
-		`dir`,
-		`dir_count`,
-		`path` AS `v`,
-		`name`,
-		`size`,
-		`loads`,
-		`timeupload`,
-		`yes`,
-		`no`,
-		(SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - $dn) . ') AS `count`
-		FROM `files`
-		WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
-		ORDER BY ' . $MODE . '
-		LIMIT ' . $start . ', ' . $onpage,
-	$mysql);
-}
+
+$query = mysql_query('
+    SELECT `id`,
+    `dir`,
+    `dir_count`,
+    `path` AS `v`,
+    ' . Language::getInstance()->buildFilesQuery() . ',
+    `size`,
+    `loads`,
+    `timeupload`,
+    `yes`,
+    `no`,
+    (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - $dn) . ') AS `count`
+    FROM `files`
+    WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
+    ORDER BY ' . $MODE . '
+    LIMIT ' . $start . ', ' . $onpage,
+$mysql);
+
 
 while ($v = mysql_fetch_assoc($query)) {
     if ($key = !$key) {

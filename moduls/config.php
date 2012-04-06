@@ -5,7 +5,7 @@
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.        #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -33,7 +33,8 @@ set_include_path(
 
 
 require_once DIR . '/functions.php';
-
+require_once DIR . '/Language.php';
+$language = Language::getInstance()->getLanguage();
 
 // Подключаем модуль партнерки
 require DIR . '/../partner/inc.php';

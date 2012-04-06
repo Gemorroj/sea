@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -791,20 +791,35 @@ break;
 ######################################ПЕРЕИМЕНОВАНИЕ##################################################
 case 'rename':
 if ($_POST) {
+    foreach ($_POST['new'] as $k => $v) {
+        if ($v == '') {
+            error('Укажите название папки на ' . htmlspecialchars($k, ENT_NOQUOTES));
+        }
+    }
     $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
     $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+    $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+    $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
 
-    mysql_query("UPDATE `files` SET name = '" . $eng . "', rus_name = '" . $rus . "' WHERE `id` = " . $id, $mysql);
+    mysql_query("
+        UPDATE `files`
+        SET name = '" . $eng . "',
+        rus_name = '" . $rus . "',
+        aze_name = '" . $aze . "',
+        tur_name = '" . $tur . "'
+        WHERE `id` = " . $id
+        , $mysql
+    );
     $error = mysql_error($mysql);
     if ($error) {
     	error('Ошибка при переименовании.<br/>' . $error);
     }
     echo 'Файл переименован';
 } else {
-    $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `rus_name` FROM `files` WHERE `id` = ' . $id, $mysql));
+    $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `id` = ' . $id, $mysql));
 
     echo '<div class="mainzag">Введите новое имя:</div><div class="row"><form method="post" action="apanel.php?action=rename&amp;id=' . $id . '"><div class="row">';
-    language_dir($file['name'], $file['rus_name']);
+    echo Language::getInstance()->filesLangpacks($file);
     echo '<input class="buttom" type="submit" value="Готово"/></div></form></div>';
 }
 break;
@@ -1204,8 +1219,10 @@ if ($_POST) {
     if (!preg_match('/^[A-Z0-9_\-]+$/i', $_POST['realname'])) {
         error('Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Z0-9_-]');
     }
-    if ($_POST['new']['english'] == '' || $_POST['new']['russian'] == '') {
-        error('Укажите отображаемые названия папки на русском и английском языках');
+    foreach ($_POST['new'] as $k => $v) {
+        if ($v == '') {
+            error('Укажите отображаемые названия папки ' . htmlspecialchars($k, ENT_NOQUOTES));
+        }
     }
 
     // берем корень
@@ -1233,6 +1250,8 @@ if ($_POST) {
     $dirnew = array();
     $dirnew['english'] = mysql_real_escape_string($_POST['new']['english'], $mysql);
     $dirnew['russian'] = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+    $dirnew['azerbaijan'] = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+    $dirnew['turkey'] = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
 
 
     mkdir($directory, 0777);
@@ -1253,7 +1272,7 @@ if ($_POST) {
 
     // заносим в бд
     // пока поддержка только английского и русского языков
-    if (mysql_query("INSERT INTO `files` (`dir`, `dir_count`, `path`, `name`, `rus_name`, `infolder`, `timeupload`) VALUES ('1', 0, '" . mysql_real_escape_string($directory, $mysql) . "', '" . $dirnew['english'] . "', '" . $dirnew['russian'] . "', '" . mysql_real_escape_string($d['path'], $mysql) . "', " . $_SERVER['REQUEST_TIME'] . ");", $mysql)) {
+    if (mysql_query("INSERT INTO `files` (`dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`) VALUES ('1', 0, '" . mysql_real_escape_string($directory, $mysql) . "', '" . $dirnew['english'] . "', '" . $dirnew['russian'] . "', '" . $dirnew['azerbaijan'] . "', '" . $dirnew['turkey'] . "', '" . mysql_real_escape_string($d['path'], $mysql) . "', " . $_SERVER['REQUEST_TIME'] . ");", $mysql)) {
         dir_count($d['path'], true);
         echo 'Новый каталог создан.';
     } else {
@@ -1265,7 +1284,7 @@ if ($_POST) {
     <div class="row">
     Имя новой папки [A-Z0-9_-]:<br/>
     <input type="text" name="realname" size="70" class="enter" /><br/>';
-    language_dir('', '');
+    echo Language::getInstance()->filesLangpacks();
     echo '<input class="buttom" type="submit" value="Добавить"/>
     </div>
     </form>';
@@ -1507,14 +1526,9 @@ foreach (glob('*.css', GLOB_NOESCAPE) as $v) {
 echo '</select>
 </div><div class="row">
 
-Язык по умолчанию:
-<select class="enter" size="1" name="langpack">';
-foreach (glob('moduls/language/*.dat') as $v) {
-    $value = pathinfo($v, PATHINFO_FILENAME);
-    echo '<option value="' . htmlspecialchars($value) . '" ' . sel($value, $setup['langpack']) . '>' . htmlspecialchars($value, ENT_NOQUOTES) . '</option>';
-}
-echo '</select>
-</div><div class="row">
+Язык по умолчанию:';
+echo Language::getInstance()->selectLangpacks($setup['langpack']);
+echo '</div><div class="row">
 
 Размер превьюшек (например, 40*40):<br/>
 <input class="enter" name="prev_size" type="text" value="' . $setup['prev_size'] . '"/>

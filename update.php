@@ -70,6 +70,13 @@ mysql_query("ALTER TABLE `files` ADD COLUMN `attach` TEXT DEFAULT NULL;", $mysql
 
 mysql_query("ALTER TABLE `files` ADD COLUMN `seo` TEXT DEFAULT NULL;", $mysql);
 
+
+mysql_query("ALTER TABLE `files` ADD `aze_name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `rus_name` ,
+ADD `tur_name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_name`", $mysql);
+mysql_query("ALTER TABLE `news` ADD `aze_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `rus_news` ,
+ADD `tur_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_news`", $mysql);
+
+
 header('Location: http://' . $_SERVER['HTTP_HOST'] . str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) . '/');
 
 ?>

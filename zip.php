@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -59,7 +59,7 @@ if ($seo['title']) {
     $title .= htmlspecialchars($filename['basename'], ENT_NOQUOTES);
 }
 
-echo '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $_SESSION['language']['view archive'] . ' <a href="' . DIRECTORY . 'zip/' . $id . '">' . $filename['basename'] . '</a></strong></div><div class="iblock">';
+echo '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $language['view archive'] . ' <a href="' . DIRECTORY . 'zip/' . $id . '">' . $filename['basename'] . '</a></strong></div><div class="iblock">';
 ###############Содержимое###################
 if (!isset($_GET['action'])) {
     $zip = new PclZip($d['path']);
@@ -91,7 +91,7 @@ if (!isset($_GET['action'])) {
     $preview = explode('|', $preview);
 
     $count = sizeof($preview) - 1;
-    echo $_SESSION['language']['all files'] . ': ' . $count . '<br/>' . $_SESSION['language']['the unpacked archive'].': ' . $obkb . ' kb</div><div class="row">';
+    echo $language['all files'] . ': ' . $count . '<br/>' . $language['the unpacked archive'].': ' . $obkb . ' kb</div><div class="row">';
     if ($page < 1) {
         $page = 1;
     }
@@ -127,7 +127,7 @@ if (!isset($_GET['action'])) {
     echo '</div>';
 
     if ($pages > 1) {
-        echo '<div class="iblock">' . $_SESSION['language']['pages'] . ': ';
+        echo '<div class="iblock">' . $language['pages'] . ': ';
         $asd = $page - 2;
         $asd2 = $page + 3;
         if ($asd < $count && $asd > 0 && $page > 3) {
@@ -161,7 +161,7 @@ if (!isset($_GET['action'])) {
     }
 
     $title .= ' - ' . $_GET['open'];
-    echo '<strong>' . $_SESSION['language']['file'] . ': <a href="' . DIRECTORY . 'zip/down/' . $id . '/' . str_replace('"', '&quot;', $_GET['open']) . '">' . $_GET['open'] . '</a></strong><br/>';
+    echo '<strong>' . $language['file'] . ': <a href="' . DIRECTORY . 'zip/down/' . $id . '/' . str_replace('"', '&quot;', $_GET['open']) . '">' . $_GET['open'] . '</a></strong><br/>';
 
     $mime = ext_to_mime(pathinfo($_GET['open'], PATHINFO_EXTENSION));
 
@@ -179,7 +179,7 @@ if (!isset($_GET['action'])) {
 
         $startDebug = microtime(true);
         $content = str_to_utf8($content[0]['content']);
-        echo $_SESSION['language']['lines'] . ': ' . substr_count($content, "\n");
+        echo $language['lines'] . ': ' . substr_count($content, "\n");
 
         $pages = floor(mb_strlen($content) / $setup['lib']);
         $content = mb_substr($content, $page * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
@@ -201,7 +201,7 @@ if (!isset($_GET['action'])) {
             echo '<pre class="ik">' . htmlspecialchars($content, ENT_NOQUOTES) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
         }
     } else {
-        echo '<span class="no">' . $_SESSION['language']['file unavailable for viewing'] . '</span>';
+        echo '<span class="no">' . $language['file unavailable for viewing'] . '</span>';
     }
 
     echo '</div><div class="iblock">';
@@ -225,7 +225,7 @@ if (!isset($_GET['action'])) {
     exit;
 }
 
-echo '- <a href="' . DIRECTORY . 'view/' . $id . '">' . $_SESSION['language']['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $_SESSION['language']['go to the category'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a></div>';
+echo '- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
 

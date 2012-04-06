@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -18,7 +18,13 @@ $id = intval($_GET['id']);
 $out = '';
 
 // Получаем инфу о файле
-$v = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id . ' AND `hidden` = "0"', $mysql));
+$v = mysql_fetch_assoc(mysql_query('
+    SELECT *,
+    ' . Language::getInstance()->buildFilesQuery() . '
+    FROM `files`
+    WHERE `id` = ' . $id . '
+    AND `hidden` = "0"
+', $mysql));
 
 if (!is_file($v['path'])) {
 	error('File not found');
@@ -59,12 +65,11 @@ $dir = $filename['dirname'].'/';
 $basename = $filename['basename'];
 $seo = unserialize($v['seo']);
 
-$filename = $_SESSION['langpack'] == 'russian' ? $v['rus_name'] : $v['name'];
 
 if ($seo['title']) {
     $title .= htmlspecialchars($seo['title'], ENT_NOQUOTES);
 } else {
-    $title .= htmlspecialchars($filename, ENT_NOQUOTES);
+    $title .= htmlspecialchars($v['name'], ENT_NOQUOTES);
 }
 
 $sql_dir = mysql_real_escape_string($dir, $mysql);
@@ -73,24 +78,24 @@ $back = mysql_fetch_assoc(mysql_query("SELECT `id` FROM `files` WHERE `path` = '
 
 
 if ($setup['send_email'] && isset($_GET['email'])) {
-    echo '<div><div class="mblock">' . $_SESSION['language']['file information'] . ' "<strong>' . htmlspecialchars($filename, ENT_NOQUOTES) . '</strong>"</div>';
+    echo '<div><div class="mblock">' . $language['file information'] . ' "<strong>' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</strong>"</div>';
 
     if (isset($_POST['mail']) && preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i', $_POST['mail'])) {
         if (mail(
             $_POST['mail'],
-            '=?utf-8?B?' . base64_encode(str_replace('%file%', $filename, $_SESSION['language']['link to file'])) . '?=',
-            str_replace(array('%file%', '%url%', '%link%'), array($filename, $setup['site_url'], 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id), $_SESSION['language']['email message']),
+            '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], $language['link to file'])) . '?=',
+            str_replace(array('%file%', '%url%', '%link%'), array($v['name'], $setup['site_url'], 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id), $language['email message']),
             "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
         )) {
-            echo '<div class="yes">' . $_SESSION['language']['email sent successfully'] . '</div>';
+            echo '<div class="yes">' . $language['email sent successfully'] . '</div>';
         } else {
-            echo '<div class="no">' . $_SESSION['language']['sending email error occurred'] . '</div>';
+            echo '<div class="no">' . $language['sending email error occurred'] . '</div>';
         }
     } else {
         echo '<form action="' . DIRECTORY . 'view/' . $id . '/email" method="post"><div class="row">Email: <input type="text" name="mail" class="enter"/><br/><input type="submit" class="buttom"/></div></form>';
     }
 
-    echo '</div><div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $_SESSION['language']['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $_SESSION['language']['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a></div>';
+    echo '</div><div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
     require 'moduls/foot.php';
     exit;
 }
@@ -100,16 +105,16 @@ if ($setup['send_email'] && isset($_GET['email'])) {
 $v['size'] = size($v['size']);
 
 // Вывод
-$out .= '<div class="mblock">' . $_SESSION['language']['file information'] . ' "<strong>' . htmlspecialchars($filename, ENT_NOQUOTES) . '</strong>"</div><div class="row">
-<strong>' . $_SESSION['language']['size'] . ':</strong> ' . $v['size'] . '<br/>
-<strong>' . $_SESSION['language']['downloaded'] . ':</strong> ' . $v['loads'] . ' ' . $_SESSION['language']['times'] . '<br/>';
+$out .= '<div class="mblock">' . $language['file information'] . ' "<strong>' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</strong>"</div><div class="row">
+<strong>' . $language['size'] . ':</strong> ' . $v['size'] . '<br/>
+<strong>' . $language['downloaded'] . ':</strong> ' . $v['loads'] . ' ' . $language['times'] . '<br/>';
 
 ###############Недавнее скачивание###################
 if ($v['timeload']) {
-    $out .= '<strong>' . $_SESSION['language']['recent'] . ':</strong><br/>' . tm($v['timeload']) . '<br/>';
+    $out .= '<strong>' . $language['recent'] . ':</strong><br/>' . tm($v['timeload']) . '<br/>';
 }
 ###############Время добавления######################
-$out .= '<strong>' . $_SESSION['language']['time additions'] . ':</strong><br/>' . tm($v['timeupload']);
+$out .= '<strong>' . $language['time additions'] . ':</strong><br/>' . tm($v['timeupload']);
 
 // убираем папку с загрузками
 $screen = strstr($v['path'], '/');
@@ -128,7 +133,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
 
     $size = getimagesize($v['path']);
 
-    $out .= $size[0] . 'x' . $size[1] . '<br/><strong>' . $_SESSION['language']['custom size'] . ':</strong>';
+    $out .= $size[0] . 'x' . $size[1] . '<br/><strong>' . $language['custom size'] . ':</strong>';
     foreach (explode(',', $setup['view_size']) as $val) {
     	$wh = explode('*', $val);
     	if (file_exists($setup['picpath'] . '/'.$wh[0] . 'x' . $wh[1] . '_' . $prev_pic . '.gif')) {
@@ -137,7 +142,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
             $out .= ' <a href="' . DIRECTORY . 'im.php?id=' . $id . '&amp;W=' . $wh[0] . '&amp;H=' . $wh[1] . '">' . $val . '</a>';
         }
     }
-    $out .= '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="' . $_SESSION['language']['download'] . '"/></div></form>';
+    $out .= '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="' . $language['download'] . '"/></div></form>';
 } else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
     $tmpa = array();
     if ($ext == 'mp3' || $ext == 'wav') {
@@ -275,25 +280,25 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
     }
 
     file_put_contents('moduls/cache/' . $id . '.dat', serialize($tmpa));
-    $out .= '<hr class="hr"/><strong>' . $_SESSION['language']['info'] . ':</strong><br/>' . $_SESSION['language']['channels'] . ': ' . $tmpa['channels'] . '<br/>' . $_SESSION['language']['framerate'] . ': ' . $tmpa['sampleRate'] . ' Hz<br/>' . $_SESSION['language']['byterate'] . ': ' . round($tmpa['avgBitrate'] / 1024) . ' Kbps<br/>' . $_SESSION['language']['length'] . ': ' . date('H:i:s', mktime(0, 0, $tmpa['streamLength'])) . '<br/>';
+    $out .= '<hr class="hr"/><strong>' . $language['info'] . ':</strong><br/>' . $language['channels'] . ': ' . $tmpa['channels'] . '<br/>' . $language['framerate'] . ': ' . $tmpa['sampleRate'] . ' Hz<br/>' . $language['byterate'] . ': ' . round($tmpa['avgBitrate'] / 1024) . ' Kbps<br/>' . $language['length'] . ': ' . date('H:i:s', mktime(0, 0, $tmpa['streamLength'])) . '<br/>';
 
     if ($tmpa['comments']['TITLE']) {
-        $out .= $_SESSION['language']['name'] . ': ' . htmlspecialchars($tmpa['comments']['TITLE'], ENT_NOQUOTES) . '<br/>';
+        $out .= $language['name'] . ': ' . htmlspecialchars($tmpa['comments']['TITLE'], ENT_NOQUOTES) . '<br/>';
     }
     if ($tmpa['comments']['ARTIST']) {
-        $out .= $_SESSION['language']['artist'] . ': ' . htmlspecialchars($tmpa['comments']['ARTIST'], ENT_NOQUOTES) . '<br/>';
+        $out .= $language['artist'] . ': ' . htmlspecialchars($tmpa['comments']['ARTIST'], ENT_NOQUOTES) . '<br/>';
     }
     if ($tmpa['comments']['ALBUM']) {
-        $out .= $_SESSION['language']['album'] . ': ' . htmlspecialchars($tmpa['comments']['ALBUM'], ENT_NOQUOTES) . '<br/>';
+        $out .= $language['album'] . ': ' . htmlspecialchars($tmpa['comments']['ALBUM'], ENT_NOQUOTES) . '<br/>';
     }
     if ($tmpa['comments']['DATE']) {
-        $out .= $_SESSION['language']['year'] . ': ' . htmlspecialchars($tmpa['comments']['DATE'], ENT_NOQUOTES) . '<br/>';
+        $out .= $language['year'] . ': ' . htmlspecialchars($tmpa['comments']['DATE'], ENT_NOQUOTES) . '<br/>';
     }
     if ($tmpa['comments']['GENRE']) {
-        $out .= $_SESSION['language']['genre'] . ': ' . htmlspecialchars($tmpa['comments']['GENRE'], ENT_NOQUOTES) . '<br/>';
+        $out .= $language['genre'] . ': ' . htmlspecialchars($tmpa['comments']['GENRE'], ENT_NOQUOTES) . '<br/>';
     }
     if ($tmpa['comments']['COMMENT']) {
-        $out .= $_SESSION['language']['comments'] . ': ' . htmlspecialchars($tmpa['comments']['COMMENT'], ENT_NOQUOTES) . '<br/>';
+        $out .= $language['comments'] . ': ' . htmlspecialchars($tmpa['comments']['COMMENT'], ENT_NOQUOTES) . '<br/>';
     }
     if ($tmpa['comments']['APIC']) {
         $out .= '<img src="' . DIRECTORY . 'apic/' . $id . '" alt=""/>';
@@ -330,11 +335,11 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
         $out = rtrim($out, ', ') . '<hr class="hr"/>';
     }
 
-    $out .= $_SESSION['language']['codec'] . ': ' . htmlspecialchars($tmpa['getVideoCodec'], ENT_NOQUOTES) . '<br/>' . $_SESSION['language']['screen resolution'] . ': ' . intval($tmpa['GetFrameWidth']) . ' x ' . intval($tmpa['GetFrameHeight']) . '<br/>' . $_SESSION['language']['time'] . ': ' . date('H:i:s', mktime(0, 0, round($tmpa['getDuration']))) . '<br/>';
+    $out .= $language['codec'] . ': ' . htmlspecialchars($tmpa['getVideoCodec'], ENT_NOQUOTES) . '<br/>' . $language['screen resolution'] . ': ' . intval($tmpa['GetFrameWidth']) . ' x ' . intval($tmpa['GetFrameHeight']) . '<br/>' . $language['time'] . ': ' . date('H:i:s', mktime(0, 0, round($tmpa['getDuration']))) . '<br/>';
 
 
     if ($tmpa['getBitRate']) {
-        $out .= $_SESSION['language']['bitrate'] . ': ' . ceil($tmpa['getBitRate'] / 1024) . ' Kbps<br/>';
+        $out .= $language['bitrate'] . ': ' . ceil($tmpa['getBitRate'] / 1024) . ' Kbps<br/>';
     }
 } else if ($ext == 'thm' || $ext == 'nth' || $ext == 'utz' || $ext == 'sdt' || $ext == 'scs' || $ext == 'apk') {
     if ($setup['screen_file_change']) {
@@ -369,17 +374,17 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
 
 // Скиншот
 if (file_exists($setup['spath'] . $screen . '.gif')) {
-    $out .= '<hr class="hr"/><strong>' . $_SESSION['language']['screenshot'] . ':</strong><br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['spath'] . htmlspecialchars($screen) . '.gif" alt=""/>';
+    $out .= '<hr class="hr"/><strong>' . $language['screenshot'] . ':</strong><br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['spath'] . htmlspecialchars($screen) . '.gif" alt=""/>';
 } else if (file_exists($setup['spath'] . $screen . '.jpg')) {
-    $out .= '<hr class="hr"/><strong>' . $_SESSION['language']['screenshot'] . ':</strong><br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['spath'] . htmlspecialchars($screen) . '.jpg" alt=""/>';
+    $out .= '<hr class="hr"/><strong>' . $language['screenshot'] . ':</strong><br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['spath'] . htmlspecialchars($screen) . '.jpg" alt=""/>';
 }
 
 ###############Описание#############################
 if (file_exists($setup['opath'] . '/' . $screen . '.txt')) {
-    $out .= '<hr class="hr"/><strong>' . $_SESSION['language']['description'] . ':</strong><br/>' . trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt'));
+    $out .= '<hr class="hr"/><strong>' . $language['description'] . ':</strong><br/>' . trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt'));
 } else if ($setup['lib_desc'] && $ext == 'txt') {
 	$fp = fopen($v['path'], 'r');
-    $out .= '<hr class="hr"/><strong>' . $_SESSION['language']['description'] . ':</strong><br/>' . trim(fgets($fp, 1024));
+    $out .= '<hr class="hr"/><strong>' . $language['description'] . ':</strong><br/>' . trim(fgets($fp, 1024));
     fclose($fp);
 }
 
@@ -428,11 +433,11 @@ if ($setup['prev_next']) {
 
         $out .= '<div class="row">';
         if ($prev[0]) {
-            $out .= '&#171; (' . $prev[1] . ')<a href="' . DIRECTORY . 'view/' . $prev[0] . '">' . $_SESSION['language']['prev'] . '</a>';
+            $out .= '&#171; (' . $prev[1] . ')<a href="' . DIRECTORY . 'view/' . $prev[0] . '">' . $language['prev'] . '</a>';
         }
         $out .= ' ['.$count.'] ';
         if ($next[0]) {
-            $out .= '<a href="' . DIRECTORY . 'view/' . $next[0] . '">' . $_SESSION['language']['next'] . '</a>(' . $next[1] . ') &#187;';
+            $out .= '<a href="' . DIRECTORY . 'view/' . $next[0] . '">' . $language['next'] . '</a>(' . $next[1] . ') &#187;';
         }
         $out .= '<br/></div>';
     }
@@ -445,13 +450,13 @@ if ($setup['eval_change']) {
     if ($i) {
         $i = round($v['yes'] / $i * 100, 0);
     }
-    $out .= '<hr class="hr"/><strong>' . $_SESSION['language']['rating'] . '</strong>: (<span class="yes">+' . $v['yes'] . '</span>/<span class="no">-' . $v['no'] . '</span>)<br/><img src="' . DIRECTORY . 'rate/' . $i . '" alt="" style="margin: 1px;"/><br/>';
+    $out .= '<hr class="hr"/><strong>' . $language['rating'] . '</strong>: (<span class="yes">+' . $v['yes'] . '</span>/<span class="no">-' . $v['no'] . '</span>)<br/><img src="' . DIRECTORY . 'rate/' . $i . '" alt="" style="margin: 1px;"/><br/>';
     if (!$vote) {
-        $out .= $_SESSION['language']['net'] . ': <span class="yes"><a href="' . DIRECTORY . 'view/' . $id . '/1">' . $_SESSION['language']['yes'] . '</a></span>/<span class="no"><a href="' . DIRECTORY . 'view/' . $id . '/0">' . $_SESSION['language']['no'] . '</a></span>';
+        $out .= $language['net'] . ': <span class="yes"><a href="' . DIRECTORY . 'view/' . $id . '/1">' . $language['yes'] . '</a></span>/<span class="no"><a href="' . DIRECTORY . 'view/' . $id . '/0">' . $language['no'] . '</a></span>';
     } else if ($vote == 1) {
-        $out .= $_SESSION['language']['true voice'];
+        $out .= $language['true voice'];
     } else if ($vote == 2) {
-        $out .= $_SESSION['language']['false voice'];
+        $out .= $language['false voice'];
     }
 }
 
@@ -461,7 +466,7 @@ if ($setup['komments_view']) {
     // Последние комментарии
     $q = mysql_query('SELECT `name`, `text`, `time` FROM `komments` WHERE `file_id` = ' . $id . ' ORDER BY `id` DESC LIMIT ' . intval($setup['komments_view']), $mysql);
     if ($q && mysql_num_rows($q)) {
-        $out .= '<strong>' . $_SESSION['language']['recent_comments'] . '</strong><br/>';
+        $out .= '<strong>' . $language['recent_comments'] . '</strong><br/>';
         while ($row = mysql_fetch_assoc($q)) {
             $out .= '<strong>' . htmlspecialchars($row['name'], ENT_NOQUOTES) . '</strong> (' . tm($row['time']) . ')<br/>' . str_replace("\n", '<br/>', $row['text']) . '<br/>';
         }
@@ -472,13 +477,13 @@ if ($setup['komments_view']) {
 
 if ($setup['komments_change']) {
     // Комментарии
-    $out .= '<strong><a href="' . DIRECTORY . 'komm/' . $id . '">' . $_SESSION['language']['comments'] . ' [' . $all_komments . ']</a></strong><br/>';
+    $out .= '<strong><a href="' . DIRECTORY . 'komm/' . $id . '">' . $language['comments'] . ' [' . $all_komments . ']</a></strong><br/>';
 }
 
 
 if ($setup['cut_change'] && $ext == 'mp3') {
     // Нарезка MP3
-    $out .= '<strong><a href="' . DIRECTORY . 'cut/' . $id . '">' . $_SESSION['language']['splitting'] . '</a></strong><br/>';
+    $out .= '<strong><a href="' . DIRECTORY . 'cut/' . $id . '">' . $language['splitting'] . '</a></strong><br/>';
 }
 if ($setup['audio_player_change'] && $ext == 'mp3') {
     // Аудио плеер
@@ -490,40 +495,40 @@ if ($setup['video_player_change'] && ($ext == 'flv' || $ext == 'mp4')) {
     // Видео плеер
     $out .= '<object type="application/x-shockwave-flash" data="' . DIRECTORY . 'moduls/flash/player_flv_maxi.swf" width="240" height="180">
        <param name="allowFullScreen" value="true" />
-       <param name="FlashVars" value="flv=' . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])) . '&amp;title=' . htmlspecialchars(htmlspecialchars($filename)) . '&amp;startimage=' . DIRECTORY . 'ffmpeg/' . $id . '/' . $setup['ffmpeg_frame'] . '&amp;width=240&amp;height=180&amp;margin=3&amp;volume=100&amp;showvolume=1&amp;showtime=1&amp;showplayer=always&amp;showloading=always&amp;showfullscreen=1&amp;showiconplay=1" />
+       <param name="FlashVars" value="flv=' . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])) . '&amp;title=' . htmlspecialchars(htmlspecialchars($v['name'])) . '&amp;startimage=' . DIRECTORY . 'ffmpeg/' . $id . '/' . $setup['ffmpeg_frame'] . '&amp;width=240&amp;height=180&amp;margin=3&amp;volume=100&amp;showvolume=1&amp;showtime=1&amp;showplayer=always&amp;showloading=always&amp;showfullscreen=1&amp;showiconplay=1" />
    </object><br/>';
 }
 if ($setup['zip_change'] && $ext == 'zip') {
     // ZIP архивы
-    $out .= '<strong><a href="' . DIRECTORY . 'zip/' . $id . '">' . $_SESSION['language']['view archive'] . '</a></strong><br/>';
+    $out .= '<strong><a href="' . DIRECTORY . 'zip/' . $id . '">' . $language['view archive'] . '</a></strong><br/>';
 }
 
 
 // txt файлы
 if ($ext == 'txt') {
 	if ($setup['lib_change']) {
-		echo '<strong><a href="' . DIRECTORY . 'read/' . $id . '">' . $_SESSION['language']['read'] . '</a></strong><br/>';
+		echo '<strong><a href="' . DIRECTORY . 'read/' . $id . '">' . $language['read'] . '</a></strong><br/>';
 	}
 
-    $out .= '<a href="' . DIRECTORY . 'txt_zip/' . $id . '">' . $_SESSION['language']['download'] . ' [ZIP]</a><br/><a href="' . DIRECTORY . 'txt_jar/' . $id . '">' . $_SESSION['language']['download'] . ' [JAR]</a><br/>';
+    $out .= '<a href="' . DIRECTORY . 'txt_zip/' . $id . '">' . $language['download'] . ' [ZIP]</a><br/><a href="' . DIRECTORY . 'txt_jar/' . $id . '">' . $language['download'] . ' [JAR]</a><br/>';
 }
 
 
 // Меню закачек
-$out .= '<strong><a href="' . DIRECTORY . 'load/' . $id . '">' . $_SESSION['language']['download'] . ' [' . strtoupper($ext) . ']</a></strong><br/>';
+$out .= '<strong><a href="' . DIRECTORY . 'load/' . $id . '">' . $language['download'] . ' [' . strtoupper($ext) . ']</a></strong><br/>';
 if ($setup['jad_change'] && $ext == 'jar') {
-    $out .= '<strong><a href="' . DIRECTORY . 'jad/' . $id . '">' . $_SESSION['language']['download'] . ' [JAD]</a></strong><br/>';
+    $out .= '<strong><a href="' . DIRECTORY . 'jad/' . $id . '">' . $language['download'] . ' [JAD]</a></strong><br/>';
 }
 
 $out .= '<input class="enter" size="50" type="text" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])) . '"/><br/>';
 
 if ($setup['send_email']) {
-    $out .= '<a href="' . DIRECTORY . 'view/' . $id . '/email">' . $_SESSION['language']['send a link to email'] . '</a><br/>';
+    $out .= '<a href="' . DIRECTORY . 'view/' . $id . '/email">' . $language['send a link to email'] . '</a><br/>';
 }
 
 if ($setup['abuse_change']) {
     if (isset($_GET['abuse'])) {
-        $out .= '<div class="yes">' . $_SESSION['language']['complaint sent to the administration'] . '<br/></div>';
+        $out .= '<div class="yes">' . $language['complaint sent to the administration'] . '<br/></div>';
         mail(
             $setup['zakaz_email'],
             '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
@@ -533,11 +538,11 @@ if ($setup['abuse_change']) {
             "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
         );
     } else {
-        $out .= '<a href="' . DIRECTORY . 'view/' . $id . '/abuse">' . $_SESSION['language']['complain about a file'] . '</a>';
+        $out .= '<a href="' . DIRECTORY . 'view/' . $id . '/abuse">' . $language['complain about a file'] . '</a>';
     }
 }
 
-echo $out . '</div><div class="iblock">- <a href="' . DIRECTORY . $back['id'] . '">' . $_SESSION['language']['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a></div>';
+echo $out . '</div><div class="iblock">- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
 

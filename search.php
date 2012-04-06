@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -18,7 +18,7 @@ if (!$setup['search_change']) {
 }
 ###############Проверка переменных###############
 
-$title .= $_SESSION['language']['search'];
+$title .= $language['search'];
 $out = '';
 
 $onpage = get2ses('onpage');
@@ -42,52 +42,32 @@ if ($page < 1) {
 ###############Проверка переменных###############
 if (isset($_GET['act'])) {
     if ($_REQUEST['word'] == '') {
-    	error($_SESSION['language']['do not fill in the required fields']);
+    	error($language['do not fill in the required fields']);
     }
     $word = mysql_real_escape_string($_REQUEST['word'], $mysql);
     $start = ($onpage * $page) - $onpage;
 
-    if ($_SESSION['langpack'] == 'russian') {
-        $sql = mysql_query('
-            SELECT SQL_CALC_FOUND_ROWS `t1`.`id`,
-            `t1`.`dir`,
-            `t1`.`dir_count`,
-            `t1`.`path`,
-            `t1`.`infolder`,
-            `t1`.`rus_name` AS `name`,
-            `t1`.`size`,
-            `t1`.`loads`,
-            `t1`.`timeupload`,
-            `t1`.`yes`,
-            `t1`.`no`,
-            `t2`.`id` AS `back`
-            FROM `files` AS `t1`
-            LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
-            WHERE `t1`.`rus_name` LIKE "%' . str_replace(array('%', '_'), array('\%', '\_'), $word) . '%"
-            AND `t1`.`hidden` = "0"
-            LIMIT ' . $start . ', ' . $onpage,
-        $mysql);
-    } else {
-        $sql = mysql_query('
-            SELECT SQL_CALC_FOUND_ROWS `t1`.`id`,
-            `t1`.`dir`,
-            `t1`.`dir_count`,
-            `t1`.`path`,
-            `t1`.`infolder`,
-            `t1`.`name`,
-            `t1`.`size`,
-            `t1`.`loads`,
-            `t1`.`timeupload`,
-            `t1`.`yes`,
-            `t1`.`no`,
-            `t2`.`id` AS `back`
-            FROM `files` AS `t1`
-            LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
-            WHERE `t1`.`name` LIKE "%' . str_replace(array('%', '_'), array('\%', '\_'), $word) . '%"
-            AND `t1`.`hidden` = "0"
-            LIMIT ' . $start . ', ' . $onpage,
-        $mysql);
-    }
+
+    $sql = mysql_query('
+        SELECT SQL_CALC_FOUND_ROWS `t1`.`id`,
+        `t1`.`dir`,
+        `t1`.`dir_count`,
+        `t1`.`path`,
+        `t1`.`infolder`,
+        ' . Language::getInstance()->buildFilesQuery('t1') . ',
+        `t1`.`size`,
+        `t1`.`loads`,
+        `t1`.`timeupload`,
+        `t1`.`yes`,
+        `t1`.`no`,
+        `t2`.`id` AS `back`
+        FROM `files` AS `t1`
+        LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
+        WHERE `t1`.`name` LIKE "%' . str_replace(array('%', '_'), array('\%', '\_'), $word) . '%"
+        AND `t1`.`hidden` = "0"
+        LIMIT ' . $start . ', ' . $onpage,
+    $mysql);
+
 
     $all = mysql_result(mysql_query('SELECT FOUND_ROWS();', $mysql), 0);
 
@@ -101,10 +81,10 @@ if (isset($_GET['act'])) {
         $pages = 1;
     }
 
-    $out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/>' . str_replace(array('%word%', '%all%'), array(htmlspecialchars($word, ENT_NOQUOTES), $all), $_SESSION['language']['upon request']) . '</div>';
+    $out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/>' . str_replace(array('%word%', '%all%'), array(htmlspecialchars($word, ENT_NOQUOTES), $all), $language['upon request']) . '</div>';
 
     if (!$all) {
-    	$out .= '<div class="no">' . $_SESSION['language']['your search found nothing'] . '</div>';
+    	$out .= '<div class="no">' . $language['your search found nothing'] . '</div>';
     }
 
 
@@ -187,7 +167,7 @@ if (isset($_GET['act'])) {
             }
 
             //Собсвенно вывод
-            $out .= $pre . ' ' . $ico . '<strong><a href="' . DIRECTORY . 'view/' . $v['id'] . '">' . str_ireplace(htmlspecialchars($word, ENT_NOQUOTES), '<span class="yes">' . htmlspecialchars($word, ENT_NOQUOTES) . '</span>', htmlspecialchars($v['name'], ENT_NOQUOTES)) . '</a></strong>' . $extension . $v['size'] . '[<a href="' . DIRECTORY . $v['back'] . '">' . $_SESSION['language']['go to the category'] . '</a>]<br/></div>';
+            $out .= $pre . ' ' . $ico . '<strong><a href="' . DIRECTORY . 'view/' . $v['id'] . '">' . str_ireplace(htmlspecialchars($word, ENT_NOQUOTES), '<span class="yes">' . htmlspecialchars($word, ENT_NOQUOTES) . '</span>', htmlspecialchars($v['name'], ENT_NOQUOTES)) . '</a></strong>' . $extension . $v['size'] . '[<a href="' . DIRECTORY . $v['back'] . '">' . $language['go to the category'] . '</a>]<br/></div>';
         }
     }
 
@@ -195,7 +175,7 @@ if (isset($_GET['act'])) {
     //------------------------------------------------------------------------------------------
     $word = rawurlencode($_REQUEST['word']);
     if ($pages > 1) {
-    	$out .= '<div class="iblock">' . $_SESSION['language']['pages'] . ': ';
+    	$out .= '<div class="iblock">' . $language['pages'] . ': ';
     	$asd = $page - 2;
     	$asd2 = $page + 3;
     	if ($asd < $all && $asd > 0 && $page > 3) {
@@ -224,13 +204,13 @@ if (isset($_GET['act'])) {
 
 
     if ($setup['pagehand_change'] && $pages > $setup['pagehand']) {
-        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $_SESSION['language']['page']) . ':<br/><form action="' . DIRECTORY . 'search.php" method="get"><div class="row"><input class="enter" name="act" type="hidden" value="search"/><input class="enter" name="word" type="hidden" value="' . $word . '"/><input class="enter" name="page" type="text" maxlength="4" size="8"/><input class="buttom" type="submit" value="' . $_SESSION['language']['go'] . '"/></div></form>';
+        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="' . DIRECTORY . 'search.php" method="get"><div class="row"><input class="enter" name="act" type="hidden" value="search"/><input class="enter" name="word" type="hidden" value="' . $word . '"/><input class="enter" name="page" type="text" maxlength="4" size="8"/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
     }
     //------------------------------------------------------------------------------------------
-    $out .= '<div class="iblock">- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a></div>';
+    $out .= '<div class="iblock">- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 } else {
     // Форма ввода слова
-    $out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/s.png" alt=""/>' . $_SESSION['language']['find files'] . '</div><div class="mainzag"><form action="' . DIRECTORY . 'search.php?act=search" method="post"><div class="row">' . $_SESSION['language']['enter the name of the file you are'] . '</div><div class="row"><input class="enter" name="word" type="text"/><br/><input class="buttom" type="submit" value="' . $_SESSION['language']['go'] . '"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/><a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a><br/></div>';
+    $out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/s.png" alt=""/>' . $language['find files'] . '</div><div class="mainzag"><form action="' . DIRECTORY . 'search.php?act=search" method="post"><div class="row">' . $language['enter the name of the file you are'] . '</div><div class="row"><input class="enter" name="word" type="text"/><br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/><a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
 }
 
 echo $out;

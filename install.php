@@ -36,6 +36,8 @@ if (!@$_GET['level']) {
       `infolder` varchar(255) NOT NULL,
       `name` varchar(255) NOT NULL,
       `rus_name` varchar(255) NOT NULL,
+      `aze_name` varchar(255) NOT NULL,
+      `tur_name` varchar(255) NOT NULL,
       `priority` tinyint(3) NOT NULL default '0',
       `size` int(11) unsigned NOT NULL,
       `loads` int(11) unsigned NOT NULL default '0',
@@ -121,6 +123,8 @@ if (!@$_GET['level']) {
       `id` int(11) unsigned NOT NULL auto_increment,
       `news` text NOT NULL,
       `rus_news` text NOT NULL,
+      `aze_news` text NOT NULL,
+      `tur_news` text NOT NULL,
       `time` int(11) unsigned NOT NULL default '0',
       PRIMARY KEY  (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";

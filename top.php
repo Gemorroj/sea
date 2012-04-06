@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#             	 Автор  :  Sea                        #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -17,7 +17,7 @@ if (!$setup['top_change']) {
 	error('Not found');
 }
 ###############Проверка переменных###############
-$title .= str_replace('%files%', $setup['top_num'], $_SESSION['language']['top20']);
+$title .= str_replace('%files%', $setup['top_num'], $language['top20']);
 
 
 $onpage = get2ses('onpage');
@@ -43,12 +43,12 @@ if (!$setup['eval_change']) {
 	$sortlink = '';
 	$sort = 'load';
 } else {
-	$sortlink = $_SESSION['language']['sort'] . ': ';
+	$sortlink = $language['sort'] . ': ';
 	if($sort != 'eval'){
 		$sort = 'load';
-		$sortlink .= '<a href="' . DIRECTORY . 'top/eval">' . $_SESSION['language']['rating'] . '</a>';
+		$sortlink .= '<a href="' . DIRECTORY . 'top/eval">' . $language['rating'] . '</a>';
 	} else {
-		$sortlink .= '<a href="' . DIRECTORY . 'top/load">' . $_SESSION['language']['popularity'] . '</a>';
+		$sortlink .= '<a href="' . DIRECTORY . 'top/load">' . $language['popularity'] . '</a>';
 	}
 }
 
@@ -61,48 +61,31 @@ if ($sort == 'load') {
 
 ###############Получаем список файлов###############
 
-if ($_SESSION['langpack'] == 'russian') {
-    $sql = mysql_query('
-        SELECT SQL_CALC_FOUND_ROWS `t1`.`id`,
-        `t1`.`path`,
-        `t1`.`infolder`,
-        `t1`.`rus_name` AS `name`,
-        `t1`.`size`,
-        `t1`.`loads`,
-        `t1`.`timeupload`,
-        `t1`.`yes`,
-        `t1`.`no`,
-        `t2`.`id` AS `back`
-        FROM `files` AS `t1`
-        LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
-        WHERE ' . $mode . ' DESC
-        LIMIT ' . (($page * $onpage) - $onpage) . ', ' . $onpage,
-    $mysql);
-} else {
-    $sql = mysql_query('
-        SELECT SQL_CALC_FOUND_ROWS `t1`.`id`,
-        `t1`.`path`,
-        `t1`.`infolder`,
-        `t1`.`name`,
-        `t1`.`size`,
-        `t1`.`loads`,
-        `t1`.`timeupload`,
-        `t1`.`yes`,
-        `t1`.`no`,
-        `t2`.`id` AS `back`
-        FROM `files` AS `t1`
-        LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
-        WHERE ' . $mode . ' DESC
-        LIMIT ' . (($page * $onpage) - $onpage) . ', ' . $onpage,
-    $mysql);
-}
+
+$sql = mysql_query('
+    SELECT SQL_CALC_FOUND_ROWS `t1`.`id`,
+    `t1`.`path`,
+    `t1`.`infolder`,
+    ' . Language::getInstance()->buildFilesQuery('t1') . ',
+    `t1`.`size`,
+    `t1`.`loads`,
+    `t1`.`timeupload`,
+    `t1`.`yes`,
+    `t1`.`no`,
+    `t2`.`id` AS `back`
+    FROM `files` AS `t1`
+    LEFT JOIN `files` AS `t2` ON `t2`.`path` = `t1`.`infolder` AND `t2`.`hidden` = "0"
+    WHERE ' . $mode . ' DESC
+    LIMIT ' . (($page * $onpage) - $onpage) . ', ' . $onpage,
+$mysql);
+
 $all = mysql_fetch_row(mysql_query('SELECT FOUND_ROWS();', $mysql));
 $all = $all[0] > $setup['top_num'] ? $setup['top_num'] : $all[0];
 
 $onpage = $onpage > $all ? $all : $onpage;
 
 ###############Вывод###############
-$out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/about.png" alt=""/>' . str_replace('%files%', $setup['top_num'], $_SESSION['language']['top20']) . ': <br/>' . $sortlink . '</div>';
+$out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/about.png" alt=""/>' . str_replace('%files%', $setup['top_num'], $language['top20']) . ': <br/>' . $sortlink . '</div>';
 ###############Cтраницы###############
 
 $pages = ceil($all / $onpage);
@@ -112,7 +95,7 @@ if (!$pages) {
 
 ###############Если их нет...###########
 if (!$all) {
-	$out .= $_SESSION['language']['empty'];
+	$out .= $language['empty'];
 }
 
 
@@ -190,12 +173,12 @@ while ($v = mysql_fetch_assoc($sql)) {
     	$extension = '';
     }
     //Собсвенно вывод
-    $out .= $pre . ' ' . $ico . '<strong><a href="' . DIRECTORY . 'view/' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>' . $extension . $v['size'] . $info . '[<a href="' . DIRECTORY . $v['back'] . '">' . $_SESSION['language']['go to the category'] . '</a>]<br/></div>';
+    $out .= $pre . ' ' . $ico . '<strong><a href="' . DIRECTORY . 'view/' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>' . $extension . $v['size'] . $info . '[<a href="' . DIRECTORY . $v['back'] . '">' . $language['go to the category'] . '</a>]<br/></div>';
 }
 //------------------------------------------------------------------------------------------
 
 if ($pages > 1) {
-    $out .= '<div class="iblock">' . $_SESSION['language']['pages'] . ': ';
+    $out .= '<div class="iblock">' . $language['pages'] . ': ';
     $asd = $page - 2;
     $asd2 = $page + 3;
     if ($asd < $all && $asd > 0 && $page > 3) {
@@ -222,7 +205,7 @@ if ($pages > 1) {
     $out .= '</div>';
 }
 //------------------------------------------------------------------------------------------
-echo $out . '<div class="iblock">- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a></div>';
+echo $out . '<div class="iblock">- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
 

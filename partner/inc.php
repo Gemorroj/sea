@@ -1887,12 +1887,14 @@ function partner_input ($buff)
 
 function partner_yes ($buff)
 {
-	return str_replace('<body>', '<body><div class="iblock"><div class="yes">' . $_SESSION['language']['partner_yes_auth'] . '<br/></div></div>', $buff);
+    $language = Language::getInstance()->getLanguage();
+	return str_replace('<body>', '<body><div class="iblock"><div class="yes">' . $language['partner_yes_auth'] . '<br/></div></div>', $buff);
 }
 
 function partner_no ($buff)
 {
-	return str_replace('<body>', '<body><div class="iblock"><div class="no">' . $_SESSION['language']['partner_no_auth'] . '<br/></div></div>', $buff);
+    $language = Language::getInstance()->getLanguage();
+	return str_replace('<body>', '<body><div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div></div>', $buff);
 }
 
 
@@ -1906,6 +1908,8 @@ if (isset($_GET['password']) && is_numeric($_GET['password']) && mysql_num_rows(
 }
 
 $basename = basename($_SERVER['PHP_SELF']);
+$language = Language::getInstance()->getLanguage();
+
 if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_zip.php' || $basename == 'cut.php' || $basename == 'jad.php' || ($basename == 'im.php' && isset($_REQUEST['W']) || isset($_REQUEST['H'])) || ($basename == 'zip.php' && @$_GET['action'] == 'preview') || ($basename == 'read.php' && @$_GET['page'] > 1)) && !isset($_SESSION['password'])) {
 	require_once dirname(__FILE__) . '/../moduls/header.php';
 
@@ -1916,7 +1920,7 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
 	$country = isset($_GET['country']) ? $_GET['country'] : geoip_country_name_by_addr($gi, $_SERVER['REMOTE_ADDR']);
 	geoip_close($gi);
 
-	$title = $_SESSION['language']['partner_auth'] . ' - ' . htmlspecialchars($country, ENT_NOQUOTES);
+	$title = $language['partner_auth'] . ' - ' . htmlspecialchars($country, ENT_NOQUOTES);
 
 
 
@@ -1927,7 +1931,7 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
 		if ($country == $v[0][3]) {
 			ksort ($v);
 			foreach ($v as $p) {
-				$pay .= $p[0] . ' (' . $p[2] . ', ' . $p[4] . ', ' . str_replace('%day%', ((strtotime($p[1]) - $_SERVER['REQUEST_TIME']) / 86400), $_SESSION['language']['partner_time']) . ') <a href="smsto:' . $p[0] . '?body=' . PREFIX . '">SMS1</a> / <a href="sms:' . $p[0] . '?body=' . PREFIX . '">SMS2</a><br/>';
+				$pay .= $p[0] . ' (' . $p[2] . ', ' . $p[4] . ', ' . str_replace('%day%', ((strtotime($p[1]) - $_SERVER['REQUEST_TIME']) / 86400), $language['partner_time']) . ') <a href="smsto:' . $p[0] . '?body=' . PREFIX . '">SMS1</a> / <a href="sms:' . $p[0] . '?body=' . PREFIX . '">SMS2</a><br/>';
 			}
 			$count[] = '&#187; ' . $v[0][3];
 		} else {
@@ -1939,7 +1943,7 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
 	$pay .= '</div>';
 
 
-	echo '<div class="iblock"><div class="no">' . $_SESSION['language']['partner_no_auth'] . '<br/></div>' . str_replace('%prefix%', '<strong>' . PREFIX . '</strong>', $_SESSION['language']['partner_prefix']) . '<br/></div><div class="iblock">' . implode('<br/>', $count) . '</div>' . $pay . '<div class="mainzag"><form action="' . DIRECTORY . '" method="get"><div>' . $_SESSION['language']['partner_enter'] . '<br/><input class="enter" type="password" name="password"/> <input class="buttom" type="submit"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . 'view/' . $id . '">' . $_SESSION['language']['go to the description of the file'] . '</a><br/><a href="' . DIRECTORY . '">' . $_SESSION['language']['home'] . '</a><br/></div>';
+	echo '<div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div>' . str_replace('%prefix%', '<strong>' . PREFIX . '</strong>', $language['partner_prefix']) . '<br/></div><div class="iblock">' . implode('<br/>', $count) . '</div>' . $pay . '<div class="mainzag"><form action="' . DIRECTORY . '" method="get"><div>' . $language['partner_enter'] . '<br/><input class="enter" type="password" name="password"/> <input class="buttom" type="submit"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/><a href="' . DIRECTORY . '">' . $language['home'] . '</a><br/></div>';
 
 
 	require_once dirname(__FILE__) . '/../moduls/foot.php';

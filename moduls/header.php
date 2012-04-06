@@ -5,7 +5,7 @@
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.        #
+#   		По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -19,6 +19,15 @@ header('Cache-Control: post-check=0, pre-check=0');
 header('Pragma: no-cache');
 
 
+define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
+
+
+if (isset($_POST['langpack']) && Language::getInstance()->setLangpack($_POST['langpack'])) {
+    // заменяем языковой пакет
+    $language = Language::getInstance()->getLanguage();
+}
+
+
 if ($setup['service_change']) {
 	if (isset($_GET['url'])) {
 		$_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($_GET['url']);
@@ -26,8 +35,6 @@ if ($setup['service_change']) {
 		$setup['site_url'] = $_SESSION['site_url'];
 	}
 }
-
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 if ($setup['style_change']) {
 	if (isset($_POST['style']) && parse_url($_POST['style'])) {
@@ -70,7 +77,7 @@ function callback($buffer)
 ob_start('callback');
 echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <link rel="alternate" type="application/rss+xml" href="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'rss.php"/>
 <link rel="stylesheet" type="text/css" href="http://' . $style . '"/>

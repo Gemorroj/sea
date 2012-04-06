@@ -10,7 +10,7 @@ if (!$setup['komments_change']) {
 ###############Проверка#########################
 
 
-$title .= $_SESSION['language']['comments'];
+$title .= $language['comments'];
 
 $id = intval($_GET['id']);
 $page = intval($_GET['page']);
@@ -39,14 +39,14 @@ if ($_GET['act'] == 'add') {
     //Проверка на ошибки
     $error = '';
     if (!$_POST['msg'] || !$_POST['name']) {
-    	$error .= $_SESSION['language']['not filled one of the fields'] . '<br/>';
+    	$error .= $language['not filled one of the fields'] . '<br/>';
     }
     if (mb_strlen($_POST['msg']) < 4) {
-    	$error .= $_SESSION['language']['you have not written a comment or he is too short'] . '<br/>';
+    	$error .= $language['you have not written a comment or he is too short'] . '<br/>';
     }
     if ($setup['komments_captcha']) {
     	if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
-    	    $error .= $_SESSION['language']['not a valid code'] . '<br/>';
+    	    $error .= $language['not a valid code'] . '<br/>';
     	}
     	unset($_SESSION['captcha_keystring']);
     }
@@ -56,18 +56,24 @@ if ($_GET['act'] == 'add') {
 
 
     if (mysql_fetch_row(mysql_query("SELECT 1 FROM `news_komments` WHERE `text` = '" . $_POST['msg'] . "' LIMIT 1", $mysql))) {
-    	$error .= $_SESSION['language']['why repeat myself'] . '<br/>';
+    	$error .= $language['why repeat myself'] . '<br/>';
     }
     //Если нет ошибок пишем в базу
     if ($error) {
     	error($error);
     }
 
-    mysql_query("INSERT INTO `news_komments` (`id_news`, `text`, `name`, `time`) VALUES (" . $id . ", '" . $_POST['msg'] . "', '" . $_POST['name'] . "', " . $_SERVER['REQUEST_TIME'] . ");", $mysql);
+    mysql_query("
+        INSERT INTO `news_komments` (
+            `id_news`, `text`, `name`, `time`
+        ) VALUES (
+            " . $id . ", '" . $_POST['msg'] . "', '" . $_POST['name'] . "', " . $_SERVER['REQUEST_TIME'] . "
+        );", $mysql
+    );
 
-    $out .= '<div class="iblock">' . $_SESSION['language']['your comment has been successfully added'] . '</div>';
+    $out .= '<div class="iblock">' . $language['your comment has been successfully added'] . '</div>';
 } else {
-    $out .= '<div class="mblock"><strong>' . $_SESSION['language']['comments'] . '</strong></div>';
+    $out .= '<div class="mblock"><strong>' . $language['comments'] . '</strong></div>';
     //Страницы
     if ($onpage) {
         $pages = ceil($all / $onpage);
@@ -80,7 +86,7 @@ if ($_GET['act'] == 'add') {
 
     //Если комментов пока нет
     if (!$all) {
-    	$out .= '<div class="row">' . $_SESSION['language']['at the moment comments for this news does not'] . '</div>';
+    	$out .= '<div class="row">' . $language['at the moment comments for this news does not'] . '</div>';
     }
 
     //Выводим комменты
@@ -104,19 +110,19 @@ if ($_GET['act'] == 'add') {
 
     // капча
     if ($setup['komments_captcha']) {
-    	$captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $_SESSION['language']['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
+    	$captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $language['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
     } else {
     	$captcha = '';
     }
 
 
     //Форма добавления камментов
-    $out .= '<div class="iblock"><form action="' . DIRECTORY . 'news_komm/' . $id . '/1/add" method="post"><div class="row">' . $_SESSION['language']['your name'] . ':<br/><input class="enter" name="name" type="text" value="" maxlength="10"/><br/>' . $_SESSION['language']['message'] . ':<br/><textarea class="enter" cols="40" rows="5" name="msg"></textarea><br/>' . $captcha . '<br/><input class="buttom" type="submit" value="' . $_SESSION['language']['go'] . '"/></div></form></div>';
+    $out .= '<div class="iblock"><form action="' . DIRECTORY . 'news_komm/' . $id . '/1/add" method="post"><div class="row">' . $language['your name'] . ':<br/><input class="enter" name="name" type="text" value="" maxlength="10"/><br/>' . $language['message'] . ':<br/><textarea class="enter" cols="40" rows="5" name="msg"></textarea><br/>' . $captcha . '<br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form></div>';
 
 
     //Страницы
     if ($pages > 1) {
-        $out .= '</div><div class="iblock">' . $_SESSION['language']['pages'] . ': ';
+        $out .= '</div><div class="iblock">' . $language['pages'] . ': ';
         $asd = $page - 2;
         $asd2 = $page + 3;
         if ($asd < $all && $asd > 0 && $page > 3) {
@@ -144,9 +150,9 @@ if ($_GET['act'] == 'add') {
 }
 
 
-echo $out . '<div class="iblock">- <a href="' . DIRECTORY . 'news/' . $id . '">' . $_SESSION['language']['news'] . '</a><br/>
-- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>
-- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a><br/></div>';
+echo $out . '<div class="iblock">- <a href="' . DIRECTORY . 'news/' . $id . '">' . $language['news'] . '</a><br/>
+- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
+- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
 
 require 'moduls/foot.php';
 

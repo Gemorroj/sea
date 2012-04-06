@@ -16,50 +16,54 @@ if (!$setup['exchanger_change']) {
 if ($_POST && $_FILES['file']) {
 
     if ($_FILES['file']['error']) {
-        error($_SESSION['language']['when downloading a file error occurred']);
+        error($language['when downloading a file error occurred']);
     }
 
     $pathinfo = pathinfo($_FILES['file']['name']);
 
     $ext = explode(',', strtolower($setup['exchanger_extensions']));
     if (!in_array(strtolower($pathinfo['extension']), $ext)) {
-        error($_SESSION['language']['invalid file extension']);
+        error($language['invalid file extension']);
     }
 
     if (!preg_match('/^' . $setup['exchanger_name'] . '+$/i', $pathinfo['filename'])) {
-        error($_SESSION['language']['not a valid file name']);
+        error($language['not a valid file name']);
     }
 
-    $path = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . intval($_POST['topath']) . ' AND `dir` = "1"', $mysql), 0);
+    $path = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . intval($_POST['topath']) . ' AND `dir` = "1" AND `hidden` = "0"', $mysql), 0);
 
     if (!$path) {
-        error($_SESSION['language']['you have specified the correct path to load']);
+        error($language['you have specified the correct path to load']);
     }
     $pathname = $path . $_FILES['file']['name'];
 
     $q = mysql_query('SELECT 1 FROM `files` WHERE `path` = "' . mysql_real_escape_string($pathname, $mysql) . '"', $mysql);
     if (mysql_num_rows($q)) {
-        error($_SESSION['language']['file with this name already exists']);
+        error($language['file with this name already exists']);
     }
 
     if (!move_uploaded_file($_FILES['file']['tmp_name'], $pathname)) {
-        error($_SESSION['language']['an error occurred while copying files']);
+        error($language['an error occurred while copying files']);
     }
 
-    if (!mysql_query("
-    INSERT INTO `files`
-    (`path`, `name`, `rus_name`, `infolder`, `size`, `timeupload`, `hidden`)
-    VALUES (
-    '" . mysql_real_escape_string($pathname, $mysql) . "',
-    '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
-    '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
-    '" . mysql_real_escape_string($path, $mysql) . "',
-    " . filesize($pathname) . ",
-    " . filectime($pathname) . ",
-    '" . ($setup['exchanger_hidden'] ? 1 : 0) . "'
-    );", $mysql)) {
+    $q = mysql_query("
+        INSERT INTO `files` (
+            `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`, `hidden`
+        ) VALUES (
+            '" . mysql_real_escape_string($pathname, $mysql) . "',
+            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
+            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
+            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
+            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
+            '" . mysql_real_escape_string($path, $mysql) . "',
+            " . filesize($pathname) . ",
+            " . filectime($pathname) . ",
+            '" . ($setup['exchanger_hidden'] ? 1 : 0) . "'
+        )", $mysql
+    );
+    if (!$q) {
         unlink($pathname);
-        error($_SESSION['language']['error writing to database']);
+        error($language['error writing to database']);
     }
     $id = mysql_insert_id($mysql);
 
@@ -112,43 +116,36 @@ if ($_POST && $_FILES['file']) {
         );
     }
 
-    echo '<div class="yes">' . $_SESSION['language']['file successfully added'] . $tmp .'</div>';
+    echo '<div class="yes">' . $language['file successfully added'] . $tmp .'</div>';
 } else {
-    $dirs = mysql_query('SELECT `id`, `path` FROM `files` WHERE `dir` = "1"', $mysql);
-    if ($_SESSION['langpack'] == 'russian') {
-        $name = 'rus_name';
-    } else {
-        $name = 'name';
-    }
-
-    echo '<div class="mainzag">' . $_SESSION['language']['upload file'] . '</div><form action="exchanger.php" method="post" enctype="multipart/form-data"><div class="row">' . $_SESSION['language']['save'] . '<select class="buttom" name="topath">';
+    echo '<div class="mainzag">' . $language['upload file'] . '</div><form action="exchanger.php" method="post" enctype="multipart/form-data"><div class="row">' . $language['save'] . '<select class="buttom" name="topath">';
 
     $in = array();
+    $dirs = mysql_query('SELECT `id`, `path` FROM `files` WHERE `dir` = "1" AND `hidden` = "0"', $mysql);
     while ($item = mysql_fetch_assoc($dirs)) {
         $arr = explode('/', $item['path']);
         $all = sizeof($arr) - 1;
         $in = array();
         for ($i = 0; $i < $all; ++$i) {
             if ($i > 0) {
-                $in[$i] = $in[$i-1] . mysql_real_escape_string($arr[$i], $mysql) . '/';
+                $in[$i] = $in[$i - 1] . mysql_real_escape_string($arr[$i], $mysql) . '/';
             } else {
                 $in[$i] = mysql_real_escape_string($arr[$i], $mysql) . '/';
             }
         }
 
-        $q = mysql_query('SELECT `' . $name . '` FROM `files` WHERE `path` IN ("' . implode('","', $in) . '")', $mysql);
-
         $names = '';
-        while ($arr = mysql_fetch_row($q)) {
-            $names .= $arr[0] . '/';
+        $q = mysql_query('SELECT ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` IN ("' . implode('","', $in) . '")', $mysql);
+        while ($arrn = mysql_fetch_assoc($q)) {
+            $names .= $arrn['name'] . '/';
         }
 
     	echo '<option value="' . $item['id'] . '">' . htmlspecialchars($names, ENT_NOQUOTES) . '</option>';
     }
-    echo '</select><br/>' . $_SESSION['language']['file'] . ' (' . htmlspecialchars($setup['exchanger_name'] . ' / ' . $setup['exchanger_extensions'], ENT_NOQUOTES) . ' / ' . ini_get('upload_max_filesize') . ')<br/><input type="file" name="file" class="enter"/><br/>' . $_SESSION['language']['screenshot'] . ' (jpeg,gif,png)<br/><input type="file" name="screen" class="enter"/><br/>' . $_SESSION['language']['description'] . '<br/><textarea class="enter" cols="24" rows="2" name="about"></textarea><br/><br/><input class="buttom" type="submit" value="' . $_SESSION['language']['go'] . '"/></div></form>';
+    echo '</select><br/>' . $language['file'] . ' (' . htmlspecialchars($setup['exchanger_name'] . ' / ' . $setup['exchanger_extensions'], ENT_NOQUOTES) . ' / ' . ini_get('upload_max_filesize') . ')<br/><input type="file" name="file" class="enter"/><br/>' . $language['screenshot'] . ' (jpeg,gif,png)<br/><input type="file" name="screen" class="enter"/><br/>' . $language['description'] . '<br/><textarea class="enter" cols="24" rows="2" name="about"></textarea><br/><br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
 }
 
-echo '<div class="iblock">- <a href="' . DIRECTORY . '">' . $_SESSION['language']['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $_SESSION['language']['home'] . '</a></div>';
+echo '<div class="iblock">- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
 

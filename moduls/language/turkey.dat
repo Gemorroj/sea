@@ -152,6 +152,7 @@ return array(
     'partner_enter' => 'If you have already sent SMS, you can enter the received autentication code here:',
     'recent_comments' => 'Recent comments:',
 
+
 );
 
 

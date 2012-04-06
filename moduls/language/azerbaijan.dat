@@ -132,7 +132,7 @@ return array(
     'email sent successfully' => 'Email sent successfully',
     'sending email error occurred' => 'Sending Email error occurred',
     'file unavailable for viewing' => 'File unavailable for viewing',
-
+    
     'when downloading a file error occurred' => 'an error occurred when downloading the file ',
     'invalid file extension' => 'Invalid file extension',
     'you have specified the correct path to load' => 'You have specified an incorrect path for upload',
@@ -143,7 +143,7 @@ return array(
     'upload file' => 'Upload file',
     'save' => 'Save',
     'not a valid file name' => 'Not a valid file name',
-
+    
     'partner_auth' => 'Authorization',
     'partner_yes_auth' => 'You have successfully authenticated!',
     'partner_no_auth' => 'You are not authorized!',
@@ -151,7 +151,6 @@ return array(
     'partner_prefix' => 'Send SMS with the text %prefix% to a corresponding phone number number',
     'partner_enter' => 'If you have already sent SMS, you can enter the received autentication code here:',
     'recent_comments' => 'Recent comments:',
-
 );
 
 
