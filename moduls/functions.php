@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -69,24 +69,24 @@ function bbcode($text = '')
     //конвертация кодов в теги регулярными выражениями
     // ББ коды
     $bbcode = array(
-    	'/\[url\](.+)\[\/url\]/isU' => '<a href="$1">$1</a>',
-    	'/\[url=(.+)\](.+)\[\/url\]/isU' => '<a href="$1">$2</a>',
-    	'/\[i\](.+)\[\/i\]/isU' => '<em>$1</em>',
-    	'/\[b\](.+)\[\/b\]/isU' => '<strong>$1</strong>',
-    	'/\[u\](.+)\[\/u\]/isU' => '<span style="text-decoration:underline;">$1</span>',
-    	'/\[big\](.+)\[\/big\]/isU' => '<span style="font-size:large;">$1</span>',
-    	'/\[small\](.+)\[\/small\]/isU' => '<span style="font-size:small;">$1</span>',
-    	'/\[code\](.+)\[\/code\]/isU' => '<code>$1</code>',
-    	'/\[red\](.+)\[\/red\]/isU' => '<span style="color:#ff0000;">$1</span>',
-    	'/\[yellow\](.+)\[\/yellow\]/isU' => '<span style="color:#ffff22;">$1</span>',
-    	'/\[green\](.+)\[\/green\]/isU' => '<span style="color:#00bb00;">$1</span>',
-    	'/\[blue\](.+)\[\/blue\]/isU' => '<span style="color:#0000bb;">$1</span>',
-    	'/\[white\](.+)\[\/white\]/isU' => '<span style="color:#ffffff;">$1</span>',
-    	'/\[color=(.+)\](.+)\[\/color\]/isU' => '<span style="color:$1;">$2</span>',
-    	'/\[size=([0-9]+)\](.+)\[\/size\]/isU' => '<span style="font-size:$1px;">$2</span>',
-    	'/\[img\](.+)\[\/img\]/isU' => '<img src="$1" alt=""/>',
+        '/\[url\](.+)\[\/url\]/isU' => '<a href="$1">$1</a>',
+        '/\[url=(.+)\](.+)\[\/url\]/isU' => '<a href="$1">$2</a>',
+        '/\[i\](.+)\[\/i\]/isU' => '<em>$1</em>',
+        '/\[b\](.+)\[\/b\]/isU' => '<strong>$1</strong>',
+        '/\[u\](.+)\[\/u\]/isU' => '<span style="text-decoration:underline;">$1</span>',
+        '/\[big\](.+)\[\/big\]/isU' => '<span style="font-size:large;">$1</span>',
+        '/\[small\](.+)\[\/small\]/isU' => '<span style="font-size:small;">$1</span>',
+        '/\[code\](.+)\[\/code\]/isU' => '<code>$1</code>',
+        '/\[red\](.+)\[\/red\]/isU' => '<span style="color:#ff0000;">$1</span>',
+        '/\[yellow\](.+)\[\/yellow\]/isU' => '<span style="color:#ffff22;">$1</span>',
+        '/\[green\](.+)\[\/green\]/isU' => '<span style="color:#00bb00;">$1</span>',
+        '/\[blue\](.+)\[\/blue\]/isU' => '<span style="color:#0000bb;">$1</span>',
+        '/\[white\](.+)\[\/white\]/isU' => '<span style="color:#ffffff;">$1</span>',
+        '/\[color=(.+)\](.+)\[\/color\]/isU' => '<span style="color:$1;">$2</span>',
+        '/\[size=([0-9]+)\](.+)\[\/size\]/isU' => '<span style="font-size:$1px;">$2</span>',
+        '/\[img\](.+)\[\/img\]/isU' => '<img src="$1" alt=""/>',
         '/\[br\]/isU' => '<br />'
-	);
+    );
     return preg_replace(array_keys($bbcode), array_values($bbcode), $text);
 }
 
@@ -99,26 +99,26 @@ function bbcode($text = '')
  */
 function antibb($text = '')
 {
-	// обратное преобразование ббкодов
-	$bbcode = array(
-    	'/<a href="(.+)">(.+)<\/a>/isU' => '[url=$1]$2[/url]',
-    	'/<em>(.+)<\/em>/isU' => '[i]$1[/i]',
-    	'/<strong>(.+)<\/strong>/isU' => '[b]$1[/b]',
-    	'/<span style="text-decoration:underline;">(.+)<\/span>/isU' => '[u]$1[/u]',
-    	'/<span style="font-size:large;">(.+)<\/span>/isU' => '[big]$1[/big]',
-    	'/<span style="font-size:small;">(.+)<\/span>/isU' => '[small]$1[/small]',
-    	'/<code>(.+)<\/code>/isU' => '[code]$1[/code]',
-    	'/<span style="color:#ff0000;">(.+)<\/span>/isU' => '[red]$1[/red]',
-    	'/<span style="color:#ffff22;">(.+)<\/span>/isU' => '[yellow]$1[/yellow]',
-    	'/<span style="color:#00bb00;">(.+)<\/span>/isU' => '[green]$1[/green]',
-    	'/<span style="color:#0000bb;">(.+)<\/span>/isU' => '[blue]$1[/blue]',
-    	'/<span style="color:#ffffff;">(.+)<\/span>/isU' => '[white]$1[/white]',
-    	'/<span style="color:(.+);">(.+)<\/span>/isU' => '[color=$1]$2[/color]',
-    	'/<span style="font-size:([0-9]+)px;">(.+)<\/span>/isU' => '[size=$1]$2[/size]',
-    	'/<img src="(.+)" alt=""\/>/isU' => '[img]$1[/img]',
-    	'/<br \/>/isU' => '[br]'
-	);
-	return preg_replace(array_keys($bbcode), array_values($bbcode), $text);
+    // обратное преобразование ббкодов
+    $bbcode = array(
+        '/<a href="(.+)">(.+)<\/a>/isU' => '[url=$1]$2[/url]',
+        '/<em>(.+)<\/em>/isU' => '[i]$1[/i]',
+        '/<strong>(.+)<\/strong>/isU' => '[b]$1[/b]',
+        '/<span style="text-decoration:underline;">(.+)<\/span>/isU' => '[u]$1[/u]',
+        '/<span style="font-size:large;">(.+)<\/span>/isU' => '[big]$1[/big]',
+        '/<span style="font-size:small;">(.+)<\/span>/isU' => '[small]$1[/small]',
+        '/<code>(.+)<\/code>/isU' => '[code]$1[/code]',
+        '/<span style="color:#ff0000;">(.+)<\/span>/isU' => '[red]$1[/red]',
+        '/<span style="color:#ffff22;">(.+)<\/span>/isU' => '[yellow]$1[/yellow]',
+        '/<span style="color:#00bb00;">(.+)<\/span>/isU' => '[green]$1[/green]',
+        '/<span style="color:#0000bb;">(.+)<\/span>/isU' => '[blue]$1[/blue]',
+        '/<span style="color:#ffffff;">(.+)<\/span>/isU' => '[white]$1[/white]',
+        '/<span style="color:(.+);">(.+)<\/span>/isU' => '[color=$1]$2[/color]',
+        '/<span style="font-size:([0-9]+)px;">(.+)<\/span>/isU' => '[size=$1]$2[/size]',
+        '/<img src="(.+)" alt=""\/>/isU' => '[img]$1[/img]',
+        '/<br \/>/isU' => '[br]'
+    );
+    return preg_replace(array_keys($bbcode), array_values($bbcode), $text);
 }
 
 
@@ -327,15 +327,15 @@ function scaner($path = '', $cont = 'folder.png')
     ob_flush();
     
     if (!is_readable($path)) {
-    	echo 'Error<br/>';
-    	return array();
-   	}
+        echo 'Error<br/>';
+        return array();
+       }
 
 
     chmod($path, 0777);
     $tmp = 0;
 
-	foreach (array_diff(scandir($path, 0), array('.', '..')) as $file) {
+    foreach (array_diff(scandir($path, 0), array('.', '..')) as $file) {
         if ($file[0] == '.') {
             continue;
         }
@@ -344,11 +344,11 @@ function scaner($path = '', $cont = 'folder.png')
 
         $tmp++;
         if ($tmp > 500) {
-			$tmp = 0;
+            $tmp = 0;
             // такая вот хуита... =( забиваем буфер
-			echo 'scan ' . htmlspecialchars($f, ENT_NOQUOTES) . '...' . str_repeat(' ', 512/*4096*/) . '<br/>';
-			ob_flush();
-		}
+            echo 'scan ' . htmlspecialchars($f, ENT_NOQUOTES) . '...' . str_repeat(' ', 512/*4096*/) . '<br/>';
+            ob_flush();
+        }
 
         $pathinfo = pathinfo($f);
         $aze_name = $tur_name = $rus_name = $name = $pathinfo['filename'];
@@ -362,25 +362,25 @@ function scaner($path = '', $cont = 'folder.png')
         if (is_dir($f)) {
 
             // скриншоты
-        	$screen = $GLOBALS['setup']['spath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
+            $screen = $GLOBALS['setup']['spath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($screen)) {
                 mkdir($screen, 0777);
             }
             chmod($screen, 0777);
 
-        	// описания
-        	$desc = $GLOBALS['setup']['opath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
+            // описания
+            $desc = $GLOBALS['setup']['opath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($desc)) {
                 mkdir($desc, 0777);
             }
-        	chmod($desc, 0777);
+            chmod($desc, 0777);
 
             // вложения
-        	$attach = $GLOBALS['setup']['apath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
+            $attach = $GLOBALS['setup']['apath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($attach)) {
                 mkdir($attach, 0777);
             }
-        	chmod($attach, 0777);
+            chmod($attach, 0777);
 
             sleep(0.005); // =///
             if (!mysql_query('
@@ -470,13 +470,13 @@ function dir_count($path = '', $increment = true)
 function size($int = 0)
 {
     if ($int < 1024) {
-    	return $int . 'b';
+        return $int . 'b';
     } else if ($int < 1048576) {
-    	return round($int / 1024, 2) . 'Kb';
+        return round($int / 1024, 2) . 'Kb';
     } else if ($int < 1073741824) {
-    	return round($int / 1048576, 2) . 'Mb';
+        return round($int / 1048576, 2) . 'Mb';
     } else {
-    	return round($int / 1073741824, 2) . 'Gb';
+        return round($int / 1073741824, 2) . 'Gb';
     }
 }
 
@@ -566,7 +566,7 @@ function thm($path = '')
 
 
     if (!$file = $thm->extractInString(pathinfo($path, PATHINFO_FILENAME).'.xml')) {
-    	$file = $thm->extractInString('Theme.xml');
+        $file = $thm->extractInString('Theme.xml');
     }
 
     if (!$file) {
@@ -583,8 +583,8 @@ function thm($path = '')
 
     // fix bug in Tar.php
     if (!$file) {
-    	preg_match('/<\?\s*xml\s*version\s*=\s*"1\.0"\s*\?>(.*)<\/.+>/isU', file_get_contents($path), $arr);
-    	$file = trim($arr[0]);
+        preg_match('/<\?\s*xml\s*version\s*=\s*"1\.0"\s*\?>(.*)<\/.+>/isU', file_get_contents($path), $arr);
+        $file = trim($arr[0]);
     }
 
 
@@ -593,15 +593,15 @@ function thm($path = '')
 
     $str = '';
     if ($load->Author_organization['Value']) {
-    	$str .= $language['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
+        $str .= $language['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
     }
 
     if ($load['version']) {
-    	$str .= $language['version'] . ': ' . htmlspecialchars($load['version'], ENT_NOQUOTES) . '<br/>';
+        $str .= $language['version'] . ': ' . htmlspecialchars($load['version'], ENT_NOQUOTES) . '<br/>';
 
-    	if (in_array($load['version'], array_keys($ver_thm))) {
-    		$str .= $language['models'] . ': ' . $ver_thm[(string)$load['version']] . '<br/>';
-    	}            
+        if (in_array($load['version'], array_keys($ver_thm))) {
+            $str .= $language['models'] . ': ' . $ver_thm[(string)$load['version']] . '<br/>';
+        }            
     }
 
     return $str;
@@ -641,9 +641,9 @@ function simple_resize ($data)
  */
 function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
 {
-	if (!is_writable(dirname($out))) {
-		return false;
-	}
+    if (!is_writable(dirname($out))) {
+        return false;
+    }
 
     //$out = pathinfo($out);
     //$out = realpath($out['dirname']) . '/' . $out['basename'];
@@ -680,23 +680,23 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
 
                 $a = sizeof($arr);
                 for ($i = 0; $i < $a; ++$i) {
-            		$tmp1 = DIR . '/cache/' . mt_rand() . '.gif';
-            		$tmp2 = DIR . '/cache/' . mt_rand() . '.gif';
+                    $tmp1 = DIR . '/cache/' . mt_rand() . '.gif';
+                    $tmp2 = DIR . '/cache/' . mt_rand() . '.gif';
 
-            		file_put_contents($tmp1, $arr[$i]);
-                	$resize = imagecreatefromgif($tmp1);
+                    file_put_contents($tmp1, $arr[$i]);
+                    $resize = imagecreatefromgif($tmp1);
 
-                	$image_p = imagecreatetruecolor($w, $h);
-                	imagecopyresampled($image_p, $resize, 0, 0, 0, 0, $w, $h, $wn, $hn);
+                    $image_p = imagecreatetruecolor($w, $h);
+                    imagecopyresampled($image_p, $resize, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
 
-                	if ($marker) {
-            			$image_p = marker($image_p, imagecreatefrompng(DIR . '/marker.png'));
-            		}
+                    if ($marker) {
+                        $image_p = marker($image_p, imagecreatefrompng(DIR . '/marker.png'));
+                    }
 
-                	imagegif($image_p, $tmp2);
-                	imagedestroy($image_p);
-                	imagedestroy($resize);
+                    imagegif($image_p, $tmp2);
+                    imagedestroy($image_p);
+                    imagedestroy($resize);
 
                     $frames[] = file_get_contents($tmp2);
                     $framed[] = $dly[$i];
@@ -721,8 +721,8 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
                 return file_put_contents($out, $gif->GetAnimation());
                 break;
             } else {
-            	// GIF
-        	   $old = imagecreatefromgif($in);
+                // GIF
+               $old = imagecreatefromgif($in);
             }
             break;
 
@@ -765,7 +765,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
     imagecopyresampled($new, $old, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
     if ($marker) {
-    	$new = marker($new, imagecreatefrompng(DIR . '/marker.png'));
+        $new = marker($new, imagecreatefrompng(DIR . '/marker.png'));
     }
 
 
@@ -831,10 +831,10 @@ function jar_ico($jar, $f)
 function error($str = '')
 {
     $language = Language::getInstance()->getLanguage();
-	require_once DIR . '/header.php';
-	echo '<div class="no">' . $str . '</div><div class="iblock">- <a href="javascript:history.back();">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $GLOBALS['setup']['site_url'] . '">' . $language['home'] . '</a><br/></div>';
-	require_once DIR . '/foot.php';
-	exit;
+    require_once DIR . '/header.php';
+    echo '<div class="no">' . $str . '</div><div class="iblock">- <a href="javascript:history.back();">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $GLOBALS['setup']['site_url'] . '">' . $language['home'] . '</a><br/></div>';
+    require_once DIR . '/foot.php';
+    exit;
 }
 
 
@@ -845,7 +845,7 @@ function error($str = '')
  */
 function pass($min = 6, $max = 8)
 {
-	return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ0123456789'), 0, mt_rand($min, $max));
+    return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ0123456789'), 0, mt_rand($min, $max));
 }
 
 
@@ -857,9 +857,9 @@ function pass($min = 6, $max = 8)
  */
 function str_to_utf8($str)
 {
-	if (@mb_convert_encoding($str, 'UTF-8', 'UTF-8') != $str) {
-		$str = mb_convert_encoding($str, 'UTF-8', 'Windows-1251');
-	}
+    if (@mb_convert_encoding($str, 'UTF-8', 'UTF-8') != $str) {
+        $str = mb_convert_encoding($str, 'UTF-8', 'Windows-1251');
+    }
     return $str;
 }
 

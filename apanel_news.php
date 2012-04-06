@@ -19,17 +19,17 @@ if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER[
 ////////////////////////////
 
 if ($_GET['action'] == 'del') {
-	if (!$_GET['level']) {
-		echo 'Будут удалены все новости! Продолжить?<br/><a href="apanel_news.php?action=del&amp;level=1">Да, продолжить</a><br/>';
-		require 'moduls/foot.php';
-		exit;
-	} else {
-		if (mysql_query('TRUNCATE TABLE `news`;', $mysql)) {
-			echo 'База данных новостей очищена.<br/>';
-		} else {
-			error('Ошибка: ' . mysql_error($mysql));
-		}
-	}
+    if (!$_GET['level']) {
+        echo 'Будут удалены все новости! Продолжить?<br/><a href="apanel_news.php?action=del&amp;level=1">Да, продолжить</a><br/>';
+        require 'moduls/foot.php';
+        exit;
+    } else {
+        if (mysql_query('TRUNCATE TABLE `news`;', $mysql)) {
+            echo 'База данных новостей очищена.<br/>';
+        } else {
+            error('Ошибка: ' . mysql_error($mysql));
+        }
+    }
 }
 
 

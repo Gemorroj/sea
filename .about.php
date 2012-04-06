@@ -49,19 +49,19 @@ switch ($act) {
         
         $i = 0;
         while ($file = mysql_fetch_assoc($q)) {
-        	$about = mb_substr($file['path'], mb_strlen($setup['path']));
+            $about = mb_substr($file['path'], mb_strlen($setup['path']));
         
-        	if ($file['dir']) {
+            if ($file['dir']) {
                 mkdir($setup['opath'] . mb_substr($about, 0, -mb_strlen(strrchr($about, '/'))), 0777, true);
-        	}
+            }
         
-        	if (trim($file['about'])) {
-        		if (file_put_contents($setup['opath'] . $about . '.txt', $file['about'])) {
-        			$i++;
-        		} else {
+            if (trim($file['about'])) {
+                if (file_put_contents($setup['opath'] . $about . '.txt', $file['about'])) {
+                    $i++;
+                } else {
                     echo 'Error - '.$about.'<br/>';
                 }
-        	}
+            }
         }
         echo 'Готово. Создано <strong>' . $i . '</strong> файлов описаний';
     break;

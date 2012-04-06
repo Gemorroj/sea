@@ -15,11 +15,11 @@ $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $name;
 
 
 if (file_exists($name)) {
-	header('Location: ' . $location, true, 301);
-	exit;
+    header('Location: ' . $location, true, 301);
+    exit;
 } else if (file_exists($name . '.swf')) {
-	header('Location: ' . $location . '.swf', true, 301);
-	exit;
+    header('Location: ' . $location . '.swf', true, 301);
+    exit;
 }
 
 
@@ -38,10 +38,10 @@ if ($file_info[1] == '.nth') {
 
     $teg = simplexml_load_string($content[0]['content'])->wallpaper['src'];
     if (!$teg) {
-    	$teg = simplexml_load_string($content[0]['content'])->wallpaper['main_display_graphics'];
+        $teg = simplexml_load_string($content[0]['content'])->wallpaper['main_display_graphics'];
     }
     if (!$teg) {
-    	$teg = simplexml_load_string($content[0]['content'])->background['main_default_bg'];
+        $teg = simplexml_load_string($content[0]['content'])->background['main_default_bg'];
     }
 
     $image = $nth->extract(PCLZIP_OPT_BY_NAME, (string)$teg, PCLZIP_OPT_EXTRACT_AS_STRING);
@@ -63,25 +63,25 @@ if ($file_info[1] == '.nth') {
 
     $content = $thm->extractInString('Theme.xml');
     if (!$content) {
-    	$content = $thm->extractInString(pathinfo($file_info[0], PATHINFO_FILENAME).'.xml');
+        $content = $thm->extractInString(pathinfo($file_info[0], PATHINFO_FILENAME).'.xml');
     }
 
     if (!$content) {
-  		$list = $thm->listContent();
+          $list = $thm->listContent();
         $all = sizeof($list);
-  		for ($i = 0; $i < $all; ++$i) {
- 			if (pathinfo($list[$i]['filename'], PATHINFO_EXTENSION) == 'xml') {
-				$content = $thm->extractInString($list[$i]['filename']);
-				break;
- 			}
-  		}
-   	}
+          for ($i = 0; $i < $all; ++$i) {
+             if (pathinfo($list[$i]['filename'], PATHINFO_EXTENSION) == 'xml') {
+                $content = $thm->extractInString($list[$i]['filename']);
+                break;
+             }
+          }
+       }
 
     // fix bug in Tar.php
     if (!$content) {
-    	preg_match('/<\?\s*xml\s*version\s*=\s*"1\.0"\s*\?>(.*)<\/.+>/isU', file_get_contents($file_info[0]), $arr);
-    	$content = trim($arr[0]);
-    	unset($arr);
+        preg_match('/<\?\s*xml\s*version\s*=\s*"1\.0"\s*\?>(.*)<\/.+>/isU', file_get_contents($file_info[0]), $arr);
+        $content = trim($arr[0]);
+        unset($arr);
     }
 
 

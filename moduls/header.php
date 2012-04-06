@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -29,29 +29,29 @@ if (isset($_POST['langpack']) && Language::getInstance()->setLangpack($_POST['la
 
 
 if ($setup['service_change']) {
-	if (isset($_GET['url'])) {
-		$_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($_GET['url']);
-	} else if (isset($_SESSION['site_url'])) {
-		$setup['site_url'] = $_SESSION['site_url'];
-	}
+    if (isset($_GET['url'])) {
+        $_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($_GET['url']);
+    } else if (isset($_SESSION['site_url'])) {
+        $setup['site_url'] = $_SESSION['site_url'];
+    }
 }
 
 if ($setup['style_change']) {
-	if (isset($_POST['style']) && parse_url($_POST['style'])) {
-		$style = htmlspecialchars(rawurldecode($_POST['style']), ENT_COMPAT);
-		setcookie('style', $_POST['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
-	} else if (isset($_GET['style']) && parse_url($_GET['style'])) {
-		$style = htmlspecialchars(rawurldecode($_GET['style']), ENT_COMPAT);
-		setcookie('style', $_GET['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
-	} else if (isset($_COOKIE['style']) && parse_url($_COOKIE['style'])) {
-		$style = htmlspecialchars($_COOKIE['style'], ENT_COMPAT);
-	} else if (isset($_SESSION['style'])) {
-		$style = $_SESSION['style'];
-	} else {
-		$style = $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['css'] . '.css';
-	}
+    if (isset($_POST['style']) && parse_url($_POST['style'])) {
+        $style = htmlspecialchars(rawurldecode($_POST['style']), ENT_COMPAT);
+        setcookie('style', $_POST['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
+    } else if (isset($_GET['style']) && parse_url($_GET['style'])) {
+        $style = htmlspecialchars(rawurldecode($_GET['style']), ENT_COMPAT);
+        setcookie('style', $_GET['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
+    } else if (isset($_COOKIE['style']) && parse_url($_COOKIE['style'])) {
+        $style = htmlspecialchars($_COOKIE['style'], ENT_COMPAT);
+    } else if (isset($_SESSION['style'])) {
+        $style = $_SESSION['style'];
+    } else {
+        $style = $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['css'] . '.css';
+    }
 } else {
-	$style = $_SERVER['HTTP_HOST'] . DIRECTORY . ($setup['css'] ? $setup['css'] : 'style') . '.css';
+    $style = $_SERVER['HTTP_HOST'] . DIRECTORY . ($setup['css'] ? $setup['css'] : 'style') . '.css';
 }
 
 

@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -16,7 +16,7 @@ require 'moduls/header.php';
 
 ###############Если нарезка выключенa##########
 if (!$setup['cut_change']) {
-	error('Not found!');
+    error('Not found!');
 }
 ###############Проверка переменных#############
 
@@ -25,7 +25,7 @@ $s = isset($_POST['s']) ? intval($_POST['s']) : 0;
 $p = isset($_POST['p']) ? intval($_POST['p']) : 0;
 
 if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') {
-	error($setup['hackmess']);
+    error($setup['hackmess']);
 }
 
 $title .= $language['splitting'];

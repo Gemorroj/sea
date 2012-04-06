@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
-# ============ЗАГРУЗ-ЦЕНТР============= #
-# 	 Автор : Sea #
-# E-mail : x-sea-x@ya.ru #
-# ICQ : 355152215 #
-# Вы не имеете права распространять данный скрипт. #
-# 		По всем вопросам пишите в ICQ. #
+#     ============ЗАГРУЗ-ЦЕНТР=============           #
+#                  Автор  :  Sea                      #
+#               E-mail  :  x-sea-x@ya.ru              #
+#                  ICQ  :  355152215                  #
+#   Вы не имеете права распространять данный скрипт.  #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -14,7 +14,7 @@ require 'moduls/config.php';
 require 'moduls/header.php';
 ###############Если комменты выключены##########
 if (!$setup['komments_change']) {
-	error('Not found');
+    error('Not found');
 }
 
 $title .= $language['comments'];
@@ -25,7 +25,7 @@ $out = '';
 $id = intval($_GET['id']);
 $page = intval($_GET['page']);
 if ($page < 1) {
-	$page = 1;
+    $page = 1;
 }
 
 $onpage = get2ses('onpage');
@@ -37,7 +37,7 @@ if ($onpage < 3) {
 ###############Инфа о файле#####################
 $file_info_real = mysql_fetch_assoc(mysql_query('SELECT `path`, `loads`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
 if (!file_exists($file_info_real['path'])) {
-	error('File not found!');
+    error('File not found!');
 }
 $seo = unserialize($file_info_real['seo']);
 ###############Получаем комменты###############
@@ -77,19 +77,19 @@ if ($_GET['act'] == 'add') {
     //Проверка на ошибки
     $error = '';
     if (!$_POST['msg'] || !$_POST['name']) {
-    	$error .= $language['not filled one of the fields'] . '<br/>';
+        $error .= $language['not filled one of the fields'] . '<br/>';
     }
     if (mb_strlen($_POST['msg']) < 4) {
-    	$error .= $language['you have not written a comment or he is too short'] . '<br/>';
+        $error .= $language['you have not written a comment or he is too short'] . '<br/>';
     }
     //if(empty($file_info_real['loads'])){
-    //	$error .= $language['before the vote, download the file'].'<br/>';
+    //    $error .= $language['before the vote, download the file'].'<br/>';
     //}
     if ($setup['komments_captcha']) {
-    	if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
-    	    $error .= $language['not a valid code'] . '<br/>';
-    	}
-    	unset($_SESSION['captcha_keystring']);
+        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
+            $error .= $language['not a valid code'] . '<br/>';
+        }
+        unset($_SESSION['captcha_keystring']);
     }
 
     $_POST['msg'] = mysql_real_escape_string(nl2br(bbcode(htmlspecialchars(mb_substr($_POST['msg'], 0, 32512), ENT_NOQUOTES))), $mysql);
@@ -97,11 +97,11 @@ if ($_GET['act'] == 'add') {
 
 
     if (mysql_fetch_row(mysql_query("SELECT 1 FROM `komments` WHERE `text` = '" . $_POST['msg'] . "' LIMIT 1", $mysql))) {
-    	$error .= $language['why repeat myself'] . '<br/>';
+        $error .= $language['why repeat myself'] . '<br/>';
     }
     //Если нет ошибок пишем в базу
     if ($error) {
-    	error($error);
+        error($error);
     }
     mysql_query("
         INSERT INTO `komments` (
@@ -120,7 +120,7 @@ if ($_GET['act'] == 'add') {
 
     //Если комментов пока нет
     if (!$all) {
-    	$out .= '<div class="row">' . $language['at the moment comment for this file does not'] . '</div>';
+        $out .= '<div class="row">' . $language['at the moment comment for this file does not'] . '</div>';
     }
     //Выводим комменты
 
@@ -129,9 +129,9 @@ if ($_GET['act'] == 'add') {
         $bool != $bool;
 
         if ($bool) {
-        	$out .= '<div class="row">';
+            $out .= '<div class="row">';
         } else {
-        	$out .= '<div class="mainzag">';
+            $out .= '<div class="mainzag">';
         }
 
 
@@ -144,9 +144,9 @@ if ($_GET['act'] == 'add') {
 
     // капча
     if ($setup['komments_captcha']) {
-    	$captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $language['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
+        $captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $language['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
     } else {
-    	$captcha = '';
+        $captcha = '';
     }
 
     //Форма добавления камментов
@@ -159,23 +159,23 @@ if ($_GET['act'] == 'add') {
         $asd = $page - 2;
         $asd2 = $page + 3;
         if($asd < $all && $asd > 0 && $page > 3) {
-        	$out .= ' <a href="' . DIRECTORY . 'komm/' . $id . '/1">1</a> ... ';
+            $out .= ' <a href="' . DIRECTORY . 'komm/' . $id . '/1">1</a> ... ';
         }
         for ($i = $asd; $i < $asd2; ++$i) {
             if ($i < $all && $i > 0) {
                 if ($i > $pages ) {
-                	break;
+                    break;
                 }
                 if ($page == $i) {
-                	$out .= '<strong>[' . $i . ']</strong> ';
+                    $out .= '<strong>[' . $i . ']</strong> ';
                 } else {
-                	$out .= '<a href="' . DIRECTORY . 'komm/' . $id . '/' . $i . '">' . $i . '</a> ';
+                    $out .= '<a href="' . DIRECTORY . 'komm/' . $id . '/' . $i . '">' . $i . '</a> ';
                 }
             }
         }
         if ($i <= $pages) {
             if ($asd2 < $all) {
-            	$out .= ' ... <a href="' . DIRECTORY . 'komm/' . $id . '/' . $pages . '">' . $pages . '</a>';
+                $out .= ' ... <a href="' . DIRECTORY . 'komm/' . $id . '/' . $pages . '">' . $pages . '</a>';
             }
         }
         $out .= '<br/>';
@@ -184,9 +184,9 @@ if ($_GET['act'] == 'add') {
 
 
 if ($back['id']) {
-	$str = '- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>';
+    $str = '- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>';
 } else {
-	$str = '';
+    $str = '';
 }
 
 echo $out . '<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';

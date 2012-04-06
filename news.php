@@ -22,24 +22,24 @@ $id = isset($_GET['id']) ? abs($_GET['id']) : 0;
 // всего новостей
 $all = mysql_result(mysql_query('SELECT COUNT(1) FROM `news`', $mysql), 0);
 if (!$all) {
-	error($language['news yet']);
+    error($language['news yet']);
 }
 
 
 $pages = ceil($all / $onpage);
 if (!$pages) {
-	$pages = 1;
+    $pages = 1;
 }
 if ($page > $pages) {
-	$page = 1;
+    $page = 1;
 }
 if ($page) {
-	$start = ($page - 1) * $onpage;
+    $start = ($page - 1) * $onpage;
 } else {
-	$start = 0;
+    $start = 0;
 }
 if ($start > $all || $start < 1) {
-	$start = 0;
+    $start = 0;
 }
 $q = mysql_query('
     SELECT `news`.`id`,
@@ -66,25 +66,25 @@ if ($pages > 1) {
     $asd = $page - 2;
     $asd2 = $page + 3;
     if ($asd < $all && $asd > 0 && $page > 3) {
-    	echo '<a href="' . DIRECTORY . 'news/1">1</a> ... ';
+        echo '<a href="' . DIRECTORY . 'news/1">1</a> ... ';
     }
 
     for ($i = $asd; $i < $asd2; ++$i) {
-    	if ($i <= $all && $i > 0) {
-    		if ($i > $pages) {
-    			break;
-    		}
-    		if ($page == $i) {
-    			echo '<strong>[' . $i . ']</strong> ';
-    		} else {
-    			echo '<a href="' . DIRECTORY . 'news/' . $i . '">' . $i . '</a> ';
-    		}
-    	}
+        if ($i <= $all && $i > 0) {
+            if ($i > $pages) {
+                break;
+            }
+            if ($page == $i) {
+                echo '<strong>[' . $i . ']</strong> ';
+            } else {
+                echo '<a href="' . DIRECTORY . 'news/' . $i . '">' . $i . '</a> ';
+            }
+        }
     }
     if ($i <= $pages) {
-    	if ($asd2 < $all) {
-    		echo ' ... <a href="' . DIRECTORY . 'news/' . $pages . '">' . $pages . '</a>';
-    	}
+        if ($asd2 < $all) {
+            echo ' ... <a href="' . DIRECTORY . 'news/' . $pages . '">' . $pages . '</a>';
+        }
     }
     
     echo '<br/>';
@@ -98,10 +98,10 @@ if ($pages > 1) {
 echo '<div class="iblock">- <a href="' . DIRECTORY . 'user/' . $id . '">' . $language['settings'] . '</a><br/>';
 
 if ($setup['stat_change']) {
-	echo '- <a href="' . DIRECTORY . 'stat.php">' . $language['statistics'] . '</a><br/>';
+    echo '- <a href="' . DIRECTORY . 'stat.php">' . $language['statistics'] . '</a><br/>';
 }
 if ($setup['zakaz_change']) {
-	echo '- <a href="' . DIRECTORY . 'table.php">' . $language['orders'] . '</a><br/>';
+    echo '- <a href="' . DIRECTORY . 'table.php">' . $language['orders'] . '</a><br/>';
 }
 echo '- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 

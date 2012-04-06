@@ -1882,74 +1882,74 @@ mysql_query('DELETE FROM `passwords` WHERE `end_date` < NOW()');
 
 function partner_input ($buff)
 {
-	return preg_replace('/<input class="enter" size="\d+" type="text" value="http:\/\/.+"\/>/', '', $buff);
+    return preg_replace('/<input class="enter" size="\d+" type="text" value="http:\/\/.+"\/>/', '', $buff);
 }
 
 function partner_yes ($buff)
 {
     $language = Language::getInstance()->getLanguage();
-	return str_replace('<body>', '<body><div class="iblock"><div class="yes">' . $language['partner_yes_auth'] . '<br/></div></div>', $buff);
+    return str_replace('<body>', '<body><div class="iblock"><div class="yes">' . $language['partner_yes_auth'] . '<br/></div></div>', $buff);
 }
 
 function partner_no ($buff)
 {
     $language = Language::getInstance()->getLanguage();
-	return str_replace('<body>', '<body><div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div></div>', $buff);
+    return str_replace('<body>', '<body><div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div></div>', $buff);
 }
 
 
 if (isset($_GET['password']) && is_numeric($_GET['password']) && mysql_num_rows(mysql_query('SELECT 1 FROM `passwords` WHERE `password` = ' . $_GET['password'], $mysql))) {
-	ob_start('partner_yes');
-	$_SESSION['password'] = $_GET['password'];
+    ob_start('partner_yes');
+    $_SESSION['password'] = $_GET['password'];
 } else if (isset($_SESSION['password']) && !mysql_num_rows(mysql_query('SELECT 1 FROM `passwords` WHERE `password` = ' . $_SESSION['password'], $mysql))) {
-	unset($_SESSION['password']);
+    unset($_SESSION['password']);
 } else if (isset($_GET['password'])) {
-	ob_start('partner_no');
+    ob_start('partner_no');
 }
 
 $basename = basename($_SERVER['PHP_SELF']);
 $language = Language::getInstance()->getLanguage();
 
 if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_zip.php' || $basename == 'cut.php' || $basename == 'jad.php' || ($basename == 'im.php' && isset($_REQUEST['W']) || isset($_REQUEST['H'])) || ($basename == 'zip.php' && @$_GET['action'] == 'preview') || ($basename == 'read.php' && @$_GET['page'] > 1)) && !isset($_SESSION['password'])) {
-	require_once dirname(__FILE__) . '/../moduls/header.php';
+    require_once dirname(__FILE__) . '/../moduls/header.php';
 
 
-	require dirname(__FILE__) . '/geoip/geoip.inc';
+    require dirname(__FILE__) . '/geoip/geoip.inc';
 
-	$gi = geoip_open(dirname(__FILE__) . '/geoip/GeoIP.dat', GEOIP_STANDARD);
-	$country = isset($_GET['country']) ? $_GET['country'] : geoip_country_name_by_addr($gi, $_SERVER['REMOTE_ADDR']);
-	geoip_close($gi);
+    $gi = geoip_open(dirname(__FILE__) . '/geoip/GeoIP.dat', GEOIP_STANDARD);
+    $country = isset($_GET['country']) ? $_GET['country'] : geoip_country_name_by_addr($gi, $_SERVER['REMOTE_ADDR']);
+    geoip_close($gi);
 
-	$title = $language['partner_auth'] . ' - ' . htmlspecialchars($country, ENT_NOQUOTES);
-
-
-
-	$pay = '<div class="mblock">';
-	$count = array();
-	$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-	foreach ($partner as $v) {
-		if ($country == $v[0][3]) {
-			ksort ($v);
-			foreach ($v as $p) {
-				$pay .= $p[0] . ' (' . $p[2] . ', ' . $p[4] . ', ' . str_replace('%day%', ((strtotime($p[1]) - $_SERVER['REQUEST_TIME']) / 86400), $language['partner_time']) . ') <a href="smsto:' . $p[0] . '?body=' . PREFIX . '">SMS1</a> / <a href="sms:' . $p[0] . '?body=' . PREFIX . '">SMS2</a><br/>';
-			}
-			$count[] = '&#187; ' . $v[0][3];
-		} else {
-			$count[] = '<a href="' . DIRECTORY . 'load/' . $id . '/?country=' . rawurlencode($v[0][3]) . '">' . $v[0][3] . '</a>';
-		}
-	}
-	$count = array_unique($count);
-	//sort($count);
-	$pay .= '</div>';
+    $title = $language['partner_auth'] . ' - ' . htmlspecialchars($country, ENT_NOQUOTES);
 
 
-	echo '<div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div>' . str_replace('%prefix%', '<strong>' . PREFIX . '</strong>', $language['partner_prefix']) . '<br/></div><div class="iblock">' . implode('<br/>', $count) . '</div>' . $pay . '<div class="mainzag"><form action="' . DIRECTORY . '" method="get"><div>' . $language['partner_enter'] . '<br/><input class="enter" type="password" name="password"/> <input class="buttom" type="submit"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/><a href="' . DIRECTORY . '">' . $language['home'] . '</a><br/></div>';
+
+    $pay = '<div class="mblock">';
+    $count = array();
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    foreach ($partner as $v) {
+        if ($country == $v[0][3]) {
+            ksort ($v);
+            foreach ($v as $p) {
+                $pay .= $p[0] . ' (' . $p[2] . ', ' . $p[4] . ', ' . str_replace('%day%', ((strtotime($p[1]) - $_SERVER['REQUEST_TIME']) / 86400), $language['partner_time']) . ') <a href="smsto:' . $p[0] . '?body=' . PREFIX . '">SMS1</a> / <a href="sms:' . $p[0] . '?body=' . PREFIX . '">SMS2</a><br/>';
+            }
+            $count[] = '&#187; ' . $v[0][3];
+        } else {
+            $count[] = '<a href="' . DIRECTORY . 'load/' . $id . '/?country=' . rawurlencode($v[0][3]) . '">' . $v[0][3] . '</a>';
+        }
+    }
+    $count = array_unique($count);
+    //sort($count);
+    $pay .= '</div>';
 
 
-	require_once dirname(__FILE__) . '/../moduls/foot.php';
-	exit;
+    echo '<div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div>' . str_replace('%prefix%', '<strong>' . PREFIX . '</strong>', $language['partner_prefix']) . '<br/></div><div class="iblock">' . implode('<br/>', $count) . '</div>' . $pay . '<div class="mainzag"><form action="' . DIRECTORY . '" method="get"><div>' . $language['partner_enter'] . '<br/><input class="enter" type="password" name="password"/> <input class="buttom" type="submit"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/><a href="' . DIRECTORY . '">' . $language['home'] . '</a><br/></div>';
+
+
+    require_once dirname(__FILE__) . '/../moduls/foot.php';
+    exit;
 } else if ($basename == 'view.php' && !isset($_SESSION['password'])) {
-	ob_start('partner_input');
+    ob_start('partner_input');
 }
 
 

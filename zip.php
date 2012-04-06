@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -16,7 +16,7 @@ require 'moduls/header.php';
 
 ###############Если zip выключен##########
 if (!$setup['zip_change']) {
-	error('Not found');
+    error('Not found');
 }
 ###############Проверка переменных###############
 
@@ -41,14 +41,14 @@ $start = isset($_GET['start']) ? intval($_GET['start']) : 0;
 
 $d = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
 if (!file_exists($d['path'])) {
-	error('File not found');
+    error('File not found');
 }
 ###############Получаем каталог#############
 $seo = unserialize($d['seo']);
 $filename = pathinfo($d['path']);
 $ext = strtolower($filename['extension']);
 if ($ext != 'zip') {
-	error('It is not ZIP archive');
+    error('It is not ZIP archive');
 }
 $dir = $filename['dirname'] . '/';
 $back = mysql_fetch_assoc(mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql));
@@ -65,7 +65,7 @@ if (!isset($_GET['action'])) {
     $zip = new PclZip($d['path']);
 
     if (!$list = $zip->listContent()) {
-    	error('Error: ' . $zip->errorInfo(true));
+        error('Error: ' . $zip->errorInfo(true));
     }
     $listcontent = $sizelist = $savelist = '';
     $aa = sizeof($list);
@@ -98,10 +98,10 @@ if (!isset($_GET['action'])) {
     $n = 0;
     $pages = ceil($count / $onpage);
     if (!$pages) {
-    	$pages = 1;
+        $pages = 1;
     }
     if ($page) {
-    	$n = ($onpage * $page) - $onpage;
+        $n = ($onpage * $page) - $onpage;
     }
     // if ($count == 0) echo 'Empty';
     $sizefiles = explode('|', $sizelist);
@@ -117,7 +117,7 @@ if (!isset($_GET['action'])) {
         $zdir = preg_replace('#[\\/]?[^\\/]*$#', '', $path);
         echo $zdir . '/<a href="' . DIRECTORY . 'zip/preview/' . $id . '/' . $path . '/">' . $fname . '</a>';
         if ($sizefiles[$n]) {
-        	echo ' [' . round($sizefiles[$n] / 1024, 2) . 'kb]';
+            echo ' [' . round($sizefiles[$n] / 1024, 2) . 'kb]';
         }
         echo '<br/>';
         $n++;
@@ -131,23 +131,23 @@ if (!isset($_GET['action'])) {
         $asd = $page - 2;
         $asd2 = $page + 3;
         if ($asd < $count && $asd > 0 && $page > 3) {
-        	echo '<a href="' . DIRECTORY . 'zip/' . $id . '&amp;page=1">1</a> ... ';
+            echo '<a href="' . DIRECTORY . 'zip/' . $id . '&amp;page=1">1</a> ... ';
         }
         for ($i = $asd; $i < $asd2; ++$i) {
             if($i < $count && $i > 0) {
                 if ($i > $pages ) {
-                	break;
+                    break;
                 }
                 if ($page == $i) {
-                	echo '<strong>[' . $i . ']</strong> ';
+                    echo '<strong>[' . $i . ']</strong> ';
                 } else {
-                	echo '<a href="' . DIRECTORY . 'zip/' . $id . '/' . $i . '">' . $i . '</a> ';
+                    echo '<a href="' . DIRECTORY . 'zip/' . $id . '/' . $i . '">' . $i . '</a> ';
                 }
             }
         }
         if ($i <= $pages) {
             if ($asd2 < $count) {
-            	echo ' ... <a href="' . DIRECTORY . 'zip/' . $id . '/' . $pages . '">' . $pages . '</a>';
+                echo ' ... <a href="' . DIRECTORY . 'zip/' . $id . '/' . $pages . '">' . $pages . '</a>';
             }
         }
         echo '<br/></div>';
@@ -157,7 +157,7 @@ if (!isset($_GET['action'])) {
 
 } else if ($_GET['action'] == 'preview') {
     if (strpos($_GET['open'] , '..') !== false || strpos($_GET['open'] , './') !== false) {
-    	error($setup['hackmess']);
+        error($setup['hackmess']);
     }
 
     $title .= ' - ' . $_GET['open'];
@@ -166,13 +166,13 @@ if (!isset($_GET['action'])) {
     $mime = ext_to_mime(pathinfo($_GET['open'], PATHINFO_EXTENSION));
 
     if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/jpeg' || $mime == 'image/bmp') {
-    	$f = $setup['zppath'] . '/' . str_replace('/', '--', mb_substr(strstr($d['path'], '/'), 1) . '_' . strtolower($_GET['open']));
-    	if (!file_exists($f)) {
-    		$zip = new PclZip($d['path']);
-    		$content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
-    		file_put_contents($f, $content[0]['content']);
-    	}
-    	echo '<img src="' . DIRECTORY . $f . '" alt="' . $_GET['open'] . '"/><br/>';
+        $f = $setup['zppath'] . '/' . str_replace('/', '--', mb_substr(strstr($d['path'], '/'), 1) . '_' . strtolower($_GET['open']));
+        if (!file_exists($f)) {
+            $zip = new PclZip($d['path']);
+            $content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
+            file_put_contents($f, $content[0]['content']);
+        }
+        echo '<img src="' . DIRECTORY . $f . '" alt="' . $_GET['open'] . '"/><br/>';
     } else if ($mime == 'text/plain') {
         $zip = new PclZip($d['path']);
         $content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
@@ -185,14 +185,14 @@ if (!isset($_GET['action'])) {
         $content = mb_substr($content, $page * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
 
         if ($page > 1) {
-        	$i = 0;
-        	foreach (str_split($content) as $v) {
-        		if ($v == ' ' || $v == "\n" || $v == "\r" || $v == "\t") {
-        			break;
-        		}
-        		$i++;
-        	}
-        	$content = substr($content, $i);
+            $i = 0;
+            foreach (str_split($content) as $v) {
+                if ($v == ' ' || $v == "\n" || $v == "\r" || $v == "\t") {
+                    break;
+                }
+                $i++;
+            }
+            $content = substr($content, $i);
         }
 
         if ($setup['lib_str']) {
@@ -207,7 +207,7 @@ if (!isset($_GET['action'])) {
     echo '</div><div class="iblock">';
 } else if ($_GET['action'] == 'down') {
     if (strpos($_GET['open'] , '..') !== false or strpos($_GET['open'] , './') !== false) {
-    	error($setup['hackmess']);
+        error($setup['hackmess']);
     }
 
     ob_end_clean();

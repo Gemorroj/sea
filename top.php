@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -14,7 +14,7 @@ require 'moduls/config.php';
 require 'moduls/header.php';
 ###############Если топ выключен###############
 if (!$setup['top_change']) {
-	error('Not found');
+    error('Not found');
 }
 ###############Проверка переменных###############
 $title .= str_replace('%files%', $setup['top_num'], $language['top20']);
@@ -34,29 +34,29 @@ $sort = get2ses('sort');
 $id = isset($_GET['id']) ? abs($_GET['id']) : 0;
 $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
 if ($page < 1) {
-	$page = 1;
+    $page = 1;
 }
 $out = '';
 
 
 if (!$setup['eval_change']) {
-	$sortlink = '';
-	$sort = 'load';
+    $sortlink = '';
+    $sort = 'load';
 } else {
-	$sortlink = $language['sort'] . ': ';
-	if($sort != 'eval'){
-		$sort = 'load';
-		$sortlink .= '<a href="' . DIRECTORY . 'top/eval">' . $language['rating'] . '</a>';
-	} else {
-		$sortlink .= '<a href="' . DIRECTORY . 'top/load">' . $language['popularity'] . '</a>';
-	}
+    $sortlink = $language['sort'] . ': ';
+    if($sort != 'eval'){
+        $sort = 'load';
+        $sortlink .= '<a href="' . DIRECTORY . 'top/eval">' . $language['rating'] . '</a>';
+    } else {
+        $sortlink .= '<a href="' . DIRECTORY . 'top/load">' . $language['popularity'] . '</a>';
+    }
 }
 
 
 if ($sort == 'load') {
-	$mode = '`t1`.`dir` = "0" AND `t1`.`loads` > 0 AND `t1`.`hidden` = "0" ORDER BY `t1`.`loads`';
+    $mode = '`t1`.`dir` = "0" AND `t1`.`loads` > 0 AND `t1`.`hidden` = "0" ORDER BY `t1`.`loads`';
 } else {
-	$mode = '`t1`.`dir` = "0" AND `t1`.`yes` > 0 AND `t1`.`hidden` = "0" ORDER BY `t1`.`yes`';
+    $mode = '`t1`.`dir` = "0" AND `t1`.`yes` > 0 AND `t1`.`hidden` = "0" ORDER BY `t1`.`yes`';
 }
 
 ###############Получаем список файлов###############
@@ -90,12 +90,12 @@ $out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/about.png" alt=""/>'
 
 $pages = ceil($all / $onpage);
 if (!$pages) {
-	$pages = 1;
+    $pages = 1;
 }
 
 ###############Если их нет...###########
 if (!$all) {
-	$out .= $language['empty'];
+    $out .= $language['empty'];
 }
 
 
@@ -105,17 +105,17 @@ while ($v = mysql_fetch_assoc($sql)) {
     $bool != $bool;
 
     if ($bool) {
-    	$out .= '<div class="row">';
+        $out .= '<div class="row">';
     } else {
-    	$out .= '<div class="mainzag">';
+        $out .= '<div class="mainzag">';
     }
 
     $ext = strtolower(pathinfo($v['path'], PATHINFO_EXTENSION));
 
     if ($sort == 'load') {
-    	$info = '[<span class="yes">' . $v['loads'] . '</span>]';
+        $info = '[<span class="yes">' . $v['loads'] . '</span>]';
     } elseif ($sort == 'eval' && $setup['eval_change']) {
-    	$info = '[<span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no'] . '</span>]';
+        $info = '[<span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no'] . '</span>]';
     } else {
         $info = '';
     }
@@ -150,27 +150,27 @@ while ($v = mysql_fetch_assoc($sql)) {
                 $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . 'theme/' . $v['id'] . '" alt=""/><br/>';
             }
         } else if ($setup['jar_change'] && $ext == 'jar') {
-        	if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
-        		$pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
-        	} else if (jar_ico($v['v'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
-        		$pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
-        	}
+            if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
+                $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
+            } else if (jar_ico($v['v'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
+                $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
+            }
         } else if ($setup['swf_change'] && $ext == 'swf') {
-        	$pre .= '<object style="width:128px; height:128px;"><param name="movie" value="' . DIRECTORY . htmlspecialchars($v['v']) . '"><embed src="' . DIRECTORY . htmlspecialchars($v['v']) . '" style="width:128px; height:128px;"></embed></param></object><br/>';
+            $pre .= '<object style="width:128px; height:128px;"><param name="movie" value="' . DIRECTORY . htmlspecialchars($v['v']) . '"><embed src="' . DIRECTORY . htmlspecialchars($v['v']) . '" style="width:128px; height:128px;"></embed></param></object><br/>';
         }
     }
 
     //Иконка к файлу
     if (!file_exists('ext/' . $ext . '.png')) {
-    	$ico = '<img src="' . DIRECTORY . 'ext/stand.png" alt=""/>';
+        $ico = '<img src="' . DIRECTORY . 'ext/stand.png" alt=""/>';
     } else {
-    	$ico = '<img src="' . DIRECTORY . 'ext/' . $ext . '.png" alt=""/>';
+        $ico = '<img src="' . DIRECTORY . 'ext/' . $ext . '.png" alt=""/>';
     }
 
     if ($setup['ext']) {
-    	$extension = '(' . $ext . ')';
+        $extension = '(' . $ext . ')';
     } else {
-    	$extension = '';
+        $extension = '';
     }
     //Собсвенно вывод
     $out .= $pre . ' ' . $ico . '<strong><a href="' . DIRECTORY . 'view/' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>' . $extension . $v['size'] . $info . '[<a href="' . DIRECTORY . $v['back'] . '">' . $language['go to the category'] . '</a>]<br/></div>';
@@ -182,24 +182,24 @@ if ($pages > 1) {
     $asd = $page - 2;
     $asd2 = $page + 3;
     if ($asd < $all && $asd > 0 && $page > 3) {
-    	$out .= '<a href="' . DIRECTORY . 'top/' . $sort . '/1">1</a> ... ';
+        $out .= '<a href="' . DIRECTORY . 'top/' . $sort . '/1">1</a> ... ';
     }
     for ($i = $asd; $i < $asd2; ++$i) {
         if($i < $all && $i > 0) {
             if ($i > $pages ) {
-            	break;
+                break;
             }
             if ($page == $i) {
-            	$out .= '<strong>[' . $i . ']</strong> ';
+                $out .= '<strong>[' . $i . ']</strong> ';
             } else {
-            	$out .= '<a href="' . DIRECTORY . 'top/' . $sort . '/' . $i . '">' . $i . '</a> ';
+                $out .= '<a href="' . DIRECTORY . 'top/' . $sort . '/' . $i . '">' . $i . '</a> ';
             }
         }
     }
 
     if ($i <= $pages) {
         if ($asd2 < $all) {
-        	$out .= ' ... <a href="' . DIRECTORY . 'top/' . $sort . '/' . $pages . '">' . $pages . '</a>';
+            $out .= ' ... <a href="' . DIRECTORY . 'top/' . $sort . '/' . $pages . '">' . $pages . '</a>';
         }
     }
     $out .= '</div>';

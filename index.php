@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -32,13 +32,13 @@ if ($prew != 0 && $prew != 1) {
 
 
 if ($sort == 'data') {
-	$mode = '`priority` DESC, `timeupload` DESC';
+    $mode = '`priority` DESC, `timeupload` DESC';
 } else if ($sort == 'size') {
-	$mode = '`priority` DESC, `size` ASC';
+    $mode = '`priority` DESC, `size` ASC';
 } else if ($sort == 'load') {
-	$mode = '`priority` DESC, `loads` DESC';
+    $mode = '`priority` DESC, `loads` DESC';
 } else if ($sort == 'eval' && $setup['eval_change']) {
-	$mode = '`priority` DESC, `yes` DESC , `no` ASC';
+    $mode = '`priority` DESC, `yes` DESC , `no` ASC';
 } else {
     $mode = '`priority` DESC, `name` ASC';
 }
@@ -70,7 +70,7 @@ if ($id) {
 
 
 if (!is_dir($d['path'])) {
-	error('Folder not found.');
+    error('Folder not found.');
 }
 
 ###############Онлайн#############
@@ -87,15 +87,15 @@ if ($online[0] > $setup['online_max']) {
 ###############Постраничная навигация###############
 $pages = ceil($d['all'] / $onpage);
 if (!$pages) {
-	$pages = 1;
+    $pages = 1;
 }
 if ($page > $pages || $page < 1) {
-	$page = 1;
+    $page = 1;
 }
 
 $start = ($page - 1) * $onpage;
 if ($start > $d['all'] || $start < 0){
-	$start = 0;
+    $start = 0;
 }
 
 ###############Готовим заголовок###################
@@ -108,24 +108,24 @@ $path = $setup['path'] . '/';
 
 $put = '';
 if ($ex) {
-	$implode = '
-	    SELECT `id`,
-	    ' . Language::getInstance()->buildFilesQuery() . '
-	    FROM `files`
-	    WHERE `path` IN(';
-	foreach ($ex as $v) {
-		$path .= $v . '/';
-		$implode .= '"' . mysql_real_escape_string($path, $mysql) . '",';
-	}
+    $implode = '
+        SELECT `id`,
+        ' . Language::getInstance()->buildFilesQuery() . '
+        FROM `files`
+        WHERE `path` IN(';
+    foreach ($ex as $v) {
+        $path .= $v . '/';
+        $implode .= '"' . mysql_real_escape_string($path, $mysql) . '",';
+    }
 
 
-	$q = mysql_query(rtrim($implode, ',') . ')', $mysql);
-	while ($s = mysql_fetch_row($q)) {
-		$put .= '<a href="' . DIRECTORY . $s[0] . '">' . htmlspecialchars($s[1], ENT_NOQUOTES) . '</a> &#187; ';
-		if (!$seo['title']) {
+    $q = mysql_query(rtrim($implode, ',') . ')', $mysql);
+    while ($s = mysql_fetch_row($q)) {
+        $put .= '<a href="' . DIRECTORY . $s[0] . '">' . htmlspecialchars($s[1], ENT_NOQUOTES) . '</a> &#187; ';
+        if (!$seo['title']) {
             $title .= '/' . htmlspecialchars($s[1], ENT_NOQUOTES);
         }
-	}
+    }
 }
 
 ##############Заголовок##########################
@@ -133,99 +133,99 @@ $out .= '<div class="mainzag"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><
 ###############Вывод рекламы###############
 $banner = '';
 if ($setup['buy_change']) {
-	if ($setup['buy']) {
-		$out .= '<div class="iblock">';
-		if ($setup['randbuy']) {
-			$list = explode("\n", $setup['buy']);
-			shuffle($list);
-			for ($i = 0; $i < $setup['countbuy']; ++$i) {
-				$out .= $list[$i] . '<br/>';
-			}
-		} else {
-			$list = explode("\n", $setup['buy']);
-			for ($i = 0; $i < $setup['countbuy']; ++$i) {
-				$out .= $list[$i] . '<br/>';
-			}
-		}
-		$out .= '</div>';
-	}
-	if ($setup['banner']) {
-		$banner .= '<div class="iblock">';
-		if ($setup['randbanner']) {
-			$list = explode("\n", $setup['banner']);
-			shuffle($list);
-			for ($i = 0; $i < $setup['countbanner']; ++$i) {
-				$banner .= $list[$i] . '<br/>';
-			}
-		} else {
-			$list = explode("\n", $setup['banner']);
-			for ($i = 0; $i < $setup['countbanner']; ++$i) {
-				$banner .= $list[$i] . '<br/>';
-			}
-		}
-		$banner .= '</div>';
-	}
+    if ($setup['buy']) {
+        $out .= '<div class="iblock">';
+        if ($setup['randbuy']) {
+            $list = explode("\n", $setup['buy']);
+            shuffle($list);
+            for ($i = 0; $i < $setup['countbuy']; ++$i) {
+                $out .= $list[$i] . '<br/>';
+            }
+        } else {
+            $list = explode("\n", $setup['buy']);
+            for ($i = 0; $i < $setup['countbuy']; ++$i) {
+                $out .= $list[$i] . '<br/>';
+            }
+        }
+        $out .= '</div>';
+    }
+    if ($setup['banner']) {
+        $banner .= '<div class="iblock">';
+        if ($setup['randbanner']) {
+            $list = explode("\n", $setup['banner']);
+            shuffle($list);
+            for ($i = 0; $i < $setup['countbanner']; ++$i) {
+                $banner .= $list[$i] . '<br/>';
+            }
+        } else {
+            $list = explode("\n", $setup['banner']);
+            for ($i = 0; $i < $setup['countbanner']; ++$i) {
+                $banner .= $list[$i] . '<br/>';
+            }
+        }
+        $banner .= '</div>';
+    }
 }
 
 // модуль расширенного сервиса
 if ($setup['service_change_advanced']) {
-	$user = isset($_GET['user']) ? intval($_GET['user']) : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
-	if ($user) {
-		$_SESSION['user'] = $user;
+    $user = isset($_GET['user']) ? intval($_GET['user']) : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
+    if ($user) {
+        $_SESSION['user'] = $user;
 
         $q = mysql_fetch_row(mysql_query('
-		    SELECT `url`, `name`, `style`
-		    FROM `users_profiles`
-		    WHERE `id` = ' . $_SESSION['user']
+            SELECT `url`, `name`, `style`
+            FROM `users_profiles`
+            WHERE `id` = ' . $_SESSION['user']
         , $mysql));
-		$_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($q[0]);
-		//$_SESSION['site_name'] = $setup['site_name'] = $q[1];
-		$q[2] = htmlspecialchars($q[2]);
+        $_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($q[0]);
+        //$_SESSION['site_name'] = $setup['site_name'] = $q[1];
+        $q[2] = htmlspecialchars($q[2]);
 
-		if ($q[2] && $q[2] != $_SESSION['style']) {
-			$_SESSION['style'] = $q[2];
-			$str = str_replace('<link rel="stylesheet" type="text/css" href="http://' . $GLOBALS['style'] . '"/>', '<link rel="stylesheet" type="text/css" href="http://' . $_SESSION['style'] . '"/>', ob_get_contents());
-			ob_clean();
-			echo $str;
-		}
+        if ($q[2] && $q[2] != $_SESSION['style']) {
+            $_SESSION['style'] = $q[2];
+            $str = str_replace('<link rel="stylesheet" type="text/css" href="http://' . $GLOBALS['style'] . '"/>', '<link rel="stylesheet" type="text/css" href="http://' . $_SESSION['style'] . '"/>', ob_get_contents());
+            ob_clean();
+            echo $str;
+        }
 
-		if ($setup['service_head']) {
-			$head = mysql_query('
-			    SELECT `name`, `value`
-			    FROM `users_settings`
-			    WHERE `parent_id` = ' . $user . '
-			    AND `position` = "0"
-			', $mysql);
-			$all = mysql_num_rows($head);
-			$all = $all < $setup['service_head'] ? $all : $setup['service_head'];
-			if ($all) {
-				$out .= '<div class="iblock">';
-				for ($i = 0; $i < $all; ++$i) {
-					$q = mysql_fetch_row($head);
-					$out .= '<a href="' . htmlspecialchars($q[1]) . '">' . htmlspecialchars($q[0], ENT_NOQUOTES) . '</a><br/>';
-				}
-				$out .= '</div>';
-			}
-		}
-		if ($setup['service_foot']) {
-			$foot = mysql_query('
-			    SELECT `name`, `value`
-			    FROM `users_settings`
-			    WHERE `parent_id` = ' . $user . '
-			    AND `position` = "1"
-			', $mysql);
-			$all = mysql_num_rows($foot);
-			$all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
-			if ($all) {
-				$banner .= '<div class="iblock">';
-				for ($i = 0; $i < $all; ++$i) {
-					$q = mysql_fetch_row($foot);
-					$banner .= '<a href="' . htmlspecialchars($q[1]) . '">' . htmlspecialchars($q[0], ENT_NOQUOTES) . '</a><br/>';
-				}
-				$banner .= '</div>';
-			}
-		}
-	}
+        if ($setup['service_head']) {
+            $head = mysql_query('
+                SELECT `name`, `value`
+                FROM `users_settings`
+                WHERE `parent_id` = ' . $user . '
+                AND `position` = "0"
+            ', $mysql);
+            $all = mysql_num_rows($head);
+            $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
+            if ($all) {
+                $out .= '<div class="iblock">';
+                for ($i = 0; $i < $all; ++$i) {
+                    $q = mysql_fetch_row($head);
+                    $out .= '<a href="' . htmlspecialchars($q[1]) . '">' . htmlspecialchars($q[0], ENT_NOQUOTES) . '</a><br/>';
+                }
+                $out .= '</div>';
+            }
+        }
+        if ($setup['service_foot']) {
+            $foot = mysql_query('
+                SELECT `name`, `value`
+                FROM `users_settings`
+                WHERE `parent_id` = ' . $user . '
+                AND `position` = "1"
+            ', $mysql);
+            $all = mysql_num_rows($foot);
+            $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
+            if ($all) {
+                $banner .= '<div class="iblock">';
+                for ($i = 0; $i < $all; ++$i) {
+                    $q = mysql_fetch_row($foot);
+                    $banner .= '<a href="' . htmlspecialchars($q[1]) . '">' . htmlspecialchars($q[0], ENT_NOQUOTES) . '</a><br/>';
+                }
+                $banner .= '</div>';
+            }
+        }
+    }
 }
 
 
@@ -242,26 +242,26 @@ if ($id < 1) {
     ', $mysql));
 
     if ($news) {
-    	$str.= '<a href="' . DIRECTORY . 'news.php">' . $language['news'] . '</a> (' . tm($news['time']) . ')<br/><span style="font-size:9px;">' . $news['news'] . '</span><br/>';
+        $str.= '<a href="' . DIRECTORY . 'news.php">' . $language['news'] . '</a> (' . tm($news['time']) . ')<br/><span style="font-size:9px;">' . $news['news'] . '</span><br/>';
     }
 
     if ($setup['search_change']) {
-    	$str.= '<a href="' . DIRECTORY . 'search.php">' . $language['search'] . '</a><br/>';
+        $str.= '<a href="' . DIRECTORY . 'search.php">' . $language['search'] . '</a><br/>';
     }
     if ($setup['top_change']) {
-    	$str.= '<a href="' . DIRECTORY . 'top.php">' . str_replace('%files%', $setup['top_num'], $language['top20']) . '</a><br/>';
+        $str.= '<a href="' . DIRECTORY . 'top.php">' . str_replace('%files%', $setup['top_num'], $language['top20']) . '</a><br/>';
     }
 
     if ($str) {
-    	$out .= '<div class="iblock">' . $str . '</div>';
-    	unset($str);
+        $out .= '<div class="iblock">' . $str . '</div>';
+        unset($str);
     }
 }
 
 
 ###############Список фалов и папок###############
 if (!$d['all']) {
-	$out .= '<div class="mainzag"><strong>[' . $language['empty'] . ']</strong></div>';
+    $out .= '<div class="mainzag"><strong>[' . $language['empty'] . ']</strong></div>';
 }
 
 
@@ -293,23 +293,23 @@ while ($v = mysql_fetch_assoc($query)) {
     $screen = strstr($v['v'], '/'); // убираем папку с загрузками
     
     if ($key = !$key) {
-    	$row = '<div class="mainzag">';
+        $row = '<div class="mainzag">';
     } else {
-    	$row = '<div class="row">';
+        $row = '<div class="row">';
     }
     if ($v['dir']) {
         //Кол-во новых файлов в папке
         if ($setup['day_new'] && $v['count']) {
             $new_all = '(<span class="yes">+' . $v['count'] . '</span>)';
         } else {
-        	$new_all = '';
+            $new_all = '';
         }
 
         //Иконка к папке
         if (file_exists($v['v'] . 'folder.png')) {
             $ico = '<img src="' . DIRECTORY . htmlspecialchars($v['v']) . 'folder.png" alt=""/>';
         } else {
-        	$ico = '<img src="' . DIRECTORY . 'ext/dir.png" alt=""/>';
+            $ico = '<img src="' . DIRECTORY . 'ext/dir.png" alt=""/>';
         }
 
         //Собсвенно вывод
@@ -350,47 +350,47 @@ while ($v = mysql_fetch_assoc($query)) {
                     $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . 'theme/' . $v['id'] . '" alt=""/>';
                 }
             } else if ($setup['jar_change'] && $ext == 'jar') {
-            	if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
-            		$pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
-            	} else if (jar_ico($v['v'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
-            		$pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
-            	}
+                if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
+                    $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
+                } else if (jar_ico($v['v'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
+                    $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
+                }
             } else if ($setup['swf_change'] && $ext == 'swf') {
-            	$pre .= '<object style="width:128px; height:128px;"><param name="movie" value="' . DIRECTORY . htmlspecialchars($v['v']) . '"><embed src="' . DIRECTORY . htmlspecialchars($v['v']) . '" style="width:128px; height:128px;"></embed></param></object>';
+                $pre .= '<object style="width:128px; height:128px;"><param name="movie" value="' . DIRECTORY . htmlspecialchars($v['v']) . '"><embed src="' . DIRECTORY . htmlspecialchars($v['v']) . '" style="width:128px; height:128px;"></embed></param></object>';
             }
         }
 
 
         if ($sort == 'load') {
-        	$info = '(<span class="yes">' . $v['loads'] . '</span>)';
+            $info = '(<span class="yes">' . $v['loads'] . '</span>)';
         } else if ($sort == 'data') {
-        	$info = '(' . tm($v['timeupload']) . ')';
+            $info = '(' . tm($v['timeupload']) . ')';
         } else if ($sort == 'eval' && $setup['eval_change']) {
-        	$info = '(<span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no'] . '</span>)';
+            $info = '(<span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no'] . '</span>)';
         } else {
-        	$info = '';
+            $info = '';
         }
 
         //Новизна файла
         if (($v['timeupload'] + $dn) >= $_SERVER['REQUEST_TIME'] && $setup['day_new']) {
-        	$new_info = '<span class="yes">' . $language['new'] . '</span>';
+            $new_info = '<span class="yes">' . $language['new'] . '</span>';
         } else {
-        	$new_info = '';
+            $new_info = '';
         }
         //Красивый размер
         $v['size'] = '(' . size($v['size']) . ')';
 
         //Иконка к файлу
         if (file_exists('ext/' . $ext . '.png')) {
-        	$ico = '<img src="' . DIRECTORY . 'ext/' . $ext . '.png" alt=""/>';
+            $ico = '<img src="' . DIRECTORY . 'ext/' . $ext . '.png" alt=""/>';
         } else {
-        	$ico = '<img src="' . DIRECTORY . 'ext/stand.png" alt=""/>';
+            $ico = '<img src="' . DIRECTORY . 'ext/stand.png" alt=""/>';
         }
         //Показ расиширения
         if ($setup['ext']) {
-        	$extension = '(' . $ext . ')';
+            $extension = '(' . $ext . ')';
         } else {
-        	$extension = '';
+            $extension = '';
         }
 
 
@@ -412,12 +412,12 @@ while ($v = mysql_fetch_assoc($query)) {
         }
 
         if ($pre) {
-        	$pre .= '<br/>';
+            $pre .= '<br/>';
         }
 
 
         if ($setup['desc'] && file_exists($setup['opath'] . $screen . '.txt')) {
-        	$desc .= '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . $screen . '.txt')), 0, $setup['desc']);
+            $desc .= '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . $screen . '.txt')), 0, $setup['desc']);
         }
 
 
@@ -432,23 +432,23 @@ if ($pages > 1) {
     $asd = $page - 2;
     $asd2 = $page + 3;
     if ($asd < $d['all'] && $asd > 0 && $page > 3) {
-    	$out .= '<a href="' . DIRECTORY . $id . '/1">1</a> ... ';
+        $out .= '<a href="' . DIRECTORY . $id . '/1">1</a> ... ';
     }
     for ($i = $asd; $i < $asd2; ++$i) {
         if ($i < $d['all'] && $i > 0) {
             if ($i > $pages ) {
-            	break;
+                break;
             }
             if ($page == $i) {
-            	$out .= '<strong>[' . $i . ']</strong> ';
+                $out .= '<strong>[' . $i . ']</strong> ';
             } else {
-            	$out .= '<a href="' . DIRECTORY . $id . '/' . $i . '">' . $i . '</a> ';
+                $out .= '<a href="' . DIRECTORY . $id . '/' . $i . '">' . $i . '</a> ';
             }
         }
     }
     if ($i <= $pages) {
         if ($asd2 < $d['all']) {
-        	$out .= ' ... <a href="' . DIRECTORY . $id . '/' . $pages . '">' . $pages . '</a>';
+            $out .= ' ... <a href="' . DIRECTORY . $id . '/' . $pages . '">' . $pages . '</a>';
         }
     }
     $out .= '<br/></div>';
@@ -464,17 +464,17 @@ if ($pages > 1) {
 $out .= '<div class="iblock">- <a href="' . DIRECTORY . 'user/' . $id . '">' . $language['settings'] . '</a><br/>';
 
 if ($setup['stat_change']) {
-	$out .= '- <a href="' . DIRECTORY . 'stat.php">' . $language['statistics'] . '</a><br/>';
+    $out .= '- <a href="' . DIRECTORY . 'stat.php">' . $language['statistics'] . '</a><br/>';
 }
 if ($setup['zakaz_change']) {
-	$out .= '- <a href="' . DIRECTORY . 'table.php">' . $language['orders'] . '</a><br/>';
+    $out .= '- <a href="' . DIRECTORY . 'table.php">' . $language['orders'] . '</a><br/>';
 }
 if ($setup['exchanger_change']) {
-	$out .= '- <a href="' . DIRECTORY . 'exchanger.php">' . $language['add file'] . '</a><br/>';
+    $out .= '- <a href="' . DIRECTORY . 'exchanger.php">' . $language['add file'] . '</a><br/>';
 }
 $out .= '- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a>';
 if ($setup['online']) {
-	$out .= '<br/>- Online: <strong>' . $online[0] . '</strong><br/>';
+    $out .= '<br/>- Online: <strong>' . $online[0] . '</strong><br/>';
 }
 
 echo $out . '</div>' . $banner;

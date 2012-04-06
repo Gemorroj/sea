@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -14,7 +14,7 @@ require 'moduls/config.php';
 require 'moduls/header.php';
 ###############Если поиск выключен###############
 if (!$setup['search_change']) {
-	error('Not found');
+    error('Not found');
 }
 ###############Проверка переменных###############
 
@@ -42,7 +42,7 @@ if ($page < 1) {
 ###############Проверка переменных###############
 if (isset($_GET['act'])) {
     if ($_REQUEST['word'] == '') {
-    	error($language['do not fill in the required fields']);
+        error($language['do not fill in the required fields']);
     }
     $word = mysql_real_escape_string($_REQUEST['word'], $mysql);
     $start = ($onpage * $page) - $onpage;
@@ -75,7 +75,7 @@ if (isset($_GET['act'])) {
     if ($onpage) {
         $pages = ceil($all / $onpage);
         if (!$pages) {
-        	$pages = 1;
+            $pages = 1;
         }
     } else {
         $pages = 1;
@@ -84,7 +84,7 @@ if (isset($_GET['act'])) {
     $out .= '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/>' . str_replace(array('%word%', '%all%'), array(htmlspecialchars($word, ENT_NOQUOTES), $all), $language['upon request']) . '</div>';
 
     if (!$all) {
-    	$out .= '<div class="no">' . $language['your search found nothing'] . '</div>';
+        $out .= '<div class="no">' . $language['your search found nothing'] . '</div>';
     }
 
 
@@ -93,9 +93,9 @@ if (isset($_GET['act'])) {
         $bool != $bool;
 
         if ($bool) {
-        	$out .= '<div class="row">';
+            $out .= '<div class="row">';
         } else {
-        	$out .= '<div class="mainzag">';
+            $out .= '<div class="mainzag">';
         }
 
 
@@ -105,7 +105,7 @@ if (isset($_GET['act'])) {
             if (file_exists($v['path'] . 'folder.png')) {
                 $out .= '<img src="' . DIRECTORY . htmlspecialchars($v['path']) . 'folder.png" alt=""/>';
             } else {
-            	$out .= '<img src="' . DIRECTORY . 'ext/dir.png" alt=""/>';
+                $out .= '<img src="' . DIRECTORY . 'ext/dir.png" alt=""/>';
             }
 
             $out .= '<strong><a href="' . DIRECTORY . $v['id'] . '">' . str_ireplace(htmlspecialchars($word, ENT_NOQUOTES), '<span class="yes">' . htmlspecialchars($word, ENT_NOQUOTES) . '</span>', htmlspecialchars($v['name'], ENT_NOQUOTES)) . '</a></strong>(' . $v['dir_count'] . ')<br/></div>';
@@ -143,13 +143,13 @@ if (isset($_GET['act'])) {
                         $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . 'theme/' . $v['id'] . '" alt=""/><br/>';
                     }
                 } else if ($setup['jar_change'] && $ext == 'jar') {
-                	if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
-                		$pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
-                	} else if (jar_ico($v['v'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
-                		$pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
-                	}
+                    if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
+                        $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
+                    } else if (jar_ico($v['v'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
+                        $pre .= '<img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/><br/>';
+                    }
                 } else if ($setup['swf_change'] && $ext == 'swf') {
-                	$pre .= '<object style="width:128px; height:128px;"><param name="movie" value="' . DIRECTORY . htmlspecialchars($v['v']) . '"><embed src="' . DIRECTORY . htmlspecialchars($v['v']) . '" style="width:128px; height:128px;"></embed></param></object><br/>';
+                    $pre .= '<object style="width:128px; height:128px;"><param name="movie" value="' . DIRECTORY . htmlspecialchars($v['v']) . '"><embed src="' . DIRECTORY . htmlspecialchars($v['v']) . '" style="width:128px; height:128px;"></embed></param></object><br/>';
                 }
             }
 
@@ -157,13 +157,13 @@ if (isset($_GET['act'])) {
             if (file_exists('ext/' . $ext . '.png')) {
                 $ico = '<img src="' . DIRECTORY . 'ext/' . $ext . '.png" alt=""/>';
             } else {
-            	$ico = '<img src="' . DIRECTORY . 'ext/stand.png" alt=""/>';
+                $ico = '<img src="' . DIRECTORY . 'ext/stand.png" alt=""/>';
             }
 
             if ($setup['ext']) {
-            	$extension = '(' . $ext . ')';
+                $extension = '(' . $ext . ')';
             } else {
-            	$extension = '';
+                $extension = '';
             }
 
             //Собсвенно вывод
@@ -175,30 +175,30 @@ if (isset($_GET['act'])) {
     //------------------------------------------------------------------------------------------
     $word = rawurlencode($_REQUEST['word']);
     if ($pages > 1) {
-    	$out .= '<div class="iblock">' . $language['pages'] . ': ';
-    	$asd = $page - 2;
-    	$asd2 = $page + 3;
-    	if ($asd < $all && $asd > 0 && $page > 3) {
-    		$out .= '<a href="' . DIRECTORY . 'search/1/' . $onpage . '/' . $prew . '/' . $word . '">1</a> ... ';
-    	}
-    	for ($i = $asd; $i < $asd2; ++$i) {
-    		if ($i < $all && $i > 0) {
-    			if ($i > $pages) {
-    				break;
-    			}
-    			if ($page == $i) {
-    				$out .= '<strong>[' . $i . ']</strong> ';
-    			} else {
-    				$out .= '<a href="' . DIRECTORY . 'search/' . $i . '/' . $onpage . '/' . $prew . '/' . $word . '">' . $i . '</a> ';
-    			}
-    		}
-    	}
-    	if ($i <= $pages) {
-    		if ($asd2 < $all) {
-    			$out .= ' ... <a href="' . DIRECTORY . 'search/' . $pages . '/' . $onpage . '/' . $prew . '/' . $word . '">' . $pages . '</a>';
-    		}
-    	}
-    	$out .= '<br/></div>';
+        $out .= '<div class="iblock">' . $language['pages'] . ': ';
+        $asd = $page - 2;
+        $asd2 = $page + 3;
+        if ($asd < $all && $asd > 0 && $page > 3) {
+            $out .= '<a href="' . DIRECTORY . 'search/1/' . $onpage . '/' . $prew . '/' . $word . '">1</a> ... ';
+        }
+        for ($i = $asd; $i < $asd2; ++$i) {
+            if ($i < $all && $i > 0) {
+                if ($i > $pages) {
+                    break;
+                }
+                if ($page == $i) {
+                    $out .= '<strong>[' . $i . ']</strong> ';
+                } else {
+                    $out .= '<a href="' . DIRECTORY . 'search/' . $i . '/' . $onpage . '/' . $prew . '/' . $word . '">' . $i . '</a> ';
+                }
+            }
+        }
+        if ($i <= $pages) {
+            if ($asd2 < $all) {
+                $out .= ' ... <a href="' . DIRECTORY . 'search/' . $pages . '/' . $onpage . '/' . $prew . '/' . $word . '">' . $pages . '</a>';
+            }
+        }
+        $out .= '<br/></div>';
     }
     //------------------------------------------------------------------------------------------
 

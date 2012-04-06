@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -19,7 +19,7 @@ $HeadTime = microtime(true);
 
 //=================================================================================================================
 if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
-	error($setup['hackmess']);
+    error($setup['hackmess']);
 }
 //=================================================================================================================
 
@@ -42,7 +42,7 @@ if ($prew != 0 && $prew != 1) {
 //------------------------------------------------------------------------------------------
 $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
 if (!is_file($file_info['path'])) {
-	error('File not found!');
+    error('File not found!');
 }
 
 
@@ -171,26 +171,26 @@ echo '<strong>Время добавления:</strong><br/>' . $file_info['time
 $prev_pic = str_replace('/', '--', mb_substr(strstr($file_info['path'], '/'), 1));
 
 if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext == 'png' || $ext == 'bmp') {
-	$out = '<hr class="hr"/>';
-	if (file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
-	    $out .= '<img src="' . DIRECTORY . $setup['picpath'] . '/' . htmlspecialchars($prev_pic) . '.gif" alt=""/><br/>';
-	} else {
-	    $out .= '<img src="' . DIRECTORY . 'im/' . $id . '" alt=""/><br/>';
-	}
+    $out = '<hr class="hr"/>';
+    if (file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
+        $out .= '<img src="' . DIRECTORY . $setup['picpath'] . '/' . htmlspecialchars($prev_pic) . '.gif" alt=""/><br/>';
+    } else {
+        $out .= '<img src="' . DIRECTORY . 'im/' . $id . '" alt=""/><br/>';
+    }
 
-	$size = getimagesize($file_info['path']);
+    $size = getimagesize($file_info['path']);
 
-	$out .= $size[0] . 'x' . $size[1] . '<br/><strong>Размер:</strong>';
-	foreach (explode(',', $setup['view_size']) as $val) {
-		$wh = explode('*', $val);
-		$f = $setup['picpath'] . '/' . $wh[0] . 'x' . $wh[1] . '_' . htmlspecialchars($prev_pic) . '.gif';
-		if (file_exists($f)) {
-			$out .= ' <a href="' . DIRECTORY . $f . '">' . $val . '</a>';
-		} else {
-	        $out .= ' <a href="' . DIRECTORY . 'im.php?id=' . $id . '&amp;W=' . $wh[0] . '&amp;H=' . $wh[1] . '">' . $val . '</a>';
-	    }
-	}
-	echo $out . '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="Скачать"/></div></form>';
+    $out .= $size[0] . 'x' . $size[1] . '<br/><strong>Размер:</strong>';
+    foreach (explode(',', $setup['view_size']) as $val) {
+        $wh = explode('*', $val);
+        $f = $setup['picpath'] . '/' . $wh[0] . 'x' . $wh[1] . '_' . htmlspecialchars($prev_pic) . '.gif';
+        if (file_exists($f)) {
+            $out .= ' <a href="' . DIRECTORY . $f . '">' . $val . '</a>';
+        } else {
+            $out .= ' <a href="' . DIRECTORY . 'im.php?id=' . $id . '&amp;W=' . $wh[0] . '&amp;H=' . $wh[1] . '">' . $val . '</a>';
+        }
+    }
+    echo $out . '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="Скачать"/></div></form>';
 }
 
 ###############Инфа о mp3###########################
@@ -199,73 +199,73 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
 
     if ($ext == 'mp3' || $ext == 'wav') {
         if (file_exists('moduls/cache/' . $id . '.dat')) {
-    		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
-    	} else {
+            $tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
+        } else {
             include 'moduls/classAudioFile.php';
 
             $audio = new AudioFile;
             $audio->loadFile($file_info['path']);
 
             if ($audio->wave_length) {
-            	$length = $audio->wave_length;
+                $length = $audio->wave_length;
             } else {
-            	include 'moduls/mp3.class.php';
-            	$mp3 = new mp3($file_info['path']);
-            	$mp3->setFileInfoExact();
-            	$length = $mp3->time;
+                include 'moduls/mp3.class.php';
+                $mp3 = new mp3($file_info['path']);
+                $mp3->setFileInfoExact();
+                $length = $mp3->time;
             }
             $comments = array();
 
             if (isset($audio->id3_title)) {
-            	$comments['TITLE'] = str_to_utf8($audio->id3_title);
-           	} else {
-           		$comments['TITLE'] = '';
-      		}
-      		if (isset($audio->id3_artist)) {
-            	$comments['ARTIST'] = str_to_utf8($audio->id3_artist);
-           	} else {
-           		$comments['ARTIST'] = '';
-      		}
-      		if (isset($audio->id3_album)) {
-            	$comments['ALBUM'] = str_to_utf8($audio->id3_album);
-           	} else {
-           		$comments['ALBUM'] = '';
-      		}
-      		if (isset($audio->id3_year)) {
-            	$comments['DATE'] = str_to_utf8($audio->id3_year);
-           	} else {
-           		$comments['DATE'] = '';
-      		}
-      		if (isset($audio->id3_genre)) {
-            	$comments['GENRE'] = str_to_utf8($audio->id3_genre);
-           	} else {
-           		$comments['GENRE'] = '';
-      		}
-      		if (isset($audio->id3_comment)) {
-            	$comments['COMMENT'] = str_to_utf8($audio->id3_comment);
-           	} else {
-           		$comments['COMMENT'] = '';
-      		}
+                $comments['TITLE'] = str_to_utf8($audio->id3_title);
+               } else {
+                   $comments['TITLE'] = '';
+              }
+              if (isset($audio->id3_artist)) {
+                $comments['ARTIST'] = str_to_utf8($audio->id3_artist);
+               } else {
+                   $comments['ARTIST'] = '';
+              }
+              if (isset($audio->id3_album)) {
+                $comments['ALBUM'] = str_to_utf8($audio->id3_album);
+               } else {
+                   $comments['ALBUM'] = '';
+              }
+              if (isset($audio->id3_year)) {
+                $comments['DATE'] = str_to_utf8($audio->id3_year);
+               } else {
+                   $comments['DATE'] = '';
+              }
+              if (isset($audio->id3_genre)) {
+                $comments['GENRE'] = str_to_utf8($audio->id3_genre);
+               } else {
+                   $comments['GENRE'] = '';
+              }
+              if (isset($audio->id3_comment)) {
+                $comments['COMMENT'] = str_to_utf8($audio->id3_comment);
+               } else {
+                   $comments['COMMENT'] = '';
+              }
 
             $tmpa = array(
-			    'channels' => $audio->wave_channels,
-			    'sampleRate' => $audio->wave_framerate,
-			    'avgBitrate' => str_replace(' Kbps', '', $audio->wave_byterate) * 1024,
-			    'streamLength' => $length,
-			    'comments' => array(
-				    'TITLE' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
-				    'ARTIST' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
-				    'ALBUM' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
-				    'DATE' => $comments['DATE'],
-				    'GENRE' => $comments['GENRE'],
-				    'COMMENT' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT']))
-				)
-			);
+                'channels' => $audio->wave_channels,
+                'sampleRate' => $audio->wave_framerate,
+                'avgBitrate' => str_replace(' Kbps', '', $audio->wave_byterate) * 1024,
+                'streamLength' => $length,
+                'comments' => array(
+                    'TITLE' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
+                    'ARTIST' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
+                    'ALBUM' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
+                    'DATE' => $comments['DATE'],
+                    'GENRE' => $comments['GENRE'],
+                    'COMMENT' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT']))
+                )
+            );
         }
     } else if ($ext == 'ogg') {
-    	if (file_exists('moduls/cache/' . $id . '.dat')) {
-    		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
-    	} else {
+        if (file_exists('moduls/cache/' . $id . '.dat')) {
+            $tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
+        } else {
             include 'moduls/PEAR/File/Ogg.php';
             try{
                 $ogg = new File_Ogg($file_info['path']);
@@ -273,50 +273,50 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
                 $comments = array();
 
                 if (isset($obj->_comments['TITLE'])) {
-                	$comments['TITLE'] = str_to_utf8($obj->_comments['TITLE']);
-               	} else {
-               		$comments['TITLE'] = '';
-          		}
-          		if (isset($obj->_comments['ARTIST'])) {
-                	$comments['ARTIST'] = str_to_utf8($obj->_comments['ARTIST']);
-               	} else {
-               		$comments['ARTIST'] = '';
-          		}
-          		if (isset($obj->_comments['ALBUM'])) {
-                	$comments['ALBUM'] = str_to_utf8($obj->_comments['ALBUM']);
-               	} else {
-               		$comments['ALBUM'] = '';
-          		}
-          		if (isset($obj->_comments['DATE'])) {
-                	$comments['DATE'] = str_to_utf8($obj->_comments['DATE']);
-               	} else {
-               		$comments['DATE'] = '';
-          		}
-          		if (isset($obj->_comments['GENRE'])) {
-                	$comments['GENRE'] = str_to_utf8($obj->_comments['GENRE']);
-               	} else {
-               		$comments['GENRE'] = '';
-          		}
-          		if (isset($obj->_comments['COMMENT'])) {
-                	$comments['COMMENT'] = str_to_utf8($obj->_comments['COMMENT']);
-               	} else {
-               		$comments['COMMENT'] = '';
-          		}
+                    $comments['TITLE'] = str_to_utf8($obj->_comments['TITLE']);
+                   } else {
+                       $comments['TITLE'] = '';
+                  }
+                  if (isset($obj->_comments['ARTIST'])) {
+                    $comments['ARTIST'] = str_to_utf8($obj->_comments['ARTIST']);
+                   } else {
+                       $comments['ARTIST'] = '';
+                  }
+                  if (isset($obj->_comments['ALBUM'])) {
+                    $comments['ALBUM'] = str_to_utf8($obj->_comments['ALBUM']);
+                   } else {
+                       $comments['ALBUM'] = '';
+                  }
+                  if (isset($obj->_comments['DATE'])) {
+                    $comments['DATE'] = str_to_utf8($obj->_comments['DATE']);
+                   } else {
+                       $comments['DATE'] = '';
+                  }
+                  if (isset($obj->_comments['GENRE'])) {
+                    $comments['GENRE'] = str_to_utf8($obj->_comments['GENRE']);
+                   } else {
+                       $comments['GENRE'] = '';
+                  }
+                  if (isset($obj->_comments['COMMENT'])) {
+                    $comments['COMMENT'] = str_to_utf8($obj->_comments['COMMENT']);
+                   } else {
+                       $comments['COMMENT'] = '';
+                  }
 
                 $tmpa = array(
-    			    'channels' => $obj->_channels,
-    			    'sampleRate' => $obj->_sampleRate,
-    			    'avgBitrate' => $obj->_avgBitrate,
-    			    'streamLength' => $obj->_streamLength,
-    			    'comments' => array(
-    				    'TITLE' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
-    				    'ARTIST' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
-    				    'ALBUM' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
-    				    'DATE' => $comments['DATE'],
-    				    'GENRE' => $comments['GENRE'],
-    				    'COMMENT' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT']))
-    				)
-    			);
+                    'channels' => $obj->_channels,
+                    'sampleRate' => $obj->_sampleRate,
+                    'avgBitrate' => $obj->_avgBitrate,
+                    'streamLength' => $obj->_streamLength,
+                    'comments' => array(
+                        'TITLE' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
+                        'ARTIST' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
+                        'ALBUM' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
+                        'DATE' => $comments['DATE'],
+                        'GENRE' => $comments['GENRE'],
+                        'COMMENT' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT']))
+                    )
+                );
             } catch(Exception $e){
                 //
             }
@@ -351,9 +351,9 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
 // Видео (ffmpeg)
 else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && extension_loaded('ffmpeg')) {
     if ($_GET['frame'] < 1) {
-    	$frame = 5;
+        $frame = 5;
     } else {
-    	$frame = $_GET['frame'];
+        $frame = $_GET['frame'];
     }
     // 80x80
     if (is_file($setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
@@ -362,17 +362,17 @@ else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && e
         $out = '<br/><img src="' . DIRECTORY . 'ffmpeg/' . $id . '/' . $frame . '" alt=""/><br/>';
     }
 
-	if (file_exists('moduls/cache/' . $id . '.dat')) {
-		$tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
-	} else {
+    if (file_exists('moduls/cache/' . $id . '.dat')) {
+        $tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
+    } else {
         $mov = new ffmpeg_movie($file_info['path'], false);
         $tmpa = array(
-		    'getVideoCodec' => $mov->getVideoCodec(),
-		    'GetFrameWidth' => $mov->GetFrameWidth(),
-		    'GetFrameHeight' => $mov->GetFrameHeight(),
-		    'getDuration' => $mov->getDuration(),
-		    'getBitRate' => $mov->getBitRate()
-		);
+            'getVideoCodec' => $mov->getVideoCodec(),
+            'GetFrameWidth' => $mov->GetFrameWidth(),
+            'GetFrameHeight' => $mov->GetFrameHeight(),
+            'getDuration' => $mov->getDuration(),
+            'getBitRate' => $mov->getBitRate()
+        );
         file_put_contents('moduls/cache/' . $id . '.dat', serialize($tmpa));
     }
 
@@ -389,30 +389,30 @@ else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && e
     echo $out;
     
 } else if ($ext == 'swf') {
-	echo '<br/><object width="128" height="128"><param name="movie" value="' . DIRECTORY . htmlspecialchars($file_info['path']) . '"><embed src="' . DIRECTORY . htmlspecialchars($file_info['path']) . '" width="128" height="128"></embed></param></object>';
+    echo '<br/><object width="128" height="128"><param name="movie" value="' . DIRECTORY . htmlspecialchars($file_info['path']) . '"><embed src="' . DIRECTORY . htmlspecialchars($file_info['path']) . '" width="128" height="128"></embed></param></object>';
 } else if ($ext == 'jar') {
-	if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
-		echo '<br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
-	} else if (jar_ico($file_info['path'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
-		echo '<br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
-	}
+    if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
+        echo '<br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
+    } else if (jar_ico($file_info['path'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
+        echo '<br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
+    }
 }
 
 $screen = strstr($file_info['path'], '/'); // убираем папку с загрузками
 //Скиншот
 if (is_file($setup['spath'] . $screen . '.gif')) {
-	echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="' . $setup['spath'] . htmlspecialchars($screen) . '.gif" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
+    echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="' . $setup['spath'] . htmlspecialchars($screen) . '.gif" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
 } else if (is_file($setup['spath'] . $screen . '.jpg')) {
-	echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="' . $setup['spath'] . htmlspecialchars($screen) . '.jpg" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
+    echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="' . $setup['spath'] . htmlspecialchars($screen) . '.jpg" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
 } else {
-	echo '<br/>[<strong><a href="apanel.php?action=screen&amp;id=' . $id . '">Добавить скриншот</a></strong>]';
+    echo '<br/>[<strong><a href="apanel.php?action=screen&amp;id=' . $id . '">Добавить скриншот</a></strong>]';
 }
 
 //Описание
 if (is_file($setup['opath'] . $screen . '.txt')) {
-	echo '<hr class="hr"/><strong>Описание:</strong><br/>' . trim(file_get_contents($setup['opath'] . $screen . '.txt'));
+    echo '<hr class="hr"/><strong>Описание:</strong><br/>' . trim(file_get_contents($setup['opath'] . $screen . '.txt'));
 } else if ($ext == 'txt' && $setup['lib_desc']) {
-	$fp = fopen($file_info['path'], 'r');
+    $fp = fopen($file_info['path'], 'r');
     echo '<hr class="hr"/><strong>Описание:</strong><br/>' . trim(fgets($fp, 1024));
     fclose($fp);
 }
@@ -446,7 +446,7 @@ echo '<hr style="margin:2px"/>' . $tmp . '
 <option value="' . $setup['path'] . '/">/</option>';
 $dirs = mysql_query('SELECT `id`, `path` FROM `files` WHERE `dir` = "1"', $mysql);
 while ($item = mysql_fetch_assoc($dirs)) {
-	echo '<option ' . ($item['path'] == $file_info['infolder'] ? 'selected="selected" ' : '') . ' value="' . $item['id'] . '">' . htmlspecialchars(substr(strstr($item['path'], '/'), 1), ENT_NOQUOTES) . '</option>';
+    echo '<option ' . ($item['path'] == $file_info['infolder'] ? 'selected="selected" ' : '') . ' value="' . $item['id'] . '">' . htmlspecialchars(substr(strstr($item['path'], '/'), 1), ENT_NOQUOTES) . '</option>';
 }
 echo '</select><br/>
 <input type="submit" value="Переместить" class="buttom"/>
@@ -487,9 +487,9 @@ if ($setup['komments_change']) {
 
 // txt файлы
 if ($ext == 'txt') {
-	if ($setup['lib_change']) {
-		echo '<strong><a href="read.php?id=' . $id . '">Читать</a></strong><br/>';
-	}
+    if ($setup['lib_change']) {
+        echo '<strong><a href="read.php?id=' . $id . '">Читать</a></strong><br/>';
+    }
     echo '<a href="txt_zip.php?id=' . $id . '">Скачать [ZIP]</a><br/><a href="txt_jar.php?id=' . $id . '">Скачать [JAR]</a><br/>';
 }
 

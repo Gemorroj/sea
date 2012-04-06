@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -15,7 +15,7 @@ require 'moduls/header.php';
 
 
 if (isset($_POST['lib'])) {
-	$_SESSION['lib'] = intval($_POST['lib']);
+    $_SESSION['lib'] = intval($_POST['lib']);
 }
 $id = intval($_GET['id']);
 $title .= $language['settings'];
@@ -83,13 +83,13 @@ if ($setup['style_change']) {
     echo '<form action="' . DIRECTORY . 'user/' . $id . '" method="post"><div class="row">' . $language['style'] . ':<br/><select class="enter" name="style">';
 
     foreach (glob('*.css', GLOB_NOESCAPE) as $var) {
-    	$value = $_SERVER['HTTP_HOST'] . DIRECTORY . $var;
-    	echo '<option value="' . $value . '" ' . sel($value, (isset($_POST['style']) ? $_POST['style'] : (isset($_COOKIE['style']) ? $_COOKIE['style'] : $style))) . '>' . htmlspecialchars(pathinfo($var, PATHINFO_FILENAME), ENT_NOQUOTES) . '</option>';
+        $value = $_SERVER['HTTP_HOST'] . DIRECTORY . $var;
+        echo '<option value="' . $value . '" ' . sel($value, (isset($_POST['style']) ? $_POST['style'] : (isset($_COOKIE['style']) ? $_COOKIE['style'] : $style))) . '>' . htmlspecialchars(pathinfo($var, PATHINFO_FILENAME), ENT_NOQUOTES) . '</option>';
     }
 
     echo '</select><input type="submit" value="' . $language['go'] . '"/></div></form>';
 } else {
-	$css = '';
+    $css = '';
 }
 
 if ($setup['service_change']) {

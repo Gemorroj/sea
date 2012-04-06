@@ -9,7 +9,7 @@ require 'moduls/header.php';
 
 
 if (!$setup['exchanger_change']) {
-	error('Not found');
+    error('Not found');
 }
 
 
@@ -140,7 +140,7 @@ if ($_POST && $_FILES['file']) {
             $names .= $arrn['name'] . '/';
         }
 
-    	echo '<option value="' . $item['id'] . '">' . htmlspecialchars($names, ENT_NOQUOTES) . '</option>';
+        echo '<option value="' . $item['id'] . '">' . htmlspecialchars($names, ENT_NOQUOTES) . '</option>';
     }
     echo '</select><br/>' . $language['file'] . ' (' . htmlspecialchars($setup['exchanger_name'] . ' / ' . $setup['exchanger_extensions'], ENT_NOQUOTES) . ' / ' . ini_get('upload_max_filesize') . ')<br/><input type="file" name="file" class="enter"/><br/>' . $language['screenshot'] . ' (jpeg,gif,png)<br/><input type="file" name="screen" class="enter"/><br/>' . $language['description'] . '<br/><textarea class="enter" cols="24" rows="2" name="about"></textarea><br/><br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
 }

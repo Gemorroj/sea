@@ -59,7 +59,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -75,7 +75,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -88,7 +88,7 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `online` (`time`) VALUES ('0');", $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -100,7 +100,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -115,7 +115,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -131,7 +131,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -147,7 +147,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -163,7 +163,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 
@@ -178,7 +178,7 @@ if (!@$_GET['level']) {
     mysql_query($sql, $mysql);
     $error = mysql_error($mysql);
     if ($error) {
-    	$er .= $error . '<br/>';
+        $er .= $error . '<br/>';
     }
 
 

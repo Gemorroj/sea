@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -24,12 +24,12 @@ if (isset($_POST['size'])) {
     $w = abs($w);
     $h = abs($h);
 } else {
-	$w = abs(@$_REQUEST['W']);
-	$h = abs(@$_REQUEST['H']);
+    $w = abs(@$_REQUEST['W']);
+    $h = abs(@$_REQUEST['H']);
 }
 
 if (!$w || !$h) {
-	$resize = false;
+    $resize = false;
     list($w, $h) = explode('*', $setup['prev_size']);
 } else if ($marker) {
     $marker = ($marker == 2 ? 0 : 1);

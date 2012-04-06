@@ -6,13 +6,13 @@ require 'moduls/config.php';
 require 'moduls/header.php';
 
 if (!$setup['lib_change']) {
-	error('Not found');
+    error('Not found');
 }
-	
+    
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) {
-	$page = 1;
+    $page = 1;
 }
 
 // Получаем инфу о файле
@@ -26,7 +26,7 @@ $v = mysql_fetch_assoc(mysql_query('
 $pathinfo = pathinfo($v['path']);
 
 if (!is_file($v['path']) || strtolower($pathinfo['extension']) != 'txt') {
-	error('File not found');
+    error('File not found');
 }
 
 $back = mysql_fetch_assoc(mysql_query("SELECT `id` FROM `files` WHERE `path` = '" . mysql_real_escape_string($pathinfo['dirname'] . '/', $mysql) . "'", $mysql));
@@ -37,7 +37,7 @@ $seo = unserialize($v['seo']);
 $title .= $language['read'] . ' - ' . htmlspecialchars($seo['title'] ? $seo['title'] : $v['name'], ENT_NOQUOTES) . ' / ' . $page;
 
 if (isset($_SESSION['lib'])) {
-	$setup['lib'] = $_SESSION['lib'];
+    $setup['lib'] = $_SESSION['lib'];
 }
 
 
@@ -50,14 +50,14 @@ $content = fread($fp, $setup['lib']) . fgets($fp, 1024);
 fclose($fp);
 
 if ($page > 1) {
-	$i = 0;
-	foreach (str_split($content, 1) as $f) {
-		if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
-			break;
-		}
-		$i++;
-	}
-	$content = substr($content, $i);
+    $i = 0;
+    foreach (str_split($content, 1) as $f) {
+        if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
+            break;
+        }
+        $i++;
+    }
+    $content = substr($content, $i);
 }
 
 $pages = ceil(filesize($v['path']) / $setup['lib']);
@@ -70,7 +70,7 @@ if ($setup['lib_str']) {
 }
 
 if ($back['id']) {
-	$str = '- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>';
+    $str = '- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>';
 } else {
     $str = '';
 }

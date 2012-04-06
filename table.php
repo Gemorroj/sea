@@ -1,11 +1,11 @@
 <?php
 #-----------------------------------------------------#
 #     ============ЗАГРУЗ-ЦЕНТР=============           #
-#             	 Автор  :  Sea                        #
+#                  Автор  :  Sea                      #
 #               E-mail  :  x-sea-x@ya.ru              #
 #                  ICQ  :  355152215                  #
 #   Вы не имеете права распространять данный скрипт.  #
-#   		По всем вопросам пишите в ICQ.            #
+#           По всем вопросам пишите в ICQ.            #
 #-----------------------------------------------------#
 
 // mod Gemorroj
@@ -14,7 +14,7 @@ require 'moduls/config.php';
 require 'moduls/header.php';
 ###############Если стол выключен###############
 if (!$setup['zakaz_change']) {
-	error('Not found');
+    error('Not found');
 }
 
 $title .= $language['orders'];
@@ -34,14 +34,14 @@ echo '<div class="mblock"><strong>' . $language['orders'] . '</strong></div>
 </form></div>';
 } else {
     if (empty($_POST['back']) || empty($_POST['text'])) {
-    	error($language['do not fill in the required fields']);
+        error($language['do not fill in the required fields']);
     }
     $headers = 'Content-Type: text/plain; charset=utf-8' . "\r\n" . 'From: support@' . $_SERVER['HTTP_HOST'];
     $text = 'СООБЩЕНИЕ: ' . $_POST['text'] . ' ОБРАТНЫЙ АДРЕС: ' . $_POST['back'];
     if (mail($setup['zakaz_email'], '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=', $text, $headers)) {
         echo '<div class="mblock"><strong>' . $language['orders'] . '</strong></div>' . $language['message sent successfully'] . '<br/>';
     } else {
-    	echo '<div class="mblock"><strong>' . $language['orders'] . '</strong></div>' . $language['message not sent'] . '<br/>';
+        echo '<div class="mblock"><strong>' . $language['orders'] . '</strong></div>' . $language['message not sent'] . '<br/>';
     }
 }
 echo '<div class="iblock">
