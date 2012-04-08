@@ -480,7 +480,7 @@ if ($pages > 1) {
 
     ###############Ручной ввод страниц###############
     if ($pages > $setup['pagehand'] && $setup['pagehand_change']) {
-        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="' . DIRECTORY . 'index.php?" method="get"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="8" size="8"/>&#160;<input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
+        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="' . DIRECTORY . 'index.php?" method="get"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="8" size="8"/> <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
     }
 }
 

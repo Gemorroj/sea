@@ -139,7 +139,7 @@ if ($_POST && $_FILES['file']) {
         mail(
             $setup['zakaz_email'],
             '=?utf-8?B?' . base64_encode('Новый файл') . '?=',
-            'Загружен новый файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'apanel_view.php?id=' . $id . "\r\n" .
+            'Загружен новый файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'apanel/apanel_view.php?id=' . $id . "\r\n" .
             'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
             'IP: ' . $_SERVER['REMOTE_ADDR'],
             "From: robot@".$_SERVER['HTTP_HOST']."\r\nContent-type: text/plain; charset=UTF-8"

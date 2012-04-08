@@ -37,6 +37,7 @@
 @set_time_limit(99999);
 ignore_user_abort(true);
 $HeadTime = microtime(true);
+chdir('../');
 
 require 'moduls/config.php';
 require 'moduls/header.php';
@@ -59,7 +60,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 switch ($action) {
     case 'exit':
         session_destroy();
-        echo 'Вы вышли из админки<br/><a href="index.php">Загрузки</a>';
+        echo 'Вы вышли из админки<br/><a href="../">Загрузки</a>';
         break;
 
 
@@ -342,7 +343,7 @@ break;
 // редактор MP3 тегов
 case 'id3':
 include 'moduls/PEAR/MP3/Id.php';
-include 'moduls/mp3.class.php';
+include 'moduls/inc/mp3.class.php';
 $id3 = new MP3_Id();
 
 $genres = $id3->genres();
@@ -531,10 +532,6 @@ break;
 ######################################ЛОГ######################################################
 case 'pos':
 $file_info = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-if (!is_dir($file_info['path'])) {
-    error('Error');
-}
-//$file_info['name'] = str_replace('*','',$file_info['name']);
 if ($_GET['to'] == 'down') {
     $query = 'UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ' . $id;
 } else {
@@ -554,23 +551,23 @@ ob_implicit_flush(1);
 
 $d = $tmp = 0;
 $r = mysql_query('SELECT `id`, `path` FROM `files`', $mysql);
-while ($a = mysql_fetch_row($r)) {
+while ($row = mysql_fetch_assoc($r)) {
     $tmp++;
     if ($tmp > 1000) {
         $tmp = 0;
-        echo 'scan ' . htmlspecialchars($a[1], ENT_NOQUOTES) . str_repeat(' ', 2048) . '...<br/>';
+        echo 'scan ' . htmlspecialchars($row['id'], ENT_NOQUOTES) . str_repeat(' ', 2048) . '...<br/>';
         ob_flush();
     }
 
-    if (!file_exists($a[1])) {
-        mysql_query('DELETE FROM `files` WHERE `id` = ' . $a[0], $mysql);
-        mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $a[0], $mysql);
+    if (!file_exists($row['path'])) {
+        mysql_query('DELETE FROM `files` WHERE `id` = ' . $row['id'], $mysql);
+        mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $row['id'], $mysql);
 
-        dir_count($a[1], false);
+        dir_count($row['path'], false);
 
         $d++;
         // заглушка
-        echo '<strong class="no">DEL ' . htmlspecialchars($a[1], ENT_NOQUOTES) . '...<br/></strong>';
+        echo '<strong class="no">DEL ' . htmlspecialchars($row['path'], ENT_NOQUOTES) . '...<br/></strong>';
         ob_flush();
     }
 }
@@ -605,7 +602,7 @@ break;
 case 'addico':
 $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
 if (!$_FILES) {
-echo '<div class="mainzag">Загрузка иконки к папке</div>
+    echo '<div class="mainzag">Загрузка иконки к папке</div>
 <div class="row">
 <form action="apanel.php?action=addico&amp;id=' . $id . '" method="post" enctype="multipart/form-data">
 <div class="row">
@@ -639,10 +636,11 @@ break;
 ######################################ЛОГ######################################################
 case 'reico':
 $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+
 if (!file_exists($file_info['path'] . 'folder.png')) {
     error('Иконки к данной папке не существует');
 }
-chmod($file_info['path'] . 'folder.png', 0777);
+
 if (unlink($file_info['path'] . 'folder.png')) {
     echo 'Удаление иконки прошло успешно.<br/>';
 } else {
@@ -677,6 +675,7 @@ if (!$_GET['level']) {
     echo 'Будут удалены все файлы в каталоге, а также сам каталог. Продолжить?<br/><a href="apanel.php?action=redir&amp;level=1&amp;id=' . $id . '">Да, продолжить</a>';
 } else {
     $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id . ' ORDER BY `name`', $mysql));
+
     if (!is_dir($file['path'])) {
         error('Такой категории не существует!');
     }
@@ -716,7 +715,6 @@ if (!$_GET['level']) {
         chmod($f_chmod.'/', 0777);
     }
 
-
     echo 'Каталог успешно удален!<div class="mainzag" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в папках<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
 }
 break;
@@ -728,20 +726,20 @@ if (!$setup['delete_dir']) {
     error($setup['hackmess']);
 }
 $file = mysql_fetch_assoc(mysql_query('SELECT `path`, `hidden`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql));
+
 if (!is_file($file['path'])) {
     error('Такого файла не существует!');
 }
-
 
 $ex = explode('/', $file['path']);
 $f_chmod = '';
 foreach ($ex as $chmod) {
     $f_chmod .= $chmod;
     if (is_dir($f_chmod)) {
-        $f_chmod = $f_chmod.'/';
+        $f_chmod = $f_chmod . '/';
     }
 
-    @chmod($f_chmod,0777);
+    @chmod($f_chmod, 0777);
 }
 
 if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
@@ -1040,9 +1038,10 @@ echo '</select><br/>
 </form>';
 } else {
     $newpath = trim($_POST['topath']);
-    if (empty($newpath)) {
+    if ($newpath == '') {
         error('Нет конечного пути!');
     }
+
     $text = explode("\n", $_POST['files']);
     $a = sizeof($text);
     for ($i = 0; $i < $a; ++$i) {
@@ -1052,7 +1051,7 @@ echo '</select><br/>
         }
         $to = $newpath . trim($parametr[1]);
         if (file_exists($to)) {
-            error('Файл ' . $to . ' уже существует');
+            error('Файл <strong>' . htmlspecialchars($to, ENT_NOQUOTES) . '</strong> уже существует');
         }
         if (!checkExt(pathinfo(trim($parametr[0]), PATHINFO_EXTENSION))) {
             error($setup['hackmess']);
@@ -1065,7 +1064,18 @@ echo '</select><br/>
             $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
 
             $infolder = dirname($to) . '/';
-            mysql_query("INSERT INTO `files` (`path`, `name`, `rus_name`, `infolder`, `size`, `timeupload`) VALUES ('" . mysql_real_escape_string($to, $mysql) . "', '" . mysql_real_escape_string($name, $mysql) . "', '" . mysql_real_escape_string($rus_name, $mysql) . "', '" . mysql_real_escape_string($infolder, $mysql) . "', " . filesize($to) . ", " . filectime($to) . ");", $mysql);
+            mysql_query("
+                INSERT INTO `files` (
+                    `path`, `name`, `rus_name`, `infolder`, `size`, `timeupload`
+                ) VALUES (
+                    '" . mysql_real_escape_string($to, $mysql) . "',
+                    '" . mysql_real_escape_string($name, $mysql) . "',
+                    '" . mysql_real_escape_string($rus_name, $mysql) . "',
+                    '" . mysql_real_escape_string($infolder, $mysql) . "',
+                    " . filesize($to) . ",
+                    " . filectime($to) . "
+                )", $mysql
+            );
             dir_count($infolder, true);
         } else {
             $err = error_get_last();
@@ -1171,9 +1181,10 @@ echo '</select><br/>
 </form>';
 } else {
     $newpath = trim($_POST['topath']);
-    if (empty($newpath)) {
+    if ($newpath == '') {
         error('Нет конечного пути! ' . htmlspecialchars($newpath, ENT_NOQUOTES));
     }
+
     $a = sizeof($_FILES['userfile']['name']);
     for ($i = 0; $i < $a; ++$i) {
         if (empty($_FILES['userfile']['name'][$i])) {
@@ -1544,7 +1555,7 @@ echo '<div class="mainzag">Настройки загруз-центра:</div>
 
 Стиль по умолчанию:
 <select class="enter" size="1" name="css">';
-foreach (glob('*.css', GLOB_NOESCAPE) as $v) {
+foreach (glob('style/*.css', GLOB_NOESCAPE) as $v) {
     $value = pathinfo($v, PATHINFO_FILENAME);
     echo '<option value="' . htmlspecialchars($value) . '" ' . sel($value, $setup['css'])  . '>' . htmlspecialchars($value, ENT_NOQUOTES) . '</option>';
 }

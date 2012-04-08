@@ -57,7 +57,7 @@ ID:<br/>
 <form action="' . DIRECTORY . 'service.php?act=pass" method="post">
 <div class="row">
 ' . $language['lost password'] . '<br/>
-ID:<input class="enter" type="text" name="id"/><input type="submit" value="' . $language['go'] . '" class="buttom"/>
+ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . $language['go'] . '" class="buttom"/>
 </div>
 </form>';
 } else if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {

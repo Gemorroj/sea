@@ -34,6 +34,7 @@
  */
 
 
+chdir('../');
 require 'moduls/config.php';
 require 'moduls/header.php';
 
@@ -65,9 +66,6 @@ if (!$id) {
     $d = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
 }
 
-if (!is_dir($d['path'])) {
-    error('Такой категории не существует!');
-}
 //------------------------------------------------------------------------------------------
 
 $all = mysql_result(mysql_query("SELECT COUNT(1) FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($d['path'], $mysql) . "'", $mysql), 0);
@@ -113,7 +111,7 @@ $ex = explode('/', $d['path']);
 $sz = sizeof($ex) - 2;
 $nav_dir = $setup['path'] . '/';
 
-unset($ex[0], $ex[$sz+1]);
+unset($ex[0], $ex[$sz + 1]);
 $path = $setup['path'] . '/';
 
 $put = '';
@@ -126,13 +124,13 @@ if ($ex) {
 
     $q = mysql_query(rtrim($implode, ',') . ')', $mysql);
     while ($s = mysql_fetch_assoc($q)) {
-        $put .= '<a href="index.php?id=' . $s['id'] . '">' . htmlspecialchars($s['name'], ENT_NOQUOTES) . '</a> &#187; ';
+        $put .= '<a href="../?id=' . $s['id'] . '">' . htmlspecialchars($s['name'], ENT_NOQUOTES) . '</a> &#187; ';
         $title .= '/' . htmlspecialchars($s['name'], ENT_NOQUOTES);
     }
 }
 
 ##############Заголовок##########################
-echo '<div class="mainzag"><img src="dis/load.png" alt=""/><a href="apanel_index.php">' . $language['downloads'] . '</a> &#187; ' . $put . '</div><div class="iblock">';
+echo '<div class="mainzag"><img src="../dis/load.png" alt=""/><a href="apanel_index.php">' . $language['downloads'] . '</a> &#187; ' . $put . '</div><div class="iblock">';
 
 //------------------------------------------------------------------------------------------
 if ($setup['eval_change']) {
@@ -195,10 +193,10 @@ while ($v = mysql_fetch_assoc($query)) {
         echo $row;
 
         if (file_exists($v['v'] . 'folder.png')) {
-            $ico = '<img src="' . htmlspecialchars($v['v']) . 'folder.png" alt=""/>';
+            $ico = '<img src="../' . htmlspecialchars($v['v']) . 'folder.png" alt=""/>';
             $addico = '[<a class="no" href="apanel.php?action=reico&amp;id=' . $v['id'] . '">I</a>]';
         } else {
-            $ico = '<img src="ext/dir.png" alt=""/>';
+            $ico = '<img src="../ext/dir.png" alt=""/>';
             $addico = '[<a class="yes" href="apanel.php?action=addico&amp;id=' . $v['id'] . '">I</a>]';
         }
 
@@ -221,7 +219,7 @@ while ($v = mysql_fetch_assoc($query)) {
 
         // описания
         if ($setup['desc']) {
-            $screen = strstr($v['v'], '/'); // убираем папку с загрузками
+            $screen = strstr(strstr($v['v'], '/'), '/'); // убираем папку с загрузками
             if (is_file($setup['opath'] . '/' . $screen . '.txt')){
                 echo '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
             }
@@ -237,9 +235,9 @@ while ($v = mysql_fetch_assoc($query)) {
         $v['size'] = '(' . size($v['size']) . ')';
 
         if (!file_exists('ext/' . $ext . '.png')) {
-            $ico = '<img src="ext/stand.png" alt=""/>';
+            $ico = '<img src="../ext/stand.png" alt=""/>';
         } else {
-            $ico = '<img src="ext/' . $ext . '.png" alt=""/>';
+            $ico = '<img src="../ext/' . $ext . '.png" alt=""/>';
         }
 
         $v['timeupload'] = tm($v['timeupload']);
@@ -271,7 +269,7 @@ while ($v = mysql_fetch_assoc($query)) {
 
         $desc = '';    
         if ($setup['desc']) {
-            $screen = strstr($v['v'], '/'); // убираем папку с загрузками
+            $screen = strstr(strstr($v['v'], '/'), '/'); // убираем папку с загрузками
 
             if (is_file($setup['opath'] . '/' . $screen . '.txt')){
                 $desc = '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
@@ -302,7 +300,7 @@ if ($pages > 1) {
         echo '<a href="apanel_index.php?id=' . $id . '&amp;page=1">1</a> ... ';
     }
     for ($i = $asd; $i < $asd2; ++$i) {
-        if($i < $all && $i > 0) {
+        if ($i < $all && $i > 0) {
             if ($i > $pages ) {
                 break;
             }
@@ -322,13 +320,13 @@ if ($pages > 1) {
     echo '<br/>';
     //------------------------------------------------------------------------------------------
     if ($pages > $setup['pagehand'] && $setup['pagehand_change'] == 1) {
-        echo 'Страница ' . $page . ' из ' . $pages . ':<br/><form action="apanel_index.php" method="get"><div class="row"><input class="buttom" type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="4" size="8" value=""/><input class="buttom" type="submit" value="Перейти"/></div></form>';
+        echo 'Страница ' . $page . ' из ' . $pages . ':<br/><form action="apanel_index.php" method="get"><div class="row"><input class="buttom" type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="4" size="8" value=""/> <input class="buttom" type="submit" value="Перейти"/></div></form>';
     }
     //------------------------------------------------------------------------------------------
     if ($setup['onpage_change']) {
         echo 'Файлов на страницу: ';
-        for($i = 10; $i < 35; $i += 5){
-            if($i == $onpage){
+        for ($i = 10; $i < 35; $i += 5) {
+            if ($i == $onpage) {
                 echo '<strong>[' . $i . ']</strong>';
             } else {
                 echo '[<a href="apanel_index.php?onpage=' . $i . '&amp;id=' . $id . '">' . $i . '</a>]';

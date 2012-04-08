@@ -34,6 +34,7 @@
  */
 
 
+chdir('../');
 require 'moduls/config.php';
 require 'moduls/header.php';
 
@@ -130,39 +131,42 @@ if (isset($_GET['hidden'])) {
     }
 } else if (isset($_POST['folder'])) {
     $folder = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . intval($_POST['folder']), $mysql));
+
     if (!$folder) {
         echo '<div class="red">Указанной директории не существует. Файл не перемещен<br/></div>';
-    } else if (file_exists($folder['path'] . $filename)) {
-        echo '<div class="red">Файл с таким именем в указанной директории уже есть. Файл не перемещен<br/></div>';
     } else {
-        if (rename($file_info['path'], $folder['path'] . $filename)) {
-            if (mysql_query('UPDATE `files` SET `path` = "' . mysql_real_escape_string($folder['path'] . $filename, $mysql) . '", `infolder` = "' . mysql_real_escape_string($folder['path'], $mysql) . '" WHERE `id` = ' . $id, $mysql)) {
-
-                if (!$file_info['hidden']) {
-                    dir_count($dir, false);
-                    dir_count($folder['path'], true);
-                }
-
-                $path1 = strstr($file_info['path'], '/'); // убираем папку с загрузками
-                $path2 = strstr($folder['path'], '/'); // убираем папку с загрузками
-
-                // перемещаем скриншоты и описания
-                if (is_file($setup['spath'] . $path1 . '.gif')) {
-                    rename($setup['spath'] . $path1 . '.gif', $setup['spath'] . $path2 . $filename . '.gif');
-                }
-                if (is_file($setup['spath'] . $path1 . '.jpg')) {
-                    rename($setup['spath'] . $path1 . '.jpg', $setup['spath'] . $path2 . $filename . '.jpg');
-                }
-                if (is_file($setup['opath'] . $path1 . '.txt')) {
-                    rename($setup['opath'] . $path1 . '.txt', $setup['opath'] . $path2 . $filename . '.txt');
-                }
-                echo '<div class="green">Файл перемещен<br/></div>';
-            } else {
-                rename($folder['path'] . $filename, $file_info['path']);
-                echo '<div class="red">Ошибка записи в БД<br/>' . mysql_error($mysql) . '</div>';
-            }
+        if (file_exists($folder['path'] . $filename)) {
+            echo '<div class="red">Файл с таким именем в указанной директории уже есть. Файл не перемещен<br/></div>';
         } else {
-            echo '<div class="red">Ошибка переименования файла<br/></div>';
+            if (rename($file_info['path'], $folder['path'] . $filename)) {
+                if (mysql_query('UPDATE `files` SET `path` = "' . mysql_real_escape_string($folder['path'] . $filename, $mysql) . '", `infolder` = "' . mysql_real_escape_string($folder['path'], $mysql) . '" WHERE `id` = ' . $id, $mysql)) {
+
+                    if (!$file_info['hidden']) {
+                        dir_count($dir, false);
+                        dir_count($folder['path'], true);
+                    }
+
+                    $path1 = strstr($file_info['path'], '/'); // убираем папку с загрузками
+                    $path2 = strstr($folder['path'], '/'); // убираем папку с загрузками
+
+                    // перемещаем скриншоты и описания
+                    if (is_file($setup['spath'] . $path1 . '.gif')) {
+                        rename($setup['spath'] . $path1 . '.gif', $setup['spath'] . $path2 . $filename . '.gif');
+                    }
+                    if (is_file($setup['spath'] . $path1 . '.jpg')) {
+                        rename($setup['spath'] . $path1 . '.jpg', $setup['spath'] . $path2 . $filename . '.jpg');
+                    }
+                    if (is_file($setup['opath'] . $path1 . '.txt')) {
+                        rename($setup['opath'] . $path1 . '.txt', $setup['opath'] . $path2 . $filename . '.txt');
+                    }
+                    echo '<div class="green">Файл перемещен<br/></div>';
+                } else {
+                    rename($folder['path'] . $filename, $file_info['path']);
+                    echo '<div class="red">Ошибка записи в БД<br/>' . mysql_error($mysql) . '</div>';
+                }
+            } else {
+                echo '<div class="red">Ошибка переименования файла<br/></div>';
+            }
         }
     }
 
@@ -197,9 +201,9 @@ $prev_pic = str_replace('/', '--', mb_substr(strstr($file_info['path'], '/'), 1)
 if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext == 'png' || $ext == 'bmp') {
     $out = '<hr class="hr"/>';
     if (file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
-        $out .= '<img src="' . DIRECTORY . $setup['picpath'] . '/' . htmlspecialchars($prev_pic) . '.gif" alt=""/><br/>';
+        $out .= '<img src="../' . $setup['picpath'] . '/' . htmlspecialchars($prev_pic) . '.gif" alt=""/><br/>';
     } else {
-        $out .= '<img src="' . DIRECTORY . 'im/' . $id . '" alt=""/><br/>';
+        $out .= '<img src="../im/' . $id . '" alt=""/><br/>';
     }
 
     $size = getimagesize($file_info['path']);
@@ -209,12 +213,12 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
         $wh = explode('*', $val);
         $f = $setup['picpath'] . '/' . $wh[0] . 'x' . $wh[1] . '_' . htmlspecialchars($prev_pic) . '.gif';
         if (file_exists($f)) {
-            $out .= ' <a href="' . DIRECTORY . $f . '">' . $val . '</a>';
+            $out .= ' <a href="../' . $f . '">' . $val . '</a>';
         } else {
-            $out .= ' <a href="' . DIRECTORY . 'im.php?id=' . $id . '&amp;W=' . $wh[0] . '&amp;H=' . $wh[1] . '">' . $val . '</a>';
+            $out .= ' <a href="../im.php?id=' . $id . '&amp;W=' . $wh[0] . '&amp;H=' . $wh[1] . '">' . $val . '</a>';
         }
     }
-    echo $out . '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="Скачать"/></div></form>';
+    echo $out . '<form action="../im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="Скачать"/></div></form>';
 }
 
 ###############Инфа о mp3###########################
@@ -225,7 +229,7 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
         if (file_exists('moduls/cache/' . $id . '.dat')) {
             $tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
         } else {
-            include 'moduls/classAudioFile.php';
+            include 'moduls/inc/classAudioFile.php';
 
             $audio = new AudioFile;
             $audio->loadFile($file_info['path']);
@@ -233,7 +237,7 @@ else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
             if ($audio->wave_length) {
                 $length = $audio->wave_length;
             } else {
-                include 'moduls/mp3.class.php';
+                include 'moduls/inc/mp3.class.php';
                 $mp3 = new mp3($file_info['path']);
                 $mp3->setFileInfoExact();
                 $length = $mp3->time;
@@ -381,9 +385,9 @@ else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && e
     }
     // 80x80
     if (is_file($setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
-        $out = '<br/><img src="' . DIRECTORY . $setup['ffmpegpath'] . '/' . htmlspecialchars($prev_pic) . '_frame_' . $frame . '.gif" alt=""/><br/>';
+        $out = '<br/><img src="../' . $setup['ffmpegpath'] . '/' . htmlspecialchars($prev_pic) . '_frame_' . $frame . '.gif" alt=""/><br/>';
     } else {
-        $out = '<br/><img src="' . DIRECTORY . 'ffmpeg/' . $id . '/' . $frame . '" alt=""/><br/>';
+        $out = '<br/><img src="../ffmpeg/' . $id . '/' . $frame . '" alt=""/><br/>';
     }
 
     if (file_exists('moduls/cache/' . $id . '.dat')) {
@@ -413,21 +417,21 @@ else if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && e
     echo $out;
     
 } else if ($ext == 'swf') {
-    echo '<br/><object width="128" height="128"><param name="movie" value="' . DIRECTORY . htmlspecialchars($file_info['path']) . '"><embed src="' . DIRECTORY . htmlspecialchars($file_info['path']) . '" width="128" height="128"></embed></param></object>';
+    echo '<br/><object width="128" height="128"><param name="movie" value="../' . htmlspecialchars($file_info['path']) . '"><embed src="../' . htmlspecialchars($file_info['path']) . '" width="128" height="128"></embed></param></object>';
 } else if ($ext == 'jar') {
     if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
-        echo '<br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
+        echo '<br/><img style="margin: 1px;" src="../' . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
     } else if (jar_ico($file_info['path'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
-        echo '<br/><img style="margin: 1px;" src="' . DIRECTORY . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
+        echo '<br/><img style="margin: 1px;" src="../' . $setup['ipath'] . '/' . htmlspecialchars($prev_pic) . '.png" alt=""/>';
     }
 }
 
 $screen = strstr($file_info['path'], '/'); // убираем папку с загрузками
 //Скиншот
 if (is_file($setup['spath'] . $screen . '.gif')) {
-    echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="' . $setup['spath'] . htmlspecialchars($screen) . '.gif" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
+    echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="../' . $setup['spath'] . htmlspecialchars($screen) . '.gif" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
 } else if (is_file($setup['spath'] . $screen . '.jpg')) {
-    echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="' . $setup['spath'] . htmlspecialchars($screen) . '.jpg" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
+    echo '<hr class="hr"/><strong>Скриншот:</strong><br/><img src="../' . $setup['spath'] . htmlspecialchars($screen) . '.jpg" alt="screen"/><br/>[<strong><a href="apanel.php?action=del_screen&amp;id=' . $id . '">Удалить скриншот</a></strong>]';
 } else {
     echo '<br/>[<strong><a href="apanel.php?action=screen&amp;id=' . $id . '">Добавить скриншот</a></strong>]';
 }
@@ -453,7 +457,7 @@ if ($file_info['attach']) {
     $attach = unserialize($file_info['attach']);
     if ($attach) {
         foreach ($attach as $k => $val) {
-            echo '<a href="' . htmlspecialchars(DIRECTORY . $setup['apath'] . dirname($screen) . '/' . $id . '_' . $k . '_' . $val) . '">' . htmlspecialchars($val, ENT_NOQUOTES) . '</a> [<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&amp;del_attach=' . $k . '" class="no">D</a>]<br/>';
+            echo '<a href="../' . htmlspecialchars($setup['apath'] . dirname($screen) . '/' . $id . '_' . $k . '_' . $val) . '">' . htmlspecialchars($val, ENT_NOQUOTES) . '</a> [<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&amp;del_attach=' . $k . '" class="no">D</a>]<br/>';
         }
     }
 }
@@ -481,46 +485,43 @@ echo '</select><br/>
 // Голосование
 if ($setup['eval_change']) {
     $i = $file_info['yes'] + $file_info['no'];
-    if ($i) {
-        $i = round($file_info['yes'] / $i * 100, 0);
-    }
+    $i = $i ? round($file_info['yes'] / $i * 100, 0) : 50;
 
     echo '<hr class="hr"/>
 <strong>Рейтинг файла(+/-)</strong>: <span class="yes">' . $file_info['yes'] . '</span>/<span class="no">' . $file_info['no'] . '</span>[<a href="apanel.php?id=' . $file_info['id'] . '&amp;action=cleareval">Сбросить</a>]<br/>
-<img src="rate.php?i=' . $i . '" alt=""/><br/>
-Полезный файл?: <span class="yes"><a href="view.php?id=' . $id . '&amp;eval=1">Да</a></span>/<span class="no"><a href="view.php?id=' . $id . '&amp;eval=0">Нет</a></span>';
+<img src="../rate.php?i=' . $i . '" alt=""/><br/>';
 }
 
 
 ###############Нарезка###########################
 echo '</div><div class="iblock">';
 if ($setup['cut_change'] && ($ext == 'mp3' || $ext == 'wav')) {
-    echo '<strong><a href="cut.php?id=' . $id . '">Нарезка</a></strong><br/>';
+    echo '<strong><a href="../cut.php?id=' . $id . '">Нарезка</a></strong><br/>';
 }
 
 ###############Просмотр архива####################
 if ($setup['zip_change'] && $ext == 'zip') {
-    echo '<strong><a href="zip.php?id=' . $id . '">Просмотр архива</a></strong><br/>';
+    echo '<strong><a href="../zip.php?id=' . $id . '">Просмотр архива</a></strong><br/>';
 }
 
 ###############Комментарии#######################
 if ($setup['komments_change']) {
-    echo '<a href="komm.php?id=' . $id . '"><strong>Комментарии [' . $all_komments . '</strong>]</a>[<a href="apanel.php?id=' . $file_info['id'] . '&amp;action=clearkomm">Очистить</a>]<br/>';
+    echo '<a href="../komm.php?id=' . $id . '"><strong>Комментарии [' . $all_komments . '</strong>]</a>[<a href="apanel.php?id=' . $file_info['id'] . '&amp;action=clearkomm">Очистить</a>]<br/>';
 }
 
 
 // txt файлы
 if ($ext == 'txt') {
     if ($setup['lib_change']) {
-        echo '<strong><a href="read.php?id=' . $id . '">Читать</a></strong><br/>';
+        echo '<strong><a href="../read.php?id=' . $id . '">Читать</a></strong><br/>';
     }
-    echo '<a href="txt_zip.php?id=' . $id . '">Скачать [ZIP]</a><br/><a href="txt_jar.php?id=' . $id . '">Скачать [JAR]</a><br/>';
+    echo '<a href="../txt_zip.php?id=' . $id . '">Скачать [ZIP]</a><br/><a href="../txt_jar.php?id=' . $id . '">Скачать [JAR]</a><br/>';
 }
 
 
-echo '<strong><a href="load.php?id=' . $id . '">Скачать [' . strtoupper($ext) . ']</a></strong><br/>';
+echo '<strong><a href="../load.php?id=' . $id . '">Скачать [' . strtoupper($ext) . ']</a></strong><br/>';
 if ($ext == 'jar' && $setup['jad_change']) {
-    echo '<strong><a href="jad.php?id=' . $id . '">Скачать [JAD]</a></strong><br/>';
+    echo '<strong><a href="../jad.php?id=' . $id . '">Скачать [JAD]</a></strong><br/>';
 }
 
 echo '</div>

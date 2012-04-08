@@ -319,6 +319,9 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('', '', '');", $mysql);
 
 
+    mysql_query("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '08-04-2012');", $mysql);
+
+
     echo 'Установка закончена<br/>Не забудте удалить файл install.php<br/><strong><a href="./">К загрузкам</a><br/>';
 }
 

@@ -117,7 +117,7 @@ if ($setup['send_email'] && isset($_GET['email'])) {
             echo '<div class="no">' . $language['sending email error occurred'] . '</div>';
         }
     } else {
-        echo '<form action="' . DIRECTORY . 'view/' . $id . '/email" method="post"><div class="row">Email: <input type="text" name="mail" class="enter"/><br/><input type="submit" class="buttom"/></div></form>';
+        echo '<form action="' . DIRECTORY . 'view/' . $id . '/email" method="post"><div class="row">Email: <input type="text" name="mail" class="enter"/><br/><input type="submit" class="buttom" value="' . $language['go'] . '"/></div></form>';
     }
 
     echo '</div><div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
@@ -167,14 +167,14 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
             $out .= ' <a href="' . DIRECTORY . 'im.php?id=' . $id . '&amp;W=' . $wh[0] . '&amp;H=' . $wh[1] . '">' . $val . '</a>';
         }
     }
-    $out .= '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input type="submit" value="' . $language['download'] . '"/></div></form>';
+    $out .= '<form action="' . DIRECTORY . 'im.php?" method="post"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input type="text" size="3" name="W"/>x<input type="text" size="3" name="H"/><br/><input class="buttom" type="submit" value="' . $language['download'] . '"/></div></form>';
 } else if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
     $tmpa = array();
     if ($ext == 'mp3' || $ext == 'wav') {
         if (file_exists('moduls/cache/' . $id . '.dat')) {
             $tmpa = unserialize(file_get_contents('moduls/cache/' . $id . '.dat'));
         } else {
-            include 'moduls/classAudioFile.php';
+            include 'moduls/inc/classAudioFile.php';
 
             $audio = new AudioFile;
             $audio->loadFile($v['path']);
@@ -182,7 +182,7 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
             if ($audio->wave_length) {
                 $length = $audio->wave_length;
             } else {
-                include 'moduls/mp3.class.php';
+                include 'moduls/inc/mp3.class.php';
                 $mp3 = new mp3($v['path']);
                 $mp3->setFileInfoExact();
                 $length = $mp3->time;
@@ -472,9 +472,8 @@ if ($setup['prev_next']) {
 ###############Голосование###########################
 if ($setup['eval_change']) {
     $i = $v['yes'] + $v['no'];
-    if ($i) {
-        $i = round($v['yes'] / $i * 100, 0);
-    }
+    $i = $i ? round($v['yes'] / $i * 100, 0) : 50;
+
     $out .= '<hr class="hr"/><strong>' . $language['rating'] . '</strong>: (<span class="yes">+' . $v['yes'] . '</span>/<span class="no">-' . $v['no'] . '</span>)<br/><img src="' . DIRECTORY . 'rate/' . $i . '" alt="" style="margin: 1px;"/><br/>';
     if (!$vote) {
         $out .= $language['net'] . ': <span class="yes"><a href="' . DIRECTORY . 'view/' . $id . '/1">' . $language['yes'] . '</a></span>/<span class="no"><a href="' . DIRECTORY . 'view/' . $id . '/0">' . $language['no'] . '</a></span>';

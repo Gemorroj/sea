@@ -37,10 +37,7 @@
 $GLOBALS['tm'] = microtime(true);
 
 header('Content-type: text/html; charset=utf-8');
-header('Expires: Thu, 21 Jul 1977 07:30:00 GMT');
-header('Last-Modified: ' . gmdate('r') . ' GMT');
-header('Cache-Control: post-check=0, pre-check=0');
-header('Pragma: no-cache');
+
 
 
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
@@ -72,10 +69,10 @@ if ($setup['style_change']) {
     } else if (isset($_SESSION['style'])) {
         $style = $_SESSION['style'];
     } else {
-        $style = $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['css'] . '.css';
+        $style = $_SERVER['HTTP_HOST'] . DIRECTORY . 'style/' . $setup['css'] . '.css';
     }
 } else {
-    $style = $_SERVER['HTTP_HOST'] . DIRECTORY . ($setup['css'] ? $setup['css'] : 'style') . '.css';
+    $style = $_SERVER['HTTP_HOST'] . DIRECTORY . 'style/' . ($setup['css'] ? $setup['css'] : 'style') . '.css';
 }
 
 

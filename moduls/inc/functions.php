@@ -334,6 +334,73 @@ function checkExt ($ext)
 
 
 /**
+ * Обновление данных файлов в БД
+ *
+ * @return bool
+ */
+function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $insert = true)
+{
+    if ($dir) {
+        if ($insert) {
+            $q = mysql_query('
+                INSERT INTO `files` (
+                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`
+                ) VALUES (
+                    "1",
+                    "' . mysql_real_escape_string($path . '/', $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string(dirname($path) . '/', $GLOBALS['mysql']) . '",
+                    0,
+                    "' . filectime($path) . '"
+                )
+            ', $GLOBALS['mysql']);
+        } else {
+            $q = mysql_query('
+                UPDATE `files`
+                SET `name` = IF(`name` <> "", `name`, "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '"),
+                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '"),
+                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '"),
+                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '")
+                WHERE `path` = "' . mysql_real_escape_string($path . '/', $GLOBALS['mysql']) . '"
+            ', $GLOBALS['mysql']);
+        }
+    } else {
+        if ($insert) {
+            $q = mysql_query('
+                INSERT INTO `files` (
+                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`
+                ) VALUES (
+                    "0",
+                    "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string(dirname($path) . '/', $GLOBALS['mysql']) . '",
+                    "' . filesize($path) . '",
+                    "' . filectime($path) . '"
+                )
+            ', $GLOBALS['mysql']);
+        } else {
+            $q = mysql_query('
+                UPDATE `files`
+                SET `name` = IF(`name` <> "", `name`, "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '"),
+                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '"),
+                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '"),
+                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '")
+                WHERE `path` = "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '"
+            ', $GLOBALS['mysql']);
+        }
+    }
+
+    return $q;
+}
+
+
+/**
  * Обновление данных загрузок в БД
  * 
  * @return array
@@ -351,7 +418,7 @@ function scaner($path = '', $cont = 'folder.png')
     if (!is_readable($path)) {
         echo 'Error<br/>';
         return array();
-       }
+    }
 
 
     chmod($path, 0777);
@@ -363,6 +430,21 @@ function scaner($path = '', $cont = 'folder.png')
         }
 
         $f = str_replace('//', '/', $path . '/' . $file);
+        $q = mysql_query('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '" OR `path` = "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '/"');
+        if (!$q) {
+            $errors[] = mysql_error($GLOBALS['mysql']);
+            continue;
+        }
+
+        $insert = true;
+        if (mysql_num_rows($q)) {
+            $insert = false;
+            $row = mysql_fetch_assoc($q);
+            if ($row['name'] != '' && $row['rus_name'] != '' && $row['aze_name'] != '' && $row['tur_name'] != '') {
+                continue;
+            }
+        }
+
 
         $tmp++;
         if ($tmp > 500) {
@@ -374,10 +456,15 @@ function scaner($path = '', $cont = 'folder.png')
 
         $pathinfo = pathinfo($f);
         $aze_name = $tur_name = $rus_name = $name = $pathinfo['filename'];
+        if ($name == '') {
+            $tmpErr = error_get_last();
+            $errors[] = $tmpErr['message'];
+            continue;
+        }
 
         // транслит
         if ($name[0] == '!') {
-            $aze_name = $tur_name = $name = $rus_name = substr($name, 1);
+            $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
             $rus_name = trans($rus_name);
         }
 
@@ -404,22 +491,7 @@ function scaner($path = '', $cont = 'folder.png')
             }
             chmod($attach, 0777);
 
-            sleep(0.005); // =///
-            if (!mysql_query('
-                INSERT IGNORE INTO `files`
-                (`dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`)
-                VALUES(
-                "1",
-                "' . mysql_real_escape_string($f . '/', $GLOBALS['mysql']) . '",
-                "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
-                "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
-                "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
-                "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
-                "' . mysql_real_escape_string($pathinfo['dirname'] . '/', $GLOBALS['mysql']) . '",
-                0,
-                "' . filectime($f) . '"
-                )
-            ', $GLOBALS['mysql'])) {
+            if (!_scanerDb($f, $name, $rus_name, $aze_name, $tur_name, true, $insert)) {
                 $errors[] = mysql_error($GLOBALS['mysql']);
             }
 
@@ -431,22 +503,7 @@ function scaner($path = '', $cont = 'folder.png')
             if ($pathinfo['basename'] == $cont) {
                 continue;
             } else {
-                sleep(0.005); // =///
-                if (!mysql_query('
-                    INSERT IGNORE INTO `files`
-                    (`dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`)
-                    VALUES(
-                    "0",
-                    "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($pathinfo['dirname'] . '/', $GLOBALS['mysql']) . '",
-                    "' . filesize($f) . '",
-                    "' . filectime($f) . '"
-                    )
-                ', $GLOBALS['mysql'])) {
+                if (!_scanerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
                     $errors[] = mysql_error($GLOBALS['mysql']);
                 }
             }
@@ -582,7 +639,7 @@ function thm($path = '')
         'UIQ3' => 'M600, P1, W950, W960, P990',
     );
 
-    require_once DIR . '/PEAR/Archive/Tar.php';
+    include_once dirname(__FILE__) . '/../PEAR/Archive/Tar.php';
 
     $thm = new Archive_Tar($path);
 
@@ -685,14 +742,17 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
         $h = intval($w / $sxy);
     }
 
+
+    $dir = dirname(__FILE__);
+
     switch ($type) {
         case 1:
             if ($GLOBALS['setup']['anim_change']) {
                 ini_set('memory_limit', '256M');
 
                 // GIF Поддержка анимации    
-                require_once DIR . '/GIFDecoder.class.php';
-                require_once DIR . '/GIFEncoder.class.php';
+                include_once $dir . '/GIFDecoder.class.php';
+                include_once $dir . '/GIFEncoder.class.php';
 
                 $gif = new GIFDecoder(file_get_contents($in));
 
@@ -702,8 +762,8 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
 
                 $a = sizeof($arr);
                 for ($i = 0; $i < $a; ++$i) {
-                    $tmp1 = DIR . '/cache/' . mt_rand() . '.gif';
-                    $tmp2 = DIR . '/cache/' . mt_rand() . '.gif';
+                    $tmp1 = $dir . '/../cache/' . mt_rand() . '.gif';
+                    $tmp2 = $dir . '/../cache/' . mt_rand() . '.gif';
 
                     file_put_contents($tmp1, $arr[$i]);
                     $resize = imagecreatefromgif($tmp1);
@@ -713,7 +773,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
 
 
                     if ($marker) {
-                        $image_p = marker($image_p, imagecreatefrompng(DIR . '/marker.png'));
+                        $image_p = marker($image_p, imagecreatefrompng($dir . '/../marker.png'));
                     }
 
                     imagegif($image_p, $tmp2);
@@ -771,8 +831,8 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
 
         case 6:
             // BMP
-            require_once DIR . '/bmp.php';
-            $old = imagecreatefrombmp($in, DIR . '/cache/');
+            include_once $dir . '/bmp.php';
+            $old = imagecreatefrombmp($in, $dir . '/../cache/');
             break;
 
 
@@ -787,7 +847,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
     imagecopyresampled($new, $old, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
     if ($marker) {
-        $new = marker($new, imagecreatefrompng(DIR . '/marker.png'));
+        $new = marker($new, imagecreatefrompng($dir . '/../marker.png'));
     }
 
 
@@ -804,7 +864,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
  */
 function jar_ico($jar, $f)
 {
-    require_once DIR . '/PEAR/pclzip.lib.php';
+    include_once dirname(__FILE__) . '/../PEAR/pclzip.lib.php';
 
     $icon = array();
     $archive = new PclZip($jar);
@@ -853,9 +913,11 @@ function jar_ico($jar, $f)
 function error($str = '')
 {
     $language = Language::getInstance()->getLanguage();
-    require_once DIR . '/header.php';
+    $dir = dirname(__FILE__);
+
+    require_once $dir . '/../header.php';
     echo '<div class="no">' . $str . '</div><div class="iblock">- <a href="javascript:history.back();">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $GLOBALS['setup']['site_url'] . '">' . $language['home'] . '</a><br/></div>';
-    require_once DIR . '/foot.php';
+    require_once $dir . '/../foot.php';
     exit;
 }
 

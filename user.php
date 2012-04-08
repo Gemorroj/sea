@@ -89,29 +89,29 @@ if ($setup['preview_change']) {
 }
 
 if ($setup['lib_change']) {
-    echo '<form action="' . DIRECTORY . 'user/' . $id . '" method="post"><div class="row">' . $language['lib'] . ':<br/><input class="enter" type="text" name="lib" value="' . (isset($_SESSION['lib']) ? $_SESSION['lib'] : $setup['lib']) . '"/><br/><input type="submit" value="' . $language['go'] . '"/></div></form>';
+    echo '<form action="' . DIRECTORY . 'user/' . $id . '" method="post"><div class="row">' . $language['lib'] . ':<br/><input size="5" class="enter" type="text" name="lib" value="' . (isset($_SESSION['lib']) ? $_SESSION['lib'] : $setup['lib']) . '"/> <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
 }
 
 
 // язык
 echo '<form action="' . DIRECTORY . 'user/' . $id . '" method="post"><div class="row">' . $language['language'] . ':<br/>';
 echo Language::getInstance()->selectLangpacks(Language::getInstance()->getLangpack());
-echo '<input type="submit" value="' . $language['go'] . '"/></div></form>';
+echo ' <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
 
 
 
 // стиль
 if ($setup['style_change']) {
     // переменная для поля ввода при сервисе
-    $css = '&amp;style=' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['css'] . '.css';
+    $css = '&amp;style=' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'style/' . $setup['css'] . '.css';
     echo '<form action="' . DIRECTORY . 'user/' . $id . '" method="post"><div class="row">' . $language['style'] . ':<br/><select class="enter" name="style">';
 
-    foreach (glob('*.css', GLOB_NOESCAPE) as $var) {
+    foreach (glob('style/*.css', GLOB_NOESCAPE) as $var) {
         $value = $_SERVER['HTTP_HOST'] . DIRECTORY . $var;
         echo '<option value="' . $value . '" ' . sel($value, (isset($_POST['style']) ? $_POST['style'] : (isset($_COOKIE['style']) ? $_COOKIE['style'] : $style))) . '>' . htmlspecialchars(pathinfo($var, PATHINFO_FILENAME), ENT_NOQUOTES) . '</option>';
     }
 
-    echo '</select><input type="submit" value="' . $language['go'] . '"/></div></form>';
+    echo '</select> <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
 } else {
     $css = '';
 }

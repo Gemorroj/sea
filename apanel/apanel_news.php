@@ -38,6 +38,7 @@
 //set_time_limit(99999);
 //ignore_user_abort(1);
 
+chdir('../');
 require 'moduls/config.php';
 require 'moduls/header.php';
 
@@ -95,7 +96,7 @@ if (isset($_POST['new'])) {
 
 
 
-echo '<div class="mblock"><a href="news.php">Новости</a></div>
+echo '<div class="mblock"><a href="../news.php">Новости</a></div>
 <div class="mblock"><a href="apanel_news.php?action=del">Очистка</a></div>
 <form action="' . $_SERVER['PHP_SELF'] . '" method="post">
 <div class="row">Введите текст новости:</div><div class="row">';

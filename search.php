@@ -228,7 +228,7 @@ if (isset($_GET['act'])) {
 
 
     if ($setup['pagehand_change'] && $pages > $setup['pagehand']) {
-        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="' . DIRECTORY . 'search.php" method="get"><div class="row"><input class="enter" name="act" type="hidden" value="search"/><input class="enter" name="word" type="hidden" value="' . $word . '"/><input class="enter" name="page" type="text" maxlength="4" size="8"/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
+        $out .= str_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="' . DIRECTORY . 'search.php" method="get"><div class="row"><input class="enter" name="act" type="hidden" value="search"/><input class="enter" name="word" type="hidden" value="' . $word . '"/><input class="enter" name="page" type="text" maxlength="4" size="8"/> <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
     }
     //------------------------------------------------------------------------------------------
     $out .= '<div class="iblock">- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';

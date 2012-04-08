@@ -35,51 +35,40 @@
 
 
 //error_reporting(0);
-
-@set_time_limit(99999);
-ini_set('max_execution_time', 99999);
+set_time_limit(99999);
 ignore_user_abort(true);
+//ob_end_flush();
 ob_implicit_flush(1);
-//clearstatcache();
-ini_set('memory_limit', '256M');
 
+chdir('../');
 require 'moduls/config.php';
 require 'moduls/header.php';
 
 
 $HeadTime = microtime(true);
 
+
 if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
     error($setup['hackmess']);
 }
+////////////////////////////
 
 
+// получаем все папки
+$res = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1" GROUP BY `path`', $mysql);
+while ($dir = mysql_fetch_row($res)) {
+    // заглушка
+    echo 'updated ' . htmlspecialchars($dir[0], ENT_NOQUOTES) . '...<br/>';
+    ob_flush();
 
-// скриншоты
-chmod($setup['spath'], 0777);
-// описания
-chmod($setup['opath'], 0777);
-// вложения
-chmod($setup['apath'], 0777);
+    $dir[0] = mysql_real_escape_string($dir[0], $mysql);
+    // заносим данныев БД
 
-$scan = isset($_GET['scan']) ? $_GET['scan'] : $setup['path'];
-
-echo '<div style="font-size: x-small;">';
-$data = scaner($scan);
-echo '</div>';
-
-
-if ($data['errors']) {
-    echo '<div class="no">' . implode('<br/>', $data['errors']) . '<br/></div>';
+    mysql_query('UPDATE `files` SET `dir_count` = ' . intval(mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE "' . $dir[0] . '%" AND `hidden` = "0"', $mysql), 0)) . ' WHERE `path`="' . $dir[0] . '"', $mysql);
 }
+mysql_query('OPTIMIZE TABLE `files`', $mysql);
 
-echo '<div class="mainzag">БД обновлена!<br/></div>
-Просканировано директорий: ' . $data['folders'] . '<br/>
-Просканировано файлов: ' . $data['files'] . '<br/>
-<div class="mainzag" style="color:#b00;">
-Внимание! Теперь следует пересчитать количество файлов в папках<br/>
-Для продолжения нажмите на <a class="yes" href="apanel_count.php">ЭТУ</a> ссылку
-</div>';
+echo '<div class="mainzag">База данных успешно обновлена!</div><div class="row"><a href="apanel.php">Админка</a></div>';
 
 require 'moduls/foot.php';
 

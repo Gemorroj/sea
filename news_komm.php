@@ -135,7 +135,7 @@ if ($_GET['act'] == 'add') {
 
 
         if (isset($_SESSION['autorise']) && $_SESSION['autorise'] == $setup['password']) {
-            $out .= '<a href="' . DIRECTORY . 'apanel.php?news_komm=' . $komments['id'] . '&amp;action=del_news_komm" title="del">[X]</a> ';
+            $out .= '<a href="' . DIRECTORY . 'apanel/apanel.php?news_komm=' . $komments['id'] . '&amp;action=del_news_komm" title="del">[X]</a> ';
         }
 
         $out .= '<strong>' . htmlspecialchars($komments['name'], ENT_NOQUOTES) . '</strong> (' . tm($komments['time']) . ')<br/>' . str_replace("\n", '<br/>', $komments['text']) . '</div>';

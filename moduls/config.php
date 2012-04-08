@@ -56,8 +56,8 @@ set_include_path(
 
 
 
-require_once DIR . '/functions.php';
-require_once DIR . '/Language.php';
+require_once DIR . '/inc/functions.php';
+require_once DIR . '/inc/Language.php';
 $language = Language::getInstance()->getLanguage();
 
 // Подключаем модуль партнерки
