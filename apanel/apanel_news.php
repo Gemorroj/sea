@@ -34,7 +34,7 @@
  */
 
 
-//error_reporting(0);
+define('APANEL', true);
 //set_time_limit(99999);
 //ignore_user_abort(1);
 

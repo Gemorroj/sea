@@ -34,6 +34,7 @@
  */
 
 
+define('APANEL', true);
 require '../moduls/config.php';
 
 $HeadTime = microtime(true);

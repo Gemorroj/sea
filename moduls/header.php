@@ -40,7 +40,11 @@ header('Content-type: text/html; charset=utf-8');
 
 
 
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
+if (defined('APANEL')) {
+    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname(dirname($_SERVER['PHP_SELF'])) . '/'));
+} else {
+    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
+}
 
 
 if (isset($_POST['langpack']) && Language::getInstance()->setLangpack($_POST['langpack'])) {

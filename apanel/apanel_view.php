@@ -34,6 +34,7 @@
  */
 
 
+define('APANEL', true);
 chdir('../');
 require 'moduls/config.php';
 require 'moduls/header.php';
