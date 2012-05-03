@@ -430,6 +430,7 @@ function scaner($path = '', $cont = 'folder.png')
         }
 
         $f = str_replace('//', '/', $path . '/' . $file);
+
         $q = mysql_query('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '" OR `path` = "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '/"');
         if (!$q) {
             $errors[] = mysql_error($GLOBALS['mysql']);
@@ -441,6 +442,10 @@ function scaner($path = '', $cont = 'folder.png')
             $insert = false;
             $row = mysql_fetch_assoc($q);
             if ($row['name'] != '' && $row['rus_name'] != '' && $row['aze_name'] != '' && $row['tur_name'] != '') {
+                if (is_dir($f)) {
+                    $folders++;
+                    scaner($f);
+                }
                 continue;
             }
         }
@@ -455,6 +460,7 @@ function scaner($path = '', $cont = 'folder.png')
         }
 
         $pathinfo = pathinfo($f);
+
         $aze_name = $tur_name = $rus_name = $name = $pathinfo['filename'];
         if ($name == '') {
             $tmpErr = error_get_last();
@@ -467,6 +473,7 @@ function scaner($path = '', $cont = 'folder.png')
             $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
             $rus_name = trans($rus_name);
         }
+
 
         if (is_dir($f)) {
 
