@@ -50,6 +50,9 @@ if (defined('APANEL')) {
 if (isset($_POST['langpack']) && Language::getInstance()->setLangpack($_POST['langpack'])) {
     // заменяем языковой пакет
     $language = Language::getInstance()->getLanguage();
+} else if (isset($_GET['langpack']) && Language::getInstance()->setLangpack($_GET['langpack'])) {
+    // заменяем языковой пакет
+    $language = Language::getInstance()->getLanguage();
 }
 
 
