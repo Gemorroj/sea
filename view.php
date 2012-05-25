@@ -192,39 +192,39 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
 
             if (isset($audio->id3v2->APIC) && $audio->id3v2->APIC) {
                 $comments['APIC'] = $audio->id3v2->APIC;
-               } else {
-                   $comments['APIC'] = false;
-              }
+            } else {
+                $comments['APIC'] = false;
+            }
             if (isset($audio->id3_title)) {
                 $comments['TITLE'] = str_to_utf8($audio->id3_title);
-               } else {
-                   $comments['TITLE'] = '';
-              }
-              if (isset($audio->id3_artist)) {
+            } else {
+                $comments['TITLE'] = '';
+            }
+            if (isset($audio->id3_artist)) {
                 $comments['ARTIST'] = str_to_utf8($audio->id3_artist);
-               } else {
-                   $comments['ARTIST'] = '';
-              }
-              if (isset($audio->id3_album)) {
+            } else {
+                $comments['ARTIST'] = '';
+            }
+            if (isset($audio->id3_album)) {
                 $comments['ALBUM'] = str_to_utf8($audio->id3_album);
-               } else {
-                   $comments['ALBUM'] = '';
-              }
-              if (isset($audio->id3_year)) {
+            } else {
+                $comments['ALBUM'] = '';
+            }
+            if (isset($audio->id3_year)) {
                 $comments['DATE'] = str_to_utf8($audio->id3_year);
-               } else {
-                   $comments['DATE'] = '';
-              }
-              if (isset($audio->id3_genre)) {
+            } else {
+                $comments['DATE'] = '';
+            }
+            if (isset($audio->id3_genre)) {
                 $comments['GENRE'] = str_to_utf8($audio->id3_genre);
-               } else {
-                   $comments['GENRE'] = '';
-              }
-              if (isset($audio->id3_comment)) {
+            } else {
+                $comments['GENRE'] = '';
+            }
+            if (isset($audio->id3_comment)) {
                 $comments['COMMENT'] = str_to_utf8($audio->id3_comment);
-               } else {
-                   $comments['COMMENT'] = '';
-              }
+            } else {
+                $comments['COMMENT'] = '';
+            }
 
             $tmpa = array(
                 'channels' => $audio->wave_channels,
@@ -254,34 +254,34 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
 
                 if (isset($obj->_comments['TITLE'])) {
                     $comments['TITLE'] = str_to_utf8($obj->_comments['TITLE']);
-                   } else {
-                       $comments['TITLE'] = '';
-                  }
-                  if (isset($obj->_comments['ARTIST'])) {
+                } else {
+                    $comments['TITLE'] = '';
+                }
+                if (isset($obj->_comments['ARTIST'])) {
                     $comments['ARTIST'] = str_to_utf8($obj->_comments['ARTIST']);
-                   } else {
-                       $comments['ARTIST'] = '';
-                  }
-                  if (isset($obj->_comments['ALBUM'])) {
+                } else {
+                    $comments['ARTIST'] = '';
+                }
+                if (isset($obj->_comments['ALBUM'])) {
                     $comments['ALBUM'] = str_to_utf8($obj->_comments['ALBUM']);
-                   } else {
-                       $comments['ALBUM'] = '';
-                  }
-                  if (isset($obj->_comments['DATE'])) {
+                } else {
+                    $comments['ALBUM'] = '';
+                }
+                if (isset($obj->_comments['DATE'])) {
                     $comments['DATE'] = str_to_utf8($obj->_comments['DATE']);
-                   } else {
-                       $comments['DATE'] = '';
-                  }
-                  if (isset($obj->_comments['GENRE'])) {
+                } else {
+                    $comments['DATE'] = '';
+                }
+                if (isset($obj->_comments['GENRE'])) {
                     $comments['GENRE'] = str_to_utf8($obj->_comments['GENRE']);
-                   } else {
-                       $comments['GENRE'] = '';
-                  }
-                  if (isset($obj->_comments['COMMENT'])) {
+                } else {
+                    $comments['GENRE'] = '';
+                }
+                if (isset($obj->_comments['COMMENT'])) {
                     $comments['COMMENT'] = str_to_utf8($obj->_comments['COMMENT']);
-                   } else {
-                       $comments['COMMENT'] = '';
-                  }
+                } else {
+                    $comments['COMMENT'] = '';
+                }
 
                 $tmpa = array(
                     'channels' => $obj->_channels,

@@ -488,9 +488,9 @@ echo '</select><br/>
         $all = 0;
         $cacheDir = dirname(__FILE__) . '/../moduls/cache';
         $q = mysql_query('SELECT `path`, `id` FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")', $mysql);
-        while ($f = mysql_fetch_row($q)) {
-            $f = realpath($f[0]);
-            $idCache = $f[1];
+        while ($f = mysql_fetch_assoc($q)) {
+            $idCache = $f['id'];
+            $f = realpath($f['path']);
 
             // Записываем Idv2 теги
             $mp3 = new mp3($f);
@@ -498,9 +498,13 @@ echo '</select><br/>
             $mp3->setIdv3_2($_POST['track'], $_POST['name'], $_POST['artist'], $_POST['album'], $_POST['year'], $_POST['genre'], $_POST['comment'], $_POST['artist'], $_POST['artist'], $_POST['comment'], 'http://' . $_SERVER['HTTP_HOST'], '');
             $mp3->save($f);
 
+
+            $id3->read($f);
+            /*
             if (PEAR::isError($id3->read($f))) {
                 continue;
             }
+            */
 
             unlink($cacheDir . '/' . $idCache . '.dat');
             $all++;
