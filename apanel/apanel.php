@@ -486,18 +486,23 @@ echo '</select><br/>
         }
 
         $all = 0;
-        $q = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")', $mysql);
+        $cacheDir = dirname(__FILE__) . '/../moduls/cache';
+        $q = mysql_query('SELECT `path`, `id` FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")', $mysql);
         while ($f = mysql_fetch_row($q)) {
+            $f = realpath($f[0]);
+            $idCache = $f[1];
 
             // Записываем Idv2 теги
-            $mp3 = new mp3($f[0]);
+            $mp3 = new mp3($f);
             //$mp3->striptags(); // bug
             $mp3->setIdv3_2($_POST['track'], $_POST['name'], $_POST['artist'], $_POST['album'], $_POST['year'], $_POST['genre'], $_POST['comment'], $_POST['artist'], $_POST['artist'], $_POST['comment'], 'http://' . $_SERVER['HTTP_HOST'], '');
-            $mp3->save($f[0]);
+            $mp3->save($f);
 
-            if (PEAR::isError($id3->read($f[0]))) {
+            if (PEAR::isError($id3->read($f))) {
                 continue;
             }
+
+            unlink($cacheDir . '/' . $idCache . '.dat');
             $all++;
 
             if ($_POST['name'] != '') {
