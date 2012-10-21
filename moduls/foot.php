@@ -34,7 +34,7 @@
  */
 
 
-echo round(microtime(true) - $GLOBALS['tm'], 4) . '</div></body></html>';
-ob_end_flush();
+$template->assign('pageTime', microtime(true) - $GLOBALS['tm']);
+$template->send();
 
 ?>

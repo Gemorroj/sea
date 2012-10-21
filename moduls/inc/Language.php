@@ -61,7 +61,7 @@ class Language
 
 
     /**
-     * Получение экземляра коннектора
+     * Получение экземляра класса
      *
      * @return Language
      */
@@ -85,7 +85,7 @@ class Language
     {
         if ($langpack && in_array($langpack, $this->getLangpacks())) {
             $this->_langpack = $_SESSION['langpack'] = $langpack;
-            $this->_language = include_once DIR . '/language/' . $this->_langpack . '.dat';
+            $this->_language = include DIR . '/language/' . $this->_langpack . '.dat';
             return true;
         }
         return false;
@@ -105,7 +105,7 @@ class Language
         } else {
             $this->_langpack = $_SESSION['langpack'];
         }
-        $this->_language = include_once DIR . '/language/' . $this->_langpack . '.dat';
+        $this->_language = include DIR . '/language/' . $this->_langpack . '.dat';
     }
 
 
@@ -159,7 +159,7 @@ class Language
 
 
     /**
-     * Название языкововых пакетов
+     * Название языковых пакетов
      *
      * @return array
      */

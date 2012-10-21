@@ -36,12 +36,12 @@
 
 //error_reporting(0);
 // данные для соединения с БД
-$mysql = mysql_connect('localhost', 'root', '') or die('Could not connect');
+$mysql = mysql_connect('127.0.0.1', 'mysql', 'mysql') or die('Could not connect');
 mysql_select_db('sea', $mysql) or die('Could not db');
 mysql_set_charset('utf8', $mysql);
 
 
-$setting = mysql_query('SELECT * FROM `setting`', $mysql);
+$setting = mysql_query('SELECT * FROM setting', $mysql);
 $setup = array();
 while ($set = mysql_fetch_assoc($setting)) {
     $setup[$set['name']] = $set['value'];
@@ -55,10 +55,13 @@ set_include_path(
 );
 
 
-
 require_once DIR . '/inc/functions.php';
 require_once DIR . '/inc/Language.php';
-$language = Language::getInstance()->getLanguage();
+
+
+require_once DIR . '/Smarty/libs/Smarty.class.php';
+require_once DIR . '/inc/Template.php';
+
 
 // Подключаем модуль партнерки
 require DIR . '/../partner/inc.php';

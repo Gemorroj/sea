@@ -128,7 +128,7 @@ if ($pages > 1) {
     echo '</div>';
 }
 
-echo '<div class="iblock">- <a href="' . DIRECTORY . 'user/' . $id . '">' . $language['settings'] . '</a><br/>';
+echo '<div class="iblock">- <a href="' . DIRECTORY . 'settings/' . $id . '">' . $language['settings'] . '</a><br/>';
 
 if ($setup['stat_change']) {
     echo '- <a href="' . DIRECTORY . 'stat.php">' . $language['statistics'] . '</a><br/>';

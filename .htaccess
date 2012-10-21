@@ -7,9 +7,6 @@ Options +FollowSymlinks -MultiViews
 
 RewriteRule ^([0-9]+)/*$ ./index.php?id=$1 [QSA,NC]
 RewriteRule ^([0-9]+)/([0-9]+)/*$ ./index.php?id=$1&page=$2 [QSA,NC]
-RewriteRule ^onpage/([0-9]+)/([0-9]+)/*$ ./index.php?onpage=$1&id=$2 [QSA,NC]
-RewriteRule ^sort/([a-z]+)/([0-9]+)/*$ ./index.php?sort=$1&id=$2 [QSA,NC]
-RewriteRule ^prew/([0-9]+)/([0-9]+)/*$ ./index.php?prew=$1&id=$2 [QSA,NC]
 
 RewriteRule ^view/([0-9]+)/*$ ./view.php?id=$1 [QSA,NC]
 RewriteRule ^view/([0-9]+)/frame([0-9]*)/*$ ./view.php?id=$1&frame=$2 [QSA,NC]
@@ -23,7 +20,8 @@ RewriteRule ^apic/([0-9]+)/*$ ./apic.php?id=$1 [QSA,NC]
 RewriteRule ^im/([0-9]+)/*$ ./im.php?id=$1 [QSA,NC]
 RewriteRule ^theme/([0-9]+)/*$ ./theme.php?id=$1 [QSA,NC]
 RewriteRule ^load/([0-9]+)/*$ ./load.php?id=$1 [QSA,NC]
-RewriteRule ^user/([0-9]+)/*$ ./user.php?id=$1 [QSA,NC]
+RewriteRule ^settings/([0-9]+)/*$ ./settings.php?id=$1 [QSA,NC]
+RewriteRule ^stat/([0-9]+)/*$ ./stat.php?id=$1 [QSA,NC]
 RewriteRule ^rate/([0-9]+)/*$ ./rate.php?i=$1 [QSA,NC]
 RewriteRule ^cut/([0-9]+)/*$ ./cut.php?id=$1 [QSA,NC]
 RewriteRule ^txt_zip/([0-9]+)/*$ ./txt_zip.php?id=$1 [QSA,NC]
@@ -58,7 +56,7 @@ RewriteRule ^read/([0-9]+)/*([0-9]*)/*$ ./read.php?id=$1&page=$2 [QSA,NC]
     Allow from all
 </Limit>
 
-DirectoryIndex index.php index.htm index.wml index.xhtml index.html index.phtml
+DirectoryIndex index.php
 
 # PHP
 #AddHandler application/x-httpd-php .php .phtml
@@ -201,16 +199,16 @@ php_flag register_globals Off
 
 
 #Отладка
-php_flag display_errors Off
+php_flag display_errors On
 php_value error_reporting -1
 php_flag log_errors On
-#php_value error_log error_log
+php_value error_log /error_log
 
 # Автоматический запуск сессии
 php_value session.auto_start 1
 # Имя сессии
 php_value session.name "lid"
-# Автоматическое подставление идентификатора сессии к ссылкам
+# Автоматическая постановка идентификатора сессии к ссылкам
 php_value session.use_trans_sid 1
 # Разделитель переменных в URI
 php_value arg_separator.output "&amp;"
@@ -226,9 +224,30 @@ php_value session.use_only_cookies 0
 #php_value session.save_path "/user/home/sea/moduls/cache"
 
 
+
 # Компрессия
-php_value zlib.output_compression 4096
-php_value zlib.output_compression_level 6
+#php_value zlib.output_compression 4096
+#php_value zlib.output_compression_level 6
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/css application/javascript text/html application/xhtml+xml application/xml text/xml application/rss+xml text/vnd.wap.wml
+    <IfModule mod_setenvif.c>
+        BrowserMatch ^Mozilla/4 gzip-only-text/html
+        BrowserMatch ^Mozilla/4\.0[678] no-gzip
+        BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    </IfModule>
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/gif "access plus 2 months"
+    ExpiresByType image/jpeg "access plus 2 months"
+    ExpiresByType image/png "access plus 2 months"
+    ExpiresByType text/css "access plus 2 months"
+    ExpiresByType application/javascript "access plus 2 months"
+    ExpiresByType image/vnd.microsoft.icon "access plus 2 months"
+</IfModule>
+
 
 
 Options -Indexes
@@ -239,13 +258,12 @@ php_value default_charset UTF-8
 php_value upload_max_filesize 999M
 php_value post_max_size 999M
 
-# временная зона. Только Apache 2
-#php_value date.timezone "Europe/Moscow"
+# временная зона
+php_value date.timezone "Europe/Moscow"
 
 
 
 # mbstring
-# Автозамена на мультибайтную кодировку конфликтует с PclZIP
 php_value mbstring.func_overload 0
 php_value mbstring.internal_encoding UTF-8
 

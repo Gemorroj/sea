@@ -42,7 +42,10 @@ ignore_user_abort(true);
 
 
 if (!@$_GET['level']) {
-    echo 'Введите ваши данные:<br/><form action="install.php?level=1" method="post"><div class="row">Пароль админа:<br/><input name="pass" type="text" value="1234"/><br/><input type="submit" value="Установка"/></div></form>';
+    echo 'Введите ваши данные:<br/>
+    <form action="install.php?level=1" method="post">
+    <div class="row">Пароль админа:<br/><input name="pass" type="text" value="1234"/><br/><input type="submit" value="Установка"/></div>
+    </form>';
 } else {
     $er = '';
 
@@ -243,6 +246,7 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_str', '160');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'desc', '50');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker', '2');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker_where', 'foot');", $mysql);
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'css', 'style');", $mysql);
 

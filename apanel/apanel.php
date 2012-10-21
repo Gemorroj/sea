@@ -1071,16 +1071,18 @@ echo '</select><br/>
         ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
         if (copy(trim($parametr[0]), $to)) {
             echo 'Импорт файла ' . htmlspecialchars($parametr[1], ENT_NOQUOTES) . ' удался<br/>';
-            $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
+            $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
 
             $infolder = dirname($to) . '/';
             mysql_query("
                 INSERT INTO `files` (
-                    `path`, `name`, `rus_name`, `infolder`, `size`, `timeupload`
+                    `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
                 ) VALUES (
                     '" . mysql_real_escape_string($to, $mysql) . "',
                     '" . mysql_real_escape_string($name, $mysql) . "',
                     '" . mysql_real_escape_string($rus_name, $mysql) . "',
+                    '" . mysql_real_escape_string($aze_name, $mysql) . "',
+                    '" . mysql_real_escape_string($tur_name, $mysql) . "',
                     '" . mysql_real_escape_string($infolder, $mysql) . "',
                     " . filesize($to) . ",
                     " . filectime($to) . "
@@ -1211,7 +1213,7 @@ echo '</select><br/>
         chmod($newpath, 0777);
         if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to)) {
             echo 'Закачка файла <strong>' . htmlspecialchars($name, ENT_NOQUOTES) . '</strong> прошла успешно.<br/>';
-            $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
+            $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
             $infolder = dirname($to) . '/';
 
 
@@ -1230,12 +1232,14 @@ echo '</select><br/>
 
             mysql_query("
                 INSERT INTO `files` (
-                    `dir`, `path`, `name`, `rus_name`, `infolder`, `size`, `timeupload`, `attach`
+                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`, `attach`
                 ) VALUES (
                     '0',
                     '" . mysql_real_escape_string($to, $mysql) . "',
                     '" . mysql_real_escape_string($name, $mysql) . "',
                     '" . mysql_real_escape_string($rus_name, $mysql) . "',
+                    '" . mysql_real_escape_string($aze_name, $mysql) . "',
+                    '" . mysql_real_escape_string($tur_name, $mysql) . "',
                     '" . mysql_real_escape_string($infolder, $mysql) . "' ,
                     " . filesize($to) . ",
                     " . filectime($to) . ",

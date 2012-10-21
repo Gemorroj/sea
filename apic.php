@@ -48,7 +48,7 @@ if (file_exists('moduls/cache/' . $id . '.dat')) {
             header('Cache: public');
             header('Cache-control: max-age=2592000');
             header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 2592000));
-            imagepng(simple_resize($im), '', 9);
+            imagepng(simple_resize($im), null, 9);
             imagedestroy($im);
         }
     }

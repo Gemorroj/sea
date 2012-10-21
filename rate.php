@@ -45,7 +45,7 @@ $c3 = imagecolorallocate($im, 168, 175, 187);
 imagefill($im, 100, 0, $c2);
 imagefilledrectangle($im, 0, 0, $i, 4, $c1);
 imagerectangle($im, 0, 0, 99, 3, $c0);
-imagepng($im, '', 9);
+imagepng($im, null, 9);
 imagedestroy($im);
 
 ?>

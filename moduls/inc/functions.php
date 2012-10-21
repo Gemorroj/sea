@@ -35,7 +35,7 @@
 
 
 /**
- * Транслит с латниницы на русский
+ * Транслит с латиницы на русский
  * 
  * @param string $t
  * @return string
@@ -58,7 +58,7 @@ function trans($t)
 
 
 /**
- * Транслит с русского на английский
+ * Транслит с русского на латиницу
  * 
  * @param string $t
  * @return string
@@ -336,6 +336,13 @@ function checkExt ($ext)
 /**
  * Обновление данных файлов в БД
  *
+ * @param string $path
+ * @param string $name
+ * @param string $rus_name
+ * @param string $aze_name
+ * @param string $tur_name
+ * @param bool $dir
+ * @param bool $insert
  * @return bool
  */
 function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $insert = true)
@@ -402,7 +409,9 @@ function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $
 
 /**
  * Обновление данных загрузок в БД
- * 
+ *
+ * @param string $path
+ * @param string $cont
  * @return array
  */
 function scaner($path = '', $cont = 'folder.png')
@@ -476,7 +485,6 @@ function scaner($path = '', $cont = 'folder.png')
 
 
         if (is_dir($f)) {
-
             // скриншоты
             $screen = $GLOBALS['setup']['spath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($screen)) {
@@ -571,6 +579,9 @@ function size($int = 0)
  * Создает файл
  * Последний элемент в path считается файлом. Директория согласно функции pathinfo
  *
+ * @param string $path
+ * @param int $chmod_dir
+ * @param int $chmod_file
  * @return bool
  */
 function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
@@ -931,7 +942,9 @@ function error($str = '')
 
 /**
  * Возвращает случайный пароль
- * 
+ *
+ * @param int $min
+ * @param int $max
  * @return string random password 6-8 symbols
  */
 function pass($min = 6, $max = 8)
@@ -941,7 +954,7 @@ function pass($min = 6, $max = 8)
 
 
 /**
- * Конвертируем из неизвоестной кодировки в UTF-8
+ * Конвертируем из Windows-1251 в UTF-8
  * 
  * @param string $str
  * @return string
