@@ -96,9 +96,9 @@ $pages = ceil(filesize($v['path']) / $setup['lib']);
 
 
 if ($setup['lib_str']) {
-    echo '<pre class="ik">' . wordwrap(htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES), $setup['lib_str'], "\n", false) . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
+    echo '<pre>' . wordwrap(htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES), $setup['lib_str'], "\n", false) . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
 } else {
-    echo '<pre class="ik">' . htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES) . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
+    echo '<pre>' . htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES) . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
 }
 
 if ($back['id']) {
@@ -109,5 +109,3 @@ if ($back['id']) {
 echo '<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
 
 require 'moduls/foot.php';
-
-?>

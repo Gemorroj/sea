@@ -569,5 +569,3 @@ if ($setup['abuse_change']) {
 echo $out . '</div><div class="iblock">- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
-
-?>

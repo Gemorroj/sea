@@ -113,5 +113,3 @@ ADD `tur_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `a
 
 
 header('Location: http://' . $_SERVER['HTTP_HOST'] . str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) . '/');
-
-?>

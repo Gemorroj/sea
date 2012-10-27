@@ -49,11 +49,14 @@ code {
     font-family: "Courier New", sans-serif;
 }
 
-pre {
-    overflow: auto;
+.mblock {
+    background-color: #007090;
+    color: #fff;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
 
-.mblock, .row, .row2, .mainzag, .iblock {
+.row, .row2, .iblock {
     border-radius: 2pt;
     background-color: #007090;
     color: #fff;
@@ -81,7 +84,7 @@ pre {
 .hr {
 }
 
-.ik {
+pre {
     box-shadow: -4px 4px 4px #ddd;
     border-radius: 2pt;
     color: #333;
@@ -92,6 +95,6 @@ pre {
     overflow: auto;
 }
 
-.ik:hover {
+pre:hover {
     box-shadow: -6px 6px 6px #ddd;
 }

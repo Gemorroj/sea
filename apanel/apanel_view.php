@@ -532,5 +532,3 @@ echo '</div>
 </div>';
 
 require 'moduls/foot.php';
-
-?>

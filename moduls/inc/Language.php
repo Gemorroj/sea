@@ -281,5 +281,3 @@ class Language
         return $str;
     }
 }
-
-?>

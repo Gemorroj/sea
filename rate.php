@@ -47,5 +47,3 @@ imagefilledrectangle($im, 0, 0, $i, 4, $c1);
 imagerectangle($im, 0, 0, 99, 3, $c0);
 imagepng($im, null, 9);
 imagedestroy($im);
-
-?>

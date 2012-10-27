@@ -131,15 +131,13 @@ if ($pages > 1) {
 echo '<div class="iblock">- <a href="' . DIRECTORY . 'settings/' . $id . '">' . $language['settings'] . '</a><br/>';
 
 if ($setup['stat_change']) {
-    echo '- <a href="' . DIRECTORY . 'stat.php">' . $language['statistics'] . '</a><br/>';
+    echo '- <a href="' . DIRECTORY . 'stat/'.$id.'">' . $language['statistics'] . '</a><br/>';
 }
 if ($setup['zakaz_change']) {
-    echo '- <a href="' . DIRECTORY . 'table.php">' . $language['orders'] . '</a><br/>';
+    echo '- <a href="' . DIRECTORY . 'table/'.$id.'">' . $language['orders'] . '</a><br/>';
 }
 
 echo '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
 - <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
-
-?>

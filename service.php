@@ -259,5 +259,3 @@ echo '<div class="iblock">
 - <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
-
-?>

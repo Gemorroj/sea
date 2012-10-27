@@ -24,7 +24,7 @@ body {
     margin-bottom: 1px;
 }
 
-.ik {
+pre {
     padding: 2px 2px 2px 2px;
     margin-bottom: 1px;
     margin-top: 1px;
@@ -34,7 +34,8 @@ body {
 }
 
 .iblock {
-    padding: 2px 2px 2px 2px;
+    list-style: disc inside;
+    padding: 2px;
     margin-bottom: 1px;
     margin-top: 1px;
     border: 1px solid #004080;
@@ -45,19 +46,8 @@ body {
 .mblock {
     background-color: #cccccc;
     color: #00254A;
-    padding: 2px 2px 2px 2px;
     margin-bottom: 1px;
     margin-top: 1px;
-    border: 1px solid #004080;
-    font-weight: 700;
-}
-
-.mainzag {
-    border: 1px solid #004080;
-    background-color: #cccccc;
-    color: #00254A;
-    padding: 2px 0 2px 2px;
-    margin-bottom: 1px;
 }
 
 img {
@@ -67,20 +57,18 @@ img {
     margin-right: 2px;
 }
 
-.row {
+.row, .row2 {
     border: 1px solid #004080;
     background-color: #cccccc;
     color: #00254A;
     padding: 1px 2px 3px 2px;
     margin-bottom: 1px;
 }
-
-.row2 {
-    border: 1px solid #004080;
-    background-color: #dddddd;
-    color: #00254A;
-    padding: 1px 2px 3px 2px;
-    margin-bottom: 1px;
+.mblock>.row, .mblock>.row2 {
+    background-color: #eeeeee;
+}
+.mblock>.row:hover, .mblock>.row2:hover {
+    background-color: #fff;
 }
 
 .hr {
@@ -100,9 +88,7 @@ a:active {
 }
 
 a:hover {
-    color: #FFFFFF;
-    text-decoration: none;
-    font-weight: 700;
+    text-decoration: underline;
 }
 
 form {

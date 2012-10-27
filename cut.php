@@ -167,5 +167,3 @@ echo '<div class="iblock">
 </div>';
 
 require 'moduls/foot.php';
-
-?>

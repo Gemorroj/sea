@@ -54,5 +54,3 @@ for ($i = 1; $i < $all; ++$i) {
 
 ksort($array);
 var_export($array, false);
-
-?>

@@ -930,11 +930,15 @@ function jar_ico($jar, $f)
  */
 function error($str = '')
 {
-    $language = Language::getInstance()->getLanguage();
+    global $template;
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';
-    echo '<div class="no">' . $str . '</div><div class="iblock">- <a href="javascript:history.back();">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $GLOBALS['setup']['site_url'] . '">' . $language['home'] . '</a><br/></div>';
+
+    $template->setTemplate('error.tpl');
+    $template->assign('message', $str);
+    $template->assign('breadcrumbs', array());
+
     require_once $dir . '/../foot.php';
     exit;
 }
@@ -1196,5 +1200,3 @@ function ext_to_mime($ext = '')
             break;
     }
 }
-
-?>

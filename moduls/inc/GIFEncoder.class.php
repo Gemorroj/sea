@@ -284,4 +284,3 @@ Class GIFEncoder {
                 return ( $this->GIF );
         }
 }
-?>

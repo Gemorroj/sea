@@ -137,6 +137,9 @@ class Template extends Smarty
         $params['pages'] = intval($params['pages']);
         $params['url'] = htmlspecialchars($params['url']);
 
+        $appendStr = isset($params['query']) ? '?' . http_build_query($params['query'], '', '&amp;') : '';
+
+
         $go = '';
 
         $page1 = $params['page'] - 2;
@@ -145,36 +148,55 @@ class Template extends Smarty
         $page4 = $params['page'] + 2;
 
         if ($page1 > 0) {
-            $go .= '<a href="' . $params['url'] . '/' . $page1 . '">' . $page1 . '</a> ';
+            $go .= '<a href="' . $params['url'] . '/' . $page1 . $appendStr . '">' . $page1 . '</a> ';
         }
 
         if ($page2 > 0) {
-            $go .= '<a href="' . $params['url'] . '/' . $page2 . '">' . $page2 . '</a> ';
+            $go .= '<a href="' . $params['url'] . '/' . $page2 . $appendStr . '">' . $page2 . '</a> ';
         }
 
-        $go .= $params['page'] . ' ';
+        $go .= '[' . $params['page'] . '] ';
 
         if ($page3 <= $params['pages']) {
-            $go .= '<a href="' . $params['url'] . '/' . $page3 . '">' . $page3 . '</a> ';
+            $go .= '<a href="' . $params['url'] . '/' . $page3 . $appendStr . '">' . $page3 . '</a> ';
         }
         if ($page4 <= $params['pages']) {
-            $go .= '<a href="' . $params['url'] . '/' . $page4 . '">' . $page4 . '</a> ';
+            $go .= '<a href="' . $params['url'] . '/' . $page4 . $appendStr . '">' . $page4 . '</a> ';
         }
 
         if ($params['pages'] > 3 && $params['pages'] > $page4) {
-            $go .= '... <a href="' . $params['url'] . '/' . $params['pages'] . '">' . $params['pages'] . '</a>';
+            $go .= '... <a href="' . $params['url'] . '/' . $params['pages'] . $appendStr . '">' . $params['pages'] . '</a>';
         }
 
         if ($page1 > 1) {
-            $go = '<a href="' . $params['url'] . '/1">1</a> ... ' . $go;
+            $go = '<a href="' . $params['url'] . '/1' . $appendStr .'">1</a> ... ' . $go;
         }
 
         if ($GLOBALS['setup']['pagehand_change'] && $params['pages'] > $GLOBALS['setup']['pagehand']) {
-            $go .= '<br/>' . str_replace(array('%page%', '%pages%'), array($params['page'], $params['pages']), $language['page']) . ':<br/><form action="' . $params['url'] . '" method="get"><div class="row"><input class="enter" name="page" type="text" maxlength="8" size="8"/> <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
+            $page =  str_replace(
+                array('%page%', '%pages%'),
+                array($params['page'], $params['pages']),
+                $language['page']
+            );
+            $hiddens = '';
+            if (isset($params['query'])) {
+                foreach ($params['query'] as $key => $value) {
+                    $hiddens .= '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '"/>';
+                }
+            }
+
+            $go .= '<br/>
+            <form action="' . $params['url'] . '" method="get">
+                <div class="iblock">
+                    ' . $hiddens . '
+                    <label>' . $page . ':<br/>
+                        <input class="enter" name="page" type="number" maxlength="8" size="8" required="required" pattern="^[0-9]+$" />
+                    </label>
+                    <input class="buttom" type="submit" value="' . $language['go'] . '"/>
+                </div>
+            </form>';
         }
 
-        return $go != $params['page'] . ' ' ? '<div class="row">&#160;' . $go . '</div>' : '';
+        return $go != '[' . $params['page'] . '] ' ? '<nav class="row">' . $go . '</nav>' : '';
     }
 }
-
-?>

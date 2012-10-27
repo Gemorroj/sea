@@ -63,5 +63,3 @@ if (is_file($d[0])) {
 } else {
     error($setup['hackmess']);
 }
-
-?>

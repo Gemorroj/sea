@@ -114,5 +114,3 @@ MIDlet-Delete-Confirm: GoodBye =)');
 } else {
     echo $setup['hackmess'];
 }
-
-?>

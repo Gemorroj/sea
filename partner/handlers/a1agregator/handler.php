@@ -101,5 +101,3 @@ if ($result) {
 } else {
 	echo 'smsid: ' . $_GET['smsid'] . "\nstatus: ignore\n\nError";
 }
-
-?>

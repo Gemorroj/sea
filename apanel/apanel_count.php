@@ -68,8 +68,6 @@ while ($dir = mysql_fetch_row($res)) {
 }
 mysql_query('OPTIMIZE TABLE `files`', $mysql);
 
-echo '<div class="mainzag">База данных успешно обновлена!</div><div class="row"><a href="apanel.php">Админка</a></div>';
+echo '<div class="mblock">База данных успешно обновлена!</div><div class="row"><a href="apanel.php">Админка</a></div>';
 
 require 'moduls/foot.php';
-
-?>

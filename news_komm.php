@@ -130,7 +130,7 @@ if ($_GET['act'] == 'add') {
         if ($bool){
             $out .= '<div class="row">';
         } else {
-            $out .= '<div class="mainzag">';
+            $out .= '<div class="row2">';
         }
 
 
@@ -196,5 +196,3 @@ if ($all > $setup['klimit']) {
     mysql_query('DELETE FROM `news_komments` WHERE `id` = ' . mysql_result(mysql_query('SELECT MIN(`id`) FROM news_komments WHERE `id_news` = ' . $id, $mysql), 0), $mysql);
     $page = 1;
 }
-
-?>

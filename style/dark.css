@@ -25,7 +25,7 @@ body {
     margin-bottom: 1px;
 }
 
-.ik {
+pre {
     padding: 2px 2px 2px 2px;
     margin-bottom: 1px;
     margin-top: 1px;
@@ -46,19 +46,8 @@ body {
 .mblock {
     background-color: #111111;
     color: #bbbbbb;
-    padding: 2px 2px 2px 2px;
     margin-bottom: 1px;
     margin-top: 1px;
-    border: 1px solid #004080;
-    font-weight: 700;
-}
-
-.mainzag {
-    border: 1px solid #004080;
-    background-color: #333333;
-    color: #bbbbbb;
-    padding: 2px 0 2px 2px;
-    margin-bottom: 1px;
 }
 
 img {

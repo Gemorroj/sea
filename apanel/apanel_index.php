@@ -131,7 +131,7 @@ if ($ex) {
 }
 
 ##############Заголовок##########################
-echo '<div class="mainzag"><img src="../dis/load.png" alt=""/><a href="apanel_index.php">' . $language['downloads'] . '</a> &#187; ' . $put . '</div><div class="iblock">';
+echo '<div class="mblock"><img src="../dis/load.png" alt=""/><a href="apanel_index.php">' . $language['downloads'] . '</a> &#187; ' . $put . '</div><div class="iblock">';
 
 //------------------------------------------------------------------------------------------
 if ($setup['eval_change']) {
@@ -185,7 +185,7 @@ $mysql);
 
 while ($v = mysql_fetch_assoc($query)) {
     if ($key = !$key) {
-        $row = '<div class="mainzag">';
+        $row = '<div class="mblock">';
     } else {
         $row = '<div class="row">';
     }
@@ -341,5 +341,3 @@ echo '<code>[R] - переименование, [O] - описание, [K] - SE
 <div class="iblock"><a href="apanel.php">Админка</a></div>';
 
 require 'moduls/foot.php';
-
-?>

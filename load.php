@@ -48,5 +48,3 @@ if (file_exists($d)) {
 } else {
     echo $setup['hackmess'];
 }
-
-?>

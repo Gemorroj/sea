@@ -27,7 +27,7 @@ body {
     margin-bottom: 1px;
 }
 
-.ik {
+pre {
     padding: 2px 2px 2px 2px;
     margin-bottom: 1px;
     margin-top: 1px;
@@ -50,23 +50,8 @@ body {
 .mblock {
     background-color: #0097ce;
     color: #fdffff;
-    padding: 2px;
     margin-bottom: 1px;
     margin-top: 1px;
-    font-weight: 700;
-    border-color: #00b9fd #006c93 #006c93 #00b9fd;
-    border-style: solid;
-    border-width: 1px;
-}
-
-.mainzag {
-    background-color: #45b6df;
-    color: #fff;
-    padding: 2px 0 2px 2px;
-    margin-bottom: 1px;
-    border-color: #70d1f4 #39a6ce #39a6ce #70d1f4;
-    border-style: solid;
-    border-width: 1px;
 }
 
 img {

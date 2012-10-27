@@ -158,5 +158,3 @@ switch ($act) {
 
 
 echo '</div></body></html>';
-
-?>

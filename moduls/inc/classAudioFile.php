@@ -1182,5 +1182,3 @@ class AudioFile
     }
 
 }
-
-?>

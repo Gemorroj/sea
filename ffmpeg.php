@@ -71,5 +71,3 @@ if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic
 }
 
 header('Location: ' . $location, true, 301);
-
-?>

@@ -74,14 +74,12 @@ if ($data['errors']) {
     echo '<div class="no">' . implode('<br/>', $data['errors']) . '<br/></div>';
 }
 
-echo '<div class="mainzag">БД обновлена!<br/></div>
+echo '<div class="mblock">БД обновлена!<br/></div>
 Просканировано директорий: ' . $data['folders'] . '<br/>
 Просканировано файлов: ' . $data['files'] . '<br/>
-<div class="mainzag" style="color:#b00;">
+<div class="mblock" style="color:#b00;">
 Внимание! Теперь следует пересчитать количество файлов в папках<br/>
 Для продолжения нажмите на <a class="yes" href="apanel_count.php">ЭТУ</a> ссылку
 </div>';
 
 require 'moduls/foot.php';
-
-?>

@@ -155,7 +155,7 @@ if ($_GET['act'] == 'add') {
         if ($bool) {
             $out .= '<div class="row">';
         } else {
-            $out .= '<div class="mainzag">';
+            $out .= '<div class="row2">';
         }
 
 
@@ -226,5 +226,3 @@ if ($all > $setup['klimit']) {
         WHERE `id` = ' . mysql_result(mysql_query('SELECT MIN(`id`) FROM komments WHERE `file_id` = ' . $id, $mysql), 0)
     , $mysql);
 }
-
-?>

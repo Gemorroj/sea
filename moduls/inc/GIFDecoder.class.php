@@ -248,4 +248,3 @@ Class GIFDecoder {
         return ( $this->GIF_delays ); 
     } 
 } 
-?>

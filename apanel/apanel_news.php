@@ -107,5 +107,3 @@ echo '<input type="submit" value="Добавить"/>
 <div class="row"><a href="apanel.php">Админка</a></div>';
 
 require 'moduls/foot.php';
-
-?>

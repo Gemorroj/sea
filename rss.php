@@ -95,5 +95,3 @@ while ($arr = mysql_fetch_assoc($q)) {
 }
 
 echo trim($rss->saveXML());
-
-?>

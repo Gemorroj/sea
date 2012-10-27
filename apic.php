@@ -53,5 +53,3 @@ if (file_exists('moduls/cache/' . $id . '.dat')) {
         }
     }
 }
-
-?>

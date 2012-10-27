@@ -66,7 +66,7 @@ switch ($action) {
 
 
 default:
-echo '<div class="mainzag">Админка</div>
+echo '<div class="mblock">Админка</div>
 <div class="row"><a href="apanel_news.php">Новости</a> (' . intval(mysql_result(mysql_query('SELECT COUNT(1) FROM `news`', $mysql), 0)) . ')</div>
 <div class="row"><a href="apanel_index.php">Файловый менеджер</a></div>
 <div class="row"><a href="apanel_scan.php">Полное обновление БД</a></div>
@@ -121,7 +121,7 @@ if ($_POST) {
         break;
     }
 } else {
-echo '<div class="mainzag">
+echo '<div class="mblock">
 Пользователей: ' . mysql_result(mysql_query('SELECT COUNT(1) FROM `users_profiles`', $mysql), 0) . '<br/>
 <form action="apanel.php?action=service" method="post">
 <div class="row">
@@ -163,7 +163,7 @@ if ($_POST) {
     }
 
 } else {
-echo '<div class="mainzag">
+echo '<div class="mblock">
 <form action="apanel.php?action=exchanger" method="post">
 <div class="row">
 Отправлять уведомления на Email о новых файлах: <input type="checkbox" name="exchanger_notice" ' . check($setup['exchanger_notice']) . '/><br/>
@@ -195,7 +195,7 @@ if ($_POST) {
         error('Ошибка: ' . mysql_error($mysql));
     }
 } else {
-    echo '<div class="mainzag">
+    echo '<div class="mblock">
 <form action="apanel.php?action=library" method="post">
 <div class="row">
 Максимальное число символов на страницу:<br/>
@@ -213,7 +213,7 @@ break;
 case 'mark':
 if (!$_POST) {
 echo '<form action="apanel.php?action=mark" method="post">
-<div class="mainzag">Маркер картинок<br/></div>
+<div class="mblock">Маркер картинок<br/></div>
 <div class="row">
 <input name="marker" type="radio" value="1" ' . ($setup['marker'] == 1 ? 'checked="checked"' : '') . '/>Вкл
 <input name="marker" type="radio" value="0" ' . ($setup['marker'] == 0 ? 'checked="checked"' : '') . '/>Выкл
@@ -227,7 +227,7 @@ echo '<form action="apanel.php?action=mark" method="post">
 </div>
 </form>
 <form action="apanel.php?action=mark" method="post">
-<div class="mainzag">На картинки будет нанесена указанная надпись, удалить ее будет невозможно<br/></div>
+<div class="mblock">На картинки будет нанесена указанная надпись, удалить ее будет невозможно<br/></div>
 <div class="row">
 <input name="text" type="text"/><br/>
 Расположение<br/>
@@ -367,7 +367,7 @@ $genre = str_to_utf8($id3->genre);
 $comment = str_to_utf8($id3->comment);
 
 
-echo '<div class="mainzag">Редактор MP3 тегов<br/></div>
+echo '<div class="mblock">Редактор MP3 тегов<br/></div>
 <div class="row">
 <form action="apanel.php?action=id3&amp;id=' . $id . '" method="post">
 <div class="row">
@@ -399,7 +399,7 @@ echo '</select><br/>
 </form>
 </div>';
 } else {
-echo '<div class="mainzag">Модуль задаст всем MP3 файлам указанные теги. Если поле пустое, то тег изменяться не будет<br/></div>
+echo '<div class="mblock">Модуль задаст всем MP3 файлам указанные теги. Если поле пустое, то тег изменяться не будет<br/></div>
 <div class="row">
 <form action="apanel.php?action=id3" method="post">
 <div class="row">
@@ -548,7 +548,7 @@ if ($_GET['to'] == 'down') {
     $query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
 }
 if (mysql_query($query, $mysql)) {
-    echo '<div class="mainzag">Приоритет каталога ' . $file_info['name'] . ' изменен!</div>';
+    echo '<div class="mblock">Приоритет каталога ' . $file_info['name'] . ' изменен!</div>';
 } else {
     echo '<div class="minizag">Ошибка при изменении приоритета</div>';
 }
@@ -581,7 +581,7 @@ while ($row = mysql_fetch_assoc($r)) {
         ob_flush();
     }
 }
-echo '<div class="mainzag">База данных успешно обновлена!</div><div class="row">Удалено неверных записей: ' . $d . '</div>';
+echo '<div class="mblock">База данных успешно обновлена!</div><div class="row">Удалено неверных записей: ' . $d . '</div>';
 break;
 
 
@@ -593,14 +593,14 @@ if (!is_dir($file_info['path'])) {
     error('Такой категории не существует.');
 }
 
-echo '<div class="mainzag">Будет пересканирована директория <strong>' . $file_info['path'] . '</strong><br/>Для продолжения нажмите на <a class="yes" href="apanel_scan.php?scan=' . rawurlencode($file_info['path']) . '">ЭТУ</a> ссылку<br/></div>';
+echo '<div class="mblock">Будет пересканирована директория <strong>' . $file_info['path'] . '</strong><br/>Для продолжения нажмите на <a class="yes" href="apanel_scan.php?scan=' . rawurlencode($file_info['path']) . '">ЭТУ</a> ссылку<br/></div>';
 break;
 
 
 ######################################ЛОГ######################################################
 case 'log':
 $q = mysql_query('SELECT * FROM `loginlog` WHERE `id` > 1 ORDER BY `time` DESC', $mysql);
-echo '<div class="mainzag">Лог последних 20 посещений админки([UserAgent] [IP] [Time]):</div><div class="row">';
+echo '<div class="mblock">Лог последних 20 посещений админки([UserAgent] [IP] [Time]):</div><div class="row">';
 while ($log = mysql_fetch_assoc($q)) {
     echo '[' . htmlspecialchars($log['ua'], ENT_NOQUOTES) . '] [' . $log['ip'] . '] [' . tm($log['time']) . ']<br/>';
 }
@@ -612,7 +612,7 @@ break;
 case 'addico':
 $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
 if (!$_FILES) {
-    echo '<div class="mainzag">Загрузка иконки к папке</div>
+    echo '<div class="mblock">Загрузка иконки к папке</div>
 <div class="row">
 <form action="apanel.php?action=addico&amp;id=' . $id . '" method="post" enctype="multipart/form-data">
 <div class="row">
@@ -725,7 +725,7 @@ if (!$_GET['level']) {
         chmod($f_chmod.'/', 0777);
     }
 
-    echo 'Каталог успешно удален!<div class="mainzag" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в папках<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
+    echo 'Каталог успешно удален!<div class="mblock" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в папках<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
 }
 break;
 
@@ -775,7 +775,7 @@ break;
 ######################################РЕКЛАМА##################################################
 case 'buy':
 if (!$_POST) {
-echo '<div class="mainzag">Рекламный блок:</div>
+echo '<div class="mblock">Рекламный блок:</div>
 <div class="row">
 <form action="apanel.php?action=buy" method="post">
 <div class="row">
@@ -851,7 +851,7 @@ if ($_POST) {
 } else {
     $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `id` = ' . $id, $mysql));
 
-    echo '<div class="mainzag">Введите новое имя:</div><div class="row"><form method="post" action="apanel.php?action=rename&amp;id=' . $id . '"><div class="row">';
+    echo '<div class="mblock">Введите новое имя:</div><div class="row"><form method="post" action="apanel.php?action=rename&amp;id=' . $id . '"><div class="row">';
     echo Language::getInstance()->filesLangpacks($file);
     echo '<input class="buttom" type="submit" value="Готово"/></div></form></div>';
 }
@@ -960,7 +960,7 @@ if (!$_POST) {
     $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
     $seo = unserialize($file['seo']);
 
-    echo '<div class="mainzag">SEO <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
+    echo '<div class="mblock">SEO <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
 <div class="row">
 <form action="apanel.php?action=seo&amp;id=' . $id . '" method="post">
 <div class="row">Title<br/>
@@ -995,7 +995,7 @@ $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE 
 $about = $setup['opath'] . mb_substr($file['path'], mb_strlen($setup['path'])) . '.txt';
 
 if (!$_POST) {
-    echo '<div class="mainzag">Описание файла/директории <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
+    echo '<div class="mblock">Описание файла/директории <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
 <div class="row">
 <form action="apanel.php?action=about&amp;id=' . $id . '" method="post">
 <div class="row">
@@ -1030,7 +1030,7 @@ case 'import':
 if (!$_POST) {
 $dirs = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
 
-echo '<div class="mainzag">Импорт файлов</div>
+echo '<div class="mblock">Импорт файлов</div>
 <div class="row">Сохранить в:</div>
 <form action="apanel.php?action=import" method="post">
 <div class="row">
@@ -1107,7 +1107,7 @@ $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного ф�
 $thumb = $setup['spath'] . $info['path'] . '.thumb.gif'; // имя конечного файла
 
 if (!$_FILES) {
-echo '<div class="mainzag">Загрузка скрина (JPEG, GIF, PNG)</div>
+echo '<div class="mblock">Загрузка скрина (JPEG, GIF, PNG)</div>
 <form action="apanel.php?action=screen&amp;id=' . $id . '" method="post" enctype="multipart/form-data">
 <div class="row">
 Файл будет скопирован в папку со скриншотами:<br/>
@@ -1167,7 +1167,7 @@ if (!$_POST) {
 $dirs = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
 
 echo '<script type="text/javascript" src="js.js"></script>
-<div class="mainzag">Upload файлов (max ' . ini_get('upload_max_filesize') . ')</div>
+<div class="mblock">Upload файлов (max ' . ini_get('upload_max_filesize') . ')</div>
 <div class="row">Сохранить в:</div>
 <form action="apanel.php?action=upload" method="post" enctype="multipart/form-data">
 <div class="row">
@@ -1329,7 +1329,7 @@ if ($_POST) {
         error('Ошибка при создании нового каталога. - ' . mysql_error($mysql));
     }
 } else {
-    echo '<div class="mainzag">Создание новой категории:</div>
+    echo '<div class="mblock">Создание новой категории:</div>
     <form action="apanel.php?action=newdir&amp;id=' . $id . '" method="post">
     <div class="row">
     Имя новой папки [A-Z0-9_-]:<br/>
@@ -1345,7 +1345,7 @@ break;
 #########################################ИЗМЕНЕНИЕ МОДУЛЕЙ###############################################
 case 'modules':
 if (!$_POST) {
-echo '<div class="mainzag">Управления модулями:</div>
+echo '<div class="mblock">Управления модулями:</div>
 <form action="apanel.php?action=modules" method="post">
 <div class="row">
 <input name="komments_change" type="checkbox" value="1" ' . check($setup['komments_change']) . '/>Комментарии<br/>
@@ -1442,7 +1442,7 @@ break;
 case 'sec':
 if (!$_POST)
 {
-echo '<div class="mainzag">Безопасность:</div>
+echo '<div class="mblock">Безопасность:</div>
 <form action="apanel.php?action=sec" method="post">
 <div class="row">
 Пароль(если не хотим менять оставляем пустым): <br/>
@@ -1498,7 +1498,7 @@ break;
 case 'setting':
 if (!$_POST)
 {
-echo '<div class="mainzag">Настройки загруз-центра:</div>
+echo '<div class="mblock">Настройки загруз-центра:</div>
 <form action="apanel.php?action=setting" method="post">
 <div class="row">
 Папка с файлами:<br/>
@@ -1680,5 +1680,3 @@ if ($action) {
 
 
 require 'moduls/foot.php';
-
-?>

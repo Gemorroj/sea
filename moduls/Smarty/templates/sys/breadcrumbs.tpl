@@ -1,4 +1,4 @@
-<div class="mainzag">
+<div class="iblock">
     <img src="{$smarty.const.DIRECTORY}dis/load.png" alt=""/><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a> &#187;
     {foreach from=$breadcrumbs key=k item=v name=loop_breadcrumbs}
         {if $smarty.foreach.loop_breadcrumbs.last}

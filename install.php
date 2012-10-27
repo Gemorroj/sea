@@ -330,5 +330,3 @@ if (!@$_GET['level']) {
 }
 
 require 'moduls/foot.php';
-
-?>

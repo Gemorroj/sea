@@ -77,5 +77,3 @@ if (!file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
 }
 
 header('Location: ' . $location, true, 301);
-
-?>

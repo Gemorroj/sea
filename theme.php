@@ -345,5 +345,3 @@ if ($file_info[1] == '.nth') {
 
 
 header('Location: ' . $location, true, 301);
-
-?>

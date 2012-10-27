@@ -112,5 +112,3 @@ function imagecreatefrombmp($filename, $tmp = '/tmp')
     }
     return false;
 }
-
-?>

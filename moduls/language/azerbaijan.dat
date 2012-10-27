@@ -151,5 +151,3 @@ return array(
     'partner_prefix' => 'Mətin və sms göndərin %prefix% qarşılıq gələn telefon nömrəsinə',
     'partner_enter' => 'O zaman kodu girə bilərsiz sms göndərdik:',
 );
-
-?>

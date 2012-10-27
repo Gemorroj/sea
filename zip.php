@@ -220,9 +220,9 @@ if (!isset($_GET['action'])) {
         }
 
         if ($setup['lib_str']) {
-            echo '<pre class="ik">' . wordwrap(htmlspecialchars($content, ENT_NOQUOTES), $setup['lib_str'], "\n", false) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
+            echo '<pre>' . wordwrap(htmlspecialchars($content, ENT_NOQUOTES), $setup['lib_str'], "\n", false) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
         } else {
-            echo '<pre class="ik">' . htmlspecialchars($content, ENT_NOQUOTES) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
+            echo '<pre>' . htmlspecialchars($content, ENT_NOQUOTES) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
         }
     } else {
         echo '<span class="no">' . $language['file unavailable for viewing'] . '</span>';
@@ -252,5 +252,3 @@ if (!isset($_GET['action'])) {
 echo '- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
 
 require 'moduls/foot.php';
-
-?>

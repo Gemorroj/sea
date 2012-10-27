@@ -181,13 +181,13 @@ class mp3
         $seconds = 0;
         switch (substr($parts[1], 3, 2)) {
             case '00':
-                $audio = 2.5;
+                $audio = '2.5';
                 break;
             case '10':
-                $audio = 2;
+                $audio = '2';
                 break;
             case '11':
-                $audio = 1;
+                $audio = '1';
                 break;
             default:
                 return false;
@@ -226,8 +226,8 @@ class mp3
             '1111' => array(-1, -1, -1, -1, -1)
         );
         $bitPart = $bitArray[$bitFlag];
-        $bitArrayNumber;
-        if ($audio == 1) {
+        $bitArrayNumber = null;
+        if ($audio == '1') {
             switch ($layer) {
                 case 1:
                     $bitArrayNumber = 0;
@@ -258,9 +258,9 @@ class mp3
         }
         //Get Frequency
         $frequencies = array(
-            1   => array('00' => 44100, '01' => 48000, '10' => 32000, '11' => 'reserved'),
-            2   => array(),
-            2.5 => array()
+            '1'   => array('00' => 44100, '01' => 48000, '10' => 32000, '11' => 'reserved'),
+            '2'   => array(),
+            '2.5' => array()
         );
         $freq = $frequencies[$audio][substr($parts[2], 4, 2)];
         //IsPadded?
@@ -521,5 +521,3 @@ class mp3
     }
 
 }
-
-?>
