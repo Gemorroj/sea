@@ -65,4 +65,3 @@ require_once DIR . '/inc/Template.php';
 
 // Подключаем модуль партнерки
 require DIR . '/../partner/inc.php';
-?>

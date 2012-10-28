@@ -174,4 +174,4 @@ $template->assign('insertId', $insertId);
 $template->assign('upload_max_filesize', ini_get('upload_max_filesize'));
 $template->assign('folders', $folders);
 $template->assign('breadcrumbs', array('exchanger' => $language['upload_file']));
-require 'moduls/foot.php';
+$template->send();

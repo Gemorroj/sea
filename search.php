@@ -131,5 +131,4 @@ $template->assign('page', $page);
 $template->assign('pages', $pages);
 $template->assign('prew', $prew);
 $template->assign('sort', $sort);
-
-require 'moduls/foot.php';
+$template->send();

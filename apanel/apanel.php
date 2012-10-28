@@ -1677,6 +1677,3 @@ break;
 if ($action) {
     echo '<div class="row"><a href="apanel.php">Админка</a></div>';
 }
-
-
-require 'moduls/foot.php';

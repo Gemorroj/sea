@@ -61,5 +61,4 @@ $stat['total_new_files'] = mysql_result(mysql_query('
 
 $template->assign('stat', $stat);
 $template->assign('breadcrumbs', array('stat' => $language['statistics']));
-
-require 'moduls/foot.php';
+$template->send();

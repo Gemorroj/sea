@@ -123,5 +123,4 @@ require 'moduls/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);
-
-require 'moduls/foot.php';
+$template->send();

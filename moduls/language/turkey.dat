@@ -119,6 +119,7 @@ return array(
     'short_password' => 'Çok kısa şifre',
     'not_a_valid_url' => 'URL doğru değil',
     'not_a_valid_mail' => 'Email doğru değil',
+    'not_a_valid_style' => 'Not a valid style',
     'prev' => 'geri',
     'next' => 'ileri',
     'complain_about_a_file' => 'Bir dosya hakkında şikayet',

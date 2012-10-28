@@ -96,17 +96,6 @@ if (!is_dir($d['path'])) {
     error('Folder not found.');
 }
 
-###############Онлайн#############
-mysql_query("REPLACE INTO `online` (`ip`, `time`) VALUES ('" . $_SERVER['REMOTE_ADDR'] . "', NOW());", $mysql);
-mysql_query('DELETE FROM `online` WHERE `time` < (NOW() - INTERVAL ' . $setup['online_time'] . ' SECOND)', $mysql);
-
-$online = mysql_result(mysql_query('SELECT COUNT(1) FROM online', $mysql), 0);
-if ($online > $setup['online_max']) {
-    mysql_query('REPLACE INTO `setting`(`name`, `value`) VALUES("online_max", "' . $online . '");', $mysql);
-    mysql_query('REPLACE INTO `setting`(`name`, `value`) VALUES("online_max_time", NOW());', $mysql);
-}
-$template->assign('online', $online);
-
 
 ###############Постраничная навигация###############
 $pages = ceil($d['all'] / $onpage);
@@ -157,103 +146,6 @@ $template->assign('breadcrumbs', $breadcrumbs);
 
 
 
-$banner = array();
-$buy = array();
-if ($setup['buy_change']) {
-    if ($setup['buy']) {
-        if ($setup['randbuy']) {
-            $list = explode("\n", $setup['buy']);
-            shuffle($list);
-            for ($i = 0; $i < $setup['countbuy']; ++$i) {
-                $buy[] = $list[$i];
-            }
-        } else {
-            $list = explode("\n", $setup['buy']);
-            for ($i = 0; $i < $setup['countbuy']; ++$i) {
-                $buy[] = $list[$i];
-            }
-        }
-    }
-
-    if ($setup['banner']) {
-        if ($setup['randbanner']) {
-            $list = explode("\n", $setup['banner']);
-            shuffle($list);
-            for ($i = 0; $i < $setup['countbanner']; ++$i) {
-                $banner[] = $list[$i];
-            }
-        } else {
-            $list = explode("\n", $setup['banner']);
-            for ($i = 0; $i < $setup['countbanner']; ++$i) {
-                $banner[] = $list[$i];
-            }
-        }
-    }
-}
-$template->assign('buy', $buy);
-$template->assign('banner', $banner);
-
-
-// модуль расширенного сервиса
-$serviceBanner = array();
-$serviceBuy = array();
-if ($setup['service_change_advanced']) {
-    $user = isset($_GET['user']) ? intval($_GET['user']) : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
-    if ($user) {
-        $_SESSION['user'] = $user;
-
-        $q = mysql_fetch_row(mysql_query('
-            SELECT `url`, `name`, `style`
-            FROM `users_profiles`
-            WHERE `id` = ' . $_SESSION['user']
-        , $mysql));
-        $_SESSION['site_url'] = $setup['site_url'] = 'http://' . htmlspecialchars($q[0]);
-        //$_SESSION['site_name'] = $setup['site_name'] = $q[1];
-        $q[2] = htmlspecialchars($q[2]);
-
-        if ($q[2] && $q[2] != $_SESSION['style']) {
-            $_SESSION['style'] = $q[2];
-            $template->assign('style', $_SESSION['style']);
-        }
-
-        if ($setup['service_head']) {
-            $head = mysql_query('
-                SELECT `name`, `value`
-                FROM `users_settings`
-                WHERE `parent_id` = ' . $user . '
-                AND `position` = "0"
-            ', $mysql);
-            $all = mysql_num_rows($head);
-            $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
-            if ($all) {
-                for ($i = 0; $i < $all; ++$i) {
-                    $q = mysql_fetch_assoc($head);
-                    $serviceBuy[$q['value']] = $q['name'];;
-                }
-            }
-        }
-
-        if ($setup['service_foot']) {
-            $foot = mysql_query('
-                SELECT `name`, `value`
-                FROM `users_settings`
-                WHERE `parent_id` = ' . $user . '
-                AND `position` = "1"
-            ', $mysql);
-            $all = mysql_num_rows($foot);
-            $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
-            if ($all) {
-                for ($i = 0; $i < $all; ++$i) {
-                    $q = mysql_fetch_assoc($foot);
-                    $serviceBanner[$q['value']] = $q['name'];
-                }
-            }
-        }
-    }
-}
-$template->assign('serviceBuy', $serviceBuy);
-$template->assign('serviceBanner', $serviceBanner);
-
 /// новости
 $news = mysql_fetch_assoc(mysql_query('
     SELECT `time`,
@@ -292,6 +184,4 @@ require 'moduls/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);
-
-
-require 'moduls/foot.php';
+$template->send();

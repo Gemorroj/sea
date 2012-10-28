@@ -1,12 +1,8 @@
-{* шапка *}
-{include file='header.tpl'}
-
-{* бредкрамбсы *}
-{include file='sys/breadcrumbs.tpl'}
+{extends file='sys/layout.tpl'}
 
 
 {* стол заказов *}
-<div class="mblock">
+{block content}
     {if $smarty.post}
         <div class="row">
             {if $sended}
@@ -30,15 +26,13 @@
             </div>
         </form>
     {/if}
-</div>
-
-{* нижнее меню *}
-<ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}{$id}">{$language.back}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="{$setup.site_url}">{$language.home}</a></li>
-</ul>
+{/block}
 
 
-{* футер *}
-{include file='footer.tpl'}
+{block footer}
+    <ul class="iblock">
+        <li><a href="{$smarty.const.DIRECTORY}{$id}">{$language.back}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
+{/block}

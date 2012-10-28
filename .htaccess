@@ -33,6 +33,9 @@ RewriteRule ^jad/([0-9]+)/*$ ./jad.php?id=$1 [QSA,NC]
 RewriteRule ^search/*([0-9]*)/*$ ./search.php?page=$1 [QSA,NC]
 RewriteRule ^top/*([0-9]*)/*$ ./top.php?page=$1 [QSA,NC]
 
+RewriteRule ^service/*$ ./service.php [QSA,NC]
+
+
 RewriteRule ^zip/([0-9]+)/*([0-9]*)/*$ ./zip.php?id=$1&page=$2 [QSA,NC]
 RewriteRule ^zip/preview/([0-9]+)/(.+)/([0-9]*)/*$ ./zip.php?action=preview&id=$1&open=$2&page=$3 [QSA,NC]
 RewriteRule ^zip/down/([0-9]+)/(.+)/*$ ./zip.php?action=down&id=$1&open=$2 [QSA,NC]
@@ -210,7 +213,7 @@ php_value session.auto_start 1
 # Имя сессии
 php_value session.name "lid"
 # Автоматическая постановка идентификатора сессии к ссылкам
-php_value session.use_trans_sid 1
+php_value session.use_trans_sid 0
 # Разделитель переменных в URI
 php_value arg_separator.output "&amp;"
 
@@ -219,7 +222,7 @@ php_value session.gc_probability 1
 php_value session.gc_maxlifetime 86400
 php_value session.cookie_lifetime 86400
 php_value session.use_cookies 1
-php_value session.use_only_cookies 0
+php_value session.use_only_cookies 1
 
 # желательно заменить, для улучшения быстродействия
 #php_value session.save_path "/user/home/sea/moduls/cache"

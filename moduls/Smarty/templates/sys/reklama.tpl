@@ -8,7 +8,7 @@
 {if $setup.service_change_advanced && $serviceBuy}
     <div class="iblock">
         {foreach from=$serviceBuy key=k item=v}
-            <a href="{$k}">{$v}</a><br/>
+            <a href="http://{$k}">{$v}</a><br/>
         {/foreach}
     </div>
 {/if}

@@ -81,5 +81,3 @@ echo '<div class="mblock">БД обновлена!<br/></div>
 Внимание! Теперь следует пересчитать количество файлов в папках<br/>
 Для продолжения нажмите на <a class="yes" href="apanel_count.php">ЭТУ</a> ссылку
 </div>';
-
-require 'moduls/foot.php';

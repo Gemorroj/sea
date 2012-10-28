@@ -935,11 +935,29 @@ function error($str = '')
 
     require_once $dir . '/../header.php';
 
-    $template->setTemplate('error.tpl');
-    $template->assign('message', $str);
+    $template->setTemplate('message.tpl');
+    $template->assign('isError', true);
+    $template->assign('message', is_array($str) ? $str : array($str));
     $template->assign('breadcrumbs', array());
+    $template->send();
+    exit;
+}
 
-    require_once $dir . '/../foot.php';
+/**
+ * Отображение сообщений
+ */
+function message($str = '')
+{
+    global $template;
+    $dir = dirname(__FILE__);
+
+    require_once $dir . '/../header.php';
+
+    $template->setTemplate('message.tpl');
+    $template->assign('isError', false);
+    $template->assign('message', is_array($str) ? $str : array($str));
+    $template->assign('breadcrumbs', array());
+    $template->send();
     exit;
 }
 

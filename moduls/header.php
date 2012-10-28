@@ -54,37 +54,16 @@ isset($_GET['langpack']) && Language::getInstance()->setLangpack($_GET['langpack
 $language = Language::getInstance()->getLanguage();
 
 
-if ($setup['service_change']) {
-    if (isset($_GET['url'])) {
-        $_SESSION['site_url'] = $setup['site_url'] = 'http://' . $_GET['url'];
-    } else if (isset($_SESSION['site_url'])) {
-        $setup['site_url'] = $_SESSION['site_url'];
-    }
-}
-
-if ($setup['style_change']) {
-    if (isset($_POST['style']) && parse_url($_POST['style'])) {
-        $style = rawurldecode($_POST['style']);
-        setcookie('style', $_POST['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
-    } else if (isset($_GET['style']) && parse_url($_GET['style'])) {
-        $style = rawurldecode($_GET['style']);
-        setcookie('style', $_GET['style'], $_SERVER['REQUEST_TIME'] + 2592000, DIRECTORY, $_SERVER['HTTP_HOST']);
-    } else if (isset($_COOKIE['style']) && parse_url($_COOKIE['style'])) {
-        $style = $_COOKIE['style'];
-    } else if (isset($_SESSION['style'])) {
-        $style = $_SESSION['style'];
-    } else {
-        $style = $_SERVER['HTTP_HOST'] . DIRECTORY . 'style/' . $setup['css'] . '.css';
-    }
-} else {
-    $style = $_SERVER['HTTP_HOST'] . DIRECTORY . 'style/' . ($setup['css'] ? $setup['css'] : 'style') . '.css';
-}
-
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
-
 $seo = array();
+
+
+require dirname(__FILE__) . '/inc/_style.php';
+require dirname(__FILE__) . '/inc/_buy.php';
+require dirname(__FILE__) . '/inc/_online.php';
+require dirname(__FILE__) . '/inc/_service.php';
+
 
 $template = new Template();
 
@@ -93,5 +72,8 @@ $template->assign('setup', $setup);
 $template->assign('style', $style);
 $template->assign('language', $language);
 $template->assign('id', $id);
-
-?>
+$template->assign('buy', $buy);
+$template->assign('banner', $banner);
+$template->assign('serviceBuy', $serviceBuy);
+$template->assign('serviceBanner', $serviceBanner);
+$template->assign('online', $online);

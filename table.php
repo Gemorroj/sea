@@ -62,4 +62,4 @@ if ($_POST) {
 
 $template->assign('sended', $sended);
 $template->assign('breadcrumbs', array('table' => $language['orders']));
-require 'moduls/foot.php';
+$template->send();

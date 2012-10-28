@@ -56,7 +56,6 @@ if ($info['access_num'] > $setup['countban']) {
 if (!isset($_POST['p']) && !isset($_GET['p'])) {
     include '../moduls/header.php';
     echo '<div class="mblock">Вход для администратора:</div><form method="post" action="' . $_SERVER['PHP_SELF'] . '"><div class="row">Пароль:<br/><input class="enter" type="password" name="p"/><br/><input class="buttom" type="submit" value="Войти"/></div></form>';
-    include '../moduls/foot.php';
     exit;
 }
 

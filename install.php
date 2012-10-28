@@ -253,7 +253,7 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countban', '2');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'autologin', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'timeban', '10');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', 'http://" . $_SERVER['HTTP_HOST'] . "');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', '" . $_SERVER['HTTP_HOST'] . "');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'anim_change', '1');", $mysql);
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_change', '1');", $mysql);
@@ -328,5 +328,3 @@ if (!@$_GET['level']) {
 
     echo 'Установка закончена<br/>Не забудте удалить файл install.php<br/><strong><a href="./">К загрузкам</a><br/>';
 }
-
-require 'moduls/foot.php';

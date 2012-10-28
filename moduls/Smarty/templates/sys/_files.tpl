@@ -1,4 +1,3 @@
-<div class="mblock">
 {if $allItemsInDir < 1}
     <strong>[{$language.empty}]</strong>
     {else}
@@ -73,4 +72,3 @@
         </div>
     {/foreach}
 {/if}
-</div>

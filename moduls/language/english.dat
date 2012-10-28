@@ -121,6 +121,7 @@ return array(
     'short_password' => 'Too short password',
     'not_a_valid_url' => 'Not a valid URL',
     'not_a_valid_mail' => 'Not a valid Email',
+    'not_a_valid_style' => 'Not a valid style',
     'prev' => 'prev',
     'next' => 'next',
     'complain_about_a_file' => 'Complain about a file',

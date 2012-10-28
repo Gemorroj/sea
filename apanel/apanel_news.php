@@ -55,7 +55,6 @@ if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER[
 if ($_GET['action'] == 'del') {
     if (!$_GET['level']) {
         echo 'Будут удалены все новости! Продолжить?<br/><a href="apanel_news.php?action=del&amp;level=1">Да, продолжить</a><br/>';
-        require 'moduls/foot.php';
         exit;
     } else {
         if (mysql_query('TRUNCATE TABLE `news`;', $mysql)) {
@@ -105,5 +104,3 @@ echo '<input type="submit" value="Добавить"/>
 </div>
 </form>
 <div class="row"><a href="apanel.php">Админка</a></div>';
-
-require 'moduls/foot.php';

@@ -121,7 +121,6 @@ if ($setup['send_email'] && isset($_GET['email'])) {
     }
 
     echo '</div><div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
-    require 'moduls/foot.php';
     exit;
 }
 
@@ -567,5 +566,3 @@ if ($setup['abuse_change']) {
 }
 
 echo $out . '</div><div class="iblock">- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
-
-require 'moduls/foot.php';

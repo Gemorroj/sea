@@ -59,5 +59,4 @@ $template->assign('langpacks', Language::getInstance()->getLangpacks());
 $template->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
 
 $template->assign('breadcrumbs', array('settings' => $language['settings']));
-
-require 'moduls/foot.php';
+$template->send();

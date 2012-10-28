@@ -120,6 +120,7 @@ return array(
     'settings_saved' => 'Düzəlişlər saxlanıldı',
     'short_password' => 'Çox qısa şifrə',
     'not_a_valid_url' => 'URL düzgün deyil',
+    'not_a_valid_style' => 'Not a valid style',
     'not_a_valid_mail' => 'Email düzgün deyil',
     'prev' => 'geri',
     'next' => 'irəli',

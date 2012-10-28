@@ -1974,9 +1974,6 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
 
 
     echo '<div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div>' . str_replace('%prefix%', '<strong>' . PREFIX . '</strong>', $language['partner_prefix']) . '<br/></div><div class="iblock">' . implode('<br/>', $count) . '</div>' . $pay . '<div class="mblock"><form action="' . DIRECTORY . '" method="get"><div>' . $language['partner_enter'] . '<br/><input class="enter" type="password" name="password"/> <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/><a href="' . DIRECTORY . '">' . $language['home'] . '</a><br/></div>';
-
-
-    require_once dirname(__FILE__) . '/../moduls/foot.php';
     exit;
 } else if ($basename == 'view.php' && !isset($_SESSION['password'])) {
     ob_start('partner_input');

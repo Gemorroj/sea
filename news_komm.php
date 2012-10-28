@@ -187,8 +187,6 @@ echo $out . '<div class="iblock">- <a href="' . DIRECTORY . 'news/' . $id . '">'
 - <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
 - <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
 
-require 'moduls/foot.php';
-
 
 
 //Авточистка комментов

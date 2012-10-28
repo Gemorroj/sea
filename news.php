@@ -139,5 +139,3 @@ if ($setup['zakaz_change']) {
 
 echo '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
 - <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
-
-require 'moduls/foot.php';

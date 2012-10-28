@@ -170,8 +170,6 @@ if (isset($_GET['hidden'])) {
             }
         }
     }
-
-    require 'moduls/foot.php';
     exit;
 }
 
@@ -530,5 +528,3 @@ echo '</div>
 - <a href="apanel_index.php?id=' . $back['id'] . '">Назад</a><br/>
 - <a href="apanel.php">Админка</a>
 </div>';
-
-require 'moduls/foot.php';

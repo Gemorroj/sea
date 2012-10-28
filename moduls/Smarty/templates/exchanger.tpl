@@ -1,12 +1,8 @@
-{* шапка *}
-{include file='header.tpl'}
-
-{* бредкрамбсы *}
-{include file='sys/breadcrumbs.tpl'}
+{extends file='sys/layout.tpl'}
 
 
 {* добавить файл *}
-<div class="mblock">
+{block content}
     {if $smarty.post}
         <div class="row">
             <span class="yes">{$language.file_successfully_added}</span>
@@ -28,7 +24,7 @@
                 </label>
                 <label>
                     {$language.file} ({$setup.exchanger_name} / {$setup.exchanger_extensions} / {$upload_max_filesize})<br/>
-                    <input type="file" name="file" class="enter"/><br/>
+                    <input type="file" name="file" class="enter" required="required"/><br/>
                 </label>
                 <label>
                     {$language.screenshot} (jpeg,gif,png)<br/>
@@ -42,16 +38,13 @@
             </div>
         </form>
     {/if}
-</div>
+{/block}
 
 
-{* нижнее меню *}
-<ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}{$id}">{$language.back}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="{$setup.site_url}">{$language.home}</a></li>
-</ul>
-
-
-{* футер *}
-{include file='footer.tpl'}
+{block footer}
+    <ul class="iblock">
+        <li><a href="{$smarty.const.DIRECTORY}{$id}">{$language.back}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
+{/block}

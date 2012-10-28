@@ -34,7 +34,6 @@
  */
 
 
-require 'moduls/config.php';
 require 'moduls/header.php';
 
 
@@ -42,30 +41,18 @@ if (!$setup['service_change_advanced']) {
     error('Not found');
 }
 
-if (!isset($_SESSION['id']) && !isset($_GET['act'])) {
-    echo '<form action="' . DIRECTORY . 'service.php" method="get">
-<div class="row">
-<input type="hidden" name="act" value="enter"/>
-ID:<br/>
-<input class="enter" type="text" name="id"/><br/>
-' . $language['pass'] . '<br/>
-<input class="enter" type="password" name="pass"/><br/>
-<input type="submit" value="' . $language['go'] . '" class="buttom"/>
-</div>
-</form>
-<div class="row"><a href="' . DIRECTORY . 'service.php?act=registration">' . $language['registration'] . '</a><br/></div>
-<form action="' . DIRECTORY . 'service.php?act=pass" method="post">
-<div class="row">
-' . $language['lost password'] . '<br/>
-ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . $language['go'] . '" class="buttom"/>
-</div>
-</form>';
-} else if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
+
+$template->setTemplate('service.tpl');
+
+$seo['title'] = $language['advanced_service'];
+
+
+if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
     $q = mysql_query('
-    SELECT *
-    FROM `users_profiles`
-    WHERE `id` = ' . intval($_GET['id']) . '
-    AND `pass` = "' . md5($_GET['pass']) . '"'
+        SELECT *
+        FROM `users_profiles`
+        WHERE `id` = ' . intval($_GET['id']) . '
+        AND `pass` = "' . md5($_GET['pass']) . '"'
     , $mysql);
 
     if (mysql_num_rows($q)) {
@@ -75,28 +62,37 @@ ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . 
         $_SESSION['url'] = $assoc['url'];
         $_SESSION['mail'] = $assoc['mail'];
         $_SESSION['style'] = $assoc['style'];
-        echo '<div class="row"><a href="' . DIRECTORY . 'service.php">' . $language['go'] . '</a><br/></div>';
+
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
+        exit;
     } else {
-        error($language['user not found']);
+        error($language['user_not_found']);
     }
 } else if (isset($_GET['act']) && $_GET['act'] == 'registration') {
     if ($_POST) {
-        $error = '';
+        $_POST['style'] = ltrim($_POST['style'], 'http://');
+        $_POST['url'] = ltrim($_POST['url'], 'http://');
+
+        $error = array();
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
-            $error .= $language['not a valid code'] . '<br/>';
+            $error[] = $language['not_a_valid_code'];
         }
         unset($_SESSION['captcha_keystring']);
 
         if (strlen($_POST['pass']) < 4) {
-            $error .= $language['short password'] . '<br/>';
+            $error[] = $language['short_password'];
         }
 
         if (strlen($_POST['url']) < 4 || !strpos($_POST['url'], '.')) {
-            $error .= $language['not a valid url'] . '<br/>';
+            $error[] = $language['not_a_valid_url'];
+        }
+
+        if (strlen($_POST['style']) < 4 || !strpos($_POST['style'], '.')) {
+            $error[] = $language['not_a_valid_style'];
         }
 
         if (strlen($_POST['mail']) < 4 || !strpos($_POST['mail'], '@')) {
-            $error .= $language['not a valid mail'] . '<br/>';
+            $error[] = $language['not_a_valid_mail'];
         }
 
         if ($error) {
@@ -115,32 +111,26 @@ ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . 
             WHERE `url` = "' . $url . '"'
         , $mysql))) {
             // Такой URL уже есть
-            error($language['duplicate url']);
+            error($language['duplicate_url']);
         } else if (mysql_query('INSERT INTO `users_profiles` SET `name` = "' . $name . '", `url` = "' . $url . '", `pass` = "' . $pass . '", `mail` = "' . $mail . '", `style` = "' . $style . '"', $mysql)) {
             $_SESSION['id'] = mysql_insert_id($mysql);
             $_SESSION['name'] = $_POST['name'];
             $_SESSION['url'] = $_POST['url'];
             $_SESSION['mail'] = $_POST['mail'];
             $_SESSION['style'] = $_POST['style'];
-            mail($mail, '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=', 'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'], 'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8");
-            echo '<div class="row">' . $language['registered'] . '<br/></div><div class="row"><a href="' . DIRECTORY . 'service.php">' . $language['go'] . '</a><br/></div>';
+
+            mail(
+                $mail,
+                '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
+                'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'],
+                'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+            );
+
+            header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
+            exit;
         } else {
             error($language['error']);
         }
-    } else {
-        echo '<form action="' . DIRECTORY . 'service.php?act=registration" method="post">
-<div class="row">
-<table><tr>
-<th>' . $language['your site'] . '</th><th>' . $language['name'] . '</th>
-</tr><tr><td>http://<input class="enter" type="text" name="url"/></td><td><input class="enter" type="text" name="name" style="width:96%;"/></td></tr>
-<tr><td>' . $language['style'] . ':</td><td>http://<input class="enter" type="text" name="style"/></td></tr>
-<tr><td>Email:</td><td><input class="enter" type="text" name="mail" style="width:96%;"/></td></tr>
-<tr><td>' . $language['pass'] . '</td><td><input class="enter" type="password" name="pass" style="width:96%;"/></td></tr>
-<tr><th><img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /></th><td><input class="enter" type="text" name="keystring" maxlength="4" style="width:96%;"/></td></tr>
-<tr><th colspan="2"><input type="submit" value="' . $language['go'] . '" class="buttom"/></th></tr>
-</table>
-</div>
-</form>';
     }
 } else if (isset($_GET['act']) && $_GET['act'] == 'pass') {
     $id = intval($_POST['id']);
@@ -148,69 +138,73 @@ ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . 
     if (mysql_num_rows($q) && $mail = mysql_result($q, 0)) {
         $pass = pass();
         mysql_query('UPDATE `users_profiles` SET `pass` = "' . md5($pass) . '" WHERE `id` = ' . $id, $mysql);
-        mail($mail, '=?utf-8?B?' . base64_encode('Change Password ' . $_SERVER['HTTP_HOST'].DIRECTORY) . '?=', 'Your new password: ' . $pass . "\r\n" . 'ID: ' . $id, 'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8");
+        mail(
+            $mail,
+            '=?utf-8?B?' . base64_encode('Change Password ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
+            'Your new password: ' . $pass . "\r\n" . 'ID: ' . $id,
+            'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+        );
+
+        message($language['email_sent_successfully']);
     } else {
-        error($language['email not found']);
+        error($language['email_not_found']);
     }
-} else {
+} else if (isset($_SESSION['id'])) {
     // если пользователь вошел в кабинет
     $act = isset($_GET['act']) ? $_GET['act'] : '';
 
     switch($act) {
         default:
-            echo '<form action="' . DIRECTORY . 'service.php?act=save" method="post"><div class="row"><table><tr><th>N</th><th>' . $language['name'] . '</th><th>' . $language['link'] . '</th></tr>';
+            $head = $foot = array();
 
             if ($setup['service_head']) {
-               echo '<tr><th colspan="3">' . $language['head'] . '</th></tr>';
-               $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "0"', $mysql);
-               for ($i = 1; $i <= $setup['service_head']; ++$i) {
-                    $assoc = mysql_fetch_assoc($q);
-                    echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="head[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="head[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
-               }
-            }
-            if ($setup['service_foot']) {
-                echo '<tr><th colspan="3">' . $language['foot'] . '</th></tr>';
-                $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'] . ' AND `position` = "1"', $mysql);
-                for ($i = 1; $i <= $setup['service_foot']; ++$i) {
-                    $assoc = mysql_fetch_assoc($q);
-                    echo '<tr><td>' . $i . '</td><td><input class="enter" type="text" name="foot[name][]" value="' . htmlspecialchars($assoc['name']) . '"/></td><td><input class="enter" type="text" name="foot[value][]" value="' . htmlspecialchars($assoc['value']) . '"/></td></tr>';
+                $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'] . ' AND `position` = "0"', $mysql);
+                for ($i = 1; $i <= $setup['service_head']; ++$i) {
+                    $head[$i] = mysql_fetch_assoc($q);
                 }
             }
-            echo '<tr><th colspan="3">URL</th></tr>
-<tr><td>&#187;</td><td><input class="enter" type="text" name="name" value="' . htmlspecialchars($_SESSION['name']) . '"/></td><td><input class="enter" type="text" name="url" value="' . htmlspecialchars($_SESSION['url']) . '"/></td></tr>
-<tr><td>Email</td><td colspan="2"><input class="enter" type="text" name="mail" value="' . htmlspecialchars($_SESSION['mail']) . '" style="width:98%;"/></td></tr>
-<tr><td>' . $language['style'] . '</td><td colspan="2"><input class="enter" type="text" name="style" value="' . htmlspecialchars($style) . '" style="width:98%;"/></td></tr>
-<tr><th colspan="3"><input type="submit" value="' . $language['go'] . '" class="buttom"/></th></tr>
-</table>
-</div></form>
-<div class="row"><form action=""><div>' . $language['service'] . '<br/><input class="enter" type="text" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . '?user=' . $_SESSION['id'] . '"/></div></form></div>';
+            if ($setup['service_foot']) {
+                $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'] . ' AND `position` = "1"', $mysql);
+                for ($i = 1; $i <= $setup['service_foot']; ++$i) {
+                    $foot[$i] = mysql_fetch_assoc($q);
+                }
+            }
 
+            $template->assign('head', $head);
+            $template->assign('foot', $foot);
             break;
 
+
         case 'save':
+            $_POST['style'] = ltrim($_POST['style'], 'http://');
+            $_POST['url'] = ltrim($_POST['url'], 'http://');
+
             $_SESSION['url'] = $_POST['url'];
             $_SESSION['name'] = $_POST['name'];
             $_SESSION['mail'] = $_POST['mail'];
 
+
             $key = 0;
 
-            mysql_query(
-            'UPDATE `users_profiles`
-            SET
-            `name` = "' . mysql_real_escape_string($_POST['name'], $mysql) . '",
-            `url` = "' . mysql_real_escape_string($_POST['url'], $mysql) . '",
-            `mail` = "' . mysql_real_escape_string($_POST['mail'], $mysql) . '",
-            `style` = "' . mysql_real_escape_string($_POST['style'], $mysql) . '",
-            WHERE `id` = ' . $_SESSION['id']
+            mysql_query('
+                UPDATE `users_profiles`
+                SET
+                `name` = "' . mysql_real_escape_string($_POST['name'], $mysql) . '",
+                `url` = "' . mysql_real_escape_string($_POST['url'], $mysql) . '",
+                `mail` = "' . mysql_real_escape_string($_POST['mail'], $mysql) . '",
+                `style` = "' . mysql_real_escape_string($_POST['style'], $mysql) . '",
+                WHERE `id` = ' . (int)$_SESSION['id']
             , $mysql);
-            mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . $_SESSION['id'], $mysql);
+            mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'], $mysql);
             $sql = 'INSERT INTO `users_settings` (`parent_id`, `position`, `name`, `value`) VALUES';
 
             $all = sizeof($_POST['head']['name']);
             $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
             for ($i = 0; $i < $all; ++$i) {
-                if ($_POST['head']['name'][$i] && $_POST['head']['value'][$i]) {
-                    $sql .= '('.$_SESSION['id'].', "0", "' . mysql_real_escape_string($_POST['head']['name'][$i], $mysql) . '", "' . mysql_real_escape_string($_POST['head']['value'][$i], $mysql) . '"),';
+                $name = $_POST['head']['name'][$i];
+                $value = ltrim($_POST['head']['value'][$i], 'http://');
+                if ($name && $value) {
+                    $sql .= '(' . (int)$_SESSION['id'] . ', "0", "' . mysql_real_escape_string($name, $mysql) . '", "' . mysql_real_escape_string($value, $mysql) . '"),';
                     $key++;
                 }
             }
@@ -218,8 +212,10 @@ ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . 
             $all = sizeof($_POST['foot']['name']);
             $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
             for ($i = 0; $i < $all; ++$i) {
-                if ($_POST['foot']['name'][$i] && $_POST['foot']['value'][$i]) {
-                    $sql .= '(' . $_SESSION['id'] . ', "1", "' . mysql_real_escape_string($_POST['foot']['name'][$i], $mysql) . '", "' . mysql_real_escape_string($_POST['foot']['value'][$i], $mysql) . '"),';
+                $name = $_POST['foot']['name'][$i];
+                $value = ltrim($_POST['foot']['value'][$i], 'http://');
+                if ($name && $value) {
+                    $sql .= '(' . (int)$_SESSION['id'] . ', "1", "' . mysql_real_escape_string($name, $mysql) . '", "' . mysql_real_escape_string($value, $mysql) . '"),';
                     $key++;
                 }
             }
@@ -234,7 +230,7 @@ ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . 
             mysql_query('ANALYZE TABLE `users_profiles`, `users_settings`', $mysql);
 
             if ($r) {
-                echo '<div class="row">' . $language['settings saved'] . '<br/></div>';
+                message($language['settings_saved']);
             } else {
                 error($language['error']);
             }
@@ -243,19 +239,11 @@ ID:<input class="enter" type="text" name="id"/> <input type="submit" value="' . 
 
         case 'exit':
             session_destroy();
-            error($language['signed out']);
+            error($language['signed_out']);
             break;
     }
-    
-    echo '<div class="iblock">- <a href="' . DIRECTORY . 'service.php?act=exit">' . $language['exit'] . '</a><br/></div>';
 }
 
 
-
-
-
-echo '<div class="iblock">
-- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
-- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
-
-require 'moduls/foot.php';
+$template->assign('breadcrumbs', array('service' => $language['advanced_service']));
+$template->send();

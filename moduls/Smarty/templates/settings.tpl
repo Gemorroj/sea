@@ -1,12 +1,8 @@
-{* шапка *}
-{include file='header.tpl'}
-
-{* бредкрамбсы *}
-{include file='sys/breadcrumbs.tpl'}
+{extends file='sys/layout.tpl'}
 
 
 {* настройки *}
-<div class="mblock">
+{block content}
     {* сортировка *}
     <div class="iblock">{$language.sort}:
         {if $sort == 'name' || $sort == ''}
@@ -125,18 +121,15 @@
 
     {* расширенное сервисное использование *}
     {if $setup.service_change_advanced}
-        <div class="iblock"><a href="{$smarty.const.DIRECTORY}service.php">{$language.advanced_service}</a></div>
+        <div class="iblock"><a href="{$smarty.const.DIRECTORY}service">{$language.advanced_service}</a></div>
     {/if}
-</div>
+{/block}
 
 
-{* нижнее меню *}
-<ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}{$id}">{$language.back}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="{$setup.site_url}">{$language.home}</a></li>
-</ul>
-
-
-{* футер *}
-{include file='footer.tpl'}
+{block footer}
+    <ul class="iblock">
+        <li><a href="{$smarty.const.DIRECTORY}{$id}">{$language.back}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
+{/block}

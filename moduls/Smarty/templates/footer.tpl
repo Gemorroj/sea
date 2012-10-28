@@ -1,1 +1,0 @@
-{math equation="round($pageTime, 4)"}</div></body></html>
