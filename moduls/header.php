@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -38,7 +38,6 @@ $GLOBALS['tm'] = microtime(true);
 require_once dirname(__FILE__) . '/config.php';
 
 header('Content-type: text/html; charset=utf-8');
-
 
 
 if (defined('APANEL')) {
@@ -54,15 +53,14 @@ isset($_GET['langpack']) && Language::getInstance()->setLangpack($_GET['langpack
 $language = Language::getInstance()->getLanguage();
 
 
-
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $seo = array();
 
 
-require dirname(__FILE__) . '/inc/_style.php';
-require dirname(__FILE__) . '/inc/_buy.php';
-require dirname(__FILE__) . '/inc/_online.php';
-require dirname(__FILE__) . '/inc/_service.php';
+require DIR . '/inc/_style.php';
+require DIR . '/inc/_buy.php';
+require DIR . '/inc/_online.php';
+require DIR . '/inc/_service.php';
 
 
 $template = new Template();

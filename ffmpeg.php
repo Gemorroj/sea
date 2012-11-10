@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -48,9 +48,10 @@ $frame = $i = $_GET['frame'] ? abs($_GET['frame']) : $setup['ffmpeg_frame'] + 1;
 
 $pic = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
 $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif';
+$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame
+    . '.gif';
 
-if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame.  '.gif')) {
+if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
     $mov = new ffmpeg_movie($pic, false);
     if (!$mov) {
         header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'dis/load.png', true, 301);

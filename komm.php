@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -59,7 +59,9 @@ if ($onpage < 3) {
 
 
 ###############Инфа о файле#####################
-$file_info_real = mysql_fetch_assoc(mysql_query('SELECT `path`, `loads`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
+$file_info_real = mysql_fetch_assoc(
+    mysql_query('SELECT `path`, `loads`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql)
+);
 if (!file_exists($file_info_real['path'])) {
     error('File not found!');
 }
@@ -70,13 +72,16 @@ $all = $all[0];
 $onpage = ($onpage > $all) ? $all : $onpage;
 $start = ($onpage * $page) - $onpage;
 
-$sql = mysql_query('
+$sql = mysql_query(
+    '
     SELECT *
     FROM `komments`
     WHERE `file_id` = ' . $id . '
     ORDER BY `id` DESC
     LIMIT ' . $start . ', ' . $onpage
-, $mysql);
+    ,
+    $mysql
+);
 
 
 $filepath = pathinfo($file_info_real['path']);
@@ -91,11 +96,16 @@ if ($seo['title']) {
 
 #######Получаем имя файла и обратный каталог#####
 $dir = $filepath['dirname'] . '/';
-$back = mysql_fetch_assoc(mysql_query("
+$back = mysql_fetch_assoc(
+    mysql_query(
+        "
     SELECT `id`
     FROM `files`
     WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'
-", $mysql));
+",
+        $mysql
+    )
+);
 ###############Запись###########################
 if ($_GET['act'] == 'add') {
     //Проверка на ошибки
@@ -116,28 +126,40 @@ if ($_GET['act'] == 'add') {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $_POST['msg'] = mysql_real_escape_string(nl2br(bbcode(htmlspecialchars(mb_substr($_POST['msg'], 0, 32512), ENT_NOQUOTES))), $mysql);
+    $_POST['msg'] = mysql_real_escape_string(
+        nl2br(bbcode(htmlspecialchars(mb_substr($_POST['msg'], 0, 32512), ENT_NOQUOTES))),
+        $mysql
+    );
     $_POST['name'] = mysql_real_escape_string(mb_substr($_POST['name'], 0, 32), $mysql);
 
 
-    if (mysql_fetch_row(mysql_query("SELECT 1 FROM `komments` WHERE `text` = '" . $_POST['msg'] . "' LIMIT 1", $mysql))) {
+    if (mysql_fetch_row(
+        mysql_query("SELECT 1 FROM `komments` WHERE `text` = '" . $_POST['msg'] . "' LIMIT 1", $mysql)
+    )
+    ) {
         $error .= $language['why repeat myself'] . '<br/>';
     }
     //Если нет ошибок пишем в базу
     if ($error) {
         error($error);
     }
-    mysql_query("
+    mysql_query(
+        "
         INSERT INTO `komments` (
             `file_id`, `name`, `text`, `time`
         ) VALUES (
             " . $id . ", '" . $_POST['name'] . "', '" . $_POST['msg'] . "', " . $_SERVER['REQUEST_TIME'] . "
         )
-    ", $mysql);
+    ",
+        $mysql
+    );
 
     $out .= '<div class="iblock">' . $language['your comment has been successfully added'] . '</div>';
 } else {
-    $out .= '<div class="mblock"><strong>' . $language['comments to the file'] . ' "' . htmlspecialchars($namefile, ENT_NOQUOTES) . '"</strong></div>';
+    $out .= '<div class="mblock"><strong>' . $language['comments to the file'] . ' "' . htmlspecialchars(
+        $namefile,
+        ENT_NOQUOTES
+    ) . '"</strong></div>';
     //Страницы
 
     $pages = $onpage ? ceil($all / $onpage) : 1;
@@ -160,21 +182,28 @@ if ($_GET['act'] == 'add') {
 
 
         if (isset($_SESSION['autorise']) && $_SESSION['autorise'] == $setup['password']) {
-            $out .= '<a href="' . DIRECTORY . 'apanel/apanel.php?komm=' . $komments['id'] . '&amp;action=del_komm" title="del">[X]</a> ';
+            $out .= '<a href="' . DIRECTORY . 'apanel/apanel.php?komm=' . $komments['id']
+                . '&amp;action=del_komm" title="del">[X]</a> ';
         }
 
-        $out .= '<strong>' . htmlspecialchars($komments['name'], ENT_NOQUOTES) . '</strong> (' . tm($komments['time']) . ')<br/>' . str_replace("\n", '<br/>', $komments['text']) . '</div>';
+        $out .= '<strong>' . htmlspecialchars($komments['name'], ENT_NOQUOTES) . '</strong> (' . tm($komments['time'])
+            . ')<br/>' . str_replace("\n", '<br/>', $komments['text']) . '</div>';
     }
 
     // капча
     if ($setup['komments_captcha']) {
-        $captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $language['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
+        $captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id()
+            . '" /><br/>' . $language['code']
+            . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
     } else {
         $captcha = '';
     }
 
     //Форма добавления камментов
-    $out .= '<div class="iblock"><form action="' . DIRECTORY . 'komm/' . $id . '/1/add" method="post"><div class="row">' . $language['your name'] . ':<br/><input class="enter" name="name" type="text" maxlength="10"/><br/>' . $language['message'] . ':<br/><textarea class="enter" cols="40" rows="5" name="msg"></textarea><br/>' . $captcha . '<br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form></div>';
+    $out .= '<div class="iblock"><form action="' . DIRECTORY . 'komm/' . $id . '/1/add" method="post"><div class="row">'
+        . $language['your name'] . ':<br/><input class="enter" name="name" type="text" maxlength="10"/><br/>'
+        . $language['message'] . ':<br/><textarea class="enter" cols="40" rows="5" name="msg"></textarea><br/>'
+        . $captcha . '<br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form></div>';
 
 
     //Страницы
@@ -182,12 +211,12 @@ if ($_GET['act'] == 'add') {
         $out .= '<div class="iblock">' . $language['pages'] . ': ';
         $asd = $page - 2;
         $asd2 = $page + 3;
-        if($asd < $all && $asd > 0 && $page > 3) {
+        if ($asd < $all && $asd > 0 && $page > 3) {
             $out .= ' <a href="' . DIRECTORY . 'komm/' . $id . '/1">1</a> ... ';
         }
         for ($i = $asd; $i < $asd2; ++$i) {
             if ($i < $all && $i > 0) {
-                if ($i > $pages ) {
+                if ($i > $pages) {
                     break;
                 }
                 if ($page == $i) {
@@ -213,14 +242,19 @@ if ($back['id']) {
     $str = '';
 }
 
-echo $out . '<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
-
+echo$out . '<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">'
+    . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">'
+    . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home']
+    . '</a><br/></div>';
 
 
 //Авточистка комментов
 if ($all > $setup['klimit']) {
-    mysql_query('
+    mysql_query(
+        '
         DELETE FROM `komments`
         WHERE `id` = ' . mysql_result(mysql_query('SELECT MIN(`id`) FROM komments WHERE `file_id` = ' . $id, $mysql), 0)
-    , $mysql);
+        ,
+        $mysql
+    );
 }

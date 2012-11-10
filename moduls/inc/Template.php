@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 class Template extends Smarty
@@ -61,11 +61,13 @@ class Template extends Smarty
      * Задаем шаблон для выдачи
      *
      * @param string $template имя файла шаблона
+     *
      * @return Template
      */
     public function setTemplate($template)
     {
         $this->_template = $template;
+
         return $this;
     }
 
@@ -73,7 +75,7 @@ class Template extends Smarty
     /**
      * Выдача шаблона в выходной поток
      */
-    public function send ()
+    public function send()
     {
         $this->assign('pageTime', microtime(true) - $GLOBALS['tm']);
         $this->display($this->_template);
@@ -85,6 +87,7 @@ class Template extends Smarty
      * Функция форматирования даты для Smarty
      *
      * @param string $str
+     *
      * @return string
      */
     public function dateFormatExtended($str)
@@ -93,10 +96,12 @@ class Template extends Smarty
 
         if (date('Y.m.d', $str) == date('Y.m.d', $_SERVER['REQUEST_TIME'])) {
             return $language['today'] . ' ' . date('H:i', $str);
-        } else if (date('Y.m.d', $str) == date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
-            return $language['yesterday'] . ' ' . date('H:i', $str);
         } else {
-            return date('Y.m.d H:i', $str);
+            if (date('Y.m.d', $str) == date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
+                return $language['yesterday'] . ' ' . date('H:i', $str);
+            } else {
+                return date('Y.m.d H:i', $str);
+            }
         }
     }
 
@@ -106,18 +111,23 @@ class Template extends Smarty
      * функция форматирования размера для Smarty
      *
      * @param int $int
+     *
      * @return string
      */
     public function sizeFormatExtended($int = 0)
     {
         if ($int < 1024) {
             return $int . 'b';
-        } else if ($int < 1048576) {
-            return round($int / 1024, 2) . 'Kb';
-        } else if ($int < 1073741824) {
-            return round($int / 1048576, 2) . 'Mb';
         } else {
-            return round($int / 1073741824, 2) . 'Gb';
+            if ($int < 1048576) {
+                return round($int / 1024, 2) . 'Kb';
+            } else {
+                if ($int < 1073741824) {
+                    return round($int / 1048576, 2) . 'Mb';
+                } else {
+                    return round($int / 1073741824, 2) . 'Gb';
+                }
+            }
         }
     }
 
@@ -128,6 +138,7 @@ class Template extends Smarty
      *
      * @param array                    $params   parameters (page - текущая страница, pages - всего страниц, url - url страницы, к нему прибавится /номер)
      * @param Smarty_Internal_Template $template template object
+     *
      * @return string      html с навигацией
      */
     public function paginationExtended($params, $template)
@@ -166,15 +177,16 @@ class Template extends Smarty
         }
 
         if ($params['pages'] > 3 && $params['pages'] > $page4) {
-            $go .= '... <a href="' . $params['url'] . '/' . $params['pages'] . $appendStr . '">' . $params['pages'] . '</a>';
+            $go .= '... <a href="' . $params['url'] . '/' . $params['pages'] . $appendStr . '">' . $params['pages']
+                . '</a>';
         }
 
         if ($page1 > 1) {
-            $go = '<a href="' . $params['url'] . '/1' . $appendStr .'">1</a> ... ' . $go;
+            $go = '<a href="' . $params['url'] . '/1' . $appendStr . '">1</a> ... ' . $go;
         }
 
         if ($GLOBALS['setup']['pagehand_change'] && $params['pages'] > $GLOBALS['setup']['pagehand']) {
-            $page =  str_replace(
+            $page = str_replace(
                 array('%page%', '%pages%'),
                 array($params['page'], $params['pages']),
                 $language['page']
@@ -182,11 +194,15 @@ class Template extends Smarty
             $hiddens = '';
             if (isset($params['query'])) {
                 foreach ($params['query'] as $key => $value) {
-                    $hiddens .= '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '"/>';
+                    $hiddens
+                        .=
+                        '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value)
+                            . '"/>';
                 }
             }
 
-            $go .= '<br/>
+            $go
+                .= '<br/>
             <form action="' . $params['url'] . '" method="get">
                 <div class="iblock">
                     ' . $hiddens . '

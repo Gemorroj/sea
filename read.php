@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -40,7 +40,7 @@ require 'moduls/header.php';
 if (!$setup['lib_change']) {
     error('Not found');
 }
-    
+
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) {
@@ -48,25 +48,36 @@ if ($page < 1) {
 }
 
 // Получаем инфу о файле
-$v = mysql_fetch_assoc(mysql_query('
+$v = mysql_fetch_assoc(
+    mysql_query(
+        '
     SELECT *,
     ' . Language::getInstance()->buildFilesQuery() . '
     FROM `files`
     WHERE `id` = ' . $id
-    , $mysql
-));
+        ,
+        $mysql
+    )
+);
 $pathinfo = pathinfo($v['path']);
 
 if (!is_file($v['path']) || strtolower($pathinfo['extension']) != 'txt') {
     error('File not found');
 }
 
-$back = mysql_fetch_assoc(mysql_query("SELECT `id` FROM `files` WHERE `path` = '" . mysql_real_escape_string($pathinfo['dirname'] . '/', $mysql) . "'", $mysql));
+$back = mysql_fetch_assoc(
+    mysql_query(
+        "SELECT `id` FROM `files` WHERE `path` = '" . mysql_real_escape_string($pathinfo['dirname'] . '/', $mysql)
+            . "'",
+        $mysql
+    )
+);
 
 
 $seo = unserialize($v['seo']);
 
-$title .= $language['read'] . ' - ' . htmlspecialchars($seo['title'] ? $seo['title'] : $v['name'], ENT_NOQUOTES) . ' / ' . $page;
+$title .= $language['read'] . ' - ' . htmlspecialchars($seo['title'] ? $seo['title'] : $v['name'], ENT_NOQUOTES) . ' / '
+    . $page;
 
 if (isset($_SESSION['lib'])) {
     $setup['lib'] = $_SESSION['lib'];
@@ -96,9 +107,14 @@ $pages = ceil(filesize($v['path']) / $setup['lib']);
 
 
 if ($setup['lib_str']) {
-    echo '<pre>' . wordwrap(htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES), $setup['lib_str'], "\n", false) . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
+    echo'<pre>' . wordwrap(htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES), $setup['lib_str'], "\n", false)
+        . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
 } else {
-    echo '<pre>' . htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES) . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
+    echo'<pre>' . htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES) . '</pre>' . go(
+        $page,
+        $pages,
+        DIRECTORY . 'read/' . $id
+    );
 }
 
 if ($back['id']) {
@@ -106,4 +122,7 @@ if ($back['id']) {
 } else {
     $str = '';
 }
-echo '<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
+echo'<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">'
+    . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">'
+    . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home']
+    . '</a><br/></div>';

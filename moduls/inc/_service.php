@@ -3,8 +3,10 @@
 if ($setup['service_change']) {
     if (isset($_GET['url'])) {
         $_SESSION['site_url'] = $setup['site_url'] = ltrim($_GET['url'], 'http://');
-    } else if (isset($_SESSION['site_url'])) {
-        $setup['site_url'] = $_SESSION['site_url'];
+    } else {
+        if (isset($_SESSION['site_url'])) {
+            $setup['site_url'] = $_SESSION['site_url'];
+        }
     }
 }
 
@@ -15,11 +17,16 @@ if ($setup['service_change_advanced']) {
     if ($user) {
         $_SESSION['user'] = $user;
 
-        $q = mysql_fetch_row(mysql_query('
+        $q = mysql_fetch_row(
+            mysql_query(
+                '
             SELECT `url`, `name`, `style`
             FROM `users_profiles`
             WHERE `id` = ' . $user
-        , $mysql));
+                ,
+                $mysql
+            )
+        );
         $_SESSION['site_url'] = $setup['site_url'] = $q[0];
         //$_SESSION['site_name'] = $setup['site_name'] = $q[1];
 

@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -48,12 +48,15 @@ $seo['title'] = $language['advanced_service'];
 
 
 if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
-    $q = mysql_query('
+    $q = mysql_query(
+        '
         SELECT *
         FROM `users_profiles`
         WHERE `id` = ' . intval($_GET['id']) . '
         AND `pass` = "' . md5($_GET['pass']) . '"'
-    , $mysql);
+        ,
+        $mysql
+    );
 
     if (mysql_num_rows($q)) {
         $assoc = mysql_fetch_assoc($q);
@@ -105,31 +108,44 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         $name = mysql_real_escape_string($_POST['name'], $mysql);
         $style = mysql_real_escape_string($_POST['style'], $mysql);
 
-        if (mysql_num_rows(mysql_query('
+        if (mysql_num_rows(
+            mysql_query(
+                '
             SELECT 1
             FROM `users_profiles`
             WHERE `url` = "' . $url . '"'
-        , $mysql))) {
+                ,
+                $mysql
+            )
+        )
+        ) {
             // Такой URL уже есть
             error($language['duplicate_url']);
-        } else if (mysql_query('INSERT INTO `users_profiles` SET `name` = "' . $name . '", `url` = "' . $url . '", `pass` = "' . $pass . '", `mail` = "' . $mail . '", `style` = "' . $style . '"', $mysql)) {
-            $_SESSION['id'] = mysql_insert_id($mysql);
-            $_SESSION['name'] = $_POST['name'];
-            $_SESSION['url'] = $_POST['url'];
-            $_SESSION['mail'] = $_POST['mail'];
-            $_SESSION['style'] = $_POST['style'];
-
-            mail(
-                $mail,
-                '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
-                'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'],
-                'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
-            );
-
-            header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
-            exit;
         } else {
-            error($language['error']);
+            if (mysql_query(
+                'INSERT INTO `users_profiles` SET `name` = "' . $name . '", `url` = "' . $url . '", `pass` = "' . $pass
+                    . '", `mail` = "' . $mail . '", `style` = "' . $style . '"',
+                $mysql
+            )
+            ) {
+                $_SESSION['id'] = mysql_insert_id($mysql);
+                $_SESSION['name'] = $_POST['name'];
+                $_SESSION['url'] = $_POST['url'];
+                $_SESSION['mail'] = $_POST['mail'];
+                $_SESSION['style'] = $_POST['style'];
+
+                mail(
+                    $mail,
+                    '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
+                    'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'],
+                    'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+                );
+
+                header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
+                exit;
+            } else {
+                error($language['error']);
+            }
         }
     }
 } else if (isset($_GET['act']) && $_GET['act'] == 'pass') {
@@ -149,44 +165,54 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
     } else {
         error($language['email_not_found']);
     }
-} else if (isset($_SESSION['id'])) {
-    // если пользователь вошел в кабинет
-    $act = isset($_GET['act']) ? $_GET['act'] : '';
+} else {
+    if (isset($_SESSION['id'])) {
+        // если пользователь вошел в кабинет
+        $act = isset($_GET['act']) ? $_GET['act'] : '';
 
-    switch($act) {
-        default:
-            $head = $foot = array();
+        switch ($act) {
+            default:
+                $head = $foot = array();
 
-            if ($setup['service_head']) {
-                $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'] . ' AND `position` = "0"', $mysql);
-                for ($i = 1; $i <= $setup['service_head']; ++$i) {
-                    $head[$i] = mysql_fetch_assoc($q);
+                if ($setup['service_head']) {
+                    $q = mysql_query(
+                        'SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id']
+                            . ' AND `position` = "0"',
+                        $mysql
+                    );
+                    for ($i = 1; $i <= $setup['service_head']; ++$i) {
+                        $head[$i] = mysql_fetch_assoc($q);
+                    }
                 }
-            }
-            if ($setup['service_foot']) {
-                $q = mysql_query('SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'] . ' AND `position` = "1"', $mysql);
-                for ($i = 1; $i <= $setup['service_foot']; ++$i) {
-                    $foot[$i] = mysql_fetch_assoc($q);
+                if ($setup['service_foot']) {
+                    $q = mysql_query(
+                        'SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id']
+                            . ' AND `position` = "1"',
+                        $mysql
+                    );
+                    for ($i = 1; $i <= $setup['service_foot']; ++$i) {
+                        $foot[$i] = mysql_fetch_assoc($q);
+                    }
                 }
-            }
 
-            $template->assign('head', $head);
-            $template->assign('foot', $foot);
-            break;
-
-
-        case 'save':
-            $_POST['style'] = ltrim($_POST['style'], 'http://');
-            $_POST['url'] = ltrim($_POST['url'], 'http://');
-
-            $_SESSION['url'] = $_POST['url'];
-            $_SESSION['name'] = $_POST['name'];
-            $_SESSION['mail'] = $_POST['mail'];
+                $template->assign('head', $head);
+                $template->assign('foot', $foot);
+                break;
 
 
-            $key = 0;
+            case 'save':
+                $_POST['style'] = ltrim($_POST['style'], 'http://');
+                $_POST['url'] = ltrim($_POST['url'], 'http://');
 
-            mysql_query('
+                $_SESSION['url'] = $_POST['url'];
+                $_SESSION['name'] = $_POST['name'];
+                $_SESSION['mail'] = $_POST['mail'];
+
+
+                $key = 0;
+
+                mysql_query(
+                    '
                 UPDATE `users_profiles`
                 SET
                 `name` = "' . mysql_real_escape_string($_POST['name'], $mysql) . '",
@@ -194,53 +220,62 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 `mail` = "' . mysql_real_escape_string($_POST['mail'], $mysql) . '",
                 `style` = "' . mysql_real_escape_string($_POST['style'], $mysql) . '",
                 WHERE `id` = ' . (int)$_SESSION['id']
-            , $mysql);
-            mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'], $mysql);
-            $sql = 'INSERT INTO `users_settings` (`parent_id`, `position`, `name`, `value`) VALUES';
+                    ,
+                    $mysql
+                );
+                mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'], $mysql);
+                $sql = 'INSERT INTO `users_settings` (`parent_id`, `position`, `name`, `value`) VALUES';
 
-            $all = sizeof($_POST['head']['name']);
-            $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
-            for ($i = 0; $i < $all; ++$i) {
-                $name = $_POST['head']['name'][$i];
-                $value = ltrim($_POST['head']['value'][$i], 'http://');
-                if ($name && $value) {
-                    $sql .= '(' . (int)$_SESSION['id'] . ', "0", "' . mysql_real_escape_string($name, $mysql) . '", "' . mysql_real_escape_string($value, $mysql) . '"),';
-                    $key++;
+                $all = sizeof($_POST['head']['name']);
+                $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
+                for ($i = 0; $i < $all; ++$i) {
+                    $name = $_POST['head']['name'][$i];
+                    $value = ltrim($_POST['head']['value'][$i], 'http://');
+                    if ($name && $value) {
+                        $sql
+                            .=
+                            '(' . (int)$_SESSION['id'] . ', "0", "' . mysql_real_escape_string($name, $mysql) . '", "'
+                                . mysql_real_escape_string($value, $mysql) . '"),';
+                        $key++;
+                    }
                 }
-            }
 
-            $all = sizeof($_POST['foot']['name']);
-            $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
-            for ($i = 0; $i < $all; ++$i) {
-                $name = $_POST['foot']['name'][$i];
-                $value = ltrim($_POST['foot']['value'][$i], 'http://');
-                if ($name && $value) {
-                    $sql .= '(' . (int)$_SESSION['id'] . ', "1", "' . mysql_real_escape_string($name, $mysql) . '", "' . mysql_real_escape_string($value, $mysql) . '"),';
-                    $key++;
+                $all = sizeof($_POST['foot']['name']);
+                $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
+                for ($i = 0; $i < $all; ++$i) {
+                    $name = $_POST['foot']['name'][$i];
+                    $value = ltrim($_POST['foot']['value'][$i], 'http://');
+                    if ($name && $value) {
+                        $sql
+                            .=
+                            '(' . (int)$_SESSION['id'] . ', "1", "' . mysql_real_escape_string($name, $mysql) . '", "'
+                                . mysql_real_escape_string($value, $mysql) . '"),';
+                        $key++;
+                    }
                 }
-            }
 
-            if ($key) {
-                $r = mysql_query(rtrim($sql, ','), $mysql);
-            } else {
-                $r = true;
-            }
+                if ($key) {
+                    $r = mysql_query(rtrim($sql, ','), $mysql);
+                } else {
+                    $r = true;
+                }
 
-            mysql_query('OPTIMIZE TABLE `users_profiles`, `users_settings`', $mysql);
-            mysql_query('ANALYZE TABLE `users_profiles`, `users_settings`', $mysql);
+                mysql_query('OPTIMIZE TABLE `users_profiles`, `users_settings`', $mysql);
+                mysql_query('ANALYZE TABLE `users_profiles`, `users_settings`', $mysql);
 
-            if ($r) {
-                message($language['settings_saved']);
-            } else {
-                error($language['error']);
-            }
-            break;
+                if ($r) {
+                    message($language['settings_saved']);
+                } else {
+                    error($language['error']);
+                }
+                break;
 
 
-        case 'exit':
-            session_destroy();
-            error($language['signed_out']);
-            break;
+            case 'exit':
+                session_destroy();
+                error($language['signed_out']);
+                break;
+        }
     }
 }
 

@@ -9,7 +9,10 @@ function ConvertBMP2GD($src, $dest = false)
         return false;
     }
     $header = unpack('vtype/Vsize/v2reserved/Voffset', fread($src_f, 14));
-    $info = unpack('Vsize/Vwidth/Vheight/vplanes/vbits/Vcompression/Vimagesize/Vxres/Vyres/Vncolor/Vimportant', fread($src_f, 40));
+    $info = unpack(
+        'Vsize/Vwidth/Vheight/vplanes/vbits/Vcompression/Vimagesize/Vxres/Vyres/Vncolor/Vimportant',
+        fread($src_f, 40)
+    );
 
     extract($info);
     extract($header);
@@ -65,40 +68,47 @@ function ConvertBMP2GD($src, $dest = false)
                 $r = $scan_line{$j++};
                 $gd_scan_line .= "\x00$r$g$b";
             }
-        } else if ($bits == 8) {
-            $gd_scan_line = $scan_line;
-        } else if ($bits == 4) {
-            $gd_scan_line = '';
-            $j = 0;
-            while ($j < $scan_line_size) {
-                $byte = ord($scan_line{$j++});
-                $p1 = chr($byte >> 4);
-                $p2 = chr($byte & 0x0F);
-                $gd_scan_line .= "$p1$p2";
+        } else {
+            if ($bits == 8) {
+                $gd_scan_line = $scan_line;
+            } else {
+                if ($bits == 4) {
+                    $gd_scan_line = '';
+                    $j = 0;
+                    while ($j < $scan_line_size) {
+                        $byte = ord($scan_line{$j++});
+                        $p1 = chr($byte >> 4);
+                        $p2 = chr($byte & 0x0F);
+                        $gd_scan_line .= "$p1$p2";
+                    }
+                    $gd_scan_line = substr($gd_scan_line, 0, $width);
+                } else {
+                    if ($bits == 1) {
+                        $gd_scan_line = '';
+                        $j = 0;
+                        while ($j < $scan_line_size) {
+                            $byte = ord($scan_line{$j++});
+                            $p1 = chr((int)(($byte & 0x80) != 0));
+                            $p2 = chr((int)(($byte & 0x40) != 0));
+                            $p3 = chr((int)(($byte & 0x20) != 0));
+                            $p4 = chr((int)(($byte & 0x10) != 0));
+                            $p5 = chr((int)(($byte & 0x08) != 0));
+                            $p6 = chr((int)(($byte & 0x04) != 0));
+                            $p7 = chr((int)(($byte & 0x02) != 0));
+                            $p8 = chr((int)(($byte & 0x01) != 0));
+                            $gd_scan_line .= "$p1$p2$p3$p4$p5$p6$p7$p8";
+                        }
+                        $gd_scan_line = substr($gd_scan_line, 0, $width);
+                    }
+                }
             }
-            $gd_scan_line = substr($gd_scan_line, 0, $width);
-        } else if ($bits == 1) {
-            $gd_scan_line = '';
-            $j = 0;
-            while ($j < $scan_line_size) {
-                $byte = ord($scan_line{$j++});
-                $p1 = chr((int)(($byte & 0x80) != 0));
-                $p2 = chr((int)(($byte & 0x40) != 0));
-                $p3 = chr((int)(($byte & 0x20) != 0));
-                $p4 = chr((int)(($byte & 0x10) != 0));
-                $p5 = chr((int)(($byte & 0x08) != 0));
-                $p6 = chr((int)(($byte & 0x04) != 0));
-                $p7 = chr((int)(($byte & 0x02) != 0));
-                $p8 = chr((int)(($byte & 0x01) != 0));
-                $gd_scan_line .= "$p1$p2$p3$p4$p5$p6$p7$p8";
-            }
-            $gd_scan_line = substr($gd_scan_line, 0, $width);
         }
 
         fwrite($dest_f, $gd_scan_line);
     }
     fclose($src_f);
     fclose($dest_f);
+
     return true;
 }
 
@@ -108,7 +118,9 @@ function imagecreatefrombmp($filename, $tmp = '/tmp')
     if (ConvertBMP2GD($filename, $tmp_name)) {
         $img = imagecreatefromgd($tmp_name);
         unlink($tmp_name);
+
         return $img;
     }
+
     return false;
 }

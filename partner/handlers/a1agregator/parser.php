@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -41,15 +41,15 @@ $xml = simplexml_load_file('id_operators.xls');
 $array = array();
 $all = sizeof($xml->Worksheet->Table->Row);
 for ($i = 1; $i < $all; ++$i) {
-	$array[(string)$xml->Worksheet->Table->Row[$i]->Cell[0]->Data] = array(
-		array(
-			'NUMBER',
-			'5 Day',
-			(string)$xml->Worksheet->Table->Row[$i]->Cell[1]->Data,
-			(string)$xml->Worksheet->Table->Row[$i]->Cell[2]->Data,
-			'PAYMENT'
-		)
-	);
+    $array[(string)$xml->Worksheet->Table->Row[$i]->Cell[0]->Data] = array(
+        array(
+            'NUMBER',
+            '5 Day',
+            (string)$xml->Worksheet->Table->Row[$i]->Cell[1]->Data,
+            (string)$xml->Worksheet->Table->Row[$i]->Cell[2]->Data,
+            'PAYMENT'
+        )
+    );
 }
 
 ksort($array);

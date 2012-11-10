@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -62,9 +62,13 @@ if (!@$_GET['level']) {
     chmod('data/ffmpeg/', 0777);
     chmod('data/pic/', 0777);
 
-    mysql_query('DROP TABLE `files`,`komments`,`online`,`setting`,`loginlog`,`news`,`news_komments`,`users_profiles`,`users_settings`;', $mysql);
+    mysql_query(
+        'DROP TABLE `files`,`komments`,`online`,`setting`,`loginlog`,`news`,`news_komments`,`users_profiles`,`users_settings`;',
+        $mysql
+    );
 
-    $sql = "CREATE TABLE `files` (
+    $sql
+        = "CREATE TABLE `files` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `dir` enum('0','1') NOT NULL default '0',
       `dir_count` int(11) unsigned NOT NULL default '0',
@@ -99,7 +103,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE `komments` (
+    $sql
+        = "CREATE TABLE `komments` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `file_id` int(11) unsigned NOT NULL,
       `name` varchar(255) NOT NULL,
@@ -115,7 +120,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE `online` (
+    $sql
+        = "CREATE TABLE `online` (
       `ip` varchar(23) NOT NULL,
       `time` datetime NOT NULL,
       UNIQUE KEY `ip` (`ip`)
@@ -128,7 +134,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE `setting` (
+    $sql
+        = "CREATE TABLE `setting` (
       `name` varchar(32) NOT NULL,
       `value` varchar(1023) NOT NULL,
       UNIQUE KEY `name` (`name`)
@@ -140,7 +147,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE IF NOT EXISTS `loginlog` (
+    $sql
+        = "CREATE TABLE IF NOT EXISTS `loginlog` (
       `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `ua` varchar(255) NOT NULL,
       `ip` varchar(23) NOT NULL,
@@ -155,7 +163,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE `news` (
+    $sql
+        = "CREATE TABLE `news` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `news` text NOT NULL,
       `rus_news` text NOT NULL,
@@ -171,7 +180,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE `news_komments` (
+    $sql
+        = "CREATE TABLE `news_komments` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `id_news` int(11) unsigned NOT NULL,
       `text` text NOT NULL,
@@ -187,7 +197,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE `users_profiles` (
+    $sql
+        = "CREATE TABLE `users_profiles` (
       `id` int(10) unsigned NOT NULL auto_increment,
       `url` varchar(255) NOT NULL COMMENT 'ссылка на главную партнера',
       `name` varchar(255) NOT NULL COMMENT 'название ссылки',
@@ -203,7 +214,8 @@ if (!@$_GET['level']) {
     }
 
 
-    $sql = "CREATE TABLE `users_settings` (
+    $sql
+        = "CREATE TABLE `users_settings` (
       `parent_id` int(10) unsigned NOT NULL,
       `position` enum('0','1') NOT NULL default '0' COMMENT 'позиция ссылки. 0 - верх, 1 - низ',
       `name` varchar(255) NOT NULL COMMENT 'название ссылки',
@@ -218,8 +230,10 @@ if (!@$_GET['level']) {
     }
 
 
-
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . md5(trim($_POST['pass'])) . "');", $mysql);
+    mysql_query(
+        "INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . md5(trim($_POST['pass'])) . "');",
+        $mysql
+    );
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'path', 'files');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'opath','about');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'apath','attach');", $mysql);
@@ -239,7 +253,10 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'sort', 'name');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand', '10');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'hackmess', 'Error!');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'view_size',  '128*128,120*160,132*176,240*320');", $mysql);
+    mysql_query(
+        "INSERT INTO `setting` (`name`,`value`) VALUES ( 'view_size',  '128*128,120*160,132*176,240*320');",
+        $mysql
+    );
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_desc', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib', '1024');", $mysql);
@@ -253,7 +270,10 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countban', '2');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'autologin', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'timeban', '10');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', '" . $_SERVER['HTTP_HOST'] . "');", $mysql);
+    mysql_query(
+        "INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', '" . $_SERVER['HTTP_HOST'] . "');",
+        $mysql
+    );
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'anim_change', '1');", $mysql);
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_change', '1');", $mysql);
@@ -271,7 +291,10 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_notice', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_hidden', '0');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_name', '[a-zA-Z0-9_]');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_extensions', 'jpg,gif,png,3gp,mp4,flv,avi,mp3,thm,nth,zip,txt');", $mysql);
+    mysql_query(
+        "INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_extensions', 'jpg,gif,png,3gp,mp4,flv,avi,mp3,thm,nth,zip,txt');",
+        $mysql
+    );
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'send_email', '1');", $mysql);
 
@@ -311,14 +334,25 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy_change',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_time',  '60');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy',  '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>');", $mysql);
+    mysql_query(
+        "INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy',  '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST']
+            . "</a></strong>');",
+        $mysql
+    );
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbuy',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbuy',  '1');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'banner',  '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>');", $mysql);
+    mysql_query(
+        "INSERT INTO `setting` (`name`,`value`) VALUES ( 'banner',  '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST']
+            . "</a></strong>');",
+        $mysql
+    );
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbanner',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbanner',  '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_change',  '1');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email',  'admin@" . $_SERVER['HTTP_HOST'] . "');", $mysql);
+    mysql_query(
+        "INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email',  'admin@" . $_SERVER['HTTP_HOST'] . "');",
+        $mysql
+    );
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'langpack',  'russian');", $mysql);
     mysql_query("INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('', '', '');", $mysql);
 

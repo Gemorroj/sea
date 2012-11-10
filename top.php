@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -75,7 +75,7 @@ if ($page > $pages || $page < 1) {
 }
 
 $start = ($page - 1) * $onpage;
-if ($start > $all || $start < 0){
+if ($start > $all || $start < 0) {
     $start = 0;
 }
 
@@ -88,18 +88,25 @@ $template->assign('sort', $sort);
 
 if ($sort == 'date') {
     $mode = '`priority` DESC, `timeupload` DESC';
-} else if ($sort == 'size') {
-    $mode = '`priority` DESC, `size` ASC';
-} else if ($sort == 'load') {
-    $mode = '`priority` DESC, `loads` DESC';
-} else if ($sort == 'eval' && $setup['eval_change']) {
-    $mode = '`priority` DESC, `yes` DESC , `no` ASC';
 } else {
-    $mode = '`priority` DESC, `name` ASC';
+    if ($sort == 'size') {
+        $mode = '`priority` DESC, `size` ASC';
+    } else {
+        if ($sort == 'load') {
+            $mode = '`priority` DESC, `loads` DESC';
+        } else {
+            if ($sort == 'eval' && $setup['eval_change']) {
+                $mode = '`priority` DESC, `yes` DESC , `no` ASC';
+            } else {
+                $mode = '`priority` DESC, `name` ASC';
+            }
+        }
+    }
 }
 
 
-$query = mysql_query('
+$query = mysql_query(
+    '
     SELECT `id`,
     `dir`,
     `dir_count`,
@@ -116,7 +123,8 @@ $query = mysql_query('
     WHERE `hidden` = "0" AND `dir` = "0"
     ORDER BY ' . $mode . '
     LIMIT ' . $start . ', ' . $onpage,
-$mysql);
+    $mysql
+);
 
 
 require 'moduls/inc/_files.php';

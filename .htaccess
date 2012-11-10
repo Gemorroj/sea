@@ -208,21 +208,19 @@ php_value error_reporting -1
 php_flag log_errors On
 php_value error_log /error_log
 
+
+# Сессии
+php_value session.use_trans_sid 0
+php_value session.use_cookies 1
+php_value session.use_only_cookies 1
+php_value session.cookie_httponly 1
+php_value session.gc_probability 1
+php_value session.gc_maxlifetime 86400
+php_value session.cookie_lifetime 86400
 # Автоматический запуск сессии
 php_value session.auto_start 1
 # Имя сессии
 php_value session.name "lid"
-# Автоматическая постановка идентификатора сессии к ссылкам
-php_value session.use_trans_sid 0
-# Разделитель переменных в URI
-php_value arg_separator.output "&amp;"
-
-
-php_value session.gc_probability 1
-php_value session.gc_maxlifetime 86400
-php_value session.cookie_lifetime 86400
-php_value session.use_cookies 1
-php_value session.use_only_cookies 1
 
 # желательно заменить, для улучшения быстродействия
 #php_value session.save_path "/user/home/sea/moduls/cache"
@@ -234,7 +232,7 @@ php_value session.use_only_cookies 1
 #php_value zlib.output_compression_level 6
 
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/css application/javascript text/html application/xhtml+xml application/xml text/xml application/rss+xml text/vnd.wap.wml
+    AddOutputFilterByType DEFLATE text/css application/javascript text/html application/xhtml+xml application/xml text/xml application/rss+xml text/vnd.wap.wml text/plain
     <IfModule mod_setenvif.c>
         BrowserMatch ^Mozilla/4 gzip-only-text/html
         BrowserMatch ^Mozilla/4\.0[678] no-gzip
@@ -264,7 +262,6 @@ php_value post_max_size 999M
 
 # временная зона
 php_value date.timezone "Europe/Moscow"
-
 
 
 # mbstring

@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -65,7 +65,9 @@ $filename = pathinfo($file_info['path']);
 $ext = $filename['extension'];
 $dir = $filename['dirname'] . '/';
 $filename = $filename['basename'];
-$back = mysql_fetch_assoc(mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql));
+$back = mysql_fetch_assoc(
+    mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql)
+);
 //------------------------------------------------------------------------------------------
 if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
     $id3 = new MP3_Id();
@@ -99,7 +101,7 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
         if ($allsize > $setup['limit']) {
             $dire = opendir($setup['mp3path'] . '/');
             while (($file = readdir($dire)) !== false) {
-                if ($file != '.' && $file != '..'){
+                if ($file != '.' && $file != '..') {
                     unlink($setup['mp3path'] . '/' . $file);
                 }
             }
@@ -149,13 +151,22 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
             fclose($fp);
             $all++;
 
-            mysql_query('UPDATE `files` SET `loads`=`loads` + 1, `timeload` = "' . $_SERVER['REQUEST_TIME'] . '" WHERE `id` = ' . $id, $mysql);
+            mysql_query(
+                'UPDATE `files` SET `loads`=`loads` + 1, `timeload` = "' . $_SERVER['REQUEST_TIME'] . '" WHERE `id` = '
+                    . $id,
+                $mysql
+            );
 
-            echo '<div class="mblock">' . $language['the file has been successfully cut'] . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $language['download'] . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['mp3path'] . '/' . $randname . '_' . rawurlencode($filename) . '"/></div>';
+            echo'<div class="mblock">' . $language['the file has been successfully cut']
+                . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $language['download']
+                . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://'
+                . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['mp3path'] . '/' . $randname . '_' . rawurlencode(
+                $filename
+            ) . '"/></div>';
         } else {
             echo '<div class="iblock">' . $language['error'] . '</div>';
         }
-    } else{
+    } else {
         echo '<div class="mblock">' . $language['error'] . '</div>';
     }
 }

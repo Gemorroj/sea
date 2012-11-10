@@ -696,7 +696,7 @@ class AudioFile
 
                     $this->wave_id = 'ZIP';
                     $this->wave_type = 'ZIP';
-                    $this->valid = true;
+                    $valid = true;
                 } else {
                     if ($this->wave_id == 'RIFF' && $this->wave_type == 'WAVE') {
                         // it's a Wave-File
@@ -1182,3 +1182,5 @@ class AudioFile
     }
 
 }
+
+?>

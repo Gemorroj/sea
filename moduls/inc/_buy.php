@@ -42,29 +42,36 @@ if ($setup['service_change_advanced']) {
 
     if ($user) {
         if ($setup['service_head']) {
-            $head = mysql_query('
+            $head = mysql_query(
+                '
                 SELECT `name`, `value`
                 FROM `users_settings`
                 WHERE `parent_id` = ' . $user . '
                 AND `position` = "0"
-            ', $mysql);
+            ',
+                $mysql
+            );
             $all = mysql_num_rows($head);
             $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
             if ($all) {
                 for ($i = 0; $i < $all; ++$i) {
                     $q = mysql_fetch_assoc($head);
-                    $serviceBuy[$q['value']] = $q['name'];;
+                    $serviceBuy[$q['value']] = $q['name'];
+                    ;
                 }
             }
         }
 
         if ($setup['service_foot']) {
-            $foot = mysql_query('
+            $foot = mysql_query(
+                '
                 SELECT `name`, `value`
                 FROM `users_settings`
                 WHERE `parent_id` = ' . $user . '
                 AND `position` = "1"
-            ', $mysql);
+            ',
+                $mysql
+            );
             $all = mysql_num_rows($foot);
             $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
             if ($all) {

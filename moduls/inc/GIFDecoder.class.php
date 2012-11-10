@@ -222,7 +222,7 @@ Class GIFDecoder {
     :: 
     */ 
     public function GIFPutByte ( $bytes ) { 
-        for ( $i = 0; $i < $a = sizeof ( $bytes ); $i++ ) { 
+        for ( $i = 0, $a = sizeof ( $bytes ); $i < $a; $i++ ) { 
             $this->GIF_string .= chr ( $bytes [ $i ] ); 
         } 
     } 
@@ -247,4 +247,6 @@ Class GIFDecoder {
     public function GIFGetDelays ( ) { 
         return ( $this->GIF_delays ); 
     } 
-} 
+}
+
+?>

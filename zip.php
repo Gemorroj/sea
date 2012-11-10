@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -75,7 +75,9 @@ if ($ext != 'zip') {
     error('It is not ZIP archive');
 }
 $dir = $filename['dirname'] . '/';
-$back = mysql_fetch_assoc(mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql));
+$back = mysql_fetch_assoc(
+    mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql)
+);
 ###############Заголовок###################
 if ($seo['title']) {
     $title .= htmlspecialchars($seo['title'], ENT_NOQUOTES);
@@ -83,7 +85,9 @@ if ($seo['title']) {
     $title .= htmlspecialchars($filename['basename'], ENT_NOQUOTES);
 }
 
-echo '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $language['view archive'] . ' <a href="' . DIRECTORY . 'zip/' . $id . '">' . $filename['basename'] . '</a></strong></div><div class="iblock">';
+echo'<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $language['view archive']
+    . ' <a href="' . DIRECTORY . 'zip/' . $id . '">' . $filename['basename']
+    . '</a></strong></div><div class="iblock">';
 ###############Содержимое###################
 if (!isset($_GET['action'])) {
     $zip = new PclZip($d['path']);
@@ -102,7 +106,7 @@ if (!isset($_GET['action'])) {
             $listcontent = "[$i]--$key:" . $list[$i][$key];
             $zfile = strstr($listcontent, '--filename');
             $zfile = str_replace('--filename:', '', $zfile);
-            $zfile = str_replace($zfile, $zfile.'|', $zfile);
+            $zfile = str_replace($zfile, $zfile . '|', $zfile);
             $savelist .= $zfile;
         }
     }
@@ -115,7 +119,8 @@ if (!isset($_GET['action'])) {
     $preview = explode('|', $preview);
 
     $count = sizeof($preview) - 1;
-    echo $language['all files'] . ': ' . $count . '<br/>' . $language['the unpacked archive'].': ' . $obkb . ' kb</div><div class="row">';
+    echo$language['all files'] . ': ' . $count . '<br/>' . $language['the unpacked archive'] . ': ' . $obkb
+        . ' kb</div><div class="row">';
     if ($page < 1) {
         $page = 1;
     }
@@ -158,8 +163,8 @@ if (!isset($_GET['action'])) {
             echo '<a href="' . DIRECTORY . 'zip/' . $id . '&amp;page=1">1</a> ... ';
         }
         for ($i = $asd; $i < $asd2; ++$i) {
-            if($i < $count && $i > 0) {
-                if ($i > $pages ) {
+            if ($i < $count && $i > 0) {
+                if ($i > $pages) {
                     break;
                 }
                 if ($page == $i) {
@@ -179,74 +184,97 @@ if (!isset($_GET['action'])) {
 
     echo '<div class="iblock">';
 
-} else if ($_GET['action'] == 'preview') {
-    if (strpos($_GET['open'] , '..') !== false || strpos($_GET['open'] , './') !== false) {
-        error($setup['hackmess']);
-    }
-
-    $title .= ' - ' . $_GET['open'];
-    echo '<strong>' . $language['file'] . ': <a href="' . DIRECTORY . 'zip/down/' . $id . '/' . str_replace('"', '&quot;', $_GET['open']) . '">' . $_GET['open'] . '</a></strong><br/>';
-
-    $mime = ext_to_mime(pathinfo($_GET['open'], PATHINFO_EXTENSION));
-
-    if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/jpeg' || $mime == 'image/bmp') {
-        $f = $setup['zppath'] . '/' . str_replace('/', '--', mb_substr(strstr($d['path'], '/'), 1) . '_' . strtolower($_GET['open']));
-        if (!file_exists($f)) {
-            $zip = new PclZip($d['path']);
-            $content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
-            file_put_contents($f, $content[0]['content']);
+} else {
+    if ($_GET['action'] == 'preview') {
+        if (strpos($_GET['open'], '..') !== false || strpos($_GET['open'], './') !== false) {
+            error($setup['hackmess']);
         }
-        echo '<img src="' . DIRECTORY . $f . '" alt="' . $_GET['open'] . '"/><br/>';
-    } else if ($mime == 'text/plain') {
-        $zip = new PclZip($d['path']);
-        $content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
 
-        $startDebug = microtime(true);
-        $content = str_to_utf8($content[0]['content']);
-        echo $language['lines'] . ': ' . substr_count($content, "\n");
+        $title .= ' - ' . $_GET['open'];
+        echo'<strong>' . $language['file'] . ': <a href="' . DIRECTORY . 'zip/down/' . $id . '/' . str_replace(
+            '"',
+            '&quot;',
+            $_GET['open']
+        ) . '">' . $_GET['open'] . '</a></strong><br/>';
 
-        $pages = floor(mb_strlen($content) / $setup['lib']);
-        $content = mb_substr($content, $page * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
+        $mime = ext_to_mime(pathinfo($_GET['open'], PATHINFO_EXTENSION));
 
-        if ($page > 1) {
-            $i = 0;
-            foreach (str_split($content) as $v) {
-                if ($v == ' ' || $v == "\n" || $v == "\r" || $v == "\t") {
-                    break;
-                }
-                $i++;
+        if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/jpeg' || $mime == 'image/bmp') {
+            $f = $setup['zppath'] . '/' . str_replace(
+                '/',
+                '--',
+                mb_substr(strstr($d['path'], '/'), 1) . '_' . strtolower($_GET['open'])
+            );
+            if (!file_exists($f)) {
+                $zip = new PclZip($d['path']);
+                $content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
+                file_put_contents($f, $content[0]['content']);
             }
-            $content = substr($content, $i);
-        }
-
-        if ($setup['lib_str']) {
-            echo '<pre>' . wordwrap(htmlspecialchars($content, ENT_NOQUOTES), $setup['lib_str'], "\n", false) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
+            echo '<img src="' . DIRECTORY . $f . '" alt="' . $_GET['open'] . '"/><br/>';
         } else {
-            echo '<pre>' . htmlspecialchars($content, ENT_NOQUOTES) . '</pre>' . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
+            if ($mime == 'text/plain') {
+                $zip = new PclZip($d['path']);
+                $content = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
+
+                $startDebug = microtime(true);
+                $content = str_to_utf8($content[0]['content']);
+                echo $language['lines'] . ': ' . substr_count($content, "\n");
+
+                $pages = floor(mb_strlen($content) / $setup['lib']);
+                $content = mb_substr($content, $page * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
+
+                if ($page > 1) {
+                    $i = 0;
+                    foreach (str_split($content) as $v) {
+                        if ($v == ' ' || $v == "\n" || $v == "\r" || $v == "\t") {
+                            break;
+                        }
+                        $i++;
+                    }
+                    $content = substr($content, $i);
+                }
+
+                if ($setup['lib_str']) {
+                    echo'<pre>' . wordwrap(htmlspecialchars($content, ENT_NOQUOTES), $setup['lib_str'], "\n", false)
+                        . '</pre>'
+                        . go($page, $pages, DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']);
+                } else {
+                    echo'<pre>' . htmlspecialchars($content, ENT_NOQUOTES) . '</pre>' . go(
+                        $page,
+                        $pages,
+                        DIRECTORY . 'zip/preview/' . $id . '/' . $_GET['open']
+                    );
+                }
+            } else {
+                echo '<span class="no">' . $language['file unavailable for viewing'] . '</span>';
+            }
         }
+
+        echo '</div><div class="iblock">';
     } else {
-        echo '<span class="no">' . $language['file unavailable for viewing'] . '</span>';
+        if ($_GET['action'] == 'down') {
+            if (strpos($_GET['open'], '..') !== false or strpos($_GET['open'], './') !== false) {
+                error($setup['hackmess']);
+            }
+
+            ob_end_clean();
+
+            $zip = new PclZip($d['path']);
+            $mime = ext_to_mime(pathinfo($_GET['open'], PATHINFO_EXTENSION));
+            header('Content-Type: ' . $mime);
+            if ($mime == 'text/plain') {
+                $f = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
+                echo str_to_utf8($f[0]['content']);
+            } else {
+                $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_IN_OUTPUT);
+            }
+
+            exit;
+        }
     }
-
-    echo '</div><div class="iblock">';
-} else if ($_GET['action'] == 'down') {
-    if (strpos($_GET['open'] , '..') !== false or strpos($_GET['open'] , './') !== false) {
-        error($setup['hackmess']);
-    }
-
-    ob_end_clean();
-
-    $zip = new PclZip($d['path']);
-    $mime = ext_to_mime(pathinfo($_GET['open'], PATHINFO_EXTENSION));
-    header('Content-Type: ' . $mime);
-    if ($mime == 'text/plain') {
-        $f = $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_AS_STRING);
-        echo str_to_utf8($f[0]['content']);
-    } else {
-        $zip->extract(PCLZIP_OPT_BY_NAME, $_GET['open'], PCLZIP_OPT_EXTRACT_IN_OUTPUT);
-    }
-
-    exit;
 }
 
-echo '- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
+echo'- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file']
+    . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>- <a href="'
+    . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home']
+    . '</a></div>';

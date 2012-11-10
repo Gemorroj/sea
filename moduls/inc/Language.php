@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 class Language
@@ -37,18 +37,20 @@ class Language
     private $_langpack;
     private $_language;
     private $_langpacks = array();
-    private $_dbFilesCorrelation = array(
-        'name' => 'english',
-        'rus_name' => 'russian',
-        'aze_name' => 'azerbaijan',
-        'tur_name' => 'turkey',
-    );
-    private $_dbNewsCorrelation = array(
-        'news' => 'english',
-        'rus_news' => 'russian',
-        'aze_news' => 'azerbaijan',
-        'tur_news' => 'turkey',
-    );
+    private $_dbFilesCorrelation
+        = array(
+            'name' => 'english',
+            'rus_name' => 'russian',
+            'aze_name' => 'azerbaijan',
+            'tur_name' => 'turkey',
+        );
+    private $_dbNewsCorrelation
+        = array(
+            'news' => 'english',
+            'rus_news' => 'russian',
+            'aze_news' => 'azerbaijan',
+            'tur_news' => 'turkey',
+        );
 
     static private $_instance;
 
@@ -61,7 +63,7 @@ class Language
 
 
     /**
-     * Получение экземляра класса
+     * Получение экземпляра класса
      *
      * @return Language
      */
@@ -79,6 +81,7 @@ class Language
      * Задаем языковой пакет
      *
      * @param string $langpack
+     *
      * @return bool
      */
     public function setLangpack($langpack)
@@ -86,8 +89,10 @@ class Language
         if ($langpack && in_array($langpack, $this->getLangpacks())) {
             $this->_langpack = $_SESSION['langpack'] = $langpack;
             $this->_language = include DIR . '/language/' . $this->_langpack . '.dat';
+
             return true;
         }
+
         return false;
     }
 
@@ -124,6 +129,7 @@ class Language
      * Строка запроса для файлов
      *
      * @param string $prefix
+     *
      * @return string
      */
     public function buildFilesQuery($prefix = null)
@@ -143,6 +149,7 @@ class Language
      * Строка запроса для новостей
      *
      * @param string $prefix
+     *
      * @return string
      */
     public function buildNewsQuery($prefix = null)
@@ -195,6 +202,7 @@ class Language
      * Показываем список доступных языковых пакетов
      *
      * @param string $default
+     *
      * @return string
      */
     public function selectLangpacks($default = '')
@@ -202,16 +210,20 @@ class Language
         $str = '<select class="enter" name="langpack">';
 
         foreach ($this->getLangpacks() as $v) {
-            $str .= '<option value="' . htmlspecialchars($v) . '" ' . ($default == $v ? 'selected="selected"' : '') . '>' . htmlspecialchars($v, ENT_NOQUOTES) . '</option>';
+            $str
+                .= '<option value="' . htmlspecialchars($v) . '" ' . ($default == $v ? 'selected="selected"' : '') . '>'
+                . htmlspecialchars($v, ENT_NOQUOTES) . '</option>';
         }
 
         $str .= '</select>';
+
         return $str;
     }
 
 
     /**
      * @param $defaults
+     *
      * @return array
      */
     private function _normalizeNewsDefaults($defaults)
@@ -222,12 +234,14 @@ class Language
                 $out[$this->_dbFilesCorrelation[$k]] = $v;
             }
         }
+
         return $out;
     }
 
 
     /**
      * @param $defaults
+     *
      * @return array
      */
     private function _normalizeFilesDefaults($defaults)
@@ -238,6 +252,7 @@ class Language
                 $out[$this->_dbFilesCorrelation[$k]] = $v;
             }
         }
+
         return $out;
     }
 
@@ -246,6 +261,7 @@ class Language
      * Показываем поля ввода для всех языковых пакетов
      *
      * @param array $defaults
+     *
      * @return string
      */
     public function filesLangpacks($defaults = array())
@@ -255,7 +271,11 @@ class Language
         $str = '';
 
         foreach ($this->getLangpacks() as $v) {
-            $str .= '<input class="enter" name="new[' . htmlspecialchars($v) . ']" type="text" size="70" value="' . (array_key_exists($v, $defaults) ? htmlspecialchars($defaults[$v]) : '') . '"/>(' . htmlspecialchars($v, ENT_NOQUOTES) . ')<br/>';
+            $str .= '<input class="enter" name="new[' . htmlspecialchars($v) . ']" type="text" size="70" value="'
+                . (array_key_exists($v, $defaults) ? htmlspecialchars($defaults[$v]) : '') . '"/>(' . htmlspecialchars(
+                $v,
+                ENT_NOQUOTES
+            ) . ')<br/>';
         }
 
         return $str;
@@ -266,6 +286,7 @@ class Language
      * Показываем поля ввода для всех языковых пакетов
      *
      * @param array $defaults
+     *
      * @return string
      */
     public function newsLangpacks($defaults = array())
@@ -275,7 +296,11 @@ class Language
         $str = '';
 
         foreach ($this->getLangpacks() as $v) {
-            $str .= htmlspecialchars($v, ENT_NOQUOTES) . '<br/><textarea name="new[' . htmlspecialchars($v) . ']" rows="3" cols="64">' . (array_key_exists($v, $defaults) ? htmlspecialchars($defaults[$v], ENT_NOQUOTES) : '') . '</textarea><br/>';
+            $str .= htmlspecialchars($v, ENT_NOQUOTES) . '<br/><textarea name="new[' . htmlspecialchars($v)
+                . ']" rows="3" cols="64">' . (array_key_exists($v, $defaults) ? htmlspecialchars(
+                $defaults[$v],
+                ENT_NOQUOTES
+            ) : '') . '</textarea><br/>';
         }
 
         return $str;

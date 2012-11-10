@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -51,7 +51,7 @@ while ($set = mysql_fetch_assoc($setting)) {
 define('DIR', dirname(__FILE__));
 set_include_path(
     get_include_path() . PATH_SEPARATOR .
-    DIR . DIRECTORY_SEPARATOR . 'PEAR'
+        DIR . DIRECTORY_SEPARATOR . 'PEAR'
 );
 
 

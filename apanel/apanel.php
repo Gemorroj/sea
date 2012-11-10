@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -42,7 +42,6 @@ chdir('../');
 
 require 'moduls/config.php';
 require 'moduls/header.php';
-
 
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -65,9 +64,11 @@ switch ($action) {
         break;
 
 
-default:
-echo '<div class="mblock">Админка</div>
-<div class="row"><a href="apanel_news.php">Новости</a> (' . intval(mysql_result(mysql_query('SELECT COUNT(1) FROM `news`', $mysql), 0)) . ')</div>
+    default:
+        echo '<div class="mblock">Админка</div>
+<div class="row"><a href="apanel_news.php">Новости</a> (' . intval(
+            mysql_result(mysql_query('SELECT COUNT(1) FROM `news`', $mysql), 0)
+        ) . ')</div>
 <div class="row"><a href="apanel_index.php">Файловый менеджер</a></div>
 <div class="row"><a href="apanel_scan.php">Полное обновление БД</a></div>
 <div class="row"><a href="apanel.php?action=rot">Очистка БД от мусора</a></div>
@@ -88,40 +89,44 @@ echo '<div class="mblock">Админка</div>
 <div class="row"><a href="apanel.php?action=cleankomm">Очистка комментариев к файлам</a></div>
 <div class="row"><a href="apanel.php?action=cleankomm_news">Очистка комментариев к новостям</a></div>
 <div class="row"><a href="apanel.php?action=exit">Выход</a></div>';
-break;
+        break;
 
 
 // расширенное сервисное использование
-case 'service':
-if ($_POST) {
-    switch ($_GET['mode']) {
-        default:
-        if (
-        mysql_query('REPLACE INTO setting(name, value) VALUES("service_head", "' . abs($_POST['head']) . '")', $mysql)
-        &&
-        mysql_query('REPLACE INTO setting(name, value) VALUES("service_foot", "' . abs($_POST['foot']) . '")', $mysql)
-        ) {
-            echo '<div class="row">Настройки изменены<br/></div>';
+    case 'service':
+        if ($_POST) {
+            switch ($_GET['mode']) {
+                default:
+                    if (
+                        mysql_query(
+                            'REPLACE INTO setting(name, value) VALUES("service_head", "' . abs($_POST['head']) . '")',
+                            $mysql
+                        )
+                        && mysql_query(
+                            'REPLACE INTO setting(name, value) VALUES("service_foot", "' . abs($_POST['foot']) . '")',
+                            $mysql
+                        )
+                    ) {
+                        echo '<div class="row">Настройки изменены<br/></div>';
+                    } else {
+                        error('Ошибка: ' . mysql_error($mysql));
+                    }
+                    break;
+
+                case 'del':
+                    $user = intval($_POST['user']);
+                    if (
+                        mysql_query('DELETE FROM `users_profiles` WHERE `id` = ' . $user, $mysql)
+                        && mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . $user, $mysql)
+                    ) {
+                        echo '<div class="row">Пользователь удален<br/></div>';
+                    } else {
+                        error('Ошибка: ' . mysql_error($mysql));
+                    }
+                    break;
+            }
         } else {
-            error('Ошибка: ' . mysql_error($mysql));
-        }
-        break;
-        
-        case 'del':
-        $user = intval($_POST['user']);
-        if (
-        mysql_query('DELETE FROM `users_profiles` WHERE `id` = ' . $user, $mysql)
-        &&
-        mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . $user, $mysql)
-        ) {
-            echo '<div class="row">Пользователь удален<br/></div>';
-        } else {
-            error('Ошибка: ' . mysql_error($mysql));
-        }
-        break;
-    }
-} else {
-echo '<div class="mblock">
+            echo '<div class="mblock">
 Пользователей: ' . mysql_result(mysql_query('SELECT COUNT(1) FROM `users_profiles`', $mysql), 0) . '<br/>
 <form action="apanel.php?action=service" method="post">
 <div class="row">
@@ -136,38 +141,51 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
 </div>
 </form>
 </div>';
-}
-break;
+        }
+        break;
 
 
-case 'exchanger':
-if ($_POST) {
-    $exchanger_notice = $_POST['exchanger_notice'] ? 1 : 0;
-    $exchanger_hidden = $_POST['exchanger_hidden'] ? 1 : 0;
-    $exchanger_extensions = mysql_real_escape_string($_POST['exchanger_extensions'], $mysql);
-    $exchanger_name = mysql_real_escape_string($_POST['exchanger_name'], $mysql);
+    case 'exchanger':
+        if ($_POST) {
+            $exchanger_notice = $_POST['exchanger_notice'] ? 1 : 0;
+            $exchanger_hidden = $_POST['exchanger_hidden'] ? 1 : 0;
+            $exchanger_extensions = mysql_real_escape_string($_POST['exchanger_extensions'], $mysql);
+            $exchanger_name = mysql_real_escape_string($_POST['exchanger_name'], $mysql);
 
 
-    if (
-        mysql_query('REPLACE INTO setting(name, value) VALUES("exchanger_notice", "' . $exchanger_notice . '")', $mysql)
-        &&
-        mysql_query('REPLACE INTO setting(name, value) VALUES("exchanger_extensions", "' . $exchanger_extensions . '")', $mysql)
-        &&
-        mysql_query('REPLACE INTO setting(name, value) VALUES("exchanger_name", "' . $exchanger_name . '")', $mysql)
-        &&
-        mysql_query('REPLACE INTO setting(name, value) VALUES("exchanger_hidden", "' . $exchanger_hidden . '")', $mysql)
-    ) {
-        echo '<div class="row">Настройки изменены<br/></div>';
-    } else {
-        error('Ошибка: ' . mysql_error($mysql));
-    }
+            if (
+                mysql_query(
+                    'REPLACE INTO setting(name, value) VALUES("exchanger_notice", "' . $exchanger_notice . '")',
+                    $mysql
+                )
+                && mysql_query(
+                    'REPLACE INTO setting(name, value) VALUES("exchanger_extensions", "' . $exchanger_extensions . '")',
+                    $mysql
+                )
+                && mysql_query(
+                    'REPLACE INTO setting(name, value) VALUES("exchanger_name", "' . $exchanger_name . '")',
+                    $mysql
+                )
+                && mysql_query(
+                    'REPLACE INTO setting(name, value) VALUES("exchanger_hidden", "' . $exchanger_hidden . '")',
+                    $mysql
+                )
+            ) {
+                echo '<div class="row">Настройки изменены<br/></div>';
+            } else {
+                error('Ошибка: ' . mysql_error($mysql));
+            }
 
-} else {
-echo '<div class="mblock">
+        } else {
+            echo '<div class="mblock">
 <form action="apanel.php?action=exchanger" method="post">
 <div class="row">
-Отправлять уведомления на Email о новых файлах: <input type="checkbox" name="exchanger_notice" ' . check($setup['exchanger_notice']) . '/><br/>
-Делать загруженные файлы невидимыми: <input type="checkbox" name="exchanger_hidden" ' . check($setup['exchanger_hidden']) . '/><br/>
+Отправлять уведомления на Email о новых файлах: <input type="checkbox" name="exchanger_notice" ' . check(
+                $setup['exchanger_notice']
+            ) . '/><br/>
+Делать загруженные файлы невидимыми: <input type="checkbox" name="exchanger_hidden" ' . check(
+                $setup['exchanger_hidden']
+            ) . '/><br/>
 Регулярное выпажение для проверки имени файла:<br/>
 <input type="text" value="' . htmlspecialchars($setup['exchanger_name'], ENT_NOQUOTES) . '" name="exchanger_name"/><br/>
 Расширения файлов, разрешенные для загрузки, перечисленные через запятую:<br/>
@@ -176,26 +194,25 @@ echo '<div class="mblock">
 </div>
 </form>
 </div>';
-}
-break;
+        }
+        break;
 
 
-case 'library':
-if ($_POST) {
-    $lib = abs($_POST['lib']);
-    $lib_str = abs($_POST['lib_str']);
-    
-    if (
-    mysql_query('REPLACE INTO setting(name, value) VALUES("lib", "' . $lib . '")', $mysql)
-    &&
-    mysql_query('REPLACE INTO setting(name, value) VALUES("lib_str", "' . $lib_str . '")', $mysql)
-    ) {
-        echo '<div class="row">Настройки изменены<br/></div>';
-    } else {
-        error('Ошибка: ' . mysql_error($mysql));
-    }
-} else {
-    echo '<div class="mblock">
+    case 'library':
+        if ($_POST) {
+            $lib = abs($_POST['lib']);
+            $lib_str = abs($_POST['lib_str']);
+
+            if (
+                mysql_query('REPLACE INTO setting(name, value) VALUES("lib", "' . $lib . '")', $mysql)
+                && mysql_query('REPLACE INTO setting(name, value) VALUES("lib_str", "' . $lib_str . '")', $mysql)
+            ) {
+                echo '<div class="row">Настройки изменены<br/></div>';
+            } else {
+                error('Ошибка: ' . mysql_error($mysql));
+            }
+        } else {
+            echo '<div class="mblock">
 <form action="apanel.php?action=library" method="post">
 <div class="row">
 Максимальное число символов на страницу:<br/>
@@ -206,13 +223,13 @@ if ($_POST) {
 </div>
 </form>
 </div>';
-}
-break;
+        }
+        break;
 
 
-case 'mark':
-if (!$_POST) {
-echo '<form action="apanel.php?action=mark" method="post">
+    case 'mark':
+        if (!$_POST) {
+            echo '<form action="apanel.php?action=mark" method="post">
 <div class="mblock">Маркер картинок<br/></div>
 <div class="row">
 <input name="marker" type="radio" value="1" ' . ($setup['marker'] == 1 ? 'checked="checked"' : '') . '/>Вкл
@@ -244,130 +261,148 @@ echo '<form action="apanel.php?action=mark" method="post">
 <input class="buttom" type="submit" value="Готово"/>
 </div>
 </form>';
-} else {
-    if (isset($_POST['marker'])) {
-        if (
-        mysql_query('REPLACE INTO setting(name, value) VALUES("marker", "' . intval($_POST['marker']) . '")', $mysql)
-        &&
-        mysql_query('REPLACE INTO setting(name, value) VALUES("marker_where", "' . ($_POST['marker_where'] == 'top' ? 'top' : 'foot') . '")', $mysql)
-        ) {
-            echo 'Настройки изменены';
         } else {
-            echo 'Ошибка: ' . mysql_error($mysql);
-        }
-    } else {
-        $q = mysql_query('SELECT `path` FROM `files` WHERE `path` LIKE "%.jpg" OR `path` LIKE "%.jpe" OR `path` LIKE "%.jpeg" OR `path` LIKE "%.gif" OR `path` LIKE "%.png"', $mysql);
-        $all = mysql_num_rows($q);
-        $i = $tmp = 0;
-        while ($arr = mysql_fetch_row($q)) {
-            $tmp++;
-        
-            if ($tmp == 1000) {
-                $tmp = 0;
-        
-                // такая вот хуита... =( забиваем буфер
-                echo 'scan ' . htmlspecialchars($arr[0], ENT_NOQUOTES) . '...<br/>' . str_repeat(' ', 2048);
-                ob_flush();
-            }
-        
-        
-            chmod($arr[0], 0666); // fix
-            list($w, $h, $type) = getimagesize($arr[0]);
-
-
-            switch ($type) {
-                case 1:
-                    $pic = imagecreatefromgif($arr[0]);
-                    break;
-
-
-                case 2:
-                    $pic = imagecreatefromjpeg($arr[0]);
-                    break;
-
-
-                case 3:
-                    $pic = imagecreatefrompng($arr[0]);
-                    break;
-
-
-                default:
-                    $pic = false;
-                    break;
-            }
-
-            if ($pic) {
-                $f = false;
-
-                // цвет
-                $color = imagecolorallocate($pic, $_POST['color'][0], $_POST['color'][1], $_POST['color'][2]);
-
-                // верх/низ
-                if ($_POST['y'] == 'foot') {
-                    $y = $h - ($_POST['size'] * 1.5);
+            if (isset($_POST['marker'])) {
+                if (
+                    mysql_query(
+                        'REPLACE INTO setting(name, value) VALUES("marker", "' . intval($_POST['marker']) . '")',
+                        $mysql
+                    )
+                    && mysql_query(
+                        'REPLACE INTO setting(name, value) VALUES("marker_where", "' . (
+                        $_POST['marker_where'] == 'top' ? 'top' : 'foot') . '")',
+                        $mysql
+                    )
+                ) {
+                    echo 'Настройки изменены';
                 } else {
-                    $y = intval($_POST['size']);
+                    echo 'Ошибка: ' . mysql_error($mysql);
                 }
+            } else {
+                $q = mysql_query(
+                    'SELECT `path` FROM `files` WHERE `path` LIKE "%.jpg" OR `path` LIKE "%.jpe" OR `path` LIKE "%.jpeg" OR `path` LIKE "%.gif" OR `path` LIKE "%.png"',
+                    $mysql
+                );
+                $all = mysql_num_rows($q);
+                $i = $tmp = 0;
+                while ($arr = mysql_fetch_row($q)) {
+                    $tmp++;
 
-                /*
-                imagestring($pic, $_POST['size'], ($w/2)-(strlen($_POST['text'])*3), $y, $_POST['text'], $color);
-                */
-                imagettftext($pic, $_POST['size'], 0, ($w/2) - (mb_strlen($_POST['text']) * 3), $y, $color, 'moduls/font.ttf', $_POST['text']);
+                    if ($tmp == 1000) {
+                        $tmp = 0;
 
-                switch ($type) {
-                    case 1:
-                        $f = imagegif($pic, $arr[0]);
-                        break;
+                        // такая вот хуита... =( забиваем буфер
+                        echo 'scan ' . htmlspecialchars($arr[0], ENT_NOQUOTES) . '...<br/>' . str_repeat(' ', 2048);
+                        ob_flush();
+                    }
 
 
-                    case 2:
-                        $f = imagejpeg($pic, $arr[0], 100);
-                        break;
+                    chmod($arr[0], 0666); // fix
+                    list($w, $h, $type) = getimagesize($arr[0]);
 
 
-                    case 3:
-                        $f = imagepng($pic, $arr[0], 100);
-                        break;
+                    switch ($type) {
+                        case 1:
+                            $pic = imagecreatefromgif($arr[0]);
+                            break;
+
+
+                        case 2:
+                            $pic = imagecreatefromjpeg($arr[0]);
+                            break;
+
+
+                        case 3:
+                            $pic = imagecreatefrompng($arr[0]);
+                            break;
+
+
+                        default:
+                            $pic = false;
+                            break;
+                    }
+
+                    if ($pic) {
+                        $f = false;
+
+                        // цвет
+                        $color = imagecolorallocate($pic, $_POST['color'][0], $_POST['color'][1], $_POST['color'][2]);
+
+                        // верх/низ
+                        if ($_POST['y'] == 'foot') {
+                            $y = $h - ($_POST['size'] * 1.5);
+                        } else {
+                            $y = intval($_POST['size']);
+                        }
+
+                        /*
+                        imagestring($pic, $_POST['size'], ($w/2)-(strlen($_POST['text'])*3), $y, $_POST['text'], $color);
+                        */
+                        imagettftext(
+                            $pic,
+                            $_POST['size'],
+                            0,
+                            ($w / 2) - (mb_strlen($_POST['text']) * 3),
+                            $y,
+                            $color,
+                            'moduls/font.ttf',
+                            $_POST['text']
+                        );
+
+                        switch ($type) {
+                            case 1:
+                                $f = imagegif($pic, $arr[0]);
+                                break;
+
+
+                            case 2:
+                                $f = imagejpeg($pic, $arr[0], 100);
+                                break;
+
+
+                            case 3:
+                                $f = imagepng($pic, $arr[0], 100);
+                                break;
+                        }
+
+                        if ($f) {
+                            $i++;
+                        }
+                    }
                 }
-
-                if ($f) {
-                    $i++;
-                }
+                echo 'Всего картинок: ' . $all . ', промаркированы: ' . $i;
             }
         }
-        echo 'Всего картинок: ' . $all . ', промаркированы: ' . $i;
-    }
-}
-break;
+        break;
 
 
 // редактор MP3 тегов
-case 'id3':
-include 'moduls/PEAR/MP3/Id.php';
-include 'moduls/inc/mp3.class.php';
-$id3 = new MP3_Id();
+    case 'id3':
+        include 'moduls/PEAR/MP3/Id.php';
+        include 'moduls/inc/mp3.class.php';
+        $id3 = new MP3_Id();
 
-$genres = $id3->genres();
-
-
-if (!$_POST) {
-
-if ($id) {
-
-$tmp = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id`=' . $id, $mysql));
-
-$id3->read($tmp[0]);
-
-$name = str_to_utf8($id3->name);
-$artists = str_to_utf8($id3->artists);
-$album = str_to_utf8($id3->album);
-$year = str_to_utf8($id3->year);
-$track = str_to_utf8($id3->track);
-$genre = str_to_utf8($id3->genre);
-$comment = str_to_utf8($id3->comment);
+        $genres = $id3->genres();
 
 
-echo '<div class="mblock">Редактор MP3 тегов<br/></div>
+        if (!$_POST) {
+
+            if ($id) {
+
+                $tmp = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id`=' . $id, $mysql));
+
+                $id3->read($tmp[0]);
+
+                $name = str_to_utf8($id3->name);
+                $artists = str_to_utf8($id3->artists);
+                $album = str_to_utf8($id3->album);
+                $year = str_to_utf8($id3->year);
+                $track = str_to_utf8($id3->track);
+                $genre = str_to_utf8($id3->genre);
+                $comment = str_to_utf8($id3->comment);
+
+
+                echo '<div class="mblock">Редактор MP3 тегов<br/></div>
 <div class="row">
 <form action="apanel.php?action=id3&amp;id=' . $id . '" method="post">
 <div class="row">
@@ -384,22 +419,23 @@ echo '<div class="mblock">Редактор MP3 тегов<br/></div>
 Жанр<br/>
 <select name="genre"><option value="' . $genre . '"/>' . $genre . '</option>';
 
-foreach ($genres as $var) {
-    if ($var == $genre) {
-        continue;
-    }
-    echo '<option value="' . htmlspecialchars($var) . '">' . htmlspecialchars($var, ENT_NOQUOTES) . '</option>';
-}
+                foreach ($genres as $var) {
+                    if ($var == $genre) {
+                        continue;
+                    }
+                    echo'<option value="' . htmlspecialchars($var) . '">' . htmlspecialchars($var, ENT_NOQUOTES)
+                        . '</option>';
+                }
 
-echo '</select><br/>
+                echo '</select><br/>
 Комментарии<br/>
 <textarea name="comment" rows="2" cols="32">' . $comment . '</textarea><br/>
 <input class="buttom" type="submit" value="Задать"/>
 </div>
 </form>
 </div>';
-} else {
-echo '<div class="mblock">Модуль задаст всем MP3 файлам указанные теги. Если поле пустое, то тег изменяться не будет<br/></div>
+            } else {
+                echo '<div class="mblock">Модуль задаст всем MP3 файлам указанные теги. Если поле пустое, то тег изменяться не будет<br/></div>
 <div class="row">
 <form action="apanel.php?action=id3" method="post">
 <div class="row">
@@ -416,203 +452,237 @@ echo '<div class="mblock">Модуль задаст всем MP3 файлам у
 Жанр<br/>
 <select name="genre"><option value=""></option>';
 
-foreach ($genres as $var) {
-    echo '<option value="' . htmlspecialchars($var) . '">' . htmlspecialchars($var, ENT_NOQUOTES) . '</option>';
-}
+                foreach ($genres as $var) {
+                    echo'<option value="' . htmlspecialchars($var) . '">' . htmlspecialchars($var, ENT_NOQUOTES)
+                        . '</option>';
+                }
 
-echo '</select><br/>
+                echo '</select><br/>
 Комментарии<br/>
 <textarea name="comment" rows="2" cols="32"></textarea><br/>
 <input class="buttom" type="submit" value="Задать"/>
 </div>
 </form>
 </div>';
-}
-} else {
-    if ($id) {
-        $tmp = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-        chmod($tmp[0], 0666); // fix
-        $id3->read($tmp[0]);
-        
-        $name = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
-        $artist = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
-        $album = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
-        $year = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
-        $track = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
-        $genre = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
-        $comment = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
-
-
-        // Записываем Idv2 теги
-        $mp3 = new mp3($tmp[0]);
-        //$mp3->striptags(); // bug
-        $mp3->setIdv3_2($track, $name, $artist, $album, $year, $genre, $comment, $artist, $artist, $comment, 'http://' . $_SERVER['HTTP_HOST'], '');
-        $mp3->save($tmp[0]);
-
-
-        // записываем Idv1 теги
-        $id3->name = $name;
-        $id3->artists = $artist;
-        $id3->album = $album;
-        $id3->year = $year;
-        $id3->track = $track;
-        $id3->genre = $genre;
-        $id3->comment = $comment;
-        $id3->write();
-
-        echo 'Теги изменены';
-    } else {
-
-        if ($_POST['name'] != '') {
-            $_POST['name'] = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
-        }
-        if ($_POST['artists'] != '') {
-            $_POST['artists'] = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
-        }
-        if ($_POST['album'] != '') {
-            $_POST['album'] = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
-        }
-        if ($_POST['year'] != '') {
-            $_POST['year'] = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
-        }
-        if ($_POST['track'] != '') {
-            $_POST['track'] = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
-        }
-        if ($_POST['genre'] != '') {
-            $_POST['genre'] = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
-        }
-        if ($_POST['comment'] != '') {
-            $_POST['comment'] = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
-        }
-
-        $all = 0;
-        $cacheDir = dirname(__FILE__) . '/../moduls/cache';
-        $q = mysql_query('SELECT `path`, `id` FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")', $mysql);
-        while ($f = mysql_fetch_assoc($q)) {
-            $idCache = $f['id'];
-            $f = realpath($f['path']);
-
-            // Записываем Idv2 теги
-            $mp3 = new mp3($f);
-            //$mp3->striptags(); // bug
-            $mp3->setIdv3_2($_POST['track'], $_POST['name'], $_POST['artist'], $_POST['album'], $_POST['year'], $_POST['genre'], $_POST['comment'], $_POST['artist'], $_POST['artist'], $_POST['comment'], 'http://' . $_SERVER['HTTP_HOST'], '');
-            $mp3->save($f);
-
-
-            $id3->read($f);
-            /*
-            if (PEAR::isError($id3->read($f))) {
-                continue;
             }
-            */
+        } else {
+            if ($id) {
+                $tmp = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+                chmod($tmp[0], 0666); // fix
+                $id3->read($tmp[0]);
 
-            unlink($cacheDir . '/' . $idCache . '.dat');
-            $all++;
+                $name = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
+                $artist = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
+                $album = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
+                $year = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
+                $track = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
+                $genre = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
+                $comment = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
 
-            if ($_POST['name'] != '') {
-                $id3->name = $_POST['name'];
+
+                // Записываем Idv2 теги
+                $mp3 = new mp3($tmp[0]);
+                //$mp3->striptags(); // bug
+                $mp3->setIdv3_2(
+                    $track,
+                    $name,
+                    $artist,
+                    $album,
+                    $year,
+                    $genre,
+                    $comment,
+                    $artist,
+                    $artist,
+                    $comment,
+                    'http://' . $_SERVER['HTTP_HOST'],
+                    ''
+                );
+                $mp3->save($tmp[0]);
+
+
+                // записываем Idv1 теги
+                $id3->name = $name;
+                $id3->artists = $artist;
+                $id3->album = $album;
+                $id3->year = $year;
+                $id3->track = $track;
+                $id3->genre = $genre;
+                $id3->comment = $comment;
+                $id3->write();
+
+                echo 'Теги изменены';
+            } else {
+
+                if ($_POST['name'] != '') {
+                    $_POST['name'] = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
+                }
+                if ($_POST['artists'] != '') {
+                    $_POST['artists'] = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
+                }
+                if ($_POST['album'] != '') {
+                    $_POST['album'] = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
+                }
+                if ($_POST['year'] != '') {
+                    $_POST['year'] = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
+                }
+                if ($_POST['track'] != '') {
+                    $_POST['track'] = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
+                }
+                if ($_POST['genre'] != '') {
+                    $_POST['genre'] = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
+                }
+                if ($_POST['comment'] != '') {
+                    $_POST['comment'] = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
+                }
+
+                $all = 0;
+                $cacheDir = dirname(__FILE__) . '/../moduls/cache';
+                $q = mysql_query('SELECT `path`, `id` FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")', $mysql);
+                while ($f = mysql_fetch_assoc($q)) {
+                    $idCache = $f['id'];
+                    $f = realpath($f['path']);
+
+                    // Записываем Idv2 теги
+                    $mp3 = new mp3($f);
+                    //$mp3->striptags(); // bug
+                    $mp3->setIdv3_2(
+                        $_POST['track'],
+                        $_POST['name'],
+                        $_POST['artist'],
+                        $_POST['album'],
+                        $_POST['year'],
+                        $_POST['genre'],
+                        $_POST['comment'],
+                        $_POST['artist'],
+                        $_POST['artist'],
+                        $_POST['comment'],
+                        'http://' . $_SERVER['HTTP_HOST'],
+                        ''
+                    );
+                    $mp3->save($f);
+
+
+                    $id3->read($f);
+                    /*
+                    if (PEAR::isError($id3->read($f))) {
+                        continue;
+                    }
+                    */
+
+                    unlink($cacheDir . '/' . $idCache . '.dat');
+                    $all++;
+
+                    if ($_POST['name'] != '') {
+                        $id3->name = $_POST['name'];
+                    }
+                    if ($_POST['artists'] != '') {
+                        $id3->artists = $_POST['artists'];
+                    }
+                    if ($_POST['album'] != '') {
+                        $id3->album = $_POST['album'];
+                    }
+                    if ($_POST['year'] != '') {
+                        $id3->year = $_POST['year'];
+                    }
+                    if ($_POST['track'] != '') {
+                        $id3->track = $_POST['track'];
+                    }
+                    if ($_POST['genre'] != '') {
+                        $id3->genre = $_POST['genre'];
+                    }
+                    if ($_POST['comment'] != '') {
+                        $id3->comment = $_POST['comment'];
+                    }
+                    $id3->write();
+                }
+
+                echo 'Теги заданы для ' . $all . ' файлов';
             }
-            if ($_POST['artists'] != '') {
-                $id3->artists = $_POST['artists'];
-            }
-            if ($_POST['album'] != '') {
-                $id3->album = $_POST['album'];
-            }
-            if ($_POST['year'] != '') {
-                $id3->year = $_POST['year'];
-            }
-            if ($_POST['track'] != '') {
-                $id3->track = $_POST['track'];
-            }
-            if ($_POST['genre'] != '') {
-                $id3->genre = $_POST['genre'];
-            }
-            if ($_POST['comment'] != '') {
-                $id3->comment = $_POST['comment'];
-            }
-            $id3->write();
         }
-
-        echo 'Теги заданы для ' . $all . ' файлов';
-    }
-}
-break;
+        break;
 
 
 ######################################ЛОГ######################################################
-case 'pos':
-$file_info = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-if ($_GET['to'] == 'down') {
-    $query = 'UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ' . $id;
-} else {
-    $query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
-}
-if (mysql_query($query, $mysql)) {
-    echo '<div class="mblock">Приоритет каталога ' . $file_info['name'] . ' изменен!</div>';
-} else {
-    echo '<div class="minizag">Ошибка при изменении приоритета</div>';
-}
-break;
+    case 'pos':
+        $file_info = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+        if ($_GET['to'] == 'down') {
+            $query = 'UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ' . $id;
+        } else {
+            $query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
+        }
+        if (mysql_query($query, $mysql)) {
+            echo '<div class="mblock">Приоритет каталога ' . $file_info['name'] . ' изменен!</div>';
+        } else {
+            echo '<div class="minizag">Ошибка при изменении приоритета</div>';
+        }
+        break;
 
 
 ######################################ЛОГ######################################################
-case 'rot':
-ob_implicit_flush(1);
+    case 'rot':
+        ob_implicit_flush(1);
 
-$d = $tmp = 0;
-$r = mysql_query('SELECT `id`, `path` FROM `files`', $mysql);
-while ($row = mysql_fetch_assoc($r)) {
-    $tmp++;
-    if ($tmp > 1000) {
-        $tmp = 0;
-        echo 'scan ' . htmlspecialchars($row['id'], ENT_NOQUOTES) . str_repeat(' ', 2048) . '...<br/>';
-        ob_flush();
-    }
+        $d = $tmp = 0;
+        $r = mysql_query('SELECT `id`, `path` FROM `files`', $mysql);
+        while ($row = mysql_fetch_assoc($r)) {
+            $tmp++;
+            if ($tmp > 1000) {
+                $tmp = 0;
+                echo 'scan ' . htmlspecialchars($row['id'], ENT_NOQUOTES) . str_repeat(' ', 2048) . '...<br/>';
+                ob_flush();
+            }
 
-    if (!file_exists($row['path'])) {
-        mysql_query('DELETE FROM `files` WHERE `id` = ' . $row['id'], $mysql);
-        mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $row['id'], $mysql);
+            if (!file_exists($row['path'])) {
+                mysql_query('DELETE FROM `files` WHERE `id` = ' . $row['id'], $mysql);
+                mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $row['id'], $mysql);
 
-        dir_count($row['path'], false);
+                dir_count($row['path'], false);
 
-        $d++;
-        // заглушка
-        echo '<strong class="no">DEL ' . htmlspecialchars($row['path'], ENT_NOQUOTES) . '...<br/></strong>';
-        ob_flush();
-    }
-}
-echo '<div class="mblock">База данных успешно обновлена!</div><div class="row">Удалено неверных записей: ' . $d . '</div>';
-break;
-
-
-######################################ЛОГ######################################################
-case 'flash':
-$file_info = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id . ' AND `dir` = "1"', $mysql));
-
-if (!is_dir($file_info['path'])) {
-    error('Такой категории не существует.');
-}
-
-echo '<div class="mblock">Будет пересканирована директория <strong>' . $file_info['path'] . '</strong><br/>Для продолжения нажмите на <a class="yes" href="apanel_scan.php?scan=' . rawurlencode($file_info['path']) . '">ЭТУ</a> ссылку<br/></div>';
-break;
+                $d++;
+                // заглушка
+                echo '<strong class="no">DEL ' . htmlspecialchars($row['path'], ENT_NOQUOTES) . '...<br/></strong>';
+                ob_flush();
+            }
+        }
+        echo'<div class="mblock">База данных успешно обновлена!</div><div class="row">Удалено неверных записей: ' . $d
+            . '</div>';
+        break;
 
 
 ######################################ЛОГ######################################################
-case 'log':
-$q = mysql_query('SELECT * FROM `loginlog` WHERE `id` > 1 ORDER BY `time` DESC', $mysql);
-echo '<div class="mblock">Лог последних 20 посещений админки([UserAgent] [IP] [Time]):</div><div class="row">';
-while ($log = mysql_fetch_assoc($q)) {
-    echo '[' . htmlspecialchars($log['ua'], ENT_NOQUOTES) . '] [' . $log['ip'] . '] [' . tm($log['time']) . ']<br/>';
-}
-echo '</div>';
-break;
+    case 'flash':
+        $file_info = mysql_fetch_assoc(
+            mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id . ' AND `dir` = "1"', $mysql)
+        );
+
+        if (!is_dir($file_info['path'])) {
+            error('Такой категории не существует.');
+        }
+
+        echo'<div class="mblock">Будет пересканирована директория <strong>' . $file_info['path']
+            . '</strong><br/>Для продолжения нажмите на <a class="yes" href="apanel_scan.php?scan=' . rawurlencode(
+            $file_info['path']
+        ) . '">ЭТУ</a> ссылку<br/></div>';
+        break;
 
 
 ######################################ЛОГ######################################################
-case 'addico':
-$file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-if (!$_FILES) {
-    echo '<div class="mblock">Загрузка иконки к папке</div>
+    case 'log':
+        $q = mysql_query('SELECT * FROM `loginlog` WHERE `id` > 1 ORDER BY `time` DESC', $mysql);
+        echo '<div class="mblock">Лог последних 20 посещений админки([UserAgent] [IP] [Time]):</div><div class="row">';
+        while ($log = mysql_fetch_assoc($q)) {
+            echo'[' . htmlspecialchars($log['ua'], ENT_NOQUOTES) . '] [' . $log['ip'] . '] [' . tm($log['time'])
+                . ']<br/>';
+        }
+        echo '</div>';
+        break;
+
+
+######################################ЛОГ######################################################
+    case 'addico':
+        $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$_FILES) {
+            echo '<div class="mblock">Загрузка иконки к папке</div>
 <div class="row">
 <form action="apanel.php?action=addico&amp;id=' . $id . '" method="post" enctype="multipart/form-data">
 <div class="row">
@@ -622,160 +692,170 @@ if (!$_FILES) {
 </div>
 </form>
 </div>';
-} else {
-    $to = $file_info['path'] . 'folder.png';
+        } else {
+            $to = $file_info['path'] . 'folder.png';
 
-    if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
-        error('Поддерживаются иконки только png формата');
-    }
-    if (file_exists($to)) {
-        error('Файл уже существует');
-    }
-    chmod($file_info['path'], 0777);
-    if (move_uploaded_file($_FILES['ico']['tmp_name'], $to)) {
-        echo 'Закачка иконки прошла успешно.<br/>';
-        chmod($to, 0644);
-    } else {
-        echo 'Закачка иконки окончилась неудачно.<br/>';
-        //chmod($file_info['path'], 0777);
-    }
-}
-break;
+            if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
+                error('Поддерживаются иконки только png формата');
+            }
+            if (file_exists($to)) {
+                error('Файл уже существует');
+            }
+            chmod($file_info['path'], 0777);
+            if (move_uploaded_file($_FILES['ico']['tmp_name'], $to)) {
+                echo 'Закачка иконки прошла успешно.<br/>';
+                chmod($to, 0644);
+            } else {
+                echo 'Закачка иконки окончилась неудачно.<br/>';
+                //chmod($file_info['path'], 0777);
+            }
+        }
+        break;
 
 
 ######################################ЛОГ######################################################
-case 'reico':
-$file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+    case 'reico':
+        $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
 
-if (!file_exists($file_info['path'] . 'folder.png')) {
-    error('Иконки к данной папке не существует');
-}
+        if (!file_exists($file_info['path'] . 'folder.png')) {
+            error('Иконки к данной папке не существует');
+        }
 
-if (unlink($file_info['path'] . 'folder.png')) {
-    echo 'Удаление иконки прошло успешно.<br/>';
-} else {
-    echo 'Удаление иконки окончилось неудачно.<br/>';
-}
-break;
+        if (unlink($file_info['path'] . 'folder.png')) {
+            echo 'Удаление иконки прошло успешно.<br/>';
+        } else {
+            echo 'Удаление иконки окончилось неудачно.<br/>';
+        }
+        break;
 
 
 ######################################РАСПАКОВЩИК###############################################
-case 'unpack':
-$file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-$dir = dirname($file['path']) . '/';
-chmod($dir, 0777);
+    case 'unpack':
+        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        $dir = dirname($file['path']) . '/';
+        chmod($dir, 0777);
 
-include 'moduls/PEAR/pclzip.lib.php';
-$zip = new PclZip($file['path']);
+        include 'moduls/PEAR/pclzip.lib.php';
+        $zip = new PclZip($file['path']);
 
-if ($zip->extract(PCLZIP_OPT_PATH, $dir)) {
-    error('Ахрив распакован в ' . $dir . '<br/>Не забудьте обновить БД.');
-} else {
-    error('Ошибка при распаковке.');
-}
-break;
+        if ($zip->extract(PCLZIP_OPT_PATH, $dir)) {
+            error('Ахрив распакован в ' . $dir . '<br/>Не забудьте обновить БД.');
+        } else {
+            error('Ошибка при распаковке.');
+        }
+        break;
 
 
 ######################################УДАЛЕНИЕ ПАПКИ######################################################
-case 'redir':
-if (!$setup['delete_dir']) {
-    error($setup['hackmess']);
-}
-if (!$_GET['level']) {
-    echo 'Будут удалены все файлы в каталоге, а также сам каталог. Продолжить?<br/><a href="apanel.php?action=redir&amp;level=1&amp;id=' . $id . '">Да, продолжить</a>';
-} else {
-    $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id . ' ORDER BY `name`', $mysql));
-
-    if (!is_dir($file['path'])) {
-        error('Такой категории не существует!');
-    }
-
-    $ex = explode('/', $file['path']);
-    $f_chmod = '';
-    foreach ($ex as $chmod) {
-        $f_chmod .= $chmod . '/';
-        chmod($f_chmod, 0777);
-    }
-
-    foreach (glob($file['path'] . '*') as $vv) {
-        if (is_dir($vv)) {
-            error('Разрешено удалять только папки с 1 уровнем вложенности!');
-        } else {
-            if (!unlink($vv)) {
-                error('Ошибка при удалении файла ' . htmlspecialchars($vv, ENT_NOQUOTES));
-            }
+    case 'redir':
+        if (!$setup['delete_dir']) {
+            error($setup['hackmess']);
         }
-    }
-    if (!mysql_query("DELETE FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($file['path'], $mysql) . "'", $mysql)) {
-        error('Ошибка при удалении файлов из базы');
-    }
+        if (!$_GET['level']) {
+            echo
+                'Будут удалены все файлы в каталоге, а также сам каталог. Продолжить?<br/><a href="apanel.php?action=redir&amp;level=1&amp;id='
+                    . $id . '">Да, продолжить</a>';
+        } else {
+            $file = mysql_fetch_assoc(
+                mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id . ' ORDER BY `name`', $mysql)
+            );
 
-    if (!rmdir($file['path'])) {
-        error('Ошибка при удалении каталога');
-    }
+            if (!is_dir($file['path'])) {
+                error('Такой категории не существует!');
+            }
 
-    if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-        error('Ошибка при удалении каталога из базы');
-    }
+            $ex = explode('/', $file['path']);
+            $f_chmod = '';
+            foreach ($ex as $chmod) {
+                $f_chmod .= $chmod . '/';
+                chmod($f_chmod, 0777);
+            }
+
+            foreach (glob($file['path'] . '*') as $vv) {
+                if (is_dir($vv)) {
+                    error('Разрешено удалять только папки с 1 уровнем вложенности!');
+                } else {
+                    if (!unlink($vv)) {
+                        error('Ошибка при удалении файла ' . htmlspecialchars($vv, ENT_NOQUOTES));
+                    }
+                }
+            }
+            if (!mysql_query(
+                "DELETE FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($file['path'], $mysql) . "'",
+                $mysql
+            )
+            ) {
+                error('Ошибка при удалении файлов из базы');
+            }
+
+            if (!rmdir($file['path'])) {
+                error('Ошибка при удалении каталога');
+            }
+
+            if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
+                error('Ошибка при удалении каталога из базы');
+            }
 
 
-    $f_chmod = '';
-    foreach ($ex as $chmod) {
-        $f_chmod .= $chmod . '/';
-        chmod($f_chmod.'/', 0777);
-    }
+            $f_chmod = '';
+            foreach ($ex as $chmod) {
+                $f_chmod .= $chmod . '/';
+                chmod($f_chmod . '/', 0777);
+            }
 
-    echo 'Каталог успешно удален!<div class="mblock" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в папках<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
-}
-break;
+            echo 'Каталог успешно удален!<div class="mblock" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в папках<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
+        }
+        break;
 
 
 ######################################УДАЛЕНИЕ ФАЙЛА###############################################
-case 'refile':
-if (!$setup['delete_dir']) {
-    error($setup['hackmess']);
-}
-$file = mysql_fetch_assoc(mysql_query('SELECT `path`, `hidden`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql));
+    case 'refile':
+        if (!$setup['delete_dir']) {
+            error($setup['hackmess']);
+        }
+        $file = mysql_fetch_assoc(
+            mysql_query('SELECT `path`, `hidden`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql)
+        );
 
-if (!is_file($file['path'])) {
-    error('Такого файла не существует!');
-}
+        if (!is_file($file['path'])) {
+            error('Такого файла не существует!');
+        }
 
-$ex = explode('/', $file['path']);
-$f_chmod = '';
-foreach ($ex as $chmod) {
-    $f_chmod .= $chmod;
-    if (is_dir($f_chmod)) {
-        $f_chmod = $f_chmod . '/';
-    }
+        $ex = explode('/', $file['path']);
+        $f_chmod = '';
+        foreach ($ex as $chmod) {
+            $f_chmod .= $chmod;
+            if (is_dir($f_chmod)) {
+                $f_chmod = $f_chmod . '/';
+            }
 
-    @chmod($f_chmod, 0777);
-}
+            @chmod($f_chmod, 0777);
+        }
 
-if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-    error('Ошибка при удалении файла из базы');
-}
+        if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
+            error('Ошибка при удалении файла из базы');
+        }
 
-if (!unlink($file['path'])) {
-    error('Ошибка при удалении файла ' . htmlspecialchars($file['path'], ENT_NOQUOTES));
-}
+        if (!unlink($file['path'])) {
+            error('Ошибка при удалении файла ' . htmlspecialchars($file['path'], ENT_NOQUOTES));
+        }
 
-if ($file['attach']) {
-    del_attach($file['infolder'], $id, unserialize($file['attach']));
-}
+        if ($file['attach']) {
+            del_attach($file['infolder'], $id, unserialize($file['attach']));
+        }
 
-if (!$file['hidden']) {
-    dir_count($file['path'], false);
-}
+        if (!$file['hidden']) {
+            dir_count($file['path'], false);
+        }
 
-echo 'Файл <strong>' . htmlspecialchars($file['path'], ENT_NOQUOTES) . '</strong> удален!';
-break;
+        echo 'Файл <strong>' . htmlspecialchars($file['path'], ENT_NOQUOTES) . '</strong> удален!';
+        break;
 
 
 ######################################РЕКЛАМА##################################################
-case 'buy':
-if (!$_POST) {
-echo '<div class="mblock">Рекламный блок:</div>
+    case 'buy':
+        if (!$_POST) {
+            echo '<div class="mblock">Рекламный блок:</div>
 <div class="row">
 <form action="apanel.php?action=buy" method="post">
 <div class="row">
@@ -795,172 +875,200 @@ XHTML код отображаемый снизу:
 </div>
 </form>
 </div>';
-} else {
-    if ($_POST['text'] == '') {
-        error('Не заполнено поле');
-    }
+        } else {
+            if ($_POST['text'] == '') {
+                error('Не заполнено поле');
+            }
 
-    if (
-        mysql_query("REPLACE INTO setting(name, value) VALUES('buy', '" . mysql_real_escape_string($_POST['text'], $mysql) . "')", $mysql)
-        &&
-        mysql_query("REPLACE INTO setting(name, value) VALUES('randbuy', '" . ($_POST['randbuy'] ? 1 : 0) . "')", $mysql)
-        &&
-        mysql_query("REPLACE INTO setting(name, value) VALUES('countbuy', '" . abs($_POST['countbuy']) . "')", $mysql)
-        &&
-        mysql_query("REPLACE INTO setting(name, value) VALUES('banner', '" . mysql_real_escape_string($_POST['banner'], $mysql) . "')", $mysql)
-        &&
-        mysql_query("REPLACE INTO setting(name, value) VALUES('randbanner', '" . ($_POST['randbanner'] ? 1 : 0) . "')", $mysql)
-        &&
-        mysql_query("REPLACE INTO setting(name, value) VALUES('countbanner', '" . abs($_POST['countbanner']) . "')", $mysql)
-    ) {
-        echo 'Настройки сохранены.';
-    } else {
-        error('Ошибка при записи в БД.<br/>' . mysql_error($mysql));
-    }
-}
-break;
+            if (
+                mysql_query(
+                    "REPLACE INTO setting(name, value) VALUES('buy', '" . mysql_real_escape_string(
+                        $_POST['text'],
+                        $mysql
+                    ) . "')",
+                    $mysql
+                )
+                && mysql_query(
+                    "REPLACE INTO setting(name, value) VALUES('randbuy', '" . ($_POST['randbuy'] ? 1 : 0) . "')",
+                    $mysql
+                )
+                && mysql_query(
+                    "REPLACE INTO setting(name, value) VALUES('countbuy', '" . abs($_POST['countbuy']) . "')",
+                    $mysql
+                )
+                && mysql_query(
+                    "REPLACE INTO setting(name, value) VALUES('banner', '" . mysql_real_escape_string(
+                        $_POST['banner'],
+                        $mysql
+                    ) . "')",
+                    $mysql
+                )
+                && mysql_query(
+                    "REPLACE INTO setting(name, value) VALUES('randbanner', '" . ($_POST['randbanner'] ? 1 : 0) . "')",
+                    $mysql
+                )
+                && mysql_query(
+                    "REPLACE INTO setting(name, value) VALUES('countbanner', '" . abs($_POST['countbanner']) . "')",
+                    $mysql
+                )
+            ) {
+                echo 'Настройки сохранены.';
+            } else {
+                error('Ошибка при записи в БД.<br/>' . mysql_error($mysql));
+            }
+        }
+        break;
 
 
 ######################################ПЕРЕИМЕНОВАНИЕ##################################################
-case 'rename':
-if ($_POST) {
-    foreach ($_POST['new'] as $k => $v) {
-        if ($v == '') {
-            error('Укажите название папки на ' . htmlspecialchars($k, ENT_NOQUOTES));
-        }
-    }
-    $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
-    $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
-    $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
-    $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+    case 'rename':
+        if ($_POST) {
+            foreach ($_POST['new'] as $k => $v) {
+                if ($v == '') {
+                    error('Укажите название папки на ' . htmlspecialchars($k, ENT_NOQUOTES));
+                }
+            }
+            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
+            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
 
-    mysql_query("
+            mysql_query(
+                "
         UPDATE `files`
         SET name = '" . $eng . "',
         rus_name = '" . $rus . "',
         aze_name = '" . $aze . "',
         tur_name = '" . $tur . "'
         WHERE `id` = " . $id
-        , $mysql
-    );
-    $error = mysql_error($mysql);
-    if ($error) {
-        error('Ошибка при переименовании.<br/>' . $error);
-    }
-    echo 'Файл переименован';
-} else {
-    $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `id` = ' . $id, $mysql));
+                ,
+                $mysql
+            );
+            $error = mysql_error($mysql);
+            if ($error) {
+                error('Ошибка при переименовании.<br/>' . $error);
+            }
+            echo 'Файл переименован';
+        } else {
+            $file = mysql_fetch_assoc(
+                mysql_query(
+                    'SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `id` = ' . $id,
+                    $mysql
+                )
+            );
 
-    echo '<div class="mblock">Введите новое имя:</div><div class="row"><form method="post" action="apanel.php?action=rename&amp;id=' . $id . '"><div class="row">';
-    echo Language::getInstance()->filesLangpacks($file);
-    echo '<input class="buttom" type="submit" value="Готово"/></div></form></div>';
-}
-break;
+            echo
+                '<div class="mblock">Введите новое имя:</div><div class="row"><form method="post" action="apanel.php?action=rename&amp;id='
+                    . $id . '"><div class="row">';
+            echo Language::getInstance()->filesLangpacks($file);
+            echo '<input class="buttom" type="submit" value="Готово"/></div></form></div>';
+        }
+        break;
 
 
 #########################################ОЧИСТКА КОММЕНТОВ К ФАЙЛУ#########################################
-case 'clearkomm':
-mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $id, $mysql);
-$error = mysql_error($mysql);
-if ($error) {
-    error('Ошибка при сбросе.<br/>' . $error);
-}
-echo 'Комментарии удалены.';
-break;
+    case 'clearkomm':
+        mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $id, $mysql);
+        $error = mysql_error($mysql);
+        if ($error) {
+            error('Ошибка при сбросе.<br/>' . $error);
+        }
+        echo 'Комментарии удалены.';
+        break;
 
 
 ##############################################ОЧИСТКА РЕЙТИНГА К ФАЙЛУ#######################################
-case 'cleareval':
-if (mysql_query('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ' . $id, $mysql)) {
-    echo 'Рейтинг удален.';
-} else {
-    error('Ошибка при сбросе рейтинга.<br/>' . mysql_error($mysql));
-}
-break;
+    case 'cleareval':
+        if (mysql_query('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ' . $id, $mysql)) {
+            echo 'Рейтинг удален.';
+        } else {
+            error('Ошибка при сбросе рейтинга.<br/>' . mysql_error($mysql));
+        }
+        break;
 
 
 #############################################ОПТИМИЗАЦИЯ БД###########################################
-case 'optm':
-$q = mysql_query('SHOW TABLES', $mysql);
-while ($arr = mysql_fetch_row($q)) {
-    mysql_query('OPTIMIZE TABLE `' . $arr[0] . '`;', $mysql);
-}
-echo 'Таблицы оптимизированы.';
-break;
+    case 'optm':
+        $q = mysql_query('SHOW TABLES', $mysql);
+        while ($arr = mysql_fetch_row($q)) {
+            mysql_query('OPTIMIZE TABLE `' . $arr[0] . '`;', $mysql);
+        }
+        echo 'Таблицы оптимизированы.';
+        break;
 
 
 ################################################ОЧИСТКА БД########################################
-case 'clean':
-if (!isset($_GET['level'])) {
-    echo 'Будут удалены все данные БД, включая описания, счетчики закачек, рейтинги и комментарии. Продолжить?<br/><a href="apanel.php?action=clean&amp;level=1">Да, продолжить</a>';
-} else {
-    if(mysql_query('TRUNCATE TABLE `files`;', $mysql) && mysql_query('TRUNCATE TABLE `komments`;', $mysql)) {
-        echo 'Таблицы очищены.<br/>';
-    } else {
-        error('Ошбка: ' . mysql_error($mysql));
-    }
-}
-break;
+    case 'clean':
+        if (!isset($_GET['level'])) {
+            echo 'Будут удалены все данные БД, включая описания, счетчики закачек, рейтинги и комментарии. Продолжить?<br/><a href="apanel.php?action=clean&amp;level=1">Да, продолжить</a>';
+        } else {
+            if (mysql_query('TRUNCATE TABLE `files`;', $mysql) && mysql_query('TRUNCATE TABLE `komments`;', $mysql)) {
+                echo 'Таблицы очищены.<br/>';
+            } else {
+                error('Ошбка: ' . mysql_error($mysql));
+            }
+        }
+        break;
 
 
 ##########################################ОЧИСТКА КОММЕНТОВ к файлам##############################################
-case 'cleankomm':
-if (!$_GET['level']) {
-    echo 'Будут удалены все комментарии к файлам! Продолжить?<br/><a href="apanel.php?action=cleankomm&amp;level=1">Да, продолжить</a>';
-} else {
-    if (mysql_query('TRUNCATE TABLE `komments`;', $mysql)) {
-        echo 'Таблица комментариев очищена.<br/>';
-    } else {
-        error('Ошибка: ' . mysql_error($mysql));
-    }
-}
-break;
+    case 'cleankomm':
+        if (!$_GET['level']) {
+            echo 'Будут удалены все комментарии к файлам! Продолжить?<br/><a href="apanel.php?action=cleankomm&amp;level=1">Да, продолжить</a>';
+        } else {
+            if (mysql_query('TRUNCATE TABLE `komments`;', $mysql)) {
+                echo 'Таблица комментариев очищена.<br/>';
+            } else {
+                error('Ошибка: ' . mysql_error($mysql));
+            }
+        }
+        break;
 
 
 ##########################################ОЧИСТКА ВСЕХ КОММЕНТОВ##############################################
-case 'cleankomm_news':
-if (!$_GET['level']) {
-    echo 'Будут удалены все комментарии к новстям! Продолжить?<br/><a href="apanel.php?action=cleankomm_news&amp;level=1">Да, продолжить</a>';
-} else {
-    if (mysql_query('TRUNCATE TABLE `news_komments`;', $mysql)) {
-        echo 'Таблица комментариев очищена.<br/>';
-    } else {
-        error('Ошибка: ' . mysql_error($mysql));
-    }
-}
-break;
+    case 'cleankomm_news':
+        if (!$_GET['level']) {
+            echo 'Будут удалены все комментарии к новстям! Продолжить?<br/><a href="apanel.php?action=cleankomm_news&amp;level=1">Да, продолжить</a>';
+        } else {
+            if (mysql_query('TRUNCATE TABLE `news_komments`;', $mysql)) {
+                echo 'Таблица комментариев очищена.<br/>';
+            } else {
+                error('Ошибка: ' . mysql_error($mysql));
+            }
+        }
+        break;
 
 
-case 'clean_cache':
-$err = '';
+    case 'clean_cache':
+        $err = '';
 
-$h = opendir($_GET['dir']);
+        $h = opendir($_GET['dir']);
 
-while (($f = readdir($h)) !== false) {
-    if ($f == '.htaccess' || $f == '.' || $f == '..') {
-        continue;
-    }
-    //chmod($_GET['dir'].'/'.$f, 0666);
-    if (!unlink($_GET['dir'] . '/' . $f)) {
-        $err .= htmlspecialchars($_GET['dir'] . '/' . $f, ENT_NOQUOTES) . '<br/>';
-    }
-}
+        while (($f = readdir($h)) !== false) {
+            if ($f == '.htaccess' || $f == '.' || $f == '..') {
+                continue;
+            }
+            //chmod($_GET['dir'].'/'.$f, 0666);
+            if (!unlink($_GET['dir'] . '/' . $f)) {
+                $err .= htmlspecialchars($_GET['dir'] . '/' . $f, ENT_NOQUOTES) . '<br/>';
+            }
+        }
 
-if ($err) {
-    error('Не удалось удалить следующие файлы:<br/>' . $err);
-} else {
-    echo 'Кэш успешно очищен.<br/>';
-}
-break;
+        if ($err) {
+            error('Не удалось удалить следующие файлы:<br/>' . $err);
+        } else {
+            echo 'Кэш успешно очищен.<br/>';
+        }
+        break;
 
 
 #########################################SEO########################################
-case 'seo':
-if (!$_POST) {
-    $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
-    $seo = unserialize($file['seo']);
+    case 'seo':
+        if (!$_POST) {
+            $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
+            $seo = unserialize($file['seo']);
 
-    echo '<div class="mblock">SEO <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
+            echo '<div class="mblock">SEO <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
 <div class="row">
 <form action="apanel.php?action=seo&amp;id=' . $id . '" method="post">
 <div class="row">Title<br/>
@@ -972,109 +1080,124 @@ Description<br/>
 <input class="buttom" type="submit" value="Изменить"/>
 </div>
 </form></div>';
-} else {
-    $seo = serialize(array(
-        'title' => $_POST['title'],
-        'keywords' => $_POST['keywords'],
-        'description' => $_POST['description']
-    ));
-    if (mysql_query('UPDATE `files` SET `seo` = "' . mysql_real_escape_string($seo, $mysql) . '" WHERE `id` = ' . $id, $mysql)) {
-        echo 'Данные изменены<br/>';
-    } else {
-        error('Данные не изменены');
-    }
+        } else {
+            $seo = serialize(
+                array(
+                    'title' => $_POST['title'],
+                    'keywords' => $_POST['keywords'],
+                    'description' => $_POST['description']
+                )
+            );
+            if (mysql_query(
+                'UPDATE `files` SET `seo` = "' . mysql_real_escape_string($seo, $mysql) . '" WHERE `id` = ' . $id,
+                $mysql
+            )
+            ) {
+                echo 'Данные изменены<br/>';
+            } else {
+                error('Данные не изменены');
+            }
 
-    echo '<a href="apanel_index.php">Файл-менеджер</a>';
-}
-break;
+            echo '<a href="apanel_index.php">Файл-менеджер</a>';
+        }
+        break;
 
 
 #########################################ДОБАВЛЕНИЕ И ИЗМЕНЕНИЕ ОПИСАНИЯ########################################
-case 'about':
-$file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-$about = $setup['opath'] . mb_substr($file['path'], mb_strlen($setup['path'])) . '.txt';
+    case 'about':
+        $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+        $about = $setup['opath'] . mb_substr($file['path'], mb_strlen($setup['path'])) . '.txt';
 
-if (!$_POST) {
-    echo '<div class="mblock">Описание файла/директории <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
+        if (!$_POST) {
+            echo'<div class="mblock">Описание файла/директории <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES)
+                . '</strong></div>
 <div class="row">
 <form action="apanel.php?action=about&amp;id=' . $id . '" method="post">
 <div class="row">
-<textarea class="enter" cols="70" rows="10" name="text">' . htmlspecialchars(antibb(file_get_contents($about)), ENT_NOQUOTES, 'UTF-8') . '</textarea><br/><br/>
+<textarea class="enter" cols="70" rows="10" name="text">' . htmlspecialchars(
+                antibb(file_get_contents($about)),
+                ENT_NOQUOTES,
+                'UTF-8'
+            ) . '</textarea><br/><br/>
 <input class="buttom" type="submit" value="Написать"/>
 </div>
 </form></div>';
-} else {
-    chmods($about);
-
-    if ($_POST['text'] == '') {
-        if (unlink($about)) {
-            echo 'Описание удалено<br/>';
         } else {
-            error('Описание не удалено');
-        }
-    } else {
-        if (file_put_contents($about, nl2br(bbcode(htmlspecialchars(trim($_POST['text'])))))) {
-            echo 'Описание изменено<br/>';
-        } else {
-            error('Описание не изменено');
-        }
-    }
+            chmods($about);
 
-    echo '<a href="apanel_view.php?id=' . $id . '">К описанию</a>';
-}
-break;
+            if ($_POST['text'] == '') {
+                if (unlink($about)) {
+                    echo 'Описание удалено<br/>';
+                } else {
+                    error('Описание не удалено');
+                }
+            } else {
+                if (file_put_contents($about, nl2br(bbcode(htmlspecialchars(trim($_POST['text'])))))) {
+                    echo 'Описание изменено<br/>';
+                } else {
+                    error('Описание не изменено');
+                }
+            }
+
+            echo '<a href="apanel_view.php?id=' . $id . '">К описанию</a>';
+        }
+        break;
 
 
 #########################################ИМПОРТ####################################################################
-case 'import':
-if (!$_POST) {
-$dirs = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
+    case 'import':
+        if (!$_POST) {
+            $dirs = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
 
-echo '<div class="mblock">Импорт файлов</div>
+            echo '<div class="mblock">Импорт файлов</div>
 <div class="row">Сохранить в:</div>
 <form action="apanel.php?action=import" method="post">
 <div class="row">
 Импортируемый файл # с каким именем сохранить<br/>
 <select class="buttom" name="topath">
 <option value="' . htmlspecialchars($setup['path']) . '/">/</option>';
-while ($item = mysql_fetch_assoc($dirs)) {
-    echo '<option value="' . htmlspecialchars($item['path']) . '">' . htmlspecialchars(substr(strstr($item['path'], '/'), 1), ENT_NOQUOTES) . '</option>';
-}
-echo '</select><br/>
+            while ($item = mysql_fetch_assoc($dirs)) {
+                echo'<option value="' . htmlspecialchars($item['path']) . '">' . htmlspecialchars(
+                    substr(strstr($item['path'], '/'), 1),
+                    ENT_NOQUOTES
+                ) . '</option>';
+            }
+            echo '</select><br/>
 Файлы:<br/>
 <textarea class="enter" cols="70" rows="10" name="files"></textarea><br/><br/>
 <input class="buttom" type="submit" value="Импорт"/>
 </div>
 </form>';
-} else {
-    $newpath = trim($_POST['topath']);
-    if ($newpath == '') {
-        error('Нет конечного пути!');
-    }
+        } else {
+            $newpath = trim($_POST['topath']);
+            if ($newpath == '') {
+                error('Нет конечного пути!');
+            }
 
-    $text = explode("\n", $_POST['files']);
-    $a = sizeof($text);
-    for ($i = 0; $i < $a; ++$i) {
-        $parametr = explode('#', trim($text[$i]));
-        if (!isset($parametr[1])) {
-            $parametr[1] = basename(trim($parametr[0]));
-        }
-        $to = $newpath . trim($parametr[1]);
-        if (file_exists($to)) {
-            error('Файл <strong>' . htmlspecialchars($to, ENT_NOQUOTES) . '</strong> уже существует');
-        }
-        if (!checkExt(pathinfo(trim($parametr[0]), PATHINFO_EXTENSION))) {
-            error($setup['hackmess']);
-        }
-        chmod($newpath, 0777);
+            $text = explode("\n", $_POST['files']);
+            $a = sizeof($text);
+            for ($i = 0; $i < $a; ++$i) {
+                $parametr = explode('#', trim($text[$i]));
+                if (!isset($parametr[1])) {
+                    $parametr[1] = basename(trim($parametr[0]));
+                }
+                $to = $newpath . trim($parametr[1]);
+                if (file_exists($to)) {
+                    error('Файл <strong>' . htmlspecialchars($to, ENT_NOQUOTES) . '</strong> уже существует');
+                }
+                if (!checkExt(pathinfo(trim($parametr[0]), PATHINFO_EXTENSION))) {
+                    error($setup['hackmess']);
+                }
+                chmod($newpath, 0777);
 
-        ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
-        if (copy(trim($parametr[0]), $to)) {
-            echo 'Импорт файла ' . htmlspecialchars($parametr[1], ENT_NOQUOTES) . ' удался<br/>';
-            $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
+                ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
+                if (copy(trim($parametr[0]), $to)) {
+                    echo 'Импорт файла ' . htmlspecialchars($parametr[1], ENT_NOQUOTES) . ' удался<br/>';
+                    $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
 
-            $infolder = dirname($to) . '/';
-            mysql_query("
+                    $infolder = dirname($to) . '/';
+                    mysql_query(
+                        "
                 INSERT INTO `files` (
                     `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
                 ) VALUES (
@@ -1086,28 +1209,32 @@ echo '</select><br/>
                     '" . mysql_real_escape_string($infolder, $mysql) . "',
                     " . filesize($to) . ",
                     " . filectime($to) . "
-                )", $mysql
-            );
-            dir_count($infolder, true);
-        } else {
-            $err = error_get_last();
-            error('Импорт файла ' . htmlspecialchars($parametr[1], ENT_NOQUOTES) . ' не удался<br/>' . $err['message']);
+                )",
+                        $mysql
+                    );
+                    dir_count($infolder, true);
+                } else {
+                    $err = error_get_last();
+                    error(
+                        'Импорт файла ' . htmlspecialchars($parametr[1], ENT_NOQUOTES) . ' не удался<br/>'
+                            . $err['message']
+                    );
+                }
+            }
+            chmod($newpath, 0777);
         }
-    }
-    chmod($newpath, 0777);
-}
-break;
+        break;
 
 
 #####################################АПЛОАД скрина###################################################
-case 'screen':
-$info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-$info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
-$to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
-$thumb = $setup['spath'] . $info['path'] . '.thumb.gif'; // имя конечного файла
+    case 'screen':
+        $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        $info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
+        $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
+        $thumb = $setup['spath'] . $info['path'] . '.thumb.gif'; // имя конечного файла
 
-if (!$_FILES) {
-echo '<div class="mblock">Загрузка скрина (JPEG, GIF, PNG)</div>
+        if (!$_FILES) {
+            echo '<div class="mblock">Загрузка скрина (JPEG, GIF, PNG)</div>
 <form action="apanel.php?action=screen&amp;id=' . $id . '" method="post" enctype="multipart/form-data">
 <div class="row">
 Файл будет скопирован в папку со скриншотами:<br/>
@@ -1115,68 +1242,75 @@ echo '<div class="mblock">Загрузка скрина (JPEG, GIF, PNG)</div>
 <input class="buttom" type="submit" value="Добавить"/>
 </div>
 </form>';
-} else {
-    $ex = pathinfo($_FILES['scr']['name']);
-    $ext = strtolower($ex['extension']);
+        } else {
+            $ex = pathinfo($_FILES['scr']['name']);
+            $ext = strtolower($ex['extension']);
 
-    if ($ext != 'gif' && $ext != 'jpg' && $ext != 'jpe' && $ext != 'jpeg' && $ext != 'png') {
-        error('Поддерживаются скриншоты только gif, jpeg, png форматов');
-    }
+            if ($ext != 'gif' && $ext != 'jpg' && $ext != 'jpe' && $ext != 'jpeg' && $ext != 'png') {
+                error('Поддерживаются скриншоты только gif, jpeg, png форматов');
+            }
 
-    chmods($to);
+            chmods($to);
 
-    if (move_uploaded_file($_FILES['scr']['tmp_name'], $to)) {
-        echo 'Закачка скрина ' . htmlspecialchars($_FILES['scr']['name'], ENT_NOQUOTES) . ' прошла успешно.<br/>';
+            if (move_uploaded_file($_FILES['scr']['tmp_name'], $to)) {
+                echo'Закачка скрина ' . htmlspecialchars($_FILES['scr']['name'], ENT_NOQUOTES)
+                    . ' прошла успешно.<br/>';
 
-        if ($ext == 'jpg' || $ext == 'jpe' || $ext == 'jpeg') {
-            $im = imagecreatefromjpeg($to);
-            imagegif($im, $to);
-            imagedestroy($im);
-        } elseif($ext == 'png') {
-            $im = imagecreatefrompng($to);
-            imagegif($im, $to);
-            imagedestroy($im);
+                if ($ext == 'jpg' || $ext == 'jpe' || $ext == 'jpeg') {
+                    $im = imagecreatefromjpeg($to);
+                    imagegif($im, $to);
+                    imagedestroy($im);
+                } elseif ($ext == 'png') {
+                    $im = imagecreatefrompng($to);
+                    imagegif($im, $to);
+                    imagedestroy($im);
+                }
+                img_resize($to, $thumb, 0, 0, $setup['marker']);
+            } else {
+                $err = error_get_last();
+                error(
+                    'Закачка скрина ' . htmlspecialchars($_FILES['scr']['name'], ENT_NOQUOTES)
+                        . ' окончилась неудачно<br/>' . $err['message']
+                );
+            }
         }
-        img_resize($to, $thumb, 0, 0, $setup['marker']);
-    } else {
-        $err = error_get_last();
-        error('Закачка скрина ' . htmlspecialchars($_FILES['scr']['name'], ENT_NOQUOTES) . ' окончилась неудачно<br/>' . $err['message']);
-    }
-}
-break;
+        break;
 
 
-case 'del_screen':
-$info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-$info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
-$to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
-$to2 = $setup['spath'] . $info['path'] . '.jpg'; // имя конечного файла
+    case 'del_screen':
+        $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        $info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
+        $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
+        $to2 = $setup['spath'] . $info['path'] . '.jpg'; // имя конечного файла
 
-if (unlink($to) || unlink($to2)) {
-    echo 'Скриншот удален.<br/>';
-} else {
-    $err = error_get_last();
-    error('Ошибка при удалении скриншота<br/>' . $err['message']);
-}
-break;
+        if (unlink($to) || unlink($to2)) {
+            echo 'Скриншот удален.<br/>';
+        } else {
+            $err = error_get_last();
+            error('Ошибка при удалении скриншота<br/>' . $err['message']);
+        }
+        break;
 
 
 #####################################АПЛОАД###################################################
-case 'upload':
-if (!$_POST) {
-$dirs = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
+    case 'upload':
+        if (!$_POST) {
+            $dirs = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
 
-echo '<script type="text/javascript" src="js.js"></script>
+            echo '<script type="text/javascript" src="js.js"></script>
 <div class="mblock">Upload файлов (max ' . ini_get('upload_max_filesize') . ')</div>
 <div class="row">Сохранить в:</div>
 <form action="apanel.php?action=upload" method="post" enctype="multipart/form-data">
 <div class="row">
 <select class="buttom" name="topath">
 <option value="' . $setup['path'] . '/">./</option>';
-while ($item = mysql_fetch_assoc($dirs)) {
-    echo '<option value="' . htmlspecialchars($item['path']) . '">' . htmlspecialchars(substr(strstr($item['path'], '/'), 1), ENT_NOQUOTES) . '</option>';
-}
-echo '</select><br/>
+            while ($item = mysql_fetch_assoc($dirs)) {
+                echo'<option value="' . htmlspecialchars($item['path']) . '">' . htmlspecialchars(
+                    substr(strstr($item['path'], '/'), 1),
+                    ENT_NOQUOTES
+                ) . '</option>';
+            }
+            echo '</select><br/>
 Добавить файлы: <a href="#" onclick="Apanel.files(1);">[+]</a> / <a href="#" onclick="Apanel.files(0);">[-]</a><br/>
 
 <div id="tpl" style="display: none;"><input name="userfile[0]" type="file"/> <a href="#" onclick="Apanel.filesAttach(this, 1);">[+]</a> / <a href="#" onclick="Apanel.filesAttach(this, 0);">[-]</a><br/></div>
@@ -1191,46 +1325,54 @@ echo '</select><br/>
 <input class="buttom" type="submit" value="Добавить"/>
 </div>
 </form>';
-} else {
-    $newpath = trim($_POST['topath']);
-    if ($newpath == '') {
-        error('Нет конечного пути! ' . htmlspecialchars($newpath, ENT_NOQUOTES));
-    }
-
-    $a = sizeof($_FILES['userfile']['name']);
-    for ($i = 0; $i < $a; ++$i) {
-        if (empty($_FILES['userfile']['name'][$i])) {
-            continue;
-        }
-        $name = $_FILES['userfile']['name'][$i];
-        $to = $newpath . $name;
-        if (!checkExt(pathinfo($name, PATHINFO_EXTENSION))) {
-            error($setup['hackmess']);
-        }
-        if (file_exists($to)) {
-            error('Файл <strong>' . htmlspecialchars($to, ENT_NOQUOTES) . '</strong> уже существует');
-        }
-        chmod($newpath, 0777);
-        if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to)) {
-            echo 'Закачка файла <strong>' . htmlspecialchars($name, ENT_NOQUOTES) . '</strong> прошла успешно.<br/>';
-            $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
-            $infolder = dirname($to) . '/';
-
-
-            $files = $dbFiles = array();
-            if (isset($_FILES['attach_userfile']['tmp_name'][$i])) {
-                foreach ($_FILES['attach_userfile']['tmp_name'][$i] as $k => $v) {
-                    if ($_FILES['attach_userfile']['name'][$i][$k]) {
-                        if (!checkExt(pathinfo($_FILES['attach_userfile']['name'][$i][$k], PATHINFO_EXTENSION))) {
-                            error($setup['hackmess']);
-                        }
-                        $dbFiles[] = $_FILES['attach_userfile']['name'][$i][$k];
-                        $files[] = array('tmp_name' => $v, 'name' => $_FILES['attach_userfile']['name'][$i][$k]);
-                    }
-                }
+        } else {
+            $newpath = trim($_POST['topath']);
+            if ($newpath == '') {
+                error('Нет конечного пути! ' . htmlspecialchars($newpath, ENT_NOQUOTES));
             }
 
-            mysql_query("
+            $a = sizeof($_FILES['userfile']['name']);
+            for ($i = 0; $i < $a; ++$i) {
+                if (empty($_FILES['userfile']['name'][$i])) {
+                    continue;
+                }
+                $name = $_FILES['userfile']['name'][$i];
+                $to = $newpath . $name;
+                if (!checkExt(pathinfo($name, PATHINFO_EXTENSION))) {
+                    error($setup['hackmess']);
+                }
+                if (file_exists($to)) {
+                    error('Файл <strong>' . htmlspecialchars($to, ENT_NOQUOTES) . '</strong> уже существует');
+                }
+                chmod($newpath, 0777);
+                if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to)) {
+                    echo'Закачка файла <strong>' . htmlspecialchars($name, ENT_NOQUOTES)
+                        . '</strong> прошла успешно.<br/>';
+                    $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
+                    $infolder = dirname($to) . '/';
+
+
+                    $files = $dbFiles = array();
+                    if (isset($_FILES['attach_userfile']['tmp_name'][$i])) {
+                        foreach ($_FILES['attach_userfile']['tmp_name'][$i] as $k => $v) {
+                            if ($_FILES['attach_userfile']['name'][$i][$k]) {
+                                if (!checkExt(
+                                    pathinfo($_FILES['attach_userfile']['name'][$i][$k], PATHINFO_EXTENSION)
+                                )
+                                ) {
+                                    error($setup['hackmess']);
+                                }
+                                $dbFiles[] = $_FILES['attach_userfile']['name'][$i][$k];
+                                $files[] = array(
+                                    'tmp_name' => $v,
+                                    'name' => $_FILES['attach_userfile']['name'][$i][$k]
+                                );
+                            }
+                        }
+                    }
+
+                    mysql_query(
+                        "
                 INSERT INTO `files` (
                     `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`, `attach`
                 ) VALUES (
@@ -1245,107 +1387,116 @@ echo '</select><br/>
                     " . filectime($to) . ",
                     " . ($dbFiles ? "'" . mysql_real_escape_string(serialize($dbFiles), $mysql) . "'" : 'NULL') . "
                 );
-            ", $mysql);
-            $id = mysql_insert_id($mysql);
-            if ($files) {
-                add_attach($newpath, $id, $files);
+            ",
+                        $mysql
+                    );
+                    $id = mysql_insert_id($mysql);
+                    if ($files) {
+                        add_attach($newpath, $id, $files);
+                    }
+
+                    dir_count($infolder, true);
+
+                    chmod($to, 0644);
+                } else {
+                    error('Закачка файла ' . htmlspecialchars($name, ENT_NOQUOTES) . ' окончилась неудачно');
+                }
             }
-
-            dir_count($infolder, true);
-
-            chmod($to, 0644);
-        } else {
-            error('Закачка файла ' . htmlspecialchars($name, ENT_NOQUOTES) . ' окончилась неудачно');
+            chmod($newpath, 0777);
         }
-    }
-    chmod($newpath, 0777);
-}
-break;
+        break;
 
 
 ######################################СОЗДАНИЕ НОВОГО КАТАЛОГА##############################################
-case 'newdir':
-if ($_POST) {
-    if (!preg_match('/^[A-Z0-9_\-]+$/i', $_POST['realname'])) {
-        error('Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Z0-9_-]');
-    }
-    foreach ($_POST['new'] as $k => $v) {
-        if ($v == '') {
-            error('Укажите отображаемые названия папки ' . htmlspecialchars($k, ENT_NOQUOTES));
-        }
-    }
+    case 'newdir':
+        if ($_POST) {
+            if (!preg_match('/^[A-Z0-9_\-]+$/i', $_POST['realname'])) {
+                error('Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Z0-9_-]');
+            }
+            foreach ($_POST['new'] as $k => $v) {
+                if ($v == '') {
+                    error('Укажите отображаемые названия папки ' . htmlspecialchars($k, ENT_NOQUOTES));
+                }
+            }
 
-    // берем корень
-    if ($id) {
-        $d = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-    } else {
-        $d['path'] = $setup['path'] . '/';
-    }
+            // берем корень
+            if ($id) {
+                $d = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+            } else {
+                $d['path'] = $setup['path'] . '/';
+            }
 
-    chmod($d['path'], 0777);
-    /////////
+            chmod($d['path'], 0777);
+            /////////
 
-    $directory = $d['path'] . $_POST['realname'] . '/';
-    //print $directory;
+            $directory = $d['path'] . $_POST['realname'] . '/';
+            //print $directory;
 
-    $temp = mb_substr($directory, mb_strlen($setup['path']), mb_strlen($directory));
+            $temp = mb_substr($directory, mb_strlen($setup['path']), mb_strlen($directory));
 
-    //скриншоты
-    $screen = $setup['spath'] . '/' . $temp;
-    // описания
-    $desc = $setup['opath'] . '/' . $temp;
-    // вложения
-    $attach = $setup['apath'] . '/' . $temp;
+            //скриншоты
+            $screen = $setup['spath'] . '/' . $temp;
+            // описания
+            $desc = $setup['opath'] . '/' . $temp;
+            // вложения
+            $attach = $setup['apath'] . '/' . $temp;
 
-    $dirnew = array();
-    $dirnew['english'] = mysql_real_escape_string($_POST['new']['english'], $mysql);
-    $dirnew['russian'] = mysql_real_escape_string($_POST['new']['russian'], $mysql);
-    $dirnew['azerbaijan'] = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
-    $dirnew['turkey'] = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
-
-
-    mkdir($directory, 0777);
-    chmod($directory, 0777); // fix
-    
-    // скриншоты
-    mkdir($screen, 0777);
-    chmod($screen, 0777); // fix
-    
-    // описания
-    mkdir($desc, 0777);
-    chmod($desc, 0777); // fix
-
-    // вложения
-    mkdir($attach, 0777);
-    chmod($attach, 0777); // fix
+            $dirnew = array();
+            $dirnew['english'] = mysql_real_escape_string($_POST['new']['english'], $mysql);
+            $dirnew['russian'] = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+            $dirnew['azerbaijan'] = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+            $dirnew['turkey'] = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
 
 
-    // заносим в бд
-    // пока поддержка только английского и русского языков
-    if (mysql_query("INSERT INTO `files` (`dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`) VALUES ('1', 0, '" . mysql_real_escape_string($directory, $mysql) . "', '" . $dirnew['english'] . "', '" . $dirnew['russian'] . "', '" . $dirnew['azerbaijan'] . "', '" . $dirnew['turkey'] . "', '" . mysql_real_escape_string($d['path'], $mysql) . "', " . $_SERVER['REQUEST_TIME'] . ");", $mysql)) {
-        dir_count($d['path'], true);
-        echo 'Новый каталог создан.';
-    } else {
-        error('Ошибка при создании нового каталога. - ' . mysql_error($mysql));
-    }
-} else {
-    echo '<div class="mblock">Создание новой категории:</div>
+            mkdir($directory, 0777);
+            chmod($directory, 0777); // fix
+
+            // скриншоты
+            mkdir($screen, 0777);
+            chmod($screen, 0777); // fix
+
+            // описания
+            mkdir($desc, 0777);
+            chmod($desc, 0777); // fix
+
+            // вложения
+            mkdir($attach, 0777);
+            chmod($attach, 0777); // fix
+
+
+            // заносим в бд
+            // пока поддержка только английского и русского языков
+            if (mysql_query(
+                "INSERT INTO `files` (`dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`) VALUES ('1', 0, '"
+                    . mysql_real_escape_string($directory, $mysql) . "', '" . $dirnew['english'] . "', '"
+                    . $dirnew['russian'] . "', '" . $dirnew['azerbaijan'] . "', '" . $dirnew['turkey'] . "', '"
+                    . mysql_real_escape_string($d['path'], $mysql) . "', " . $_SERVER['REQUEST_TIME'] . ");",
+                $mysql
+            )
+            ) {
+                dir_count($d['path'], true);
+                echo 'Новый каталог создан.';
+            } else {
+                error('Ошибка при создании нового каталога. - ' . mysql_error($mysql));
+            }
+        } else {
+            echo '<div class="mblock">Создание новой категории:</div>
     <form action="apanel.php?action=newdir&amp;id=' . $id . '" method="post">
     <div class="row">
     Имя новой папки [A-Z0-9_-]:<br/>
     <input type="text" name="realname" size="70" class="enter" /><br/>';
-    echo Language::getInstance()->filesLangpacks();
-    echo '<input class="buttom" type="submit" value="Добавить"/>
+            echo Language::getInstance()->filesLangpacks();
+            echo '<input class="buttom" type="submit" value="Добавить"/>
     </div>
     </form>';
-}
-break;
+        }
+        break;
 
 
 #########################################ИЗМЕНЕНИЕ МОДУЛЕЙ###############################################
-case 'modules':
-if (!$_POST) {
-echo '<div class="mblock">Управления модулями:</div>
+    case 'modules':
+        if (!$_POST) {
+            echo '<div class="mblock">Управления модулями:</div>
 <form action="apanel.php?action=modules" method="post">
 <div class="row">
 <input name="komments_change" type="checkbox" value="1" ' . check($setup['komments_change']) . '/>Комментарии<br/>
@@ -1388,61 +1539,64 @@ echo '<div class="mblock">Управления модулями:</div>
 <input class="buttom" type="submit" value="Сохранить"/>
 </div>
 </form>';
-} else {
-    $_POST['komments_change'] = $_POST['komments_change'] ? 1 : 0;
-    $_POST['komments_captcha'] = $_POST['komments_captcha'] ? 1 : 0;
-    $_POST['eval_change'] = $_POST['eval_change'] ? 1 : 0;
-    $_POST['onpage_change'] = $_POST['onpage_change'] ? 1 : 0;
-    $_POST['preview_change'] = $_POST['preview_change'] ? 1 : 0;
-    $_POST['top_change'] = $_POST['top_change'] ? 1 : 0;
-    $_POST['stat_change'] = $_POST['stat_change'] ? 1 : 0;
-    $_POST['search_change'] = $_POST['search_change'] ? 1 : 0;
-    $_POST['pagehand_change'] = $_POST['pagehand_change'] ? 1 : 0;
-    $_POST['zip_change'] = $_POST['zip_change'] ? 1 : 0;
-    $_POST['jad_change'] = $_POST['jad_change'] ? 1 : 0;
-    $_POST['zakaz_change'] = $_POST['zakaz_change'] ? 1 : 0;
-    $_POST['buy_change'] = $_POST['buy_change'] ? 1 : 0;
-    $_POST['cut_change'] = $_POST['cut_change'] ? 1 : 0;
-    $_POST['audio_player_change'] = $_POST['audio_player_change'] ? 1 : 0;
-    $_POST['video_player_change'] = $_POST['video_player_change'] ? 1 : 0;
-    $_POST['lib_change'] = $_POST['lib_change'] ? 1 : 0;
+        } else {
+            $_POST['komments_change'] = $_POST['komments_change'] ? 1 : 0;
+            $_POST['komments_captcha'] = $_POST['komments_captcha'] ? 1 : 0;
+            $_POST['eval_change'] = $_POST['eval_change'] ? 1 : 0;
+            $_POST['onpage_change'] = $_POST['onpage_change'] ? 1 : 0;
+            $_POST['preview_change'] = $_POST['preview_change'] ? 1 : 0;
+            $_POST['top_change'] = $_POST['top_change'] ? 1 : 0;
+            $_POST['stat_change'] = $_POST['stat_change'] ? 1 : 0;
+            $_POST['search_change'] = $_POST['search_change'] ? 1 : 0;
+            $_POST['pagehand_change'] = $_POST['pagehand_change'] ? 1 : 0;
+            $_POST['zip_change'] = $_POST['zip_change'] ? 1 : 0;
+            $_POST['jad_change'] = $_POST['jad_change'] ? 1 : 0;
+            $_POST['zakaz_change'] = $_POST['zakaz_change'] ? 1 : 0;
+            $_POST['buy_change'] = $_POST['buy_change'] ? 1 : 0;
+            $_POST['cut_change'] = $_POST['cut_change'] ? 1 : 0;
+            $_POST['audio_player_change'] = $_POST['audio_player_change'] ? 1 : 0;
+            $_POST['video_player_change'] = $_POST['video_player_change'] ? 1 : 0;
+            $_POST['lib_change'] = $_POST['lib_change'] ? 1 : 0;
 
-    $_POST['screen_change'] = $_POST['screen_change'] ? 1 : 0;
-    $_POST['screen_file_change'] = $_POST['screen_file_change'] ? 1 : 0;
-    $_POST['swf_change'] = $_POST['swf_change'] ? 1 : 0;
-    $_POST['swf_file_change'] = $_POST['swf_file_change'] ? 1 : 0;
-    $_POST['jar_change'] = $_POST['jar_change'] ? 1 : 0;
-    $_POST['jar_file_change'] = $_POST['jar_file_change'] ? 1 : 0;
+            $_POST['screen_change'] = $_POST['screen_change'] ? 1 : 0;
+            $_POST['screen_file_change'] = $_POST['screen_file_change'] ? 1 : 0;
+            $_POST['swf_change'] = $_POST['swf_change'] ? 1 : 0;
+            $_POST['swf_file_change'] = $_POST['swf_file_change'] ? 1 : 0;
+            $_POST['jar_change'] = $_POST['jar_change'] ? 1 : 0;
+            $_POST['jar_file_change'] = $_POST['jar_file_change'] ? 1 : 0;
 
-    $_POST['anim_change'] = $_POST['anim_change'] ? 1 : 0;
-    $_POST['prew'] = $_POST['prew'] ? 1 : 0;
-    $_POST['lib_desc'] = $_POST['lib_desc'] ? 1 : 0;
-    $_POST['ext'] = $_POST['ext'] ? 1 : 0;
-    $_POST['prev_next'] = $_POST['prev_next'] ? 1 : 0;
-    $_POST['style_change'] = $_POST['style_change'] ? 1 : 0;
-    $_POST['service_change'] = $_POST['service_change'] ? 1 : 0;
-    $_POST['service_change_advanced'] = $_POST['service_change_advanced'] ? 1 : 0;
-    $_POST['abuse_change'] = $_POST['abuse_change'] ? 1 : 0;
-    $_POST['exchanger_change'] = $_POST['exchanger_change'] ? 1 : 0;
-    $_POST['send_email'] = $_POST['send_email'] ? 1 : 0;
+            $_POST['anim_change'] = $_POST['anim_change'] ? 1 : 0;
+            $_POST['prew'] = $_POST['prew'] ? 1 : 0;
+            $_POST['lib_desc'] = $_POST['lib_desc'] ? 1 : 0;
+            $_POST['ext'] = $_POST['ext'] ? 1 : 0;
+            $_POST['prev_next'] = $_POST['prev_next'] ? 1 : 0;
+            $_POST['style_change'] = $_POST['style_change'] ? 1 : 0;
+            $_POST['service_change'] = $_POST['service_change'] ? 1 : 0;
+            $_POST['service_change_advanced'] = $_POST['service_change_advanced'] ? 1 : 0;
+            $_POST['abuse_change'] = $_POST['abuse_change'] ? 1 : 0;
+            $_POST['exchanger_change'] = $_POST['exchanger_change'] ? 1 : 0;
+            $_POST['send_email'] = $_POST['send_email'] ? 1 : 0;
 
 
-    foreach ($_POST as $key => $value) {
-        if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
-            error($setup['hackmess']);
+            foreach ($_POST as $key => $value) {
+                if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
+                    error($setup['hackmess']);
+                }
+                mysql_query(
+                    "REPLACE INTO `setting`(`name`, `value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
+                        . intval($value) . "');",
+                    $mysql
+                );
+            }
+            echo 'Список модулей изменен';
         }
-        mysql_query("REPLACE INTO `setting`(`name`, `value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '" . intval($value) . "');", $mysql);
-    }
-    echo 'Список модулей изменен';
-}
-break;
+        break;
 
 
 ########################################БЕЗОПАСНОСТЬ################################################
-case 'sec':
-if (!$_POST)
-{
-echo '<div class="mblock">Безопасность:</div>
+    case 'sec':
+        if (!$_POST) {
+            echo '<div class="mblock">Безопасность:</div>
 <form action="apanel.php?action=sec" method="post">
 <div class="row">
 Пароль(если не хотим менять оставляем пустым): <br/>
@@ -1462,43 +1616,57 @@ echo '<div class="mblock">Безопасность:</div>
 <input class="buttom" type="submit" value="Сохранить"/>
 </div>
 </form>';
-}
-else
-{
-    $_POST['autologin'] = $_POST['autologin'] ? 1 : 0;
-    $_POST['delete_dir'] = $_POST['delete_dir'] ? 1 : 0;
-    $_POST['delete_file'] = $_POST['delete_file'] ? 1 : 0;
-    is_num($_POST['countban'], 'countban');
-    is_num($_POST['timeban'], 'timeban');
+        } else {
+            $_POST['autologin'] = $_POST['autologin'] ? 1 : 0;
+            $_POST['delete_dir'] = $_POST['delete_dir'] ? 1 : 0;
+            $_POST['delete_file'] = $_POST['delete_file'] ? 1 : 0;
+            is_num($_POST['countban'], 'countban');
+            is_num($_POST['timeban'], 'timeban');
 
-    if (!$_POST['pwd'] || md5($_POST['pwd']) != $setup['password']) {
-        error($setup['hackmess']);
-    }
+            if (!$_POST['pwd'] || md5($_POST['pwd']) != $setup['password']) {
+                error($setup['hackmess']);
+            }
 
-    foreach ($_POST as $key => $value) {
-        if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir' && $key != 'delete_file') {
-            error('Не заполнено одно из полей.');
+            foreach ($_POST as $key => $value) {
+                if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir'
+                    && $key != 'delete_file'
+                ) {
+                    error('Не заполнено одно из полей.');
+                }
+            }
+            if ($_POST['password'] != '') {
+                $_SESSION['autorise'] = md5($_POST['password']);
+                mysql_query(
+                    "UPDATE `setting` SET `value` = '" . md5($_POST['password']) . "' WHERE `name` = 'password';",
+                    $mysql
+                );
+            }
+            mysql_query(
+                "UPDATE `setting` SET `value` = '" . $_POST['countban'] . "' WHERE `name` = 'countban';",
+                $mysql
+            );
+            mysql_query("UPDATE `setting` SET `value` = '" . $_POST['timeban'] . "' WHERE `name` = 'timeban';", $mysql);
+            mysql_query(
+                "UPDATE `setting` SET `value` = '" . $_POST['autologin'] . "' WHERE `name` = 'autologin';",
+                $mysql
+            );
+            mysql_query(
+                "UPDATE `setting` SET `value` = '" . $_POST['delete_file'] . "' WHERE `name` = 'delete_file';",
+                $mysql
+            );
+            mysql_query(
+                "UPDATE `setting` SET `value` = '" . $_POST['delete_dir'] . "' WHERE `name` = 'delete_dir';",
+                $mysql
+            );
+            echo 'Настройки изменены.';
         }
-    }
-    if ($_POST['password'] != '') {
-        $_SESSION['autorise'] = md5($_POST['password']);
-        mysql_query("UPDATE `setting` SET `value` = '" . md5($_POST['password']) . "' WHERE `name` = 'password';", $mysql);
-    }
-    mysql_query("UPDATE `setting` SET `value` = '" . $_POST['countban'] . "' WHERE `name` = 'countban';", $mysql);
-    mysql_query("UPDATE `setting` SET `value` = '" . $_POST['timeban'] . "' WHERE `name` = 'timeban';", $mysql);
-    mysql_query("UPDATE `setting` SET `value` = '" . $_POST['autologin'] . "' WHERE `name` = 'autologin';", $mysql);
-    mysql_query("UPDATE `setting` SET `value` = '" . $_POST['delete_file'] . "' WHERE `name` = 'delete_file';", $mysql);
-    mysql_query("UPDATE `setting` SET `value` = '" . $_POST['delete_dir'] . "' WHERE `name` = 'delete_dir';", $mysql);
-    echo 'Настройки изменены.';
-}
-break;
+        break;
 
 
 ########################################НАСТРОЙКИ СКРИПТА################################################
-case 'setting':
-if (!$_POST)
-{
-echo '<div class="mblock">Настройки загруз-центра:</div>
+    case 'setting':
+        if (!$_POST) {
+            echo '<div class="mblock">Настройки загруз-центра:</div>
 <form action="apanel.php?action=setting" method="post">
 <div class="row">
 Папка с файлами:<br/>
@@ -1515,35 +1683,43 @@ echo '<div class="mblock">Настройки загруз-центра:</div>
 </div><div class="row">
 
 Папка c JAVA книгами:<br/>
-<input class="enter" name="jpath" type="text" value="' . $setup['jpath'] . '"/> <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['jpath'] . '">Очистить</a><br/>
+<input class="enter" name="jpath" type="text" value="' . $setup['jpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
+                . '?action=clean_cache&amp;dir=' . $setup['jpath'] . '">Очистить</a><br/>
 </div><div class="row">
 
 Папка c иконками из JAR файлов:<br/>
-<input class="enter" name="ipath" type="text" value="' . $setup['ipath'] . '"/> <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['ipath'] . '">Очистить</a><br/>
+<input class="enter" name="ipath" type="text" value="' . $setup['ipath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
+                . '?action=clean_cache&amp;dir=' . $setup['ipath'] . '">Очистить</a><br/>
 </div><div class="row">
 
 Папка c картинками из ZIP архивов:<br/>
-<input class="enter" name="zppath" type="text" value="' . $setup['zppath'] . '"/> <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['zppath'] . '">Очистить</a><br/>
+<input class="enter" name="zppath" type="text" value="' . $setup['zppath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
+                . '?action=clean_cache&amp;dir=' . $setup['zppath'] . '">Очистить</a><br/>
 </div><div class="row">
 
 Папка c ZIP книгами:<br/>
-<input class="enter" name="zpath" type="text" value="' . $setup['zpath'] . '"/> <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['zpath'] . '">Очистить</a><br/>
+<input class="enter" name="zpath" type="text" value="' . $setup['zpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
+                . '?action=clean_cache&amp;dir=' . $setup['zpath'] . '">Очистить</a><br/>
 </div><div class="row">
 
 Папка co скриншотами тем:<br/>
-<input class="enter" name="tpath" type="text" value="' . $setup['tpath'] . '"/> <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['tpath'] . '">Очистить</a><br/>
+<input class="enter" name="tpath" type="text" value="' . $setup['tpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
+                . '?action=clean_cache&amp;dir=' . $setup['tpath'] . '">Очистить</a><br/>
 </div><div class="row">
 
 Папка co скриншотами видео:<br/>
-<input class="enter" name="ffmpegpath" type="text" value="' . $setup['ffmpegpath'] . '"/> <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['ffmpegpath'] . '">Очистить</a><br/>
+<input class="enter" name="ffmpegpath" type="text" value="' . $setup['ffmpegpath'] . '"/> <a href="'
+                . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['ffmpegpath'] . '">Очистить</a><br/>
 </div><div class="row">
 
 Папка c превьюшками картинок:<br/>
-<input class="enter" name="picpath" type="text" value="' . $setup['picpath'] . '"/> <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['picpath'] . '">Очистить</a><br/>
+<input class="enter" name="picpath" type="text" value="' . $setup['picpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
+                . '?action=clean_cache&amp;dir=' . $setup['picpath'] . '">Очистить</a><br/>
 </div><div class="row">
 
 Папка для нарезок:<br/>
-<input class="enter" name="mp3path" type="text" value="' . $setup['mp3path'] . '"/>  <a href="' . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['mp3path'] . '">Очистить</a><br/>
+<input class="enter" name="mp3path" type="text" value="' . $setup['mp3path'] . '"/>  <a href="' . $_SERVER['PHP_SELF']
+                . '?action=clean_cache&amp;dir=' . $setup['mp3path'] . '">Очистить</a><br/>
 </div><div class="row">
 Лимит нарезок (Мб):<br/>
 <input class="enter" name="limit" type="text" value="' . $setup['limit'] . '"/>
@@ -1569,16 +1745,17 @@ echo '<div class="mblock">Настройки загруз-центра:</div>
 
 Стиль по умолчанию:
 <select class="enter" size="1" name="css">';
-foreach (glob('style/*.css', GLOB_NOESCAPE) as $v) {
-    $value = pathinfo($v, PATHINFO_FILENAME);
-    echo '<option value="' . htmlspecialchars($value) . '" ' . sel($value, $setup['css'])  . '>' . htmlspecialchars($value, ENT_NOQUOTES) . '</option>';
-}
-echo '</select>
+            foreach (glob('style/*.css', GLOB_NOESCAPE) as $v) {
+                $value = pathinfo($v, PATHINFO_FILENAME);
+                echo'<option value="' . htmlspecialchars($value) . '" ' . sel($value, $setup['css']) . '>'
+                    . htmlspecialchars($value, ENT_NOQUOTES) . '</option>';
+            }
+            echo '</select>
 </div><div class="row">
 
 Язык по умолчанию:';
-echo Language::getInstance()->selectLangpacks($setup['langpack']);
-echo '</div><div class="row">
+            echo Language::getInstance()->selectLangpacks($setup['langpack']);
+            echo '</div><div class="row">
 
 Размер превьюшек (например, 40*40):<br/>
 <input class="enter" name="prev_size" type="text" value="' . $setup['prev_size'] . '"/>
@@ -1636,40 +1813,42 @@ E-mail админа:<br/>
 <input class="buttom" type="submit" value="Сохранить"/>
 </div>
 </form>';
-}
-else
-{
-    if ($_POST['password'] || $_POST['delete_dir'] || $_POST['delete_file']) {
-        error($setup['hackmess']);
-    }
-    foreach ($_POST as $key => $value) {
-        if ($value == '') {
-            error('Не заполнено одно из полей.');
+        } else {
+            if ($_POST['password'] || $_POST['delete_dir'] || $_POST['delete_file']) {
+                error($setup['hackmess']);
+            }
+            foreach ($_POST as $key => $value) {
+                if ($value == '') {
+                    error('Не заполнено одно из полей.');
+                }
+                mysql_query(
+                    "REPLACE INTO `setting`(`name`,`value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
+                        . mysql_real_escape_string($value, $mysql) . "');",
+                    $mysql
+                );
+                //print mysql_error($mysql);
+            }
+            echo 'Настройки сохранены';
         }
-        mysql_query("REPLACE INTO `setting`(`name`,`value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '" . mysql_real_escape_string($value, $mysql) . "');", $mysql);
-        //print mysql_error($mysql);
-    }
-    echo 'Настройки сохранены';
-}
-break;
+        break;
 
 
-case 'del_news_komm':
-if (mysql_query('DELETE FROM `news_komments` WHERE `id` = ' . intval($_GET['news_komm']), $mysql)) {
-    echo 'Ok<br/>';
-} else {
-    error('Ошибка: ' . mysql_error($mysql));
-}
-break;
+    case 'del_news_komm':
+        if (mysql_query('DELETE FROM `news_komments` WHERE `id` = ' . intval($_GET['news_komm']), $mysql)) {
+            echo 'Ok<br/>';
+        } else {
+            error('Ошибка: ' . mysql_error($mysql));
+        }
+        break;
 
 
-case 'del_komm':
-if (mysql_query('DELETE FROM `komments` WHERE `id` = ' . intval($_GET['komm']), $mysql)) {
-    echo 'Ok<br/>';
-} else {
-    error('Ошибка: ' . mysql_error($mysql));
-}
-break;
+    case 'del_komm':
+        if (mysql_query('DELETE FROM `komments` WHERE `id` = ' . intval($_GET['komm']), $mysql)) {
+            echo 'Ok<br/>';
+        } else {
+            error('Ошибка: ' . mysql_error($mysql));
+        }
+        break;
 }
 
 

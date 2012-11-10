@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -77,13 +77,16 @@ class rss2 extends DOMDocument
 $rss = new rss2($language['news'], $link, $language['news']);
 
 
-$q = mysql_query('
+$q = mysql_query(
+    '
     SELECT ' . Language::getInstance()->buildNewsQuery() . ',
     `time`
     FROM `news`
     ORDER BY `id` DESC
     LIMIT 0, 10
-', $mysql);
+',
+    $mysql
+);
 
 
 while ($arr = mysql_fetch_assoc($q)) {

@@ -179,6 +179,7 @@ class mp3
     {
         //Get Audio Version
         $seconds = 0;
+        $errors = array();
         switch (substr($parts[1], 3, 2)) {
             case '00':
                 $audio = '2.5';
@@ -196,10 +197,10 @@ class mp3
         //Get Layer
         switch (substr($parts[1], 5, 2)) {
             case '01':
-                $layer = 3;
+                $layer = '3';
                 break;
             case '10':
-                $layer = 2;
+                $layer = '2';
                 break;
             default:
                 return false;
@@ -227,7 +228,7 @@ class mp3
         );
         $bitPart = $bitArray[$bitFlag];
         $bitArrayNumber = null;
-        if ($audio == '1') {
+        if ($audio == 1) {
             switch ($layer) {
                 case 1:
                     $bitArrayNumber = 0;
@@ -521,3 +522,5 @@ class mp3
     }
 
 }
+
+?>

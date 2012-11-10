@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -73,30 +73,30 @@ switch ($act) {
         </div>
         </form>
         </fieldset>';
-    break;
-    
-    
+        break;
+
+
     case 'about':
         $q = mysql_query('SELECT `dir`, `path`, `about` FROM `files`', $mysql);
-        
+
         $i = 0;
         while ($file = mysql_fetch_assoc($q)) {
             $about = mb_substr($file['path'], mb_strlen($setup['path']));
-        
+
             if ($file['dir']) {
                 mkdir($setup['opath'] . mb_substr($about, 0, -mb_strlen(strrchr($about, '/'))), 0777, true);
             }
-        
+
             if (trim($file['about'])) {
                 if (file_put_contents($setup['opath'] . $about . '.txt', $file['about'])) {
                     $i++;
                 } else {
-                    echo 'Error - '.$about.'<br/>';
+                    echo 'Error - ' . $about . '<br/>';
                 }
             }
         }
         echo 'Готово. Создано <strong>' . $i . '</strong> файлов описаний';
-    break;
+        break;
 
 
     case 'sort_about':
@@ -105,9 +105,12 @@ switch ($act) {
             $ext = strtolower(pathinfo($_POST['about_folder'] . '/' . $f, PATHINFO_EXTENSION));
             if ($ext == 'txt' && is_file($_POST['about_folder'] . '/' . $f)) {
                 $name = substr($f, 0, -4); // отрезаем .txt
-                $path = mysql_query('SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . mb_strlen($name) . ') = "' . mysql_real_escape_string($name, $mysql) . '"');
+                $path = mysql_query(
+                    'SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . mb_strlen($name) . ') = "'
+                        . mysql_real_escape_string($name, $mysql) . '"'
+                );
                 if (mysql_num_rows($path)) {
-                    
+
                     $about = mysql_result($path, 0);
                     $about = mb_substr($about, mb_strlen($setup['path']));
 
@@ -118,25 +121,28 @@ switch ($act) {
                     } else {
                         echo 'Error - ' . $f . '<br/>';
                     }
-                   
+
                 }
             }
         }
         echo 'Готово. Перемещено <strong>' . $i . '</strong> файлов описаний';
-    break;
-    
-    
+        break;
+
+
     case 'sort_screen':
         $i = 0;
         foreach (scandir($_POST['screen_folder']) as $f) {
             $ext = strtolower(pathinfo($_POST['screen_folder'] . '/' . $f, PATHINFO_EXTENSION));
             if (($ext == 'gif' || $ext == 'jpg') && is_file($_POST['screen_folder'] . '/' . $f)) {
-                
+
                 $name = substr($f, 0, -4); // отрезаем расширение
-                
-                $path = mysql_query('SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . mb_strlen($name) . ') = "' . mysql_real_escape_string($name, $mysql) . '"');
+
+                $path = mysql_query(
+                    'SELECT `path` FROM `files` WHERE SUBSTR(`path`, -' . mb_strlen($name) . ') = "'
+                        . mysql_real_escape_string($name, $mysql) . '"'
+                );
                 if (mysql_num_rows($path)) {
-                    
+
                     $about = mysql_result($path, 0);
                     $about = mb_substr($about, mb_strlen($setup['path']));
 
@@ -147,14 +153,13 @@ switch ($act) {
                     } else {
                         echo 'Error - ' . $f . '<br/>';
                     }
-                   
+
                 }
             }
         }
         echo 'Готово. Перемещено <strong>' . $i . '</strong> скриншотов';
-    break;    
+        break;
 }
-
 
 
 echo '</div></body></html>';

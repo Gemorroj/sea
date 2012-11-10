@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -69,13 +69,19 @@ if (!$id) {
 
 //------------------------------------------------------------------------------------------
 
-$all = mysql_result(mysql_query("SELECT COUNT(1) FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($d['path'], $mysql) . "'", $mysql), 0);
+$all = mysql_result(
+    mysql_query(
+        "SELECT COUNT(1) FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($d['path'], $mysql) . "'",
+        $mysql
+    ),
+    0
+);
 $pages = ceil($all / $onpage);
 if (!$pages) {
     $pages = 1;
 }
 if ($page > $pages || $page < 1) {
-    $page=1;
+    $page = 1;
 }
 if ($start > $all || $start < 0) {
     $start = 0;
@@ -95,14 +101,20 @@ if (!isset($valid_sort[$sort])) {
 
 if ($sort == 'data') {
     $MODE = '`priority` DESC, `timeupload` DESC';
-} else if ($sort == 'size') {
-    $MODE = '`priority` DESC, `size` ASC';
-} else if ($sort == 'load') {
-    $MODE = '`priority` DESC, `loads` DESC';
-} else if ($sort == 'eval' && $setup['eval_change']) {
-    $MODE = '`priority` DESC, `yes` DESC , `no` ASC';
 } else {
-    $MODE = '`priority` DESC, `name` ASC';
+    if ($sort == 'size') {
+        $MODE = '`priority` DESC, `size` ASC';
+    } else {
+        if ($sort == 'load') {
+            $MODE = '`priority` DESC, `loads` DESC';
+        } else {
+            if ($sort == 'eval' && $setup['eval_change']) {
+                $MODE = '`priority` DESC, `yes` DESC , `no` ASC';
+            } else {
+                $MODE = '`priority` DESC, `name` ASC';
+            }
+        }
+    }
 }
 
 // загловок
@@ -131,7 +143,8 @@ if ($ex) {
 }
 
 ##############Заголовок##########################
-echo '<div class="mblock"><img src="../dis/load.png" alt=""/><a href="apanel_index.php">' . $language['downloads'] . '</a> &#187; ' . $put . '</div><div class="iblock">';
+echo'<div class="mblock"><img src="../dis/load.png" alt=""/><a href="apanel_index.php">' . $language['downloads']
+    . '</a> &#187; ' . $put . '</div><div class="iblock">';
 
 //------------------------------------------------------------------------------------------
 if ($setup['eval_change']) {
@@ -140,20 +153,42 @@ if ($setup['eval_change']) {
     $eval = '';
 }
 if ($sort == 'name') {
-    $sortlink = '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=size">размер</a>,<a href="apanel_index.php?sort=load">популярность</a>' . $eval;
-} else if ($sort == 'data') {
-    $sortlink = '<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>,<a href="apanel_index.php?sort=load">популярность</a>' . $eval;
-} else if ($sort == 'size') {
-    $sortlink = '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя<a/>,<a href="apanel_index.php?sort=load">популярность</a></a>' . $eval;
-} else if ($sort == 'load') {
-    $sortlink = '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>' . $eval;
-} else if ($sort == 'eval' && $setup['eval_change']) {
-    $sortlink = '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>,<a href="apanel_index.php?sort=load">популярность</a>';
+    $sortlink
+        =
+        '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=size">размер</a>,<a href="apanel_index.php?sort=load">популярность</a>'
+            . $eval;
 } else {
-    $sortlink = '';
+    if ($sort == 'data') {
+        $sortlink
+            =
+            '<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>,<a href="apanel_index.php?sort=load">популярность</a>'
+                . $eval;
+    } else {
+        if ($sort == 'size') {
+            $sortlink
+                =
+                '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя<a/>,<a href="apanel_index.php?sort=load">популярность</a></a>'
+                    . $eval;
+        } else {
+            if ($sort == 'load') {
+                $sortlink
+                    =
+                    '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>'
+                        . $eval;
+            } else {
+                if ($sort == 'eval' && $setup['eval_change']) {
+                    $sortlink
+                        = '<a href="apanel_index.php?sort=data">дата</a>,<a href="apanel_index.php?sort=name">имя</a>,<a href="apanel_index.php?sort=size">размер</a>,<a href="apanel_index.php?sort=load">популярность</a>';
+                } else {
+                    $sortlink = '';
+                }
+            }
+        }
+    }
 }
 
-echo 'Сортировать по:<br/>' . $sortlink . '<br/><a href="apanel.php?id=' . $id . '&amp;action=newdir">Новая папка</a></div>';
+echo'Сортировать по:<br/>' . $sortlink . '<br/><a href="apanel.php?id=' . $id
+    . '&amp;action=newdir">Новая папка</a></div>';
 //------------------------------------------------------------------------------------------
 if (!$all) {
     echo '<div class="no">[Раздел пуст]<br/></div>';
@@ -164,7 +199,8 @@ $dn = 86400 * $setup['day_new'];
 $key = false;
 
 
-$query = mysql_query('
+$query = mysql_query(
+    '
     SELECT `id`,
     `dir`,
     `dir_count`,
@@ -180,7 +216,8 @@ $query = mysql_query('
     WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
     ORDER BY ' . $MODE . '
     LIMIT ' . $start . ', ' . $onpage,
-$mysql);
+    $mysql
+);
 
 
 while ($v = mysql_fetch_assoc($query)) {
@@ -201,7 +238,9 @@ while ($v = mysql_fetch_assoc($query)) {
             $addico = '[<a class="yes" href="apanel.php?action=addico&amp;id=' . $v['id'] . '">I</a>]';
         }
 
-        $updown = '[<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=pos&amp;to=up">Up</a>/<a class="no" href="apanel.php?id=' . $v['id'] . '&amp;action=pos&amp;to=down">Down</a>]';
+        $updown = '[<a class="yes" href="apanel.php?id=' . $v['id']
+            . '&amp;action=pos&amp;to=up">Up</a>/<a class="no" href="apanel.php?id=' . $v['id']
+            . '&amp;action=pos&amp;to=down">Down</a>]';
         if ($setup['delete_dir'] == 1) {
             $dl = '[<a class="no" href="apanel.php?action=redir&amp;id=' . $v['id'] . '">D</a>]';
         } else {
@@ -216,13 +255,24 @@ while ($v = mysql_fetch_assoc($query)) {
             $new_all = '';
         }
 
-        echo $ico . '<strong><a href="apanel_index.php?id=' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>(' . $v['dir_count'] . ')' . $new_all . ' [<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=flash">F</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=rename">R</a>][<a class="no" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]' . $dl . $addico . $updown;
+        echo$ico . '<strong><a href="apanel_index.php?id=' . $v['id'] . '">' . htmlspecialchars(
+            $v['name'],
+            ENT_NOQUOTES
+        ) . '</a></strong>(' . $v['dir_count'] . ')' . $new_all . ' [<a class="yes" href="apanel.php?id=' . $v['id']
+            . '&amp;action=flash">F</a>][<a class="yes" href="apanel.php?id=' . $v['id']
+            . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id']
+            . '&amp;action=rename">R</a>][<a class="no" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]'
+            . $dl . $addico . $updown;
 
         // описания
         if ($setup['desc']) {
             $screen = strstr(strstr($v['v'], '/'), '/'); // убираем папку с загрузками
-            if (is_file($setup['opath'] . '/' . $screen . '.txt')){
-                echo '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
+            if (is_file($setup['opath'] . '/' . $screen . '.txt')) {
+                echo'<br/>' . mb_substr(
+                    trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')),
+                    0,
+                    $setup['desc']
+                );
             }
         }
 
@@ -242,7 +292,7 @@ while ($v = mysql_fetch_assoc($query)) {
         }
 
         $v['timeupload'] = tm($v['timeupload']);
-        
+
         if ($setup['ext']) {
             $extension = '(' . $ext . ')';
         } else {
@@ -268,25 +318,40 @@ while ($v = mysql_fetch_assoc($query)) {
         }
 
 
-        $desc = '';    
+        $desc = '';
         if ($setup['desc']) {
             $screen = strstr(strstr($v['v'], '/'), '/'); // убираем папку с загрузками
 
-            if (is_file($setup['opath'] . '/' . $screen . '.txt')){
-                $desc = '<br/>' . mb_substr(trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')), 0, $setup['desc']);
+            if (is_file($setup['opath'] . '/' . $screen . '.txt')) {
+                $desc = '<br/>' . mb_substr(
+                    trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt')),
+                    0,
+                    $setup['desc']
+                );
             }
         }
 
-        
+
         /////////////
-        echo $row . $ico . '<strong><a href="apanel_view.php?id=' . $v['id'] . '">' . htmlspecialchars($v['name'], ENT_NOQUOTES) . '</a></strong>' . $extension . $v['size'] . '[<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=rename">R</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]' . $unzip . $dl . '[' . $add_screen . ']' . $desc;
-        
+        echo$row . $ico . '<strong><a href="apanel_view.php?id=' . $v['id'] . '">' . htmlspecialchars(
+            $v['name'],
+            ENT_NOQUOTES
+        ) . '</a></strong>' . $extension . $v['size'] . '[<a class="yes" href="apanel.php?id=' . $v['id']
+            . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id']
+            . '&amp;action=rename">R</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]'
+            . $unzip . $dl . '[' . $add_screen . ']' . $desc;
+
         if ($sort == 'data') {
             echo '<br/>Добавлен: ' . $v['timeupload'];
-        } else if ($sort == 'load') {
-            echo '<br/>Скачано ' . $v['loads'] . ' раз(а)';
-        } else if ($sort == 'eval' && $setup['eval_change'] == 1) {
-            echo '<br/>Рейтинг(+/-): <span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no'] . '</span><br/>';
+        } else {
+            if ($sort == 'load') {
+                echo '<br/>Скачано ' . $v['loads'] . ' раз(а)';
+            } else {
+                if ($sort == 'eval' && $setup['eval_change'] == 1) {
+                    echo'<br/>Рейтинг(+/-): <span class="yes">' . $v['yes'] . '</span>/<span class="no">' . $v['no']
+                        . '</span><br/>';
+                }
+            }
         }
         echo '</div>';
     }
@@ -302,7 +367,7 @@ if ($pages > 1) {
     }
     for ($i = $asd; $i < $asd2; ++$i) {
         if ($i < $all && $i > 0) {
-            if ($i > $pages ) {
+            if ($i > $pages) {
                 break;
             }
             if ($page == $i) {
@@ -312,7 +377,7 @@ if ($pages > 1) {
             }
         }
     }
-    
+
     if ($i <= $pages) {
         if ($asd2 < $all) {
             echo ' ... <a href="apanel_index.php?id=' . $id . '&amp;page=' . $pages . '">' . $pages . '</a>';
@@ -321,7 +386,10 @@ if ($pages > 1) {
     echo '<br/>';
     //------------------------------------------------------------------------------------------
     if ($pages > $setup['pagehand'] && $setup['pagehand_change'] == 1) {
-        echo 'Страница ' . $page . ' из ' . $pages . ':<br/><form action="apanel_index.php" method="get"><div class="row"><input class="buttom" type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="4" size="8" value=""/> <input class="buttom" type="submit" value="Перейти"/></div></form>';
+        echo'Страница ' . $page . ' из ' . $pages
+            . ':<br/><form action="apanel_index.php" method="get"><div class="row"><input class="buttom" type="hidden" name="id" value="'
+            . $id
+            . '"/><input class="enter" name="page" type="text" maxlength="4" size="8" value=""/> <input class="buttom" type="submit" value="Перейти"/></div></form>';
     }
     //------------------------------------------------------------------------------------------
     if ($setup['onpage_change']) {

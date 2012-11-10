@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -55,8 +55,10 @@ if (isset($_POST['size'])) {
 if (!$w || !$h) {
     $resize = false;
     list($w, $h) = explode('*', $setup['prev_size']);
-} else if ($marker) {
-    $marker = ($marker == 2 ? 0 : 1);
+} else {
+    if ($marker) {
+        $marker = ($marker == 2 ? 0 : 1);
+    }
 }
 
 $pic = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
@@ -64,7 +66,10 @@ $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
 
 if ($resize) {
     $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
-    mysql_query('UPDATE `files` SET `loads`=`loads`+1, `timeload`=' . $_SERVER['REQUEST_TIME'] . ' WHERE `id`=' . $id, $mysql);
+    mysql_query(
+        'UPDATE `files` SET `loads`=`loads`+1, `timeload`=' . $_SERVER['REQUEST_TIME'] . ' WHERE `id`=' . $id,
+        $mysql
+    );
 }
 
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['picpath'] . '/' . $prev_pic . '.gif';

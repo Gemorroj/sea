@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -68,7 +68,13 @@ $all = $pages = $directories = $files = 0;
 if ($word != '') {
     $sqlLikeWord = str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($word, $mysql));
 
-    $all = mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `hidden` = "0" AND `name` LIKE "%' . $sqlLikeWord . '%"', $mysql), 0);
+    $all = mysql_result(
+        mysql_query(
+            'SELECT COUNT(1) FROM `files` WHERE `hidden` = "0" AND `name` LIKE "%' . $sqlLikeWord . '%"',
+            $mysql
+        ),
+        0
+    );
     $all = $all > $setup['top_num'] ? $setup['top_num'] : $all;
 
     $onpage = $onpage > $all ? $all : $onpage;
@@ -83,25 +89,32 @@ if ($word != '') {
     }
 
     $start = ($page - 1) * $onpage;
-    if ($start > $all || $start < 0){
+    if ($start > $all || $start < 0) {
         $start = 0;
     }
 
 
     if ($sort == 'date') {
         $mode = '`priority` DESC, `timeupload` DESC';
-    } else if ($sort == 'size') {
-        $mode = '`priority` DESC, `size` ASC';
-    } else if ($sort == 'load') {
-        $mode = '`priority` DESC, `loads` DESC';
-    } else if ($sort == 'eval' && $setup['eval_change']) {
-        $mode = '`priority` DESC, `yes` DESC , `no` ASC';
     } else {
-        $mode = '`priority` DESC, `name` ASC';
+        if ($sort == 'size') {
+            $mode = '`priority` DESC, `size` ASC';
+        } else {
+            if ($sort == 'load') {
+                $mode = '`priority` DESC, `loads` DESC';
+            } else {
+                if ($sort == 'eval' && $setup['eval_change']) {
+                    $mode = '`priority` DESC, `yes` DESC , `no` ASC';
+                } else {
+                    $mode = '`priority` DESC, `name` ASC';
+                }
+            }
+        }
     }
 
 
-    $query = mysql_query('
+    $query = mysql_query(
+        '
         SELECT `id`,
         `dir`,
         `dir_count`,
@@ -113,13 +126,15 @@ if ($word != '') {
         `timeupload`,
         `yes`,
         `no`,
-        (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . ' AND `hidden` = "0") AS `count`
+        (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . (
+            $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . ' AND `hidden` = "0") AS `count`
         FROM `files`
         WHERE `hidden` = "0"
         AND `name` LIKE "%' . $sqlLikeWord . '%"
         ORDER BY ' . $mode . '
         LIMIT ' . $start . ', ' . $onpage,
-    $mysql);
+        $mysql
+    );
 
     require 'moduls/inc/_files.php';
 }

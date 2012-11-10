@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -52,7 +52,7 @@ if ($page < 1) {
 }
 
 $onpage = get2ses('onpage');
-is_num($onpage,'onpage');
+is_num($onpage, 'onpage');
 if ($onpage < 3) {
     $onpage = 3;
 }
@@ -64,7 +64,10 @@ $all = $all[0];
 $onpage = ($onpage > $all) ? $all : $onpage;
 $start = ($onpage * $page) - $onpage;
 
-$sql = mysql_query('SELECT * FROM `news_komments` WHERE `id_news` = ' . $id . ' ORDER BY `id` DESC LIMIT ' . $start . ', ' . $onpage, $mysql);
+$sql = mysql_query(
+    'SELECT * FROM `news_komments` WHERE `id_news` = ' . $id . ' ORDER BY `id` DESC LIMIT ' . $start . ', ' . $onpage,
+    $mysql
+);
 
 
 ###############Запись###########################
@@ -84,11 +87,17 @@ if ($_GET['act'] == 'add') {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $_POST['msg'] = mysql_real_escape_string(nl2br(bbcode(htmlspecialchars(mb_substr($_POST['msg'], 0, 32512), ENT_NOQUOTES))), $mysql);
+    $_POST['msg'] = mysql_real_escape_string(
+        nl2br(bbcode(htmlspecialchars(mb_substr($_POST['msg'], 0, 32512), ENT_NOQUOTES))),
+        $mysql
+    );
     $_POST['name'] = mysql_real_escape_string(mb_substr($_POST['name'], 0, 24), $mysql);
 
 
-    if (mysql_fetch_row(mysql_query("SELECT 1 FROM `news_komments` WHERE `text` = '" . $_POST['msg'] . "' LIMIT 1", $mysql))) {
+    if (mysql_fetch_row(
+        mysql_query("SELECT 1 FROM `news_komments` WHERE `text` = '" . $_POST['msg'] . "' LIMIT 1", $mysql)
+    )
+    ) {
         $error .= $language['why repeat myself'] . '<br/>';
     }
     //Если нет ошибок пишем в базу
@@ -96,12 +105,14 @@ if ($_GET['act'] == 'add') {
         error($error);
     }
 
-    mysql_query("
+    mysql_query(
+        "
         INSERT INTO `news_komments` (
             `id_news`, `text`, `name`, `time`
         ) VALUES (
             " . $id . ", '" . $_POST['msg'] . "', '" . $_POST['name'] . "', " . $_SERVER['REQUEST_TIME'] . "
-        );", $mysql
+        );",
+        $mysql
     );
 
     $out .= '<div class="iblock">' . $language['your comment has been successfully added'] . '</div>';
@@ -127,7 +138,7 @@ if ($_GET['act'] == 'add') {
     while ($komments = mysql_fetch_assoc($sql)) {
         $bool != $bool;
 
-        if ($bool){
+        if ($bool) {
             $out .= '<div class="row">';
         } else {
             $out .= '<div class="row2">';
@@ -135,22 +146,30 @@ if ($_GET['act'] == 'add') {
 
 
         if (isset($_SESSION['autorise']) && $_SESSION['autorise'] == $setup['password']) {
-            $out .= '<a href="' . DIRECTORY . 'apanel/apanel.php?news_komm=' . $komments['id'] . '&amp;action=del_news_komm" title="del">[X]</a> ';
+            $out .= '<a href="' . DIRECTORY . 'apanel/apanel.php?news_komm=' . $komments['id']
+                . '&amp;action=del_news_komm" title="del">[X]</a> ';
         }
 
-        $out .= '<strong>' . htmlspecialchars($komments['name'], ENT_NOQUOTES) . '</strong> (' . tm($komments['time']) . ')<br/>' . str_replace("\n", '<br/>', $komments['text']) . '</div>';
+        $out .= '<strong>' . htmlspecialchars($komments['name'], ENT_NOQUOTES) . '</strong> (' . tm($komments['time'])
+            . ')<br/>' . str_replace("\n", '<br/>', $komments['text']) . '</div>';
     }
 
     // капча
     if ($setup['komments_captcha']) {
-        $captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id() . '" /><br/>' . $language['code'] . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
+        $captcha = '<img alt="" src="' . DIRECTORY . 'moduls/kcaptcha/index.php?' . session_name() . '=' . session_id()
+            . '" /><br/>' . $language['code']
+            . '<input class="enter" type="text" name="keystring" size="4" maxlength="4"/><br/>';
     } else {
         $captcha = '';
     }
 
 
     //Форма добавления камментов
-    $out .= '<div class="iblock"><form action="' . DIRECTORY . 'news_komm/' . $id . '/1/add" method="post"><div class="row">' . $language['your name'] . ':<br/><input class="enter" name="name" type="text" value="" maxlength="10"/><br/>' . $language['message'] . ':<br/><textarea class="enter" cols="40" rows="5" name="msg"></textarea><br/>' . $captcha . '<br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form></div>';
+    $out .= '<div class="iblock"><form action="' . DIRECTORY . 'news_komm/' . $id
+        . '/1/add" method="post"><div class="row">' . $language['your name']
+        . ':<br/><input class="enter" name="name" type="text" value="" maxlength="10"/><br/>' . $language['message']
+        . ':<br/><textarea class="enter" cols="40" rows="5" name="msg"></textarea><br/>' . $captcha
+        . '<br/><input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form></div>';
 
 
     //Страницы
@@ -163,7 +182,7 @@ if ($_GET['act'] == 'add') {
         }
         for ($i = $asd; $i < $asd2; ++$i) {
             if ($i < $all && $i > 0) {
-                if ($i > $pages ) {
+                if ($i > $pages) {
                     break;
                 }
                 if ($page == $i) {
@@ -188,9 +207,14 @@ echo $out . '<div class="iblock">- <a href="' . DIRECTORY . 'news/' . $id . '">'
 - <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a><br/></div>';
 
 
-
 //Авточистка комментов
 if ($all > $setup['klimit']) {
-    mysql_query('DELETE FROM `news_komments` WHERE `id` = ' . mysql_result(mysql_query('SELECT MIN(`id`) FROM news_komments WHERE `id_news` = ' . $id, $mysql), 0), $mysql);
+    mysql_query(
+        'DELETE FROM `news_komments` WHERE `id` = ' . mysql_result(
+            mysql_query('SELECT MIN(`id`) FROM news_komments WHERE `id_news` = ' . $id, $mysql),
+            0
+        ),
+        $mysql
+    );
     $page = 1;
 }

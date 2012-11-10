@@ -72,7 +72,7 @@ Class GIFEncoder {
                                                 ( $GIF_red | ( $GIF_grn << 8 ) | ( $GIF_blu << 16 ) ) : -1;
 
 
-                for ( $i = 0; $i < $a = sizeof ( $GIF_src ); $i++ ) {
+                for ( $i = 0, $a = sizeof ( $GIF_src ); $i < $a; $i++ ) {
                         if ( strToLower ( $GIF_mod ) == 'url' ) {
                                 $this->BUF [ ] = fread ( fopen ( $GIF_src [ $i ], "rb" ), filesize ( $GIF_src [ $i ] ) );
                         }
@@ -102,7 +102,7 @@ Class GIFEncoder {
                         }
                 }
                 GIFEncoder::GIFAddHeader ( );
-                for ( $i = 0; $i < $aa = sizeof ( $this->BUF ); $i++ ) {
+                for ( $i = 0, $aa = sizeof ( $this->BUF ); $i < $aa; $i++ ) {
                         GIFEncoder::GIFAddFrames ( $i, $GIF_dly [ $i ] );
                 }
                 GIFEncoder::GIFAddFooter ( );
@@ -284,3 +284,5 @@ Class GIFEncoder {
                 return ( $this->GIF );
         }
 }
+
+?>

@@ -29,10 +29,9 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-
 
 
 require 'moduls/header.php';
@@ -46,17 +45,28 @@ $template->setTemplate('stat.tpl');
 $seo['title'] = $language['statistics'];
 
 
-$stat = mysql_fetch_assoc(mysql_query('
+$stat = mysql_fetch_assoc(
+    mysql_query(
+        '
     SELECT COUNT(1) AS all_files, SUM(`loads`) AS total_downloads, SUM(`size`) AS total_volume
     FROM `files`
     WHERE `dir` = "0" AND `hidden` = "0"
-', $mysql));
-$stat['total_new_files'] = mysql_result(mysql_query('
+',
+        $mysql
+    )
+);
+$stat['total_new_files'] = mysql_result(
+    mysql_query(
+        '
     SELECT COUNT(1)
     FROM `files`
     WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . '
     AND `hidden` = "0"
-', $mysql), 0);
+',
+        $mysql
+    ),
+    0
+);
 
 
 $template->assign('stat', $stat);

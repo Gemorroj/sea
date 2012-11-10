@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -44,7 +44,10 @@ $d = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $i
 
 
 if (file_exists($d[0])) {
-    mysql_query('UPDATE `files` SET `loads`=`loads` + 1, `timeload` = ' . $_SERVER['REQUEST_TIME'] . ' WHERE `id` = ' . $id, $mysql);
+    mysql_query(
+        'UPDATE `files` SET `loads`=`loads` + 1, `timeload` = ' . $_SERVER['REQUEST_TIME'] . ' WHERE `id` = ' . $id,
+        $mysql
+    );
 
     $nm = array_reverse(explode('.', basename($d[0])));
     $nm = $nm[1];
@@ -68,8 +71,9 @@ if (file_exists($d[0])) {
         $ar[] = chr(10);
 
         file_put_contents($setup['jpath'] . '/props.ini', $ar);
-        file_put_contents($setup['jpath'] . '/MANIFEST.MF',
-'Manifest-Version: 1.0
+        file_put_contents(
+            $setup['jpath'] . '/MANIFEST.MF',
+            'Manifest-Version: 1.0
 MicroEdition-Configuration: CLDC-1.0
 MicroEdition-Profile: MIDP-1.0
 MIDlet-Name: ' . $nm . '
@@ -77,7 +81,8 @@ MIDlet-Vendor: Gemor Reader
 MIDlet-1: ' . $nm . ', /icon.png, br.BookReader
 MIDlet-Version: 1.6
 MIDlet-Info-URL: http://' . $_SERVER['HTTP_HOST'] . '
-MIDlet-Delete-Confirm: GoodBye =)');
+MIDlet-Delete-Confirm: GoodBye =)'
+        );
 
         include 'moduls/PEAR/pclzip.lib.php';
         $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
@@ -86,7 +91,12 @@ MIDlet-Delete-Confirm: GoodBye =)');
         $zip->add(dirname(__FILE__) . '/' . $setup['jpath'] . '/props.ini', PCLZIP_OPT_REMOVE_ALL_PATH);
         //echo 'ERROR : '.$zip->errorInfo(true);
 
-        $zip->add(dirname(__FILE__) . '/' . $setup['jpath'] . '/MANIFEST.MF', PCLZIP_OPT_REMOVE_ALL_PATH, PCLZIP_OPT_ADD_PATH, 'META-INF');
+        $zip->add(
+            dirname(__FILE__) . '/' . $setup['jpath'] . '/MANIFEST.MF',
+            PCLZIP_OPT_REMOVE_ALL_PATH,
+            PCLZIP_OPT_ADD_PATH,
+            'META-INF'
+        );
         //echo 'ERROR : '.$zip->errorInfo(true);
 
         file_put_contents($setup['jpath'] . '/textfile.txt', $arr[0]);
@@ -99,7 +109,10 @@ MIDlet-Delete-Confirm: GoodBye =)');
         for ($i = 1; $i < $all; ++$i) {
             file_put_contents($setup['jpath'] . '/textfile' . $i . '.txt', $arr[$i]);
 
-            $zip->add(dirname(__FILE__) . '/' . $setup['jpath'] . '/textfile' . $i . '.txt', PCLZIP_OPT_REMOVE_ALL_PATH);
+            $zip->add(
+                dirname(__FILE__) . '/' . $setup['jpath'] . '/textfile' . $i . '.txt',
+                PCLZIP_OPT_REMOVE_ALL_PATH
+            );
             //echo 'ERROR : '.$zip->errorInfo(true);
             unlink($setup['jpath'] . '/textfile' . $i . '.txt');
         }
@@ -110,7 +123,11 @@ MIDlet-Delete-Confirm: GoodBye =)');
         chmod($tmp, 0644);
     }
 
-    header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), true, 301);
+    header(
+        'Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)),
+        true,
+        301
+    );
 } else {
     echo $setup['hackmess'];
 }

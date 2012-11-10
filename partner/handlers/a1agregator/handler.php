@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -41,13 +41,14 @@ $password = mt_rand(1000, mt_getrandmax());
 $answer = str_replace('{password}', $password, ANSWER);
 $result = $num = false;
 
-$result1 = mysql_query("
+$result1 = mysql_query(
+    "
     INSERT INTO `inbox`
 	VALUES (
 	0,
 	'" . mysql_real_escape_string($_GET['date'], $mysql) . "',
 	'" . mysql_real_escape_string($_GET['msg'], $mysql) . "',
-    '" . mysql_real_escape_string($_GET['msg_trans'], $mysql) ."',
+    '" . mysql_real_escape_string($_GET['msg_trans'], $mysql) . "',
     " . intval($_GET['operator_id']) . ",
     " . floatval($_GET['user_id']) . ",
     " . intval($_GET['smsid']) . ",
@@ -60,22 +61,25 @@ $result1 = mysql_query("
     " . intval($_GET['ran'], $mysql) . ",
     '" . mysql_real_escape_string($answer, $mysql) . "'
 	)
-	", $mysql);
+	",
+    $mysql
+);
 
 if ($result1) {
-	foreach ($partner[$_GET['operator_id']] as $var) {
-		if ($var[0] == $_GET['num']) {
-			$num = $var[1];
-			break;
-		}
-	}
+    foreach ($partner[$_GET['operator_id']] as $var) {
+        if ($var[0] == $_GET['num']) {
+            $num = $var[1];
+            break;
+        }
+    }
 
-	if (!$num) {
-		$num = UNKNOWN_NUMBER;
-	}
+    if (!$num) {
+        $num = UNKNOWN_NUMBER;
+    }
 
-	if ($num) {
-        $result2 = mysql_query("
+    if ($num) {
+        $result2 = mysql_query(
+            "
             INSERT INTO `passwords`
             VALUES (
             0,
@@ -83,15 +87,17 @@ if ($result1) {
             NOW(),
             NOW() + INTERVAL " . $num . "
             )
-        ", $mysql);
+        ",
+            $mysql
+        );
     } else {
         $result2 = false;
     }
 
     if (!$result2) {
-    	mysql_query('DELETE FROM `inbox` WHERE `id` = ' . mysql_insert_id($mysql), $mysql);
-   	} else {
-   		$result = true;
+        mysql_query('DELETE FROM `inbox` WHERE `id` = ' . mysql_insert_id($mysql), $mysql);
+    } else {
+        $result = true;
     }
 }
 
@@ -99,5 +105,5 @@ header('Content-type: text/plain; charset=UTF-8');
 if ($result) {
     echo 'smsid: ' . $_GET['smsid'] . "\nstatus: reply\n\n" . $answer;
 } else {
-	echo 'smsid: ' . $_GET['smsid'] . "\nstatus: ignore\n\nError";
+    echo 'smsid: ' . $_GET['smsid'] . "\nstatus: ignore\n\nError";
 }

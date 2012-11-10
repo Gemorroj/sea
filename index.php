@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -58,18 +58,26 @@ $template->assign('sort', $sort);
 
 if ($sort == 'date') {
     $mode = '`priority` DESC, `timeupload` DESC';
-} else if ($sort == 'size') {
-    $mode = '`priority` DESC, `size` ASC';
-} else if ($sort == 'load') {
-    $mode = '`priority` DESC, `loads` DESC';
-} else if ($sort == 'eval' && $setup['eval_change']) {
-    $mode = '`priority` DESC, `yes` DESC , `no` ASC';
 } else {
-    $mode = '`priority` DESC, `name` ASC';
+    if ($sort == 'size') {
+        $mode = '`priority` DESC, `size` ASC';
+    } else {
+        if ($sort == 'load') {
+            $mode = '`priority` DESC, `loads` DESC';
+        } else {
+            if ($sort == 'eval' && $setup['eval_change']) {
+                $mode = '`priority` DESC, `yes` DESC , `no` ASC';
+            } else {
+                $mode = '`priority` DESC, `name` ASC';
+            }
+        }
+    }
 }
 ###############Получаем текущий каталог#############
 if ($id) {
-    $d = mysql_fetch_assoc(mysql_query('
+    $d = mysql_fetch_assoc(
+        mysql_query(
+            '
         SELECT `t1`.`path`,
         `t1`.`seo`,
         COUNT(1) AS `all`
@@ -79,16 +87,24 @@ if ($id) {
         AND `t1`.`hidden` = "0"
         GROUP BY `t1`.`id`
         ORDER BY NULL',
-    $mysql));
+            $mysql
+        )
+    );
     $seo = unserialize($d['seo']);
 } else {
     $d['path'] = $setup['path'] . '/';
-    $d['all'] = mysql_result(mysql_query('
+    $d['all'] = mysql_result(
+        mysql_query(
+            '
         SELECT COUNT(1)
         FROM `files`
         WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
         AND `hidden` = "0"
-    ', $mysql), 0);
+    ',
+            $mysql
+        ),
+        0
+    );
 }
 
 
@@ -107,7 +123,7 @@ if ($page > $pages || $page < 1) {
 }
 
 $start = ($page - 1) * $onpage;
-if ($start > $d['all'] || $start < 0){
+if ($start > $d['all'] || $start < 0) {
     $start = 0;
 }
 
@@ -123,7 +139,8 @@ $path = $setup['path'] . '/';
 
 $breadcrumbs = array();
 if ($ex) {
-    $implode = '
+    $implode
+        = '
         SELECT `id`,
         ' . Language::getInstance()->buildFilesQuery() . '
         FROM `files`
@@ -145,22 +162,27 @@ if ($ex) {
 $template->assign('breadcrumbs', $breadcrumbs);
 
 
-
 /// новости
-$news = mysql_fetch_assoc(mysql_query('
+$news = mysql_fetch_assoc(
+    mysql_query(
+        '
     SELECT `time`,
     ' . Language::getInstance()->buildNewsQuery() . '
     FROM `news`
     ORDER BY `id` DESC
     LIMIT 1
-', $mysql));
+',
+        $mysql
+    )
+);
 
 $template->assign('news', $news);
 
 $template->assign('allItemsInDir', $d['all']);
 
 
-$query = mysql_query('
+$query = mysql_query(
+    '
     SELECT
     `id`,
     `dir`,
@@ -172,13 +194,15 @@ $query = mysql_query('
     `timeupload`,
     `yes`,
     `no`,
-    (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . ' AND `hidden` = "0") AS `count`
+    (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . (
+        $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . ' AND `hidden` = "0") AS `count`
     FROM `files`
     WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
     AND `hidden` = "0"
     ORDER BY ' . $mode . '
     LIMIT ' . $start . ', ' . $onpage,
-$mysql);
+    $mysql
+);
 
 require 'moduls/inc/_files.php';
 

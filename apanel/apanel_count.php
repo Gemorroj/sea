@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -64,7 +64,18 @@ while ($dir = mysql_fetch_row($res)) {
     $dir[0] = mysql_real_escape_string($dir[0], $mysql);
     // заносим данныев БД
 
-    mysql_query('UPDATE `files` SET `dir_count` = ' . intval(mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE "' . $dir[0] . '%" AND `hidden` = "0"', $mysql), 0)) . ' WHERE `path`="' . $dir[0] . '"', $mysql);
+    mysql_query(
+        'UPDATE `files` SET `dir_count` = ' . intval(
+            mysql_result(
+                mysql_query(
+                    'SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE "' . $dir[0] . '%" AND `hidden` = "0"',
+                    $mysql
+                ),
+                0
+            )
+        ) . ' WHERE `path`="' . $dir[0] . '"',
+        $mysql
+    );
 }
 mysql_query('OPTIMIZE TABLE `files`', $mysql);
 

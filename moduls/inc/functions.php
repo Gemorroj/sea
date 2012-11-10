@@ -29,61 +29,357 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
 
 /**
  * Транслит с латиницы на русский
- * 
+ *
  * @param string $t
+ *
  * @return string
  */
 function trans($t)
 {
-    $a = array('_', 'YA', 'Ya', 'ya', 'yee', 'YO', 'yo', 'Yo', 'ZH', 'zh', 'Zh', 'Z',
-        'z', 'CH', 'ch', 'Ch', 'SH', 'sh', 'Sh', 'YE', 'ye', 'Ye', 'YU', 'yu', 'Yu',
-        'JA', 'ja', 'Ja', 'A', 'a', 'B', 'b', 'V', 'v', 'G', 'g', 'D', 'd', 'E', 'e',
-        'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p',
-        'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'F', 'f', 'H', 'h', 'W', 'w', 'x', 'q',
-        'Y', 'y', 'C', 'c');
-    $b = array(' ', 'Я', 'Я', 'я', 'ые', 'Ё', 'ё', 'Ё', 'Ж', 'ж', 'Ж', 'З', 'з', 'Ч',
-        'ч', 'Ch', 'Ш', 'ш', 'Ш', 'Э', 'э', 'Э', 'Ю', 'ю', 'Ю', 'Я', 'я', 'Я', 'А', 'а',
-        'Б', 'б', 'В', 'в', 'Г', 'г', 'Д', 'д', 'Е', 'е', 'И', 'и', 'Й', 'й', 'К', 'к',
-        'Л', 'л', 'М', 'м', 'Н', 'н', 'О', 'о', 'П', 'п', 'Р', 'р', 'С', 'с', 'Т', 'т',
-        'У', 'у', 'Ф', 'ф', 'Х', 'х', 'Щ', 'щ', 'ъ', 'ь', 'Ы', 'ы', 'Ц', 'ц', '');
+    $a = array(
+        '_',
+        'YA',
+        'Ya',
+        'ya',
+        'yee',
+        'YO',
+        'yo',
+        'Yo',
+        'ZH',
+        'zh',
+        'Zh',
+        'Z',
+        'z',
+        'CH',
+        'ch',
+        'Ch',
+        'SH',
+        'sh',
+        'Sh',
+        'YE',
+        'ye',
+        'Ye',
+        'YU',
+        'yu',
+        'Yu',
+        'JA',
+        'ja',
+        'Ja',
+        'A',
+        'a',
+        'B',
+        'b',
+        'V',
+        'v',
+        'G',
+        'g',
+        'D',
+        'd',
+        'E',
+        'e',
+        'I',
+        'i',
+        'J',
+        'j',
+        'K',
+        'k',
+        'L',
+        'l',
+        'M',
+        'm',
+        'N',
+        'n',
+        'O',
+        'o',
+        'P',
+        'p',
+        'R',
+        'r',
+        'S',
+        's',
+        'T',
+        't',
+        'U',
+        'u',
+        'F',
+        'f',
+        'H',
+        'h',
+        'W',
+        'w',
+        'x',
+        'q',
+        'Y',
+        'y',
+        'C',
+        'c'
+    );
+    $b = array(
+        ' ',
+        'Я',
+        'Я',
+        'я',
+        'ые',
+        'Ё',
+        'ё',
+        'Ё',
+        'Ж',
+        'ж',
+        'Ж',
+        'З',
+        'з',
+        'Ч',
+        'ч',
+        'Ch',
+        'Ш',
+        'ш',
+        'Ш',
+        'Э',
+        'э',
+        'Э',
+        'Ю',
+        'ю',
+        'Ю',
+        'Я',
+        'я',
+        'Я',
+        'А',
+        'а',
+        'Б',
+        'б',
+        'В',
+        'в',
+        'Г',
+        'г',
+        'Д',
+        'д',
+        'Е',
+        'е',
+        'И',
+        'и',
+        'Й',
+        'й',
+        'К',
+        'к',
+        'Л',
+        'л',
+        'М',
+        'м',
+        'Н',
+        'н',
+        'О',
+        'о',
+        'П',
+        'п',
+        'Р',
+        'р',
+        'С',
+        'с',
+        'Т',
+        'т',
+        'У',
+        'у',
+        'Ф',
+        'ф',
+        'Х',
+        'х',
+        'Щ',
+        'щ',
+        'ъ',
+        'ь',
+        'Ы',
+        'ы',
+        'Ц',
+        'ц',
+        ''
+    );
+
     return str_replace($a, $b, $t);
 }
 
 
 /**
  * Транслит с русского на латиницу
- * 
+ *
  * @param string $t
+ *
  * @return string
  */
 function retrans($t)
 {
-    $a = array('_', 'YA', 'Ya', 'ya', 'yee', 'YO', 'yo', 'Yo', 'ZH', 'zh', 'Zh', 'Z',
-        'z', 'CH', 'ch', 'Ch', 'SH', 'sh', 'Sh', 'YE', 'ye', 'Ye', 'YU', 'yu', 'Yu',
-        'JA', 'ja', 'Ja', 'A', 'a', 'B', 'b', 'V', 'v', 'G', 'g', 'D', 'd', 'E', 'e',
-        'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p',
-        'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'F', 'f', 'H', 'h', 'W', 'w', 'x', 'q',
-        'Y', 'y', 'C', 'c');
-    $b = array(' ', 'Я', 'Я', 'я', 'ые', 'Ё', 'ё', 'Ё', 'Ж', 'ж', 'Ж', 'З', 'з', 'Ч',
-        'ч', 'Ch', 'Ш', 'ш', 'Ш', 'Э', 'э', 'Э', 'Ю', 'ю', 'Ю', 'Я', 'я', 'Я', 'А', 'а',
-        'Б', 'б', 'В', 'в', 'Г', 'г', 'Д', 'д', 'Е', 'е', 'И', 'и', 'Й', 'й', 'К', 'к',
-        'Л', 'л', 'М', 'м', 'Н', 'н', 'О', 'о', 'П', 'п', 'Р', 'р', 'С', 'с', 'Т', 'т',
-        'У', 'у', 'Ф', 'ф', 'Х', 'х', 'Щ', 'щ', 'ъ', 'ь', 'Ы', 'ы', 'Ц', 'ц');
+    $a = array(
+        '_',
+        'YA',
+        'Ya',
+        'ya',
+        'yee',
+        'YO',
+        'yo',
+        'Yo',
+        'ZH',
+        'zh',
+        'Zh',
+        'Z',
+        'z',
+        'CH',
+        'ch',
+        'Ch',
+        'SH',
+        'sh',
+        'Sh',
+        'YE',
+        'ye',
+        'Ye',
+        'YU',
+        'yu',
+        'Yu',
+        'JA',
+        'ja',
+        'Ja',
+        'A',
+        'a',
+        'B',
+        'b',
+        'V',
+        'v',
+        'G',
+        'g',
+        'D',
+        'd',
+        'E',
+        'e',
+        'I',
+        'i',
+        'J',
+        'j',
+        'K',
+        'k',
+        'L',
+        'l',
+        'M',
+        'm',
+        'N',
+        'n',
+        'O',
+        'o',
+        'P',
+        'p',
+        'R',
+        'r',
+        'S',
+        's',
+        'T',
+        't',
+        'U',
+        'u',
+        'F',
+        'f',
+        'H',
+        'h',
+        'W',
+        'w',
+        'x',
+        'q',
+        'Y',
+        'y',
+        'C',
+        'c'
+    );
+    $b = array(
+        ' ',
+        'Я',
+        'Я',
+        'я',
+        'ые',
+        'Ё',
+        'ё',
+        'Ё',
+        'Ж',
+        'ж',
+        'Ж',
+        'З',
+        'з',
+        'Ч',
+        'ч',
+        'Ch',
+        'Ш',
+        'ш',
+        'Ш',
+        'Э',
+        'э',
+        'Э',
+        'Ю',
+        'ю',
+        'Ю',
+        'Я',
+        'я',
+        'Я',
+        'А',
+        'а',
+        'Б',
+        'б',
+        'В',
+        'в',
+        'Г',
+        'г',
+        'Д',
+        'д',
+        'Е',
+        'е',
+        'И',
+        'и',
+        'Й',
+        'й',
+        'К',
+        'к',
+        'Л',
+        'л',
+        'М',
+        'м',
+        'Н',
+        'н',
+        'О',
+        'о',
+        'П',
+        'п',
+        'Р',
+        'р',
+        'С',
+        'с',
+        'Т',
+        'т',
+        'У',
+        'у',
+        'Ф',
+        'ф',
+        'Х',
+        'х',
+        'Щ',
+        'щ',
+        'ъ',
+        'ь',
+        'Ы',
+        'ы',
+        'Ц',
+        'ц'
+    );
+
     return str_replace($b, $a, $t);
 }
 
 
 /**
  * Ббкод в html
- * 
+ *
  * @param string $text
+ *
  * @return string
  */
 function bbcode($text = '')
@@ -109,14 +405,16 @@ function bbcode($text = '')
         '/\[img\](.+)\[\/img\]/isU' => '<img src="$1" alt=""/>',
         '/\[br\]/isU' => '<br />'
     );
+
     return preg_replace(array_keys($bbcode), array_values($bbcode), $text);
 }
 
 
 /**
  * Из html в ббкод
- * 
+ *
  * @param string $text
+ *
  * @return string
  */
 function antibb($text = '')
@@ -140,6 +438,7 @@ function antibb($text = '')
         '/<img src="(.+)" alt=""\/>/isU' => '[img]$1[/img]',
         '/<br \/>/isU' => '[br]'
     );
+
     return preg_replace(array_keys($bbcode), array_values($bbcode), $text);
 }
 
@@ -151,15 +450,20 @@ function is_num($txt, $name)
 {
     if (isset($_POST[$name])) {
         $txt = $_POST[$name];
-    } else if (isset($_GET[$name])) {
-        $txt = $_GET[$name];
-    } else if (isset($_SESSION[$name])) {
-        $txt = $_SESSION[$name];
+    } else {
+        if (isset($_GET[$name])) {
+            $txt = $_GET[$name];
+        } else {
+            if (isset($_SESSION[$name])) {
+                $txt = $_SESSION[$name];
+            }
+        }
     }
 
     if (intval($txt) < 0) {
         error($GLOBALS['setup']['hackmess']);
     }
+
     return;
 }
 
@@ -200,9 +504,10 @@ function get2ses($name)
 
 /**
  * Маркер картинок
- * 
+ *
  * @param resource $image
  * @param resource $watermark
+ *
  * @return resource
  */
 function marker($image, $watermark)
@@ -236,7 +541,12 @@ function marker($image, $watermark)
             $transparencyColor = imagecolorsforindex($watermark, $transparencyIndex);
         }
 
-        $transparencyIndex = imagecolorallocate($f, $transparencyColor['red'], $transparencyColor['green'], $transparencyColor['blue']);
+        $transparencyIndex = imagecolorallocate(
+            $f,
+            $transparencyColor['red'],
+            $transparencyColor['green'],
+            $transparencyColor['blue']
+        );
         imagefill($f, 0, 0, $transparencyIndex);
         imagecolortransparent($f, $transparencyIndex);
 
@@ -258,12 +568,14 @@ function marker($image, $watermark)
                     $rgb['green'] = intval(($rgb['green'] + $rgb2['green']) / 2);
                     $rgb['blue'] = intval(($rgb['blue'] + $rgb2['blue']) / 2);
                 }
-            } else if ($GLOBALS['setup']['marker_where'] == 'foot' && $j >= $footH && $i < $watermarkWidth) {
-                $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j - $footH));
-                if ($rgb2['alpha'] != 127) {
-                    $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
-                    $rgb['green'] = intval(($rgb['green'] + $rgb2['green']) / 2);
-                    $rgb['blue'] = intval(($rgb['blue'] + $rgb2['blue']) / 2);
+            } else {
+                if ($GLOBALS['setup']['marker_where'] == 'foot' && $j >= $footH && $i < $watermarkWidth) {
+                    $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j - $footH));
+                    if ($rgb2['alpha'] != 127) {
+                        $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
+                        $rgb['green'] = intval(($rgb['green'] + $rgb2['green']) / 2);
+                        $rgb['blue'] = intval(($rgb['blue'] + $rgb2['blue']) / 2);
+                    }
                 }
             }
 
@@ -285,13 +597,14 @@ function marker($image, $watermark)
 
 /**
  * Добавление вложений
- * 
+ *
  * @param string $folder
- * @param int $id
- * @param array $files
+ * @param int    $id
+ * @param array  $files
+ *
  * @return bool
  */
-function add_attach ($folder, $id, $files)
+function add_attach($folder, $id, $files)
 {
     $attach = $GLOBALS['setup']['apath'] . mb_substr($folder . '/', mb_strlen($GLOBALS['setup']['path']));
     foreach ($files as $k => $v) {
@@ -304,13 +617,14 @@ function add_attach ($folder, $id, $files)
 
 /**
  * Удаление вложений
- * 
+ *
  * @param string $folder
- * @param int $id
- * @param array $files
+ * @param int    $id
+ * @param array  $files
+ *
  * @return bool
  */
-function del_attach ($folder, $id, $files)
+function del_attach($folder, $id, $files)
 {
     $attach = $GLOBALS['setup']['apath'] . mb_substr($folder . '/', mb_strlen($GLOBALS['setup']['path']));
     foreach ($files as $k => $v) {
@@ -323,13 +637,37 @@ function del_attach ($folder, $id, $files)
 
 /**
  * Проверяем расширение по черному списку
- * 
+ *
  * @param string $ext
+ *
  * @return bool
  */
-function checkExt ($ext)
+function checkExt($ext)
 {
-    return !in_array(strtolower($ext), array('php', 'php3', 'php4', 'php5', 'php6', 'html', 'htm', 'wml', 'phtml', 'phtm', 'cgi', 'asp', 'js', 'py', 'pl', 'jsp', 'ry', 'shtm', 'shtml'));
+    return !in_array(
+        strtolower($ext),
+        array(
+            'php',
+            'php3',
+            'php4',
+            'php5',
+            'php6',
+            'html',
+            'htm',
+            'wml',
+            'phtml',
+            'phtm',
+            'cgi',
+            'asp',
+            'js',
+            'py',
+            'pl',
+            'jsp',
+            'ry',
+            'shtm',
+            'shtml'
+        )
+    );
 }
 
 
@@ -341,15 +679,17 @@ function checkExt ($ext)
  * @param string $rus_name
  * @param string $aze_name
  * @param string $tur_name
- * @param bool $dir
- * @param bool $insert
+ * @param bool   $dir
+ * @param bool   $insert
+ *
  * @return bool
  */
 function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $insert = true)
 {
     if ($dir) {
         if ($insert) {
-            $q = mysql_query('
+            $q = mysql_query(
+                '
                 INSERT INTO `files` (
                     `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`
                 ) VALUES (
@@ -363,20 +703,35 @@ function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $
                     0,
                     "' . filectime($path) . '"
                 )
-            ', $GLOBALS['mysql']);
+            ',
+                $GLOBALS['mysql']
+            );
         } else {
-            $q = mysql_query('
+            $q = mysql_query(
+                '
                 UPDATE `files`
                 SET `name` = IF(`name` <> "", `name`, "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '"),
-                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '"),
-                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '"),
-                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '")
+                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string(
+                    $rus_name,
+                    $GLOBALS['mysql']
+                ) . '"),
+                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string(
+                    $aze_name,
+                    $GLOBALS['mysql']
+                ) . '"),
+                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string(
+                    $tur_name,
+                    $GLOBALS['mysql']
+                ) . '")
                 WHERE `path` = "' . mysql_real_escape_string($path . '/', $GLOBALS['mysql']) . '"
-            ', $GLOBALS['mysql']);
+            ',
+                $GLOBALS['mysql']
+            );
         }
     } else {
         if ($insert) {
-            $q = mysql_query('
+            $q = mysql_query(
+                '
                 INSERT INTO `files` (
                     `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`
                 ) VALUES (
@@ -390,16 +745,30 @@ function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $
                     "' . filesize($path) . '",
                     "' . filectime($path) . '"
                 )
-            ', $GLOBALS['mysql']);
+            ',
+                $GLOBALS['mysql']
+            );
         } else {
-            $q = mysql_query('
+            $q = mysql_query(
+                '
                 UPDATE `files`
                 SET `name` = IF(`name` <> "", `name`, "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '"),
-                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '"),
-                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '"),
-                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '")
+                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string(
+                    $rus_name,
+                    $GLOBALS['mysql']
+                ) . '"),
+                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string(
+                    $aze_name,
+                    $GLOBALS['mysql']
+                ) . '"),
+                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string(
+                    $tur_name,
+                    $GLOBALS['mysql']
+                ) . '")
                 WHERE `path` = "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '"
-            ', $GLOBALS['mysql']);
+            ',
+                $GLOBALS['mysql']
+            );
         }
     }
 
@@ -412,6 +781,7 @@ function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $
  *
  * @param string $path
  * @param string $cont
+ *
  * @return array
  */
 function scaner($path = '', $cont = 'folder.png')
@@ -423,9 +793,10 @@ function scaner($path = '', $cont = 'folder.png')
     // заглушка
     echo 'scan ' . htmlspecialchars($path, ENT_NOQUOTES) . '...' . str_repeat(' ', 56) . '<br/>';
     ob_flush();
-    
+
     if (!is_readable($path)) {
         echo 'Error<br/>';
+
         return array();
     }
 
@@ -440,7 +811,13 @@ function scaner($path = '', $cont = 'folder.png')
 
         $f = str_replace('//', '/', $path . '/' . $file);
 
-        $q = mysql_query('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '" OR `path` = "' . mysql_real_escape_string($f, $GLOBALS['mysql']) . '/"');
+        $q = mysql_query(
+            'SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = "'
+                . mysql_real_escape_string($f, $GLOBALS['mysql']) . '" OR `path` = "' . mysql_real_escape_string(
+                $f,
+                $GLOBALS['mysql']
+            ) . '/"'
+        );
         if (!$q) {
             $errors[] = mysql_error($GLOBALS['mysql']);
             continue;
@@ -464,7 +841,7 @@ function scaner($path = '', $cont = 'folder.png')
         if ($tmp > 500) {
             $tmp = 0;
             // такая вот хуита... =( забиваем буфер
-            echo 'scan ' . htmlspecialchars($f, ENT_NOQUOTES) . '...' . str_repeat(' ', 512/*4096*/) . '<br/>';
+            echo 'scan ' . htmlspecialchars($f, ENT_NOQUOTES) . '...' . str_repeat(' ', 512 /*4096*/) . '<br/>';
             ob_flush();
         }
 
@@ -512,14 +889,16 @@ function scaner($path = '', $cont = 'folder.png')
 
             $folders++;
             scaner($f);
-        } else if (is_file($f)) {
+        } else {
+            if (is_file($f)) {
 
-            $files++;
-            if ($pathinfo['basename'] == $cont) {
-                continue;
-            } else {
-                if (!_scanerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
-                    $errors[] = mysql_error($GLOBALS['mysql']);
+                $files++;
+                if ($pathinfo['basename'] == $cont) {
+                    continue;
+                } else {
+                    if (!_scanerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
+                        $errors[] = mysql_error($GLOBALS['mysql']);
+                    }
                 }
             }
         }
@@ -531,9 +910,10 @@ function scaner($path = '', $cont = 'folder.png')
 
 /**
  * Изменение количества файлов в директориях
- * 
- * @param string $path директория
- * @param bool $increment инкремент или декремент
+ *
+ * @param string $path      директория
+ * @param bool   $increment инкремент или декремент
+ *
  * @return bool
  */
 function dir_count($path = '', $increment = true)
@@ -547,30 +927,38 @@ function dir_count($path = '', $increment = true)
             $in[$i] = mysql_real_escape_string($arr[$i], $GLOBALS['mysql']) . '/';
         }
     }
-    return mysql_query('
+
+    return mysql_query(
+        '
         UPDATE `files`
         SET `dir_count` = `dir_count` ' . ($increment ? '+' : '-') . ' 1
-        WHERE `path` IN ("' . implode('","', $in) . '")', $GLOBALS['mysql']
+        WHERE `path` IN ("' . implode('","', $in) . '")',
+        $GLOBALS['mysql']
     );
 }
 
 
 /**
  * Размер
- * 
+ *
  * @param int $int
+ *
  * @return string
  */
 function size($int = 0)
 {
     if ($int < 1024) {
         return $int . 'b';
-    } else if ($int < 1048576) {
-        return round($int / 1024, 2) . 'Kb';
-    } else if ($int < 1073741824) {
-        return round($int / 1048576, 2) . 'Mb';
     } else {
-        return round($int / 1073741824, 2) . 'Gb';
+        if ($int < 1048576) {
+            return round($int / 1024, 2) . 'Kb';
+        } else {
+            if ($int < 1073741824) {
+                return round($int / 1048576, 2) . 'Mb';
+            } else {
+                return round($int / 1073741824, 2) . 'Gb';
+            }
+        }
     }
 }
 
@@ -580,22 +968,25 @@ function size($int = 0)
  * Последний элемент в path считается файлом. Директория согласно функции pathinfo
  *
  * @param string $path
- * @param int $chmod_dir
- * @param int $chmod_file
+ * @param int    $chmod_dir
+ * @param int    $chmod_file
+ *
  * @return bool
  */
 function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
 {
     @mkdir(pathinfo($path, PATHINFO_DIRNAME), $chmod_dir, true);
     file_put_contents($path, '');
+
     return chmod($path, $chmod_file);
 }
 
 
 /**
  * Время
- * 
+ *
  * @param int $t
+ *
  * @return string
  */
 function tm($t)
@@ -604,10 +995,12 @@ function tm($t)
 
     if (date('Y.m.d', $t) == date('Y.m.d', $_SERVER['REQUEST_TIME'])) {
         return $language['today'] . ' ' . date('H:i', $t);
-    } else if (date('Y.m.d', $t) == date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
-        return $language['yesterday'] . ' ' . date('H:i', $t);
     } else {
-        return date('Y.m.d H:i', $t);
+        if (date('Y.m.d', $t) == date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
+            return $language['yesterday'] . ' ' . date('H:i', $t);
+        } else {
+            return date('Y.m.d H:i', $t);
+        }
     }
 }
 
@@ -629,7 +1022,6 @@ function thm($path = '')
         '1.7' => 'T68, T230, T290, T300, T310',
         '1.8' => 'T68, T230, T290, T300, T310',
         '1.9' => 'T68, T230, T290, T300, T310',
-
         2 => 'J210, J220, J230, T610, T630, Z600, Z300',
         '2.0' => 'J210, J220, J230, T610, T630, Z600, Z300',
         '2.1' => 'J210, J220, J230, T610, T630, Z600, Z300',
@@ -641,19 +1033,16 @@ function thm($path = '')
         '2.7' => 'J210, J220, J230, T610, T630, Z600, Z300',
         '2.8' => 'J210, J220, J230, T610, T630, Z600, Z300',
         '2.9' => 'J210, J220, J230, T610, T630, Z600, Z300',
-
         3 => 'J300, K300, K500, K700, S700, Z1010',
         '3.0' => 'J300, K300, K500, K700, S700, Z1010',
         '3.1' => 'V800, Z800',
         '3.2' => 'V800, Z800',
-
         4 => 'K600, K750, W700, W800, Z520, Z525',
         '4.0' => 'K600, K750, W700, W800, Z520, Z525',
         '4.1' => 'K310, K320, K510,W200, W300, Z530, W550, W600, W810, Z550, Z558, W900',
         '4.5' => 'Z250, Z310, Z320, K550, K610, Z610, Z710, W610, W660, W710, K790, K800, K810, S500, W580, W830, W850, T650, K770, W880',
         '4.6' => 'K630, K660, K850, R300, R306, V640, W760, W890, W910, Z750',
         '4.7' => 'C702, C902, W760, W980, Z780',
-
         'UIQ3' => 'M600, P1, W950, W960, P990',
     );
 
@@ -662,7 +1051,7 @@ function thm($path = '')
     $thm = new Archive_Tar($path);
 
 
-    if (!$file = $thm->extractInString(pathinfo($path, PATHINFO_FILENAME).'.xml')) {
+    if (!$file = $thm->extractInString(pathinfo($path, PATHINFO_FILENAME) . '.xml')) {
         $file = $thm->extractInString('Theme.xml');
     }
 
@@ -690,7 +1079,9 @@ function thm($path = '')
 
     $str = '';
     if ($load->Author_organization['Value']) {
-        $str .= $language['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
+        $str
+            .=
+            $language['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
     }
 
     if ($load['version']) {
@@ -698,7 +1089,7 @@ function thm($path = '')
 
         if (in_array($load['version'], array_keys($ver_thm))) {
             $str .= $language['models'] . ': ' . $ver_thm[(string)$load['version']] . '<br/>';
-        }            
+        }
     }
 
     return $str;
@@ -708,7 +1099,7 @@ function thm($path = '')
 /**
  * Упрощенный ресайзер картинок
  */
-function simple_resize ($data)
+function simple_resize($data)
 {
     if (!is_resource($data)) {
         return false;
@@ -822,7 +1213,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
                 break;
             } else {
                 // GIF
-               $old = imagecreatefromgif($in);
+                $old = imagecreatefromgif($in);
             }
             break;
 
@@ -843,6 +1234,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
         case 13:
             // SWF
             rename($in, $out);
+
             return;
             break;
 
@@ -858,7 +1250,6 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
             return;
             break;
     }
-
 
 
     $new = imagecreatetruecolor($w, $h);
@@ -893,7 +1284,7 @@ function jar_ico($jar, $f)
     if (@$list[0]['content']) {
         if (!$icon) {
             preg_match('/MIDlet\-Icon:[\s*](.*)/iux', $list[0]['content'], $arr);
-    
+
             if (@$arr[1]) {
                 foreach (explode(',', $arr[1]) as $v) {
                     $v = trim(trim($v), '/');
@@ -907,7 +1298,7 @@ function jar_ico($jar, $f)
 
         if (!$icon) {
             preg_match('/MIDlet\-1:[\s*](.*)/iux', $list[0]['content'], $arr);
-    
+
             if (@$arr[1]) {
                 foreach (explode(',', $arr[1]) as $v) {
                     $v = trim(trim($v), '/');
@@ -967,18 +1358,24 @@ function message($str = '')
  *
  * @param int $min
  * @param int $max
+ *
  * @return string random password 6-8 symbols
  */
 function pass($min = 6, $max = 8)
 {
-    return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ0123456789'), 0, mt_rand($min, $max));
+    return substr(
+        str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ0123456789'),
+        0,
+        mt_rand($min, $max)
+    );
 }
 
 
 /**
  * Конвертируем из Windows-1251 в UTF-8
- * 
+ *
  * @param string $str
+ *
  * @return string
  */
 function str_to_utf8($str)
@@ -986,16 +1383,18 @@ function str_to_utf8($str)
     if (@mb_convert_encoding($str, 'UTF-8', 'UTF-8') != $str) {
         $str = mb_convert_encoding($str, 'UTF-8', 'Windows-1251');
     }
+
     return $str;
 }
 
 
 /**
  * Постраничная навигация
- * 
+ *
  * @param int     $pg  текущая страница
  * @param int     $all всего страниц
  * @param string  $str url страницы, к нему прибавится /номер
+ *
  * @return string      html с навигацией
  */
 function go($pg = 0, $all = 0, $str)
@@ -1042,8 +1441,9 @@ function go($pg = 0, $all = 0, $str)
 
 /**
  * Возвращает MIME файла по его расширению
- * 
+ *
  * @param  string $ext  расширение
+ *
  * @return string       MIME тип
  */
 function ext_to_mime($ext = '')

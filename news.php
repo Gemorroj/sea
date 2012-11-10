@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -74,7 +74,8 @@ if ($page) {
 if ($start > $all || $start < 1) {
     $start = 0;
 }
-$q = mysql_query('
+$q = mysql_query(
+    '
     SELECT `news`.`id`,
     ' . Language::getInstance()->buildNewsQuery() . ',
     `news`.`time`,
@@ -85,10 +86,13 @@ $q = mysql_query('
     GROUP BY `news`.`id`
     ORDER BY `news`.`id` DESC
     LIMIT ' . $start . ', ' . $onpage,
-$mysql);
+    $mysql
+);
 
 while ($arr = mysql_fetch_assoc($q)) {
-    $str .= '<div class="iblock">' . tm($arr['time']) . '<br/><span style="font-size:9px;">' . $arr['news'] . '</span><br/><a href="' . DIRECTORY . 'news_komm/' . $arr['id'] . '">' . $language['comments'] . '</a> [' . $arr['count'] . ']</div>';
+    $str .= '<div class="iblock">' . tm($arr['time']) . '<br/><span style="font-size:9px;">' . $arr['news']
+        . '</span><br/><a href="' . DIRECTORY . 'news_komm/' . $arr['id'] . '">' . $language['comments'] . '</a> ['
+        . $arr['count'] . ']</div>';
 }
 
 echo $str;
@@ -119,11 +123,14 @@ if ($pages > 1) {
             echo ' ... <a href="' . DIRECTORY . 'news/' . $pages . '">' . $pages . '</a>';
         }
     }
-    
+
     echo '<br/>';
     ###############Ручной ввод страниц###############
     if ($pages > $setup['pagehand'] && $setup['pagehand_change']) {
-        echo str_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="' . $_SERVER['PHP_SELF'] . '?" method="get"><div class="row"><input type="hidden" name="id" value="' . $id . '"/><input class="enter" name="page" type="text" maxlength="8" size="8"/> <input class="buttom" type="submit" value="' . $language['go'] . '"/></div></form>';
+        echostr_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="'
+            . $_SERVER['PHP_SELF'] . '?" method="get"><div class="row"><input type="hidden" name="id" value="' . $id
+            . '"/><input class="enter" name="page" type="text" maxlength="8" size="8"/> <input class="buttom" type="submit" value="'
+            . $language['go'] . '"/></div></form>';
     }
     echo '</div>';
 }
@@ -131,10 +138,10 @@ if ($pages > 1) {
 echo '<div class="iblock">- <a href="' . DIRECTORY . 'settings/' . $id . '">' . $language['settings'] . '</a><br/>';
 
 if ($setup['stat_change']) {
-    echo '- <a href="' . DIRECTORY . 'stat/'.$id.'">' . $language['statistics'] . '</a><br/>';
+    echo '- <a href="' . DIRECTORY . 'stat/' . $id . '">' . $language['statistics'] . '</a><br/>';
 }
 if ($setup['zakaz_change']) {
-    echo '- <a href="' . DIRECTORY . 'table/'.$id.'">' . $language['orders'] . '</a><br/>';
+    echo '- <a href="' . DIRECTORY . 'table/' . $id . '">' . $language['orders'] . '</a><br/>';
 }
 
 echo '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>

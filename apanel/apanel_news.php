@@ -29,7 +29,7 @@
 /**
  * Sea Downloads
  *
- * @author Sea, Gemorroj
+ * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
@@ -78,12 +78,14 @@ if (isset($_POST['new'])) {
     $aze = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['azerbaijan'], ENT_NOQUOTES)), $mysql);
     $tur = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['turkey'], ENT_NOQUOTES)), $mysql);
 
-    mysql_query("
+    mysql_query(
+        "
         INSERT INTO `news` (
             `news`, `rus_news`, `aze_news`, `tur_news`, `time`
         ) VALUES (
             '" . $eng . "', '" . $rus . "', '" . $aze . "', '" . $tur . "', " . $_SERVER['REQUEST_TIME'] . "
-        )", $mysql
+        )",
+        $mysql
     );
 
     if ($err = mysql_error($mysql)) {
@@ -92,7 +94,6 @@ if (isset($_POST['new'])) {
         echo '<div class="iblock">Новость успешно добавлена!</div>';
     }
 }
-
 
 
 echo '<div class="mblock"><a href="../news.php">Новости</a></div>
