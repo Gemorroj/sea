@@ -694,7 +694,7 @@ function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $
                     `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`
                 ) VALUES (
                     "1",
-                    "' . mysql_real_escape_string($path . '/', $GLOBALS['mysql']) . '",
+                    "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '",
                     "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
                     "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
                     "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
@@ -723,7 +723,7 @@ function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $
                     $tur_name,
                     $GLOBALS['mysql']
                 ) . '")
-                WHERE `path` = "' . mysql_real_escape_string($path . '/', $GLOBALS['mysql']) . '"
+                WHERE `path` = "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '"
             ',
                 $GLOBALS['mysql']
             );
@@ -805,19 +805,22 @@ function scaner($path = '', $cont = 'folder.png')
     $tmp = 0;
 
     foreach (array_diff(scandir($path, 0), array('.', '..')) as $file) {
-        if ($file[0] == '.') {
+        if ($file[0] === '.') {
             continue;
         }
 
         $f = str_replace('//', '/', $path . '/' . $file);
 
+        $is_dir = is_dir($f);
+        if ($is_dir) {
+            $f .= '/';
+        }
+
         $q = mysql_query(
             'SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = "'
-                . mysql_real_escape_string($f, $GLOBALS['mysql']) . '" OR `path` = "' . mysql_real_escape_string(
-                $f,
-                $GLOBALS['mysql']
-            ) . '/"'
+                . mysql_real_escape_string($f, $GLOBALS['mysql']) . '"'
         );
+
         if (!$q) {
             $errors[] = mysql_error($GLOBALS['mysql']);
             continue;
@@ -828,7 +831,7 @@ function scaner($path = '', $cont = 'folder.png')
             $insert = false;
             $row = mysql_fetch_assoc($q);
             if ($row['name'] != '' && $row['rus_name'] != '' && $row['aze_name'] != '' && $row['tur_name'] != '') {
-                if (is_dir($f)) {
+                if ($is_dir) {
                     $folders++;
                     scaner($f);
                 }
@@ -861,23 +864,23 @@ function scaner($path = '', $cont = 'folder.png')
         }
 
 
-        if (is_dir($f)) {
+        if ($is_dir) {
             // скриншоты
-            $screen = $GLOBALS['setup']['spath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
+            $screen = $GLOBALS['setup']['spath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($screen)) {
                 mkdir($screen, 0777);
             }
             chmod($screen, 0777);
 
             // описания
-            $desc = $GLOBALS['setup']['opath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
+            $desc = $GLOBALS['setup']['opath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($desc)) {
                 mkdir($desc, 0777);
             }
             chmod($desc, 0777);
 
             // вложения
-            $attach = $GLOBALS['setup']['apath'] . mb_substr($f . '/', mb_strlen($GLOBALS['setup']['path']));
+            $attach = $GLOBALS['setup']['apath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($attach)) {
                 mkdir($attach, 0777);
             }
@@ -1171,8 +1174,8 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
 
                 $a = sizeof($arr);
                 for ($i = 0; $i < $a; ++$i) {
-                    $tmp1 = $dir . '/../cache/' . mt_rand() . '.gif';
-                    $tmp2 = $dir . '/../cache/' . mt_rand() . '.gif';
+                    $tmp1 = $dir . '/../cache/' . uniqid() . '.gif';
+                    $tmp2 = $dir . '/../cache/' . uniqid() . '.gif';
 
                     file_put_contents($tmp1, $arr[$i]);
                     $resize = imagecreatefromgif($tmp1);
@@ -1321,7 +1324,7 @@ function jar_ico($jar, $f)
  */
 function error($str = '')
 {
-    global $template;
+    global $template, $setup, $mysql;
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';
@@ -1339,7 +1342,7 @@ function error($str = '')
  */
 function message($str = '')
 {
-    global $template;
+    global $template, $setup, $mysql;
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';

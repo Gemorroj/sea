@@ -34,7 +34,6 @@
  */
 
 
-require 'moduls/config.php';
 require 'moduls/header.php';
 
 // Проверка переменных
@@ -61,7 +60,7 @@ if (!is_file($v['path'])) {
 }
 
 
-// Всего комментириев
+// Всего комментариев
 $all_komments = mysql_result(mysql_query('SELECT COUNT(1) FROM `komments` WHERE `file_id` = ' . $id, $mysql), 0);
 
 // Система голосований
@@ -672,6 +671,6 @@ if ($setup['abuse_change']) {
     }
 }
 
-echo$out . '</div><div class="iblock">- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back']
+echo $out . '</div><div class="iblock">- <a href="' . DIRECTORY . $back['id'] . '">' . $language['back']
     . '</a><br/>- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url']
     . '">' . $language['home'] . '</a></div>';

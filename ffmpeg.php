@@ -65,7 +65,7 @@ if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic
         }
     }
 
-    $tmp = DIR . '/cache/' . mt_rand(1000, 999999) . '.tmp';
+    $tmp = DIR . '/cache/' . uniqid() . '.tmp';
     imagegif($fr->toGDImage(), $tmp);
     img_resize($tmp, $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif', 0, 0, $setup['marker']);
     unlink($tmp);

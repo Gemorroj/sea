@@ -43,12 +43,10 @@ $info = mysql_fetch_array(mysql_query('SELECT * FROM `loginlog` WHERE `id` = 1',
 $timeban = $_SERVER['REQUEST_TIME'] - $info['time'];
 //-------------------------------
 if ($timeban < $setup['timeban']) {
-    include '../moduls/header.php';
     error('Следующая авторизация возможна через ' . ($setup['timeban'] - $timeban) . ' секунд!');
 }
 //-------------------------------
 if ($info['access_num'] > $setup['countban']) {
-    include '../moduls/header.php';
     $query = mysql_query(
         'UPDATE `loginlog` SET `time` = ' . $_SERVER['REQUEST_TIME'] . ', `access_num` = 0 WHERE `id` = 1',
         $mysql
@@ -59,9 +57,26 @@ if ($info['access_num'] > $setup['countban']) {
 }
 //-------------------------------
 if (!isset($_POST['p']) && !isset($_GET['p'])) {
-    include '../moduls/header.php';
-    echo'<div class="mblock">Вход для администратора:</div><form method="post" action="' . $_SERVER['PHP_SELF']
-        . '"><div class="row">Пароль:<br/><input class="enter" type="password" name="p"/><br/><input class="buttom" type="submit" value="Войти"/></div></form>';
+    echo '<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+    <head>
+        <title>Админка - вход</title>
+    </head>
+    <body>
+        <div>
+            <fieldset>
+                <legend>Вход для администратора</legend>
+                <form method="post" action="' . $_SERVER['PHP_SELF'] . '">
+                    <div>
+                        Пароль: <input class="enter" type="password" name="p"/><br/>
+                        <input type="submit" value="Войти"/>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </body>
+</html>
+';
     exit;
 }
 
@@ -83,10 +98,9 @@ if ($setup['autologin']
             array('\\', '//'),
             '/',
             dirname($_SERVER['PHP_SELF']) . '/'
-        ) . 'apanel.php?' . session_name() . '=' . session_id()
+        ) . 'apanel.php'
     );
 } else {
-    include '../moduls/header.php';
     mysql_query('UPDATE `loginlog` SET `access_num` = `access_num` + 1 WHERE `id` = 1', $mysql);
     error('Пароль введен неверно. Осталось попыток до блокировки: ' . ($setup['countban'] - $info['access_num']));
 }

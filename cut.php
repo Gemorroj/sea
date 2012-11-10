@@ -109,7 +109,7 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
         }
     }
 
-    $randname = mt_rand(10000, mt_getrandmax());
+    $randname = uniqid();
     $randintval = $setup['mp3path'] . '/' . $randname . '_' . $filename;
     if (copy($file_info['path'], $randintval)) {
         $fp = fopen($randintval, 'rb');

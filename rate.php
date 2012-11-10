@@ -34,16 +34,19 @@
  */
 
 
-$i = intval($_GET['i']);
-
 header('Content-type: image/png');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Cache-Control: no-cache, must-revalidate, no-store');
+header('Pragma: no-cache');
+
+
 $im = imagecreate(100, 4);
 $c0 = imagecolorallocate($im, 0, 0, 0);
 $c1 = imagecolorallocate($im, 255, 128, 0);
 $c2 = imagecolorallocate($im, 100, 150, 225);
 $c3 = imagecolorallocate($im, 168, 175, 187);
 imagefill($im, 100, 0, $c2);
-imagefilledrectangle($im, 0, 0, $i, 4, $c1);
+imagefilledrectangle($im, 0, 0, intval($_GET['i']), 4, $c1);
 imagerectangle($im, 0, 0, 99, 3, $c0);
-imagepng($im, null, 9);
+imagepng($im);
 imagedestroy($im);

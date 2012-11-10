@@ -33,19 +33,32 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-
+error_reporting(0);
 require 'moduls/config.php';
-require 'moduls/header.php';
 
 set_time_limit(999);
 ignore_user_abort(true);
 
+echo '<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+    <head>
+        <title>Установка</title>
+    </head>
+    <body>
+        <div>
+';
 
 if (!@$_GET['level']) {
-    echo 'Введите ваши данные:<br/>
-    <form action="install.php?level=1" method="post">
-    <div class="row">Пароль админа:<br/><input name="pass" type="text" value="1234"/><br/><input type="submit" value="Установка"/></div>
-    </form>';
+    echo '
+    <fieldset><legend>Введите ваши данные</legend>
+        <form action="' . $_SERVER['PHP_SELF'] . '?level=1" method="post">
+            <div>
+                Пароль админа: <input name="pass" type="text" value="1234" maxlength="255"/><br/>
+                <input type="submit" value="Установка"/>
+            </div>
+        </form>
+    </fieldset>
+    ';
 } else {
     $er = '';
 
@@ -313,6 +326,7 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'day_new', '2');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'komments_change', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'komments_captcha', '0');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'komments_view', '3');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'top_change', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ext', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'delete_dir', '1');", $mysql);
@@ -357,8 +371,29 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('', '', '');", $mysql);
 
 
-    mysql_query("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '08-04-2012');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '10-11-2012');", $mysql);
 
+    if ($er) {
+        echo '
+        <fieldset>
+            <legend>В ходе установки произошли ошибки</legend>
+            ' . $er . '
+        </fieldset>
+        ';
+    }
 
-    echo 'Установка закончена<br/>Не забудте удалить файл install.php<br/><strong><a href="./">К загрузкам</a><br/>';
+    echo '
+    <fieldset>
+        <legend>Установка закончена</legend>
+        Не забудьте удалить файл install.php<br/>
+        <strong><a href="./">К загрузкам</a>
+    </fieldset>
+    ';
 }
+
+
+echo '
+        </div>
+    </body>
+</html>
+';

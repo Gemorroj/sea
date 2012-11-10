@@ -1814,9 +1814,6 @@ E-mail админа:<br/>
 </div>
 </form>';
         } else {
-            if ($_POST['password'] || $_POST['delete_dir'] || $_POST['delete_file']) {
-                error($setup['hackmess']);
-            }
             foreach ($_POST as $key => $value) {
                 if ($value == '') {
                     error('Не заполнено одно из полей.');
