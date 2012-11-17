@@ -128,6 +128,7 @@ return array(
     'complaint_sent_to_the_administration' => 'Complaint sent to the Administration',
     'add_file' => 'Add file',
     'send_a_link_to_email' => 'Send a link to Email',
+    'email_incorrect' => 'Incorrect Email',
     'link_to_file' => 'Link to file %file%',
     'email_message' => 'From site %url% was sent to you link to the file %file%' . "\r\n" . ' %link%',
     'email_sent_successfully' => 'Email sent successfully',
@@ -152,4 +153,6 @@ return array(
     'partner_prefix' => 'Send SMS with the text %prefix% to a corresponding phone number number',
     'partner_enter' => 'If you have already sent SMS, you can enter the received autentication code here:',
     'recent_comments' => 'Recent comments:',
+
+    'attachments' => 'Attachments',
 );

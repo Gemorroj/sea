@@ -128,6 +128,7 @@ return array(
     'complaint_sent_to_the_administration' => 'Şilyəti Adminə göndərmək',
     'add_file' => 'Fayl əlavə et',
     'send_a_link_to_email' => 'Bu fayli dostuna göndər',
+    'email_incorrect' => 'Incorrect Email',
     'link_to_file' => 'Bağlantı faylı %file%',
     'email_message' => 'Sizin sayt %url% Fayl ilə link dostuna göndərəcəkdir %file%' . "\r\n" . ' %link%',
     'email_sent_successfully' => 'Fayl yaydığiniz ünvana göndərildi',
@@ -151,4 +152,6 @@ return array(
     'partner_time' => 'Ayırmaq üçün %day% gün',
     'partner_prefix' => 'Mətin və sms göndərin %prefix% qarşılıq gələn telefon nömrəsinə',
     'partner_enter' => 'O zaman kodu girə bilərsiz sms göndərdik:',
+
+    'attachments' => 'Attachments',
 );

@@ -942,31 +942,6 @@ function dir_count($path = '', $increment = true)
 
 
 /**
- * Размер
- *
- * @param int $int
- *
- * @return string
- */
-function size($int = 0)
-{
-    if ($int < 1024) {
-        return $int . 'b';
-    } else {
-        if ($int < 1048576) {
-            return round($int / 1024, 2) . 'Kb';
-        } else {
-            if ($int < 1073741824) {
-                return round($int / 1048576, 2) . 'Mb';
-            } else {
-                return round($int / 1073741824, 2) . 'Gb';
-            }
-        }
-    }
-}
-
-
-/**
  * Создает файл
  * Последний элемент в path считается файлом. Директория согласно функции pathinfo
  *
@@ -986,32 +961,13 @@ function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
 
 
 /**
- * Время
+ * Получаем данные из тем
  *
- * @param int $t
- *
- * @return string
+ * @param int $id
+ * @param string $path
+ * @return array
  */
-function tm($t)
-{
-    $language = Language::getInstance()->getLanguage();
-
-    if (date('Y.m.d', $t) == date('Y.m.d', $_SERVER['REQUEST_TIME'])) {
-        return $language['today'] . ' ' . date('H:i', $t);
-    } else {
-        if (date('Y.m.d', $t) == date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
-            return $language['yesterday'] . ' ' . date('H:i', $t);
-        } else {
-            return date('Y.m.d H:i', $t);
-        }
-    }
-}
-
-
-/**
- * Получаем картинки из тем
- */
-function thm($id, $path = '')
+function getThmInfo($id, $path = '')
 {
     if (file_exists(dirname(__FILE__) . '/../cache/' . $id . '.dat')) {
         return unserialize(file_get_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat'));
@@ -1084,28 +1040,29 @@ function thm($id, $path = '')
     $language = Language::getInstance()->getLanguage();
     $load = simplexml_load_string($file);
 
-    $str = '';
+    $out = array();
     if ($load->Author_organization['Value']) {
-        $str
-            .=
-            $language['author'] . ': ' . htmlspecialchars($load->Author_organization['Value'], ENT_NOQUOTES) . '<br/>';
+        $out['author'] = $load->Author_organization['Value'];
     }
 
     if ($load['version']) {
-        $str .= $language['version'] . ': ' . htmlspecialchars($load['version'], ENT_NOQUOTES) . '<br/>';
+        $out['version'] = $load['version'];
 
         if (in_array($load['version'], array_keys($ver_thm))) {
-            $str .= $language['models'] . ': ' . $ver_thm[(string)$load['version']] . '<br/>';
+            $out['models'] = $ver_thm[(string)$load['version']];
         }
     }
 
-    file_put_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat', serialize($str));
-    return $str;
+    file_put_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat', serialize($out));
+    return $out;
 }
 
 
 /**
  * Упрощенный ресайзер картинок
+ *
+ * @param resource $data
+ * @return resource
  */
 function simple_resize($data)
 {
@@ -1337,7 +1294,11 @@ function error($str = '')
     $template->setTemplate('message.tpl');
     $template->assign('isError', true);
     $template->assign('message', is_array($str) ? $str : array($str));
-    $template->assign('breadcrumbs', array());
+
+    if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
+        $template->assign('breadcrumbs', array());
+    }
+
     $template->send();
     exit;
 }
@@ -1355,7 +1316,11 @@ function message($str = '')
     $template->setTemplate('message.tpl');
     $template->assign('isError', false);
     $template->assign('message', is_array($str) ? $str : array($str));
-    $template->assign('breadcrumbs', array());
+
+    if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
+        $template->assign('breadcrumbs', array());
+    }
+
     $template->send();
     exit;
 }
@@ -1440,7 +1405,7 @@ function go($pg = 0, $all = 0, $str)
     }
 
     if ($go == $pg . ' ') {
-        return;
+        return '';
     } else {
         return '<div class="row">&#160;' . $go . '</div>';
     }
@@ -1628,6 +1593,14 @@ function ext_to_mime($ext = '')
 }
 
 
+/**
+ * Данные об аудио файле
+ *
+ * @param int $id
+ * @param string $path
+ *
+ * @return array
+ */
 function getMusicInfo($id, $path)
 {
     if (file_exists(dirname(__FILE__) . '/../cache/' . $id . '.dat')) {
@@ -1766,6 +1739,14 @@ function getMusicInfo($id, $path)
 }
 
 
+/**
+ * Данные об видео файле
+ *
+ * @param int $id
+ * @param string $path
+ *
+ * @return array
+ */
 function getVideoInfo($id, $path)
 {
     if (file_exists(dirname(__FILE__) . '/../cache/' . $id . '.dat')) {
@@ -1786,4 +1767,15 @@ function getVideoInfo($id, $path)
     }
 
     return $tmpa;
+}
+
+
+/**
+ * @param string $email
+ *
+ * @return bool
+ */
+function isValidEmail ($email)
+{
+    return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
 }

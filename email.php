@@ -34,46 +34,64 @@
  */
 
 
-require 'moduls/config.php';
+require 'moduls/header.php';
 
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
-
-$id = intval($_REQUEST['id']);
-$resize = true;
-$marker = $setup['marker'];
-
-
-$w = isset($_GET['w']) ? abs($_GET['w']) : 0;
-$h = isset($_GET['h']) ? abs($_GET['h']) : 0;
-
-
-if (!$w || !$h) {
-    $resize = false;
-    list($w, $h) = explode('*', $setup['prev_size']);
-} else {
-    if ($marker) {
-        $marker = ($marker == 2 ? 0 : 1);
-    }
+// Если email выключен
+if (!$setup['send_email']) {
+    error('Not found');
 }
 
-$pic = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
-$prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
-
-if ($resize) {
-    $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
-    mysql_unbuffered_query(
-        'UPDATE `files` SET `loads`=`loads`+1, `timeload`=' . $_SERVER['REQUEST_TIME'] . ' WHERE `id`=' . $id,
+// Получаем инфу о файле
+$v = mysql_fetch_assoc(
+    mysql_query(
+        '
+    SELECT *,
+    ' . Language::getInstance()->buildFilesQuery() . '
+    FROM `files`
+    WHERE `id` = ' . $id . '
+    AND `hidden` = "0"
+',
         $mysql
-    );
+    )
+);
+
+if (!is_file($v['path'])) {
+    error('File not found');
 }
 
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['picpath'] . '/' . $prev_pic . '.gif';
+$seo['title'] = $language['send_a_link_to_email'] . ' - ' . $v['name'];
+$template->setTemplate('email.tpl');
+$template->assign(
+    'breadcrumbs',
+    array(
+        'view/' . $id => $v['name'],
+        'email/' . $id => $language['send_a_link_to_email']
+    )
+);
 
 
-if (!file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
-    if (!img_resize($pic, $setup['picpath'] . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
-        error('Error');
+if (isset($_POST['email'])) {
+    if (!isValidEmail($_POST['email'])) {
+        error($language['email_incorrect']);
+    }
+
+    setcookie('sea_email', $_POST['email'], time() + 86400000);
+    if (mail(
+        $_POST['email'],
+        '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], $language['link_to_file'])) . '?=',
+        str_replace(
+            array('%file%', '%url%', '%link%'),
+            array($v['name'], $setup['site_url'], 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id),
+            $language['email_message']
+        ),
+        "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+    )
+    ) {
+        message($language['email_sent_successfully']);
+    } else {
+        error($language['sending_email_error_occurred']);
     }
 }
 
-header('Location: ' . $location, true, 301);
+$template->assign('name', $v['name']);
+$template->send();

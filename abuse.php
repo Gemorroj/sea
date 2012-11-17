@@ -34,46 +34,49 @@
  */
 
 
-require 'moduls/config.php';
+require 'moduls/header.php';
 
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
-
-$id = intval($_REQUEST['id']);
-$resize = true;
-$marker = $setup['marker'];
-
-
-$w = isset($_GET['w']) ? abs($_GET['w']) : 0;
-$h = isset($_GET['h']) ? abs($_GET['h']) : 0;
-
-
-if (!$w || !$h) {
-    $resize = false;
-    list($w, $h) = explode('*', $setup['prev_size']);
-} else {
-    if ($marker) {
-        $marker = ($marker == 2 ? 0 : 1);
-    }
+// Если жалобы выключены
+if (!$setup['abuse_change']) {
+    error('Not found');
 }
 
-$pic = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
-$prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
-
-if ($resize) {
-    $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
-    mysql_unbuffered_query(
-        'UPDATE `files` SET `loads`=`loads`+1, `timeload`=' . $_SERVER['REQUEST_TIME'] . ' WHERE `id`=' . $id,
+// Получаем инфу о файле
+$v = mysql_fetch_assoc(
+    mysql_query(
+        '
+    SELECT *,
+    ' . Language::getInstance()->buildFilesQuery() . '
+    FROM `files`
+    WHERE `id` = ' . $id . '
+    AND `hidden` = "0"
+',
         $mysql
-    );
+    )
+);
+
+if (!is_file($v['path'])) {
+    error('File not found');
 }
 
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['picpath'] . '/' . $prev_pic . '.gif';
+$seo['title'] = $language['complain_about_a_file'] . ' - ' . $v['name'];
+$template->assign(
+    'breadcrumbs',
+    array(
+        'view/' . $id => $v['name'],
+        'abuse/' . $id => $language['complain_about_a_file']
+    )
+);
 
-
-if (!file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
-    if (!img_resize($pic, $setup['picpath'] . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
-        error('Error');
-    }
+if (mail(
+    $setup['zakaz_email'],
+    '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
+    'Получена жалоба на файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id . "\r\n" .
+        'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
+        'IP: ' . $_SERVER['REMOTE_ADDR'],
+    "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+)) {
+    message($language['complaint_sent_to_the_administration']);
+} else {
+    error($language['sending_email_error_occurred']);
 }
-
-header('Location: ' . $location, true, 301);

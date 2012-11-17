@@ -126,6 +126,7 @@ return array(
     'complaint_sent_to_the_administration' => 'Şilyəti Admine Gönder',
     'add_file' => 'Dosya ekle',
     'send_a_link_to_email' => 'Bu fayli dostuna gönder',
+    'email_incorrect' => 'Incorrect Email',
     'link_to_file' => 'Bağlantı dosyası %file%',
     'email_message' => 'Sizin site %url% Dosya ile link dostuna gönderecektir %file%' . "\r\n" . '%link%',
     'email_sent_successfully' => 'Dosya Yaydığınız adrese gönderildi',
@@ -147,4 +148,6 @@ return array(
     'partner_time' => 'Ayırmak için %day% gün',
     'partner_prefix' => 'Metin ve sms gönderin %prefix% karşılık gelen telefon numarasına',
     'partner_enter' => 'O zaman kodu girebilir miyiz sms gönderdik',
+
+    'attachments' => 'Attachments',
 );

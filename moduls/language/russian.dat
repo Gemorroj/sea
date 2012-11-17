@@ -128,6 +128,7 @@ return array(
     'complaint_sent_to_the_administration' => 'Жалоба отправлена администрации',
     'add_file' => 'Добавить файл',
     'send_a_link_to_email' => 'Отправить ссылку на Email',
+    'email_incorrect' => 'Некорректный Email',
     'link_to_file' => 'Ссылка на файл %file%',
     'email_message' => 'С сайта %url% Вам была отправлена ссылка на файл %file%' . "\r\n" . '%link%',
     'email_sent_successfully' => 'Email успешно отправлен',
@@ -152,4 +153,6 @@ return array(
     'partner_prefix' => 'Оправьте SMS с текстом %prefix% на подходящий Вам номер',
     'partner_enter' => 'Если Вы уже отправили SMS, полученный код авторизации можно ввести здесь:',
     'recent_comments' => 'Последние комментарии:',
+
+    'attachments' => 'Вложения',
 );

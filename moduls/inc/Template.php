@@ -207,7 +207,7 @@ class Template extends Smarty
                 <div class="iblock">
                     ' . $hiddens . '
                     <label>' . $page . ':<br/>
-                        <input class="enter" name="page" type="number" maxlength="8" size="8" required="required" pattern="^[0-9]+$" />
+                        <input class="enter" name="page" type="number" maxlength="8" size="8" required="required" pattern="^[0-9]+$" min="1" max="1024"/>
                     </label>
                     <input class="buttom" type="submit" value="' . $language['go'] . '"/>
                 </div>
