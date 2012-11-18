@@ -64,7 +64,7 @@
             <div class="row">
                 <label>
                     {$language.lib}:<br/>
-                    <input size="5" class="enter" type="number" name="lib" value="{$lib}" required="required" pattern="^[0-9]+$" />
+                    <input size="5" class="enter" type="number" name="lib" value="{$lib}" required="required" min="1" />
                 </label>
                 <input class="buttom" type="submit" value="{$language.go}"/>
             </div>

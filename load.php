@@ -38,20 +38,18 @@ require 'moduls/config.php';
 ###############Проверка переменных###############
 $id = intval($_GET['id']);
 ###############Получаем инфу о файле###########
-$d = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
+$v = getFileInfo($id);
 
-if (file_exists($d)) {
-    mysql_query(
-        'UPDATE `files` SET `loads` = `loads` + 1, `timeload` = ' . $_SERVER['REQUEST_TIME'] . ' WHERE `id` = ' . $id,
-        $mysql
-    );
+if (file_exists($v['path'])) {
+    updFileLoad($id);
+
     $dir = dirname($_SERVER['PHP_SELF']);
     $dir = ($dir == DIRECTORY_SEPARATOR ? '' : $dir);
     header(
-        'Location: http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($d)),
+        'Location: http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])),
         true,
         301
     );
 } else {
-    echo $setup['hackmess'];
+    error($language['error']);
 }

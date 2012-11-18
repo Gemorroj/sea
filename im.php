@@ -56,15 +56,13 @@ if (!$w || !$h) {
     }
 }
 
-$pic = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
+$v = getFileInfo($id);
+$pic = $v['path'];
 $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
 
 if ($resize) {
     $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
-    mysql_unbuffered_query(
-        'UPDATE `files` SET `loads`=`loads`+1, `timeload`=' . $_SERVER['REQUEST_TIME'] . ' WHERE `id`=' . $id,
-        $mysql
-    );
+    updFileLoad($id);
 }
 
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['picpath'] . '/' . $prev_pic . '.gif';

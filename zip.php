@@ -63,7 +63,7 @@ if ($page < 1) {
 $start = isset($_GET['start']) ? intval($_GET['start']) : 0;
 
 
-$d = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+$d = getFileInfo($id);
 if (!file_exists($d['path'])) {
     error('File not found');
 }

@@ -35,43 +35,40 @@
 
 
 require 'moduls/config.php';
+
 ini_set('memory_limit', '128M');
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 $id = intval($_GET['id']);
 
-$file_info = mysql_fetch_row(
-    mysql_query('SELECT `path`, LOWER(RIGHT(`path`,4)) FROM `files` WHERE `id` = ' . $id, $mysql)
-);
+$v = getFileInfo($id);
+$prev_path = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
+$ext = strtolower(pathinfo($v['path'], PATHINFO_EXTENSION));
 
 
-$name = $setup['tpath'] . '/' . str_replace('/', '--', mb_substr(strstr($file_info[0], '/'), 1)) . '.gif';
+$name = $setup['tpath'] . '/' . $prev_path . '.gif';
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $name;
 
 
 if (file_exists($name)) {
     header('Location: ' . $location, true, 301);
     exit;
-} else {
-    if (file_exists($name . '.swf')) {
-        header('Location: ' . $location . '.swf', true, 301);
-        exit;
-    }
+} else if (file_exists($name . '.swf')) {
+    header('Location: ' . $location . '.swf', true, 301);
+    exit;
 }
 
 
-if ($file_info[1] == '.nth') {
+if ($ext == 'nth') {
     require_once 'moduls/PEAR/pclzip.lib.php';
 
-    $nth = new PclZip($file_info[0]);
+    $nth = new PclZip($v['path']);
 
     $content = $nth->extract(PCLZIP_OPT_BY_NAME, 'theme_descriptor.xml', PCLZIP_OPT_EXTRACT_AS_STRING);
     if (!$content) {
         $content = $nth->extract(PCLZIP_OPT_BY_PREG, '#\.xml$#', PCLZIP_OPT_EXTRACT_AS_STRING);
     }
 
-    //var_dump($nth, $file_info[0], is_readable($file_info[0]));
-    //exit;
 
     $teg = simplexml_load_string($content[0]['content'])->wallpaper['src'];
     if (!$teg) {
@@ -93,14 +90,14 @@ if ($file_info[1] == '.nth') {
     } else {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
-} else if ($file_info[1] == '.thm') {
+} else if ($ext == 'thm') {
     require_once 'moduls/PEAR/Archive/Tar.php';
 
-    $thm = new Archive_Tar($file_info[0]);
+    $thm = new Archive_Tar($v['path']);
 
     $content = $thm->extractInString('Theme.xml');
     if (!$content) {
-        $content = $thm->extractInString(pathinfo($file_info[0], PATHINFO_FILENAME) . '.xml');
+        $content = $thm->extractInString(pathinfo($v['path'], PATHINFO_FILENAME) . '.xml');
     }
 
     if (!$content) {
@@ -116,7 +113,7 @@ if ($file_info[1] == '.nth') {
 
     // fix bug in Tar.php
     if (!$content) {
-        preg_match('/<\?\s*xml\s*version\s*=\s*"1\.0"\s*\?>(.*)<\/.+>/isU', file_get_contents($file_info[0]), $arr);
+        preg_match('/<\?\s*xml\s*version\s*=\s*"1\.0"\s*\?>(.*)<\/.+>/isU', file_get_contents($v['path']), $arr);
         $content = trim($arr[0]);
         unset($arr);
     }
@@ -142,10 +139,10 @@ if ($file_info[1] == '.nth') {
     } else {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
-} else if ($file_info[1] == '.sdt') {
+} else if ($ext == 'sdt') {
     require_once 'moduls/PEAR/pclzip.lib.php';
 
-    $sdt = new PclZip($file_info[0]);
+    $sdt = new PclZip($v['path']);
     $format = $teg = $image = $skin = '';
 
     $content = $sdt->extract(PCLZIP_OPT_BY_NAME, 'config.stc', PCLZIP_OPT_EXTRACT_AS_STRING);
@@ -248,10 +245,10 @@ if ($file_info[1] == '.nth') {
     } else {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
-} else if ($file_info[1] == '.scs') {
+} else if ($ext == 'scs') {
     require_once 'moduls/PEAR/pclzip.lib.php';
 
-    $scs = new PclZip($file_info[0]);
+    $scs = new PclZip($v['path']);
 
     $content = $scs->extract(PCLZIP_OPT_BY_NAME, 'SkinApplicationImage.jpg', PCLZIP_OPT_EXTRACT_AS_STRING);
     if (!$content) {
@@ -279,148 +276,144 @@ if ($file_info[1] == '.nth') {
 
     file_put_contents($name, $content[0]['content']);
     img_resize($name, $name, 0, 0, $setup['marker']);
-} else {
-    if ($file_info[1] == '.utz') {
-        require_once 'moduls/PEAR/pclzip.lib.php';
+} else if ($ext == 'utz') {
+    require_once 'moduls/PEAR/pclzip.lib.php';
 
-        $utz = new PclZip($file_info[0]);
-
-
-        $content = $utz->extract(PCLZIP_OPT_BY_NAME, 'Theme.xml', PCLZIP_OPT_EXTRACT_AS_STRING);
-        if (!$content) {
-            $content = $utz->extract(PCLZIP_OPT_BY_PREG, '#\.xml$#', PCLZIP_OPT_EXTRACT_AS_STRING);
-        }
-
-        $teg = (string)simplexml_load_string($content[0]['content'])->preview['file'];
-        if (!$teg) {
-            $teg = (string)simplexml_load_string($content[0]['content'])->wallpapers->wallpaper['file'];
-        }
-
-        if ($teg) {
-            $image = $utz->extract(PCLZIP_OPT_BY_NAME, $teg, PCLZIP_OPT_EXTRACT_AS_STRING);
-        } else {
-            $image = $utz->extract(PCLZIP_OPT_BY_PREG, '#\.png$#', PCLZIP_OPT_EXTRACT_AS_STRING);
-        }
-
-        file_put_contents($name, $image[0]['content']);
-        $info = getimagesize($name);
-
-        if ($info[2] == 4 || $info[2] == 13) {
-            img_resize($name, $name . '.swf', 0, 0, $setup['marker']);
-            $location .= '.swf';
-        } else {
-            img_resize($name, $name, 0, 0, $setup['marker']);
-        }
-    } else {
-        if ($file_info[1] == '.apk') {
-            require_once 'moduls/PEAR/pclzip.lib.php';
-
-            $apk = new PclZip($file_info[0]);
-
-            $content = $apk->extract(PCLZIP_OPT_BY_NAME, 'res/drawable/icon.png', PCLZIP_OPT_EXTRACT_AS_STRING);
-            if (!$content) {
-                $content = $apk->extract(PCLZIP_OPT_BY_NAME, 'res/drawable/main.png', PCLZIP_OPT_EXTRACT_AS_STRING);
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_PREG,
-                    '#res/drawable/.*icon.*\.png$#',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(PCLZIP_OPT_BY_PREG, '#res/drawable/.*\.png$#', PCLZIP_OPT_EXTRACT_AS_STRING);
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_NAME,
-                    'res/drawable-ldpi/icon.png',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_NAME,
-                    'res/drawable-ldpi/main.png',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_PREG,
-                    '#res/drawable-ldpi/.*icon.*\.png$#',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_PREG,
-                    '#res/drawable-ldpi/.*\.png$#',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_NAME,
-                    'res/drawable-mdpi/icon.png',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_NAME,
-                    'res/drawable-mdpi/main.png',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_PREG,
-                    '#res/drawable-mdpi/.*icon.*\.png$#',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_PREG,
-                    '#res/drawable-mdpi/.*\.png$#',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_NAME,
-                    'res/drawable-hdpi/icon.png',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_NAME,
-                    'res/drawable-hdpi/main.png',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_PREG,
-                    '#res/drawable-hdpi/.*icon.*\.png$#',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
-            if (!$content) {
-                $content = $apk->extract(
-                    PCLZIP_OPT_BY_PREG,
-                    '#res/drawable-hdpi/.*\.png$#',
-                    PCLZIP_OPT_EXTRACT_AS_STRING
-                );
-            }
+    $utz = new PclZip($v['path']);
 
 
-            file_put_contents($name, $content[0]['content']);
-            img_resize($name, $name, 0, 0, $setup['marker']);
-        }
+    $content = $utz->extract(PCLZIP_OPT_BY_NAME, 'Theme.xml', PCLZIP_OPT_EXTRACT_AS_STRING);
+    if (!$content) {
+        $content = $utz->extract(PCLZIP_OPT_BY_PREG, '#\.xml$#', PCLZIP_OPT_EXTRACT_AS_STRING);
     }
+
+    $teg = (string)simplexml_load_string($content[0]['content'])->preview['file'];
+    if (!$teg) {
+        $teg = (string)simplexml_load_string($content[0]['content'])->wallpapers->wallpaper['file'];
+    }
+
+    if ($teg) {
+        $image = $utz->extract(PCLZIP_OPT_BY_NAME, $teg, PCLZIP_OPT_EXTRACT_AS_STRING);
+    } else {
+        $image = $utz->extract(PCLZIP_OPT_BY_PREG, '#\.png$#', PCLZIP_OPT_EXTRACT_AS_STRING);
+    }
+
+    file_put_contents($name, $image[0]['content']);
+    $info = getimagesize($name);
+
+    if ($info[2] == 4 || $info[2] == 13) {
+        img_resize($name, $name . '.swf', 0, 0, $setup['marker']);
+        $location .= '.swf';
+    } else {
+        img_resize($name, $name, 0, 0, $setup['marker']);
+    }
+} else if ($ext == 'apk') {
+    require_once 'moduls/PEAR/pclzip.lib.php';
+
+    $apk = new PclZip($v['path']);
+
+    $content = $apk->extract(PCLZIP_OPT_BY_NAME, 'res/drawable/icon.png', PCLZIP_OPT_EXTRACT_AS_STRING);
+    if (!$content) {
+        $content = $apk->extract(PCLZIP_OPT_BY_NAME, 'res/drawable/main.png', PCLZIP_OPT_EXTRACT_AS_STRING);
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_PREG,
+            '#res/drawable/.*icon.*\.png$#',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(PCLZIP_OPT_BY_PREG, '#res/drawable/.*\.png$#', PCLZIP_OPT_EXTRACT_AS_STRING);
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_NAME,
+            'res/drawable-ldpi/icon.png',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_NAME,
+            'res/drawable-ldpi/main.png',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_PREG,
+            '#res/drawable-ldpi/.*icon.*\.png$#',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_PREG,
+            '#res/drawable-ldpi/.*\.png$#',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_NAME,
+            'res/drawable-mdpi/icon.png',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_NAME,
+            'res/drawable-mdpi/main.png',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_PREG,
+            '#res/drawable-mdpi/.*icon.*\.png$#',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_PREG,
+            '#res/drawable-mdpi/.*\.png$#',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_NAME,
+            'res/drawable-hdpi/icon.png',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_NAME,
+            'res/drawable-hdpi/main.png',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_PREG,
+            '#res/drawable-hdpi/.*icon.*\.png$#',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+    if (!$content) {
+        $content = $apk->extract(
+            PCLZIP_OPT_BY_PREG,
+            '#res/drawable-hdpi/.*\.png$#',
+            PCLZIP_OPT_EXTRACT_AS_STRING
+        );
+    }
+
+
+    file_put_contents($name, $content[0]['content']);
+    img_resize($name, $name, 0, 0, $setup['marker']);
 }
 
 

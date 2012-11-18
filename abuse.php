@@ -42,18 +42,7 @@ if (!$setup['abuse_change']) {
 }
 
 // Получаем инфу о файле
-$v = mysql_fetch_assoc(
-    mysql_query(
-        '
-    SELECT *,
-    ' . Language::getInstance()->buildFilesQuery() . '
-    FROM `files`
-    WHERE `id` = ' . $id . '
-    AND `hidden` = "0"
-',
-        $mysql
-    )
-);
+$v = getFileInfo($id);
 
 if (!is_file($v['path'])) {
     error('File not found');

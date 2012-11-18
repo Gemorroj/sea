@@ -40,21 +40,18 @@ define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SE
 // Проверка переменных
 $id = intval($_GET['id']);
 // Получаем инфу о файле
-$d = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+$v = getFileInfo($id);
 
 
-if (file_exists($d[0])) {
-    mysql_query(
-        'UPDATE `files` SET `loads`=`loads` + 1, `timeload` = ' . $_SERVER['REQUEST_TIME'] . ' WHERE `id` = ' . $id,
-        $mysql
-    );
+if (file_exists($v['path'])) {
+    updFileLoad($id);
 
-    $nm = array_reverse(explode('.', basename($d[0])));
+    $nm = array_reverse(explode('.', basename($v['path'])));
     $nm = $nm[1];
-    $tmp = $setup['jpath'] . '/' . str_replace('/', '--', mb_substr(strstr($d[0], '/'), 1)) . '.jar';
+    $tmp = $setup['jpath'] . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.jar';
 
     if (!file_exists($tmp)) {
-        $f = str_to_utf8(file_get_contents($d[0]));
+        $f = str_to_utf8(file_get_contents($v['path']));
 
         copy('moduls/book.zip', $tmp);
         copy('moduls/props.ini', $setup['jpath'] . '/props.ini');
@@ -129,5 +126,5 @@ MIDlet-Delete-Confirm: GoodBye =)'
         301
     );
 } else {
-    echo $setup['hackmess'];
+    error($language['error']);
 }

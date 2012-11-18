@@ -46,7 +46,9 @@ define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SE
 $id = intval($_GET['id']);
 $frame = $i = $_GET['frame'] ? abs($_GET['frame']) : $setup['ffmpeg_frame'] + 1;
 
-$pic = mysql_result(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql), 0);
+$v = getFileInfo($id);
+
+$pic = $v['path'];
 $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame
     . '.gif';

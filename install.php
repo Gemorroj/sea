@@ -76,7 +76,7 @@ if (!@$_GET['level']) {
     chmod('data/pic/', 0777);
 
     mysql_query(
-        'DROP TABLE `files`,`komments`,`online`,`setting`,`loginlog`,`news`,`news_komments`,`users_profiles`,`users_settings`;',
+        'DROP TABLE `files`,`comments`,`online`,`setting`,`loginlog`,`news`,`news_comments`,`users_profiles`,`users_settings`;',
         $mysql
     );
 
@@ -117,7 +117,7 @@ if (!@$_GET['level']) {
 
 
     $sql
-        = "CREATE TABLE `komments` (
+        = "CREATE TABLE `comments` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `file_id` int(11) unsigned NOT NULL,
       `name` varchar(255) NOT NULL,
@@ -194,7 +194,7 @@ if (!@$_GET['level']) {
 
 
     $sql
-        = "CREATE TABLE `news_komments` (
+        = "CREATE TABLE `news_comments` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `id_news` int(11) unsigned NOT NULL,
       `text` text NOT NULL,
@@ -260,7 +260,6 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpegpath', 'data/ffmpeg');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'picpath', 'data/pic');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'limit', '10');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'klimit', '25');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'onpage', '10');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prew', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'sort', 'name');", $mysql);
@@ -324,9 +323,9 @@ if (!@$_GET['level']) {
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zag', 'Downloads');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'day_new', '2');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'komments_change', '1');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'komments_captcha', '0');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'komments_view', '3');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_change', '1');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_captcha', '0');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_view', '3');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'top_change', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ext', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'delete_dir', '1');", $mysql);

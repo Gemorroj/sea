@@ -21,12 +21,12 @@
                 <td><input class="enter" type="email" name="mail" id="mail" required="required" style="width:96%;"/></td>
             </tr>
             <tr>
-                <td><label for="pass">{$language.pass}</label></td>
+                <td><label for="pass">{$language.pass}:</label></td>
                 <td><input class="enter" type="password" name="pass" id="pass" style="width:96%;" required="required"/></td>
             </tr>
             <tr>
                 <th><img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.DIRECTORY}moduls/kcaptcha/index.php?{session_name()}={session_id()}" /></th>
-                <td><input class="enter" type="number" name="keystring" maxlength="4" required="required" style="width:96%;"/></td>
+                <td><input class="enter" type="number" name="keystring" maxlength="4" required="required" style="width:96%;" min="1" max="9999"/></td>
             </tr>
             <tr>
                 <th colspan="2"><input type="submit" value="{$language.go}" class="buttom"/></th>

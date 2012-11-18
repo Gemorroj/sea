@@ -34,50 +34,48 @@
  */
 
 
-require 'moduls/config.php';
 require 'moduls/header.php';
 
+// если библиотека отключена
 if (!$setup['lib_change']) {
     error('Not found');
 }
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Получаем инфу о файле
+$v = getFileInfo($id);
+if (!is_file($v['path'])) {
+    error('File not found');
+}
+
+// страница
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1) {
     $page = 1;
 }
 
-// Получаем инфу о файле
-$v = mysql_fetch_assoc(
-    mysql_query(
-        '
-    SELECT *,
-    ' . Language::getInstance()->buildFilesQuery() . '
-    FROM `files`
-    WHERE `id` = ' . $id
-        ,
-        $mysql
-    )
-);
-$pathinfo = pathinfo($v['path']);
 
-if (!is_file($v['path']) || strtolower($pathinfo['extension']) != 'txt') {
-    error('File not found');
-}
+$template->setTemplate('read.tpl');
 
-$back = mysql_fetch_assoc(
-    mysql_query(
-        "SELECT `id` FROM `files` WHERE `path` = '" . mysql_real_escape_string($pathinfo['dirname'] . '/', $mysql)
-            . "'",
-        $mysql
-    )
-);
+
+$sql_dir = mysql_real_escape_string($v['infolder'], $mysql);
+// Директория
+$directory = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
+$template->assign('directory', $directory);
+$template->assign('breadcrumbs', array(
+  $directory['id'] => $directory['name'],
+  'view/' . $id => $v['name'],
+  'read/' . $id => $language['read']
+));
 
 
 $seo = unserialize($v['seo']);
+if (!$seo['title']) {
+    $seo['title'] = $v['name'];
+}
+$seo['title'] .= ' - ' . $language['read'] . ' / ' . $page;
 
-$title .= $language['read'] . ' - ' . htmlspecialchars($seo['title'] ? $seo['title'] : $v['name'], ENT_NOQUOTES) . ' / '
-    . $page;
+
 
 if (isset($_SESSION['lib'])) {
     $setup['lib'] = $_SESSION['lib'];
@@ -103,26 +101,12 @@ if ($page > 1) {
     $content = substr($content, $i);
 }
 
+$content = str_to_utf8($content);
 $pages = ceil(filesize($v['path']) / $setup['lib']);
 
 
-if ($setup['lib_str']) {
-    echo'<pre>' . wordwrap(htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES), $setup['lib_str'], "\n", false)
-        . '</pre>' . go($page, $pages, DIRECTORY . 'read/' . $id);
-} else {
-    echo'<pre>' . htmlspecialchars(str_to_utf8($content), ENT_NOQUOTES) . '</pre>' . go(
-        $page,
-        $pages,
-        DIRECTORY . 'read/' . $id
-    );
-}
-
-if ($back['id']) {
-    $str = '- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>';
-} else {
-    $str = '';
-}
-echo'<div class="iblock">- <a href="' . DIRECTORY . 'view/' . $id . '">'
-    . $language['go to the description of the file'] . '</a><br/>' . $str . '- <a href="' . DIRECTORY . '">'
-    . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home']
-    . '</a><br/></div>';
+$template->assign('content', $content);
+$template->assign('file', $v);
+$template->assign('page', $page);
+$template->assign('pages', $pages);
+$template->send();

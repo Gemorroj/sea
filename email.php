@@ -42,18 +42,7 @@ if (!$setup['send_email']) {
 }
 
 // Получаем инфу о файле
-$v = mysql_fetch_assoc(
-    mysql_query(
-        '
-    SELECT *,
-    ' . Language::getInstance()->buildFilesQuery() . '
-    FROM `files`
-    WHERE `id` = ' . $id . '
-    AND `hidden` = "0"
-',
-        $mysql
-    )
-);
+$v = getFileInfo($id);
 
 if (!is_file($v['path'])) {
     error('File not found');
@@ -61,6 +50,7 @@ if (!is_file($v['path'])) {
 
 $seo['title'] = $language['send_a_link_to_email'] . ' - ' . $v['name'];
 $template->setTemplate('email.tpl');
+$template->assign('file', $v);
 $template->assign(
     'breadcrumbs',
     array(
@@ -93,5 +83,5 @@ if (isset($_POST['email'])) {
     }
 }
 
-$template->assign('name', $v['name']);
+
 $template->send();

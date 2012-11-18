@@ -39,7 +39,7 @@ require 'moduls/inc/Rss.php';
 
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
-$link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news.php';
+$link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
 
 
 $rss = new Rss($language['news'], $link, $language['news']);
@@ -60,7 +60,7 @@ while ($arr = mysql_fetch_assoc($q)) {
     $date = new DateTime('@' . $arr['time']);
 
     $rss->addItem(
-        'Новости - ' . $date->format('Y.m.d H:i'),
+        $language['news'] . ' - ' . $date->format('Y.m.d H:i'),
         $link,
         '<div>' . $arr['news'] . '</div>',
         $date

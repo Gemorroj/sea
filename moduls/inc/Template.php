@@ -50,6 +50,7 @@ class Template extends Smarty
             ->setCacheDir(DIR . '/Smarty/cache/')
             ->registerPlugin('modifier', 'dateFormatExtended', array($this, 'dateFormatExtended'))
             ->registerPlugin('modifier', 'sizeFormatExtended', array($this, 'sizeFormatExtended'))
+            ->registerPlugin('modifier', 'bbcode', array($this, 'bbcode'))
             ->registerPlugin('function', 'paginationExtended', array($this, 'paginationExtended'))
             ->loadFilter('variable', 'htmlspecialchars');
 
@@ -207,7 +208,7 @@ class Template extends Smarty
                 <div class="iblock">
                     ' . $hiddens . '
                     <label>' . $page . ':<br/>
-                        <input class="enter" name="page" type="number" maxlength="8" size="8" required="required" pattern="^[0-9]+$" min="1" max="1024"/>
+                        <input class="enter" name="page" type="number" maxlength="8" size="8" required="required" min="1" max="65536"/>
                     </label>
                     <input class="buttom" type="submit" value="' . $language['go'] . '"/>
                 </div>
@@ -215,5 +216,40 @@ class Template extends Smarty
         }
 
         return $go != '[' . $params['page'] . '] ' ? '<nav class="row">' . $go . '</nav>' : '';
+    }
+
+
+    /**
+     * Ббкод в html
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    public function bbcode($str)
+    {
+        $str = htmlspecialchars($str);
+
+        $bbcode = array(
+            '/\[url\](.+)\[\/url\]/isU' => '<a href="$1">$1</a>',
+            '/\[url=(.+)\](.+)\[\/url\]/isU' => '<a href="$1">$2</a>',
+            '/\[i\](.+)\[\/i\]/isU' => '<em>$1</em>',
+            '/\[b\](.+)\[\/b\]/isU' => '<strong>$1</strong>',
+            '/\[u\](.+)\[\/u\]/isU' => '<span style="text-decoration:underline;">$1</span>',
+            '/\[big\](.+)\[\/big\]/isU' => '<span style="font-size:large;">$1</span>',
+            '/\[small\](.+)\[\/small\]/isU' => '<span style="font-size:small;">$1</span>',
+            '/\[code\](.+)\[\/code\]/isU' => '<code>$1</code>',
+            '/\[red\](.+)\[\/red\]/isU' => '<span style="color:#ff0000;">$1</span>',
+            '/\[yellow\](.+)\[\/yellow\]/isU' => '<span style="color:#ffff22;">$1</span>',
+            '/\[green\](.+)\[\/green\]/isU' => '<span style="color:#00bb00;">$1</span>',
+            '/\[blue\](.+)\[\/blue\]/isU' => '<span style="color:#0000bb;">$1</span>',
+            '/\[white\](.+)\[\/white\]/isU' => '<span style="color:#ffffff;">$1</span>',
+            '/\[color=(.+)\](.+)\[\/color\]/isU' => '<span style="color:$1;">$2</span>',
+            '/\[size=([0-9]+)\](.+)\[\/size\]/isU' => '<span style="font-size:$1px;">$2</span>',
+            '/\[img\](.+)\[\/img\]/isU' => '<img src="$1" alt=""/>',
+            '/\[br\]/isU' => '<br />'
+        );
+
+        return preg_replace(array_keys($bbcode), array_values($bbcode), $str);
     }
 }

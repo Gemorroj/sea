@@ -34,73 +34,51 @@
  */
 
 
-require 'moduls/config.php';
-require 'moduls/PEAR/MP3/Id.php';
 require 'moduls/header.php';
+require 'moduls/PEAR/MP3/Id.php';
 
-###############Если нарезка выключенa##########
+// если нарезка отключена
 if (!$setup['cut_change']) {
     error('Not found!');
 }
-###############Проверка переменных#############
 
-$id = intval($_GET['id']);
-$s = isset($_POST['s']) ? intval($_POST['s']) : 0;
-$p = isset($_POST['p']) ? intval($_POST['p']) : 0;
 
-if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') {
-    error($setup['hackmess']);
+// Получаем инфу о файле
+$v = getFileInfo($id);
+
+if (!is_file($v['path'])) {
+    error('File not found');
 }
+$v['info'] = getMusicInfo($id, $v['path']);
+$cut = array();
 
-$title .= $language['splitting'];
-
-
-###############Получаем инфу о файле###########
-$file_info = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-if (!is_file($file_info['path'])) {
-    error('Not found!');
-}
-#######Получаем имя файла и обратный каталог#####
-$filename = pathinfo($file_info['path']);
-$ext = $filename['extension'];
-$dir = $filename['dirname'] . '/';
-$filename = $filename['basename'];
-$back = mysql_fetch_assoc(
-    mysql_query("SELECT * FROM `files` WHERE `path` = '" . mysql_real_escape_string($dir, $mysql) . "'", $mysql)
+$seo['title'] = $language['splitting'] . ' - ' . $v['name'];
+$template->setTemplate('cut.tpl');
+$template->assign('file', $v);
+$template->assignByRef('cut', $cut);
+$template->assign(
+    'breadcrumbs',
+    array(
+         'view/' . $id => $v['name'],
+         'cut/' . $id => $language['splitting']
+    )
 );
-//------------------------------------------------------------------------------------------
-if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
-    $id3 = new MP3_Id();
-    $result = $id3->read($file_info['path']);
-    $result = $id3->study();
-    // ------------------------Форма ввода параметров---------------------------
-    echo '<div class="mblock">' . $language['splitting'] . '</div><div class="iblock">
-' . $language['size'] . ': ' . round(($id3->getTag('filesize') / 1024), 0) . ' Kb<br/>
-' . $language['length'] . ': ' . $id3->getTag('lengths') . ' ' . $language['sec'] . '</div><div class="row">
-<form action="' . DIRECTORY . 'cut/' . $id . '" method="post">
-<div class="row">
-' . $language['method slicing'] . ':<br/>
-<select class="enter" name="way">
-<option value="size">' . $language['size'] . '</option>
-<option value="time">' . $language['time'] . '</option>
-</select><br/>
-' . $language['start slicing'] . ':<br/>
-<input maxlength="5" class="enter" type="text" name="s"/><br/>
-' . $language['stop slicing'] . ':<br/>
-<input maxlength="5" class="enter" type="text" name="p"/><br/>
-<input class="buttom" type="submit" name="a" value="' . $language['go'] . '"/>
-</div>
-</form></div>';
-} else {
 
-    $list = glob($setup['mp3path'] . '/*');
-    $all = sizeof($list);
+
+if ($_POST) {
+    $s = isset($_POST['s']) ? intval($_POST['s']) : 0;
+    $p = isset($_POST['p']) ? intval($_POST['p']) : 0;
+
+    if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') {
+        error($language['error']);
+    }
+
     $allsize = 0;
-    foreach ($list as $key => $string) {
+    foreach (glob($setup['mp3path'] . '/*') as $string) {
         $allsize += round(filesize($string) / 1024 / 1024, 1);
         if ($allsize > $setup['limit']) {
-            $dire = opendir($setup['mp3path'] . '/');
-            while (($file = readdir($dire)) !== false) {
+            $dir = opendir($setup['mp3path'] . '/');
+            while (($file = readdir($dir)) !== false) {
                 if ($file != '.' && $file != '..') {
                     unlink($setup['mp3path'] . '/' . $file);
                 }
@@ -109,9 +87,9 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
         }
     }
 
-    $randname = uniqid();
-    $randintval = $setup['mp3path'] . '/' . $randname . '_' . $filename;
-    if (copy($file_info['path'], $randintval)) {
+    $randintval = $setup['mp3path'] . '/' . uniqid() . '_' . pathinfo($v['path'], PATHINFO_BASENAME);
+
+    if (copy($v['path'], $randintval)) {
         $fp = fopen($randintval, 'rb');
         $raz = filesize($randintval);
 
@@ -125,10 +103,8 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
                 $p = $raz;
             }
         } else {
-            $id3 = new MP3_Id();
-            $result = $id3->read($randintval);
-            $result = $id3->study();
-            $byterate = $id3->getTag('bitrate') / 8;
+            //todo:avgBitrate может быть плавающим
+            $byterate = ($v['info']['avgBitrate'] ? $v['info']['avgBitrate'] : 128000) / 8;
             $secbit = $raz / 1024 / $byterate;
             if ($s > $secbit || $s < 0) {
                 $s = 0;
@@ -139,40 +115,32 @@ if (!isset($_POST['a']) || ($s < 1 && $p < 1)) {
             $s *= $byterate * 1024;
             $p *= $byterate * 1024;
         }
+
         $p -= $s;
         fseek($fp, $s);
         $filefp = fread($fp, $p);
         fclose($fp);
         unlink($randintval);
+
         $fp = fopen($randintval, 'xb');
         if (fwrite($fp, $filefp)) {
             $fp = fopen($randintval, 'rb');
-            $ras = round(filesize($randintval) / 1024);
+            $ras = filesize($randintval);
             fclose($fp);
-            $all++;
 
-            mysql_query(
-                'UPDATE `files` SET `loads`=`loads` + 1, `timeload` = "' . $_SERVER['REQUEST_TIME'] . '" WHERE `id` = '
-                    . $id,
-                $mysql
+            updFileLoad($id);
+
+            $cut = array(
+                'link' => DIRECTORY . $randintval,
+                'size' => $ras,
             );
-
-            echo'<div class="mblock">' . $language['the file has been successfully cut']
-                . '</div><div class="row"><strong><a href="' . DIRECTORY . $randintval . '">' . $language['download']
-                . '</a> (' . $ras . ' kb)</strong><br/><input class="enter" type="text" name="link" value="http://'
-                . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['mp3path'] . '/' . $randname . '_' . rawurlencode(
-                $filename
-            ) . '"/></div>';
         } else {
-            echo '<div class="iblock">' . $language['error'] . '</div>';
+            error($language['error']);
         }
     } else {
-        echo '<div class="mblock">' . $language['error'] . '</div>';
+        error($language['error']);
     }
 }
-echo '<div class="iblock">
-- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file'] . '</a><br/>
-- <a href="' . DIRECTORY . '/' . $back['id'] . '">' . $language['go to the category'] . '</a><br/>
-- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
-- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a>
-</div>';
+
+
+$template->send();

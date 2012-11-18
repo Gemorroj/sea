@@ -112,4 +112,14 @@ mysql_query("ALTER TABLE `news` ADD `aze_news` TEXT CHARACTER SET utf8 COLLATE u
 ADD `tur_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_news`", $mysql);
 
 
+
+// new
+mysql_query("RENAME TABLE `komments`  TO `comments`", $mysql);
+mysql_query("RENAME TABLE `news_komments`  TO `news_comments`", $mysql);
+mysql_query("DELETE FROM `setting` WHERE `name` = 'klimit'", $mysql);
+mysql_query("UPDATE `setting` SET `name` = 'comments_change' WHERE `name` = 'komments_change'", $mysql);
+mysql_query("UPDATE `setting` SET `name` = 'comments_view' WHERE `name` = 'komments_view'", $mysql);
+mysql_query("UPDATE `setting` SET `name` = 'comments_captcha' WHERE `name` = 'komments_captcha'", $mysql);
+
+
 header('Location: http://' . $_SERVER['HTTP_HOST'] . str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) . '/');

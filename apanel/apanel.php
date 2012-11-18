@@ -86,8 +86,8 @@ switch ($action) {
 <div class="row"><a href="apanel.php?action=mark">Маркер картинок</a></div>
 <div class="row"><a href="apanel.php?action=optm">Оптимизация БД</a></div>
 <div class="row"><a href="apanel.php?action=clean">Очистка БД</a></div>
-<div class="row"><a href="apanel.php?action=cleankomm">Очистка комментариев к файлам</a></div>
-<div class="row"><a href="apanel.php?action=cleankomm_news">Очистка комментариев к новостям</a></div>
+<div class="row"><a href="apanel.php?action=cleancomm">Очистка комментариев к файлам</a></div>
+<div class="row"><a href="apanel.php?action=cleancomm_news">Очистка комментариев к новостям</a></div>
 <div class="row"><a href="apanel.php?action=exit">Выход</a></div>';
         break;
 
@@ -634,7 +634,7 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
 
             if (!file_exists($row['path'])) {
                 mysql_query('DELETE FROM `files` WHERE `id` = ' . $row['id'], $mysql);
-                mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $row['id'], $mysql);
+                mysql_query('DELETE FROM `comments` WHERE `file_id` = ' . $row['id'], $mysql);
 
                 dir_count($row['path'], false);
 
@@ -967,8 +967,8 @@ XHTML код отображаемый снизу:
 
 
 #########################################ОЧИСТКА КОММЕНТОВ К ФАЙЛУ#########################################
-    case 'clearkomm':
-        mysql_query('DELETE FROM `komments` WHERE `file_id` = ' . $id, $mysql);
+    case 'clearcomm':
+        mysql_query('DELETE FROM `comments` WHERE `file_id` = ' . $id, $mysql);
         $error = mysql_error($mysql);
         if ($error) {
             error('Ошибка при сбросе.<br/>' . $error);
@@ -1002,7 +1002,7 @@ XHTML код отображаемый снизу:
         if (!isset($_GET['level'])) {
             echo 'Будут удалены все данные БД, включая описания, счетчики закачек, рейтинги и комментарии. Продолжить?<br/><a href="apanel.php?action=clean&amp;level=1">Да, продолжить</a>';
         } else {
-            if (mysql_query('TRUNCATE TABLE `files`;', $mysql) && mysql_query('TRUNCATE TABLE `komments`;', $mysql)) {
+            if (mysql_query('TRUNCATE TABLE `files`;', $mysql) && mysql_query('TRUNCATE TABLE `comments`;', $mysql)) {
                 echo 'Таблицы очищены.<br/>';
             } else {
                 error('Ошбка: ' . mysql_error($mysql));
@@ -1012,11 +1012,11 @@ XHTML код отображаемый снизу:
 
 
 ##########################################ОЧИСТКА КОММЕНТОВ к файлам##############################################
-    case 'cleankomm':
+    case 'cleancomm':
         if (!$_GET['level']) {
-            echo 'Будут удалены все комментарии к файлам! Продолжить?<br/><a href="apanel.php?action=cleankomm&amp;level=1">Да, продолжить</a>';
+            echo 'Будут удалены все комментарии к файлам! Продолжить?<br/><a href="apanel.php?action=cleancomm&amp;level=1">Да, продолжить</a>';
         } else {
-            if (mysql_query('TRUNCATE TABLE `komments`;', $mysql)) {
+            if (mysql_query('TRUNCATE TABLE `comments`;', $mysql)) {
                 echo 'Таблица комментариев очищена.<br/>';
             } else {
                 error('Ошибка: ' . mysql_error($mysql));
@@ -1026,11 +1026,11 @@ XHTML код отображаемый снизу:
 
 
 ##########################################ОЧИСТКА ВСЕХ КОММЕНТОВ##############################################
-    case 'cleankomm_news':
+    case 'cleancomm_news':
         if (!$_GET['level']) {
-            echo 'Будут удалены все комментарии к новстям! Продолжить?<br/><a href="apanel.php?action=cleankomm_news&amp;level=1">Да, продолжить</a>';
+            echo 'Будут удалены все комментарии к новстям! Продолжить?<br/><a href="apanel.php?action=cleancomm_news&amp;level=1">Да, продолжить</a>';
         } else {
-            if (mysql_query('TRUNCATE TABLE `news_komments`;', $mysql)) {
+            if (mysql_query('TRUNCATE TABLE `news_comments`;', $mysql)) {
                 echo 'Таблица комментариев очищена.<br/>';
             } else {
                 error('Ошибка: ' . mysql_error($mysql));
@@ -1115,7 +1115,7 @@ Description<br/>
 <form action="apanel.php?action=about&amp;id=' . $id . '" method="post">
 <div class="row">
 <textarea class="enter" cols="70" rows="10" name="text">' . htmlspecialchars(
-                antibb(file_get_contents($about)),
+                file_get_contents($about),
                 ENT_NOQUOTES,
                 'UTF-8'
             ) . '</textarea><br/><br/>
@@ -1132,7 +1132,7 @@ Description<br/>
                     error('Описание не удалено');
                 }
             } else {
-                if (file_put_contents($about, nl2br(bbcode(htmlspecialchars(trim($_POST['text'])))))) {
+                if (file_put_contents($about, trim($_POST['text']))) {
                     echo 'Описание изменено<br/>';
                 } else {
                     error('Описание не изменено');
@@ -1499,8 +1499,8 @@ Description<br/>
             echo '<div class="mblock">Управления модулями:</div>
 <form action="apanel.php?action=modules" method="post">
 <div class="row">
-<input name="komments_change" type="checkbox" value="1" ' . check($setup['komments_change']) . '/>Комментарии<br/>
-<input name="komments_captcha" type="checkbox" value="1" ' . check($setup['komments_captcha']) . '/>Капча к комментариям<br/>
+<input name="comments_change" type="checkbox" value="1" ' . check($setup['comments_change']) . '/>Комментарии<br/>
+<input name="comments_captcha" type="checkbox" value="1" ' . check($setup['comments_captcha']) . '/>Капча к комментариям<br/>
 <input name="eval_change" type="checkbox" value="1" ' . check($setup['eval_change']) . '/>Рейтинг<br/>
 <input name="jad_change" type="checkbox" value="1" ' . check($setup['jad_change']) . '/>Генератор Jad<br/>
 <input name="cut_change" type="checkbox" value="1" ' . check($setup['cut_change']) . '/>Нарезчик MP3<br/>
@@ -1540,8 +1540,8 @@ Description<br/>
 </div>
 </form>';
         } else {
-            $_POST['komments_change'] = $_POST['komments_change'] ? 1 : 0;
-            $_POST['komments_captcha'] = $_POST['komments_captcha'] ? 1 : 0;
+            $_POST['comments_change'] = $_POST['comments_change'] ? 1 : 0;
+            $_POST['comments_captcha'] = $_POST['comments_captcha'] ? 1 : 0;
             $_POST['eval_change'] = $_POST['eval_change'] ? 1 : 0;
             $_POST['onpage_change'] = $_POST['onpage_change'] ? 1 : 0;
             $_POST['preview_change'] = $_POST['preview_change'] ? 1 : 0;
@@ -1724,12 +1724,8 @@ Description<br/>
 Лимит нарезок (Мб):<br/>
 <input class="enter" name="limit" type="text" value="' . $setup['limit'] . '"/>
 </div><div class="row">
-
-Лимит комментариев к одному файлу:<br/>
-<input class="enter" name="klimit" type="text" value="' . $setup['klimit'] . '"/>
-</div><div class="row">
 Кол-во комментариев в описании файла:<br/>
-<input class="enter" name="komments_view" type="text" value="' . $setup['komments_view'] . '"/>
+<input class="enter" name="comments_view" type="text" value="' . $setup['comments_view'] . '"/>
 </div><div class="row">
 
 Файлов на страницу по умолчанию:
@@ -1830,8 +1826,8 @@ E-mail админа:<br/>
         break;
 
 
-    case 'del_news_komm':
-        if (mysql_query('DELETE FROM `news_komments` WHERE `id` = ' . intval($_GET['news_komm']), $mysql)) {
+    case 'del_comment_news_comments':
+        if (mysql_query('DELETE FROM `news_comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
             echo 'Ok<br/>';
         } else {
             error('Ошибка: ' . mysql_error($mysql));
@@ -1839,8 +1835,8 @@ E-mail админа:<br/>
         break;
 
 
-    case 'del_komm':
-        if (mysql_query('DELETE FROM `komments` WHERE `id` = ' . intval($_GET['komm']), $mysql)) {
+    case 'del_comment_view_comments':
+        if (mysql_query('DELETE FROM `comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
             echo 'Ok<br/>';
         } else {
             error('Ошибка: ' . mysql_error($mysql));

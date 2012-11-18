@@ -166,7 +166,7 @@ $template->assign('breadcrumbs', $breadcrumbs);
 $news = mysql_fetch_assoc(
     mysql_query(
         '
-    SELECT `time`,
+    SELECT *,
     ' . Language::getInstance()->buildNewsQuery() . '
     FROM `news`
     ORDER BY `id` DESC

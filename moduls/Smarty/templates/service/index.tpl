@@ -3,10 +3,10 @@
         <input type="hidden" name="act" value="enter"/>
         <label>
             ID:<br/>
-            <input class="enter" type="number" name="id" required="required" pattern="^[0-9]+$"/><br/>
+            <input class="enter" type="number" name="id" required="required" min="1"/><br/>
         </label>
         <label>
-            {$language.pass}<br/>
+            {$language.pass}:<br/>
             <input class="enter" type="password" name="pass" required="required"/><br/>
         </label>
         <input type="submit" value="{$language.go}" class="buttom"/>
@@ -19,7 +19,7 @@
     <div class="row">
         <label>
             {$language.lost_password}<br/>
-            ID:<input class="enter" type="number" name="id" required="required" pattern="^[0-9]+$"/> <input type="submit" value="{$language.go}" class="buttom"/>
+            ID:<input class="enter" type="number" name="id" required="required" min="1"/> <input type="submit" value="{$language.go}" class="buttom"/>
         </label>
     </div>
 </form>

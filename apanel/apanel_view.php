@@ -204,7 +204,7 @@ if (isset($_GET['hidden'])) {
 }
 
 
-$all_komments = mysql_result(mysql_query('SELECT COUNT(1) FROM `komments` WHERE file_id = ' . $id, $mysql), 0);
+$all_comments = mysql_result(mysql_query('SELECT COUNT(1) FROM `comments` WHERE file_id = ' . $id, $mysql), 0);
 
 $file_info['size'] = '(' . size($file_info['size']) . ')';
 
@@ -412,9 +412,9 @@ if ($setup['zip_change'] && $ext == 'zip') {
 }
 
 ###############Комментарии#######################
-if ($setup['komments_change']) {
-    echo'<a href="../komm.php?id=' . $id . '"><strong>Комментарии [' . $all_komments
-        . '</strong>]</a>[<a href="apanel.php?id=' . $file_info['id'] . '&amp;action=clearkomm">Очистить</a>]<br/>';
+if ($setup['comments_change']) {
+    echo'<a href="../comments/' . $id . '"><strong>Комментарии [' . $all_comments
+        . '</strong>]</a>[<a href="apanel.php?id=' . $file_info['id'] . '&amp;action=clearcomm">Очистить</a>]<br/>';
 }
 
 

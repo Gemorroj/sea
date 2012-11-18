@@ -376,74 +376,6 @@ function retrans($t)
 
 
 /**
- * Ббкод в html
- *
- * @param string $text
- *
- * @return string
- */
-function bbcode($text = '')
-{
-    //конвертация кодов в теги регулярными выражениями
-    // ББ коды
-    $bbcode = array(
-        '/\[url\](.+)\[\/url\]/isU' => '<a href="$1">$1</a>',
-        '/\[url=(.+)\](.+)\[\/url\]/isU' => '<a href="$1">$2</a>',
-        '/\[i\](.+)\[\/i\]/isU' => '<em>$1</em>',
-        '/\[b\](.+)\[\/b\]/isU' => '<strong>$1</strong>',
-        '/\[u\](.+)\[\/u\]/isU' => '<span style="text-decoration:underline;">$1</span>',
-        '/\[big\](.+)\[\/big\]/isU' => '<span style="font-size:large;">$1</span>',
-        '/\[small\](.+)\[\/small\]/isU' => '<span style="font-size:small;">$1</span>',
-        '/\[code\](.+)\[\/code\]/isU' => '<code>$1</code>',
-        '/\[red\](.+)\[\/red\]/isU' => '<span style="color:#ff0000;">$1</span>',
-        '/\[yellow\](.+)\[\/yellow\]/isU' => '<span style="color:#ffff22;">$1</span>',
-        '/\[green\](.+)\[\/green\]/isU' => '<span style="color:#00bb00;">$1</span>',
-        '/\[blue\](.+)\[\/blue\]/isU' => '<span style="color:#0000bb;">$1</span>',
-        '/\[white\](.+)\[\/white\]/isU' => '<span style="color:#ffffff;">$1</span>',
-        '/\[color=(.+)\](.+)\[\/color\]/isU' => '<span style="color:$1;">$2</span>',
-        '/\[size=([0-9]+)\](.+)\[\/size\]/isU' => '<span style="font-size:$1px;">$2</span>',
-        '/\[img\](.+)\[\/img\]/isU' => '<img src="$1" alt=""/>',
-        '/\[br\]/isU' => '<br />'
-    );
-
-    return preg_replace(array_keys($bbcode), array_values($bbcode), $text);
-}
-
-
-/**
- * Из html в ббкод
- *
- * @param string $text
- *
- * @return string
- */
-function antibb($text = '')
-{
-    // обратное преобразование ббкодов
-    $bbcode = array(
-        '/<a href="(.+)">(.+)<\/a>/isU' => '[url=$1]$2[/url]',
-        '/<em>(.+)<\/em>/isU' => '[i]$1[/i]',
-        '/<strong>(.+)<\/strong>/isU' => '[b]$1[/b]',
-        '/<span style="text-decoration:underline;">(.+)<\/span>/isU' => '[u]$1[/u]',
-        '/<span style="font-size:large;">(.+)<\/span>/isU' => '[big]$1[/big]',
-        '/<span style="font-size:small;">(.+)<\/span>/isU' => '[small]$1[/small]',
-        '/<code>(.+)<\/code>/isU' => '[code]$1[/code]',
-        '/<span style="color:#ff0000;">(.+)<\/span>/isU' => '[red]$1[/red]',
-        '/<span style="color:#ffff22;">(.+)<\/span>/isU' => '[yellow]$1[/yellow]',
-        '/<span style="color:#00bb00;">(.+)<\/span>/isU' => '[green]$1[/green]',
-        '/<span style="color:#0000bb;">(.+)<\/span>/isU' => '[blue]$1[/blue]',
-        '/<span style="color:#ffffff;">(.+)<\/span>/isU' => '[white]$1[/white]',
-        '/<span style="color:(.+);">(.+)<\/span>/isU' => '[color=$1]$2[/color]',
-        '/<span style="font-size:([0-9]+)px;">(.+)<\/span>/isU' => '[size=$1]$2[/size]',
-        '/<img src="(.+)" alt=""\/>/isU' => '[img]$1[/img]',
-        '/<br \/>/isU' => '[br]'
-    );
-
-    return preg_replace(array_keys($bbcode), array_values($bbcode), $text);
-}
-
-
-/**
  * Число ли
  */
 function is_num($txt, $name)
@@ -1037,16 +969,15 @@ function getThmInfo($id, $path = '')
     }
 
 
-    $language = Language::getInstance()->getLanguage();
     $load = simplexml_load_string($file);
 
-    $out = array();
+    $out = array('author' => '', 'version' => '', 'models' => '');
     if ($load->Author_organization['Value']) {
-        $out['author'] = $load->Author_organization['Value'];
+        $out['author'] = (string)$load->Author_organization['Value'];
     }
 
     if ($load['version']) {
-        $out['version'] = $load['version'];
+        $out['version'] = (string)$load['version'];
 
         if (in_array($load['version'], array_keys($ver_thm))) {
             $out['models'] = $ver_thm[(string)$load['version']];
@@ -1617,7 +1548,7 @@ function getMusicInfo($id, $path)
         $audio = new AudioFile;
         $audio->loadFile($path);
 
-        if ($audio->wave_length) {
+        if ($audio->wave_length > 0) {
             $length = $audio->wave_length;
         } else {
             include dirname(__FILE__) . '/mp3.class.php';
@@ -1666,16 +1597,16 @@ function getMusicInfo($id, $path)
         $tmpa = array(
             'channels' => $audio->wave_channels,
             'sampleRate' => $audio->wave_framerate,
-            'avgBitrate' => str_replace(' Kbps', '', $audio->wave_byterate) * 1024,
+            'avgBitrate' => intval($audio->wave_byterate) * 1024,
             'streamLength' => $length,
-            'comments' => array(
-                'TITLE' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
-                'ARTIST' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
-                'ALBUM' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
-                'DATE' => $comments['DATE'],
-                'GENRE' => $comments['GENRE'],
-                'COMMENT' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT'])),
-                'APIC' => $comments['APIC']
+            'tag' => array(
+                'title' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
+                'artist' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
+                'album' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
+                'date' => $comments['DATE'],
+                'genre' => $comments['GENRE'],
+                'comment' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT'])),
+                'apic' => $comments['APIC']
             )
         );
     } elseif ($ext == 'ogg') {
@@ -1721,14 +1652,14 @@ function getMusicInfo($id, $path)
                 'sampleRate' => $obj->_sampleRate,
                 'avgBitrate' => $obj->_avgBitrate,
                 'streamLength' => $obj->_streamLength,
-                'comments' => array(
-                    'TITLE' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
-                    'ARTIST' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
-                    'ALBUM' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
-                    'DATE' => $comments['DATE'],
-                    'GENRE' => $comments['GENRE'],
-                    'COMMENT' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT'])),
-                    'APIC' => false
+                'tag' => array(
+                    'title' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
+                    'artist' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
+                    'album' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
+                    'date' => $comments['DATE'],
+                    'genre' => $comments['GENRE'],
+                    'comment' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT'])),
+                    'apic' => false
                 )
             );
         } catch (Exception $e) {}
@@ -1778,4 +1709,45 @@ function getVideoInfo($id, $path)
 function isValidEmail ($email)
 {
     return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
+}
+
+
+/**
+ * Данные файла из БД
+ *
+ * @param int $id
+ *
+ * @return array
+ */
+function getFileInfo ($id)
+{
+    return mysql_fetch_assoc(
+        mysql_query('
+            SELECT *, ' . Language::getInstance()->buildFilesQuery() . '
+            FROM `files`
+            WHERE `id` = ' . intval($id) . '
+            AND `hidden` = "0"
+        ',
+            $GLOBALS['mysql']
+        )
+    );
+}
+
+
+/**
+ * Обновляем счетчик скачиваний
+ *
+ * @param int $id
+ *
+ * @return bool
+ */
+function updFileLoad ($id)
+{
+    return mysql_unbuffered_query('
+        UPDATE `files`
+        SET `loads` = `loads` + 1,
+        `timeload` = ' . $_SERVER['REQUEST_TIME'] . '
+        WHERE `id` = ' . intval($id),
+        $GLOBALS['mysql']
+    );
 }

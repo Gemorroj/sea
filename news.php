@@ -34,54 +34,46 @@
  */
 
 
-require 'moduls/config.php';
 require 'moduls/header.php';
-$str = '';
 
-$title .= $language['news'];
 
-// кол-во на страницу
+$template->setTemplate('news.tpl');
+$seo['title'] = $language['news'];
+$template->assign('breadcrumbs', array('news' => $language['news']));
+
 $onpage = get2ses('onpage');
+$page = isset($_GET['page']) ? abs($_GET['page']) : 0;
+
 if ($onpage < 3) {
-    $onpage = 3;
-}
-$page = isset($_GET['page']) ? abs($_GET['page']) : 1;
-if ($page < 1) {
-    $page = 1;
+    $onpage = $setup['onpage'];
 }
 
-$id = isset($_GET['id']) ? abs($_GET['id']) : 0;
 
 // всего новостей
 $all = mysql_result(mysql_query('SELECT COUNT(1) FROM `news`', $mysql), 0);
-if (!$all) {
-    error($language['news yet']);
-}
-
 
 $pages = ceil($all / $onpage);
 if (!$pages) {
     $pages = 1;
 }
-if ($page > $pages) {
+if ($page > $pages || $page < 1) {
     $page = 1;
 }
-if ($page) {
-    $start = ($page - 1) * $onpage;
-} else {
+
+$start = ($page - 1) * $onpage;
+if ($start > $all || $start < 0) {
     $start = 0;
 }
-if ($start > $all || $start < 1) {
-    $start = 0;
-}
-$q = mysql_query(
+
+
+$query = mysql_query(
     '
     SELECT `news`.`id`,
     ' . Language::getInstance()->buildNewsQuery() . ',
     `news`.`time`,
-    COUNT(k.id) AS count
+    COUNT(k.id) AS `count`
     FROM `news`
-    LEFT JOIN `news_komments` AS k ON `news`.`id` = k.id_news
+    LEFT JOIN `news_comments` AS k ON `news`.`id` = k.id_news
     WHERE `news`.`id` > 0
     GROUP BY `news`.`id`
     ORDER BY `news`.`id` DESC
@@ -89,60 +81,13 @@ $q = mysql_query(
     $mysql
 );
 
-while ($arr = mysql_fetch_assoc($q)) {
-    $str .= '<div class="iblock">' . tm($arr['time']) . '<br/><span style="font-size:9px;">' . $arr['news']
-        . '</span><br/><a href="' . DIRECTORY . 'news_komm/' . $arr['id'] . '">' . $language['comments'] . '</a> ['
-        . $arr['count'] . ']</div>';
+$news = array();
+while ($row = mysql_fetch_assoc($query)) {
+    $news[] = $row;
 }
 
-echo $str;
-
-if ($pages > 1) {
-    echo '<div class="iblock">' . $language['pages'] . ': ';
-
-    $asd = $page - 2;
-    $asd2 = $page + 3;
-    if ($asd < $all && $asd > 0 && $page > 3) {
-        echo '<a href="' . DIRECTORY . 'news/1">1</a> ... ';
-    }
-
-    for ($i = $asd; $i < $asd2; ++$i) {
-        if ($i <= $all && $i > 0) {
-            if ($i > $pages) {
-                break;
-            }
-            if ($page == $i) {
-                echo '<strong>[' . $i . ']</strong> ';
-            } else {
-                echo '<a href="' . DIRECTORY . 'news/' . $i . '">' . $i . '</a> ';
-            }
-        }
-    }
-    if ($i <= $pages) {
-        if ($asd2 < $all) {
-            echo ' ... <a href="' . DIRECTORY . 'news/' . $pages . '">' . $pages . '</a>';
-        }
-    }
-
-    echo '<br/>';
-    ###############Ручной ввод страниц###############
-    if ($pages > $setup['pagehand'] && $setup['pagehand_change']) {
-        echostr_replace(array('%page%', '%pages%'), array($page, $pages), $language['page']) . ':<br/><form action="'
-            . $_SERVER['PHP_SELF'] . '?" method="get"><div class="row"><input type="hidden" name="id" value="' . $id
-            . '"/><input class="enter" name="page" type="text" maxlength="8" size="8"/> <input class="buttom" type="submit" value="'
-            . $language['go'] . '"/></div></form>';
-    }
-    echo '</div>';
-}
-
-echo '<div class="iblock">- <a href="' . DIRECTORY . 'settings/' . $id . '">' . $language['settings'] . '</a><br/>';
-
-if ($setup['stat_change']) {
-    echo '- <a href="' . DIRECTORY . 'stat/' . $id . '">' . $language['statistics'] . '</a><br/>';
-}
-if ($setup['zakaz_change']) {
-    echo '- <a href="' . DIRECTORY . 'table/' . $id . '">' . $language['orders'] . '</a><br/>';
-}
-
-echo '- <a href="' . DIRECTORY . '">' . $language['downloads'] . '</a><br/>
-- <a href="' . $setup['site_url'] . '">' . $language['home'] . '</a></div>';
+$template->assign('allItemsInDir', $all);
+$template->assign('page', $page);
+$template->assign('pages', $pages);
+$template->assign('news', $news);
+$template->send();

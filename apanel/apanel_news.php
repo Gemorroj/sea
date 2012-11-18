@@ -73,10 +73,10 @@ if (isset($_POST['new'])) {
         }
     }
 
-    $eng = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['english'], ENT_NOQUOTES)), $mysql);
-    $rus = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['russian'], ENT_NOQUOTES)), $mysql);
-    $aze = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['azerbaijan'], ENT_NOQUOTES)), $mysql);
-    $tur = mysql_real_escape_string(bbcode(htmlspecialchars($_POST['new']['turkey'], ENT_NOQUOTES)), $mysql);
+    $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
+    $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+    $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+    $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
 
     mysql_query(
         "

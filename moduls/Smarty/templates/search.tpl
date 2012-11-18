@@ -23,7 +23,7 @@
     <form action="{$smarty.const.DIRECTORY}search" method="get">
         <div class="row">
             <label>
-                    {$language.enter_the_name_of_the_file_you_are}<br/>
+                {$language.enter_the_name_of_the_file_you_are}<br/>
                 <input class="enter" name="word" type="search" required="required" maxlength="255" value="{$word}"/><br/>
             </label>
             <input class="buttom" type="submit" value="{$language.go}"/>

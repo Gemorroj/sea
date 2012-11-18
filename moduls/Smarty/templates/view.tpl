@@ -11,7 +11,6 @@
 {block content}
     {include file='sys/_file.tpl'}
 
-
     {if $setup.prev_next}
         <div class="iblock">
             {if $prevNext.prev}
@@ -24,13 +23,12 @@
         </div>
     {/if}
 
-
     {if ($setup['eval_change'])}
         <div class="iblock">
             <strong>{$language.rating}</strong>: (<span class="yes">+{$file.yes}</span>/<span class="no">-{$file.no}</span>)<br/>
             <img src="{$smarty.const.DIRECTORY}rate/{$rate}" alt="" style="margin: 1px;"/><br/>
             {if $vote == null}
-                {$language.net}: <span class="yes"><a href="{$smarty.const.DIRECTORY}view/{$id}/1">{$language.yes}</a></span>/<span class="no"><a href="{$smarty.const.DIRECTORY}view/{$id}/0">{$language.no}</a></span>
+                {$language.net}: <span class="yes"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=1">{$language.yes}</a></span>/<span class="no"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=0">{$language.no}</a></span>
             {elseif $vote == 'success'}
                 {$language.true_voice}
             {elseif $vote == 'fail'}
@@ -39,24 +37,17 @@
         </div>
     {/if}
 
-
-    {if $setup.komments_view && $komments}
+    {if $setup.comments_view && $comments}
         <div class="iblock">
-            {foreach $komments as $komment}
+            {foreach $comments as $comment}
             <div class="{cycle values="row,row2"}">
-                <strong>{$komment.name}</strong> ({$komment.time|dateFormatExtended})<br/>
-                {$komment.text|nl2br}
+                <strong>{$comment.name}</strong> ({$comment.time|dateFormatExtended})<br/>
+                {$comment.text|bbcode nofilter}
             </div>
             {/foreach}
         </div>
     {/if}
     <div class="iblock">
-
-        {if ($setup['komments_change'])}
-            <strong><a href="{$smarty.const.DIRECTORY}komm/{$id}">{$language.comments} [{$kommentsCount}]</a></strong><br/>
-        {/if}
-
-
         {if ($setup.cut_change && $file.ext == 'mp3')}
             <strong><a href="{$smarty.const.DIRECTORY}cut/{$id}">{$language.splitting}</a></strong><br/>
         {/if}
@@ -67,12 +58,10 @@
         </object><br/>
         {/if}
 
-
-
         {if ($setup.video_player_change && ($file.ext == 'flv' || $file.ext == 'mp4'))}
         <object type="application/x-shockwave-flash" data="{$smarty.const.DIRECTORY}moduls/flash/player_flv_maxi.swf" width="240" height="180">
             <param name="allowFullScreen" value="true" />
-            <param name="FlashVars" value="flv={$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}&amp;title={$file.name|rawurlencode}&amp;startimage={$smarty.const.DIRECTORY}ffmpeg/{$id}/{$setup.ffmpeg_frame}&amp;width=240&amp;height=180&amp;margin=3&amp;volume=100&amp;showvolume=1&amp;showtime=1&amp;showplayer=always&amp;showloading=always&amp;showfullscreen=1&amp;showiconplay=1" />
+            <param name="FlashVars" value="flv={$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}&amp;title={$file.name|rawurlencode}&amp;startimage={$smarty.const.DIRECTORY}ffmpeg/{$id}?frame={$setup.ffmpeg_frame}&amp;width=240&amp;height=180&amp;margin=3&amp;volume=100&amp;showvolume=1&amp;showtime=1&amp;showplayer=always&amp;showloading=always&amp;showfullscreen=1&amp;showiconplay=1" />
         </object><br/>
         {/if}
 
@@ -80,7 +69,6 @@
         {if ($setup.zip_change && $file.ext == 'zip')}
             <strong><a href="{$smarty.const.DIRECTORY}zip/{$id}">{$language.view_archive}</a></strong><br/>
         {/if}
-
 
         {if $file.ext == 'txt'}
             {if $setup.lib_change}
@@ -102,7 +90,11 @@
             <a href="{$smarty.const.DIRECTORY}email/{$id}">{$language.send_a_link_to_email}</a><br/>
         {/if}
         {if $setup.abuse_change}
-            <a href="{$smarty.const.DIRECTORY}abuse/{$id}">{$language.complain_about_a_file}</a>
+            <a href="{$smarty.const.DIRECTORY}abuse/{$id}">{$language.complain_about_a_file}</a><br/>
+        {/if}
+
+        {if ($setup['comments_change'])}
+            <strong><a href="{$smarty.const.DIRECTORY}view_comments/{$id}">{$language.comments} [{$commentsCount}]</a></strong><br/>
         {/if}
     </div>
 {/block}
@@ -110,7 +102,7 @@
 
 {block footer}
 <ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}{$directory.id}">{$language.go_to_the_category}</li>
+    <li><a href="{$smarty.const.DIRECTORY}{$directory.id}">{$language.go_to_the_category}</a></li>
     <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
     <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
     <li><a href="http://{$setup.site_url}">{$language.home}</a></li>

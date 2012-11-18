@@ -40,16 +40,13 @@ define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SE
 // Проверка переменных
 $id = intval($_GET['id']);
 // Получаем инфу о файле
-$d = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+$v = getFileInfo($id);
 
 
-if (file_exists($d[0])) {
-    mysql_query(
-        'UPDATE `files` SET `loads` = `loads` + 1, `timeload` = ' . $_SERVER['REQUEST_TIME'] . ' WHERE `id` = ' . $id,
-        $mysql
-    );
+if (file_exists($v['path'])) {
+    updFileLoad($id);
 
-    $tmp = $setup['zpath'] . '/' . str_replace('/', '--', mb_substr(strstr($d[0], '/'), 1)) . '.zip';
+    $tmp = $setup['zpath'] . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.zip';
 
     if (!file_exists($tmp)) {
         include 'moduls/PEAR/pclzip.lib.php';
@@ -63,7 +60,7 @@ if (file_exists($d[0])) {
             return 1;
         }
 
-        $zip->create($d[0], PCLZIP_CB_PRE_ADD, 'cb');
+        $zip->create($v['path'], PCLZIP_CB_PRE_ADD, 'cb');
         chmod($tmp, 0644);
     }
 
@@ -73,5 +70,5 @@ if (file_exists($d[0])) {
         301
     );
 } else {
-    echo $setup['hackmess'];
+    error($language['error']);
 }

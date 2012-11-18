@@ -36,21 +36,8 @@
 
 require 'moduls/header.php';
 
-
-
 // Получаем инфу о файле
-$v = mysql_fetch_assoc(
-    mysql_query(
-        '
-    SELECT *,
-    ' . Language::getInstance()->buildFilesQuery() . '
-    FROM `files`
-    WHERE `id` = ' . $id . '
-    AND `hidden` = "0"
-',
-        $mysql
-    )
-);
+$v = getFileInfo($id);
 
 if (!is_file($v['path'])) {
     error('File not found');
@@ -109,20 +96,20 @@ require 'moduls/inc/_file.php';
 
 $sql_dir = mysql_real_escape_string($dir, $mysql);
 // Директория
-$directory = mysql_fetch_assoc(mysql_query('SELECT `id`, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
+$directory = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
 // Всего комментариев
-$kommentsCount = mysql_result(mysql_query('SELECT COUNT(1) FROM `komments` WHERE `file_id` = ' . $id, $mysql), 0);
+$commentsCount = mysql_result(mysql_query('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ' . $id, $mysql), 0);
 // Последние комментарии
-$komments = array();
-if ($setup['komments_view'] && $kommentsCount) {
+$comments = array();
+if ($setup['comments_view'] && $commentsCount) {
     $q = mysql_query(
-        'SELECT `name`, `text`, `time` FROM `komments` WHERE `file_id` = ' . $id . ' ORDER BY `id` DESC LIMIT '
-            . intval($setup['komments_view']),
+        'SELECT `name`, `text`, `time` FROM `comments` WHERE `file_id` = ' . $id . ' ORDER BY `id` DESC LIMIT '
+            . intval($setup['comments_view']),
         $mysql
     );
     if ($q && mysql_num_rows($q)) {
         while ($row = mysql_fetch_assoc($q)) {
-            $komments[] = $row;
+            $comments[] = $row;
         }
     }
 }
@@ -191,8 +178,6 @@ if ($setup['prev_next']) {
 }
 
 
-
-
 if (!$seo['title']) {
     $seo['title'] = $v['name'];
 }
@@ -202,13 +187,12 @@ $template->assign('file', $v);
 $template->assign('directory', $directory);
 $template->assign('vote', $vote);
 $template->assign('rate', $rate);
-$template->assign('kommentsCount', $kommentsCount);
-$template->assign('komments', $komments);
+$template->assign('commentsCount', $commentsCount);
+$template->assign('comments', $comments);
 $template->assign('breadcrumbs', array(
     $directory['id'] => $directory['name'],
     'view/' . $id => $v['name']
 ));
-
 
 
 $template->send();

@@ -146,7 +146,7 @@ if ($_POST) {
 
     if ($_POST['about']) {
         $about = $setup['opath'] . substr($pathname, strlen($setup['path'])) . '.txt';
-        file_put_contents($about, nl2br(bbcode(htmlspecialchars(trim($_POST['about'])))));
+        file_put_contents($about, trim($_POST['about']));
     }
 
     if ($setup['exchanger_notice']) {
