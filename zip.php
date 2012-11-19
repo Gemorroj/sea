@@ -34,15 +34,15 @@
  */
 
 
-require 'moduls/config.php';
-require 'moduls/PEAR/pclzip.lib.php';
 require 'moduls/header.php';
+require 'moduls/PEAR/pclzip.lib.php';
 
-###############Если zip выключен##########
+
+// если zip отключен
 if (!$setup['zip_change']) {
     error('Not found');
 }
-###############Проверка переменных###############
+
 
 
 $onpage = get2ses('onpage');
@@ -85,7 +85,7 @@ if ($seo['title']) {
     $title .= htmlspecialchars($filename['basename'], ENT_NOQUOTES);
 }
 
-echo'<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $language['view archive']
+echo '<div class="mblock"><img src="' . DIRECTORY . 'dis/load.png" alt=""/><strong>' . $language['view archive']
     . ' <a href="' . DIRECTORY . 'zip/' . $id . '">' . $filename['basename']
     . '</a></strong></div><div class="iblock">';
 ###############Содержимое###################
@@ -110,6 +110,18 @@ if (!isset($_GET['action'])) {
             $savelist .= $zfile;
         }
     }
+    /*
+    // TODO:заменить просмотр
+    for ($i = 0, $s = sizeof($list); $i < $s; ++$i) {
+        if ($list[$i]['folder']) {
+            $folder++;
+        } else {
+            $link .= '<br/>&#187;<span class="red"><a href="extract.php?arh=' . basename($f) . '&amp;f=' . rawurlencode($list[$i]['filename']) . '">' . htmlspecialchars(charsets($list[$i]['filename']), ENT_NOQUOTES, 'UTF-8') . '</a></span> (' . round($list[$i]['size'] / 1024, 2) . ' kb)';
+        }
+    }
+    */
+
+
     $sizefiles2 = explode('|', $sizelist);
 
     $sizelist2 = array_sum($sizefiles2);
@@ -119,8 +131,7 @@ if (!isset($_GET['action'])) {
     $preview = explode('|', $preview);
 
     $count = sizeof($preview) - 1;
-    echo$language['all files'] . ': ' . $count . '<br/>' . $language['the unpacked archive'] . ': ' . $obkb
-        . ' kb</div><div class="row">';
+    echo $language['all files'] . ': ' . $count . '<br/>' . $language['the unpacked archive'] . ': ' . $obkb . ' kb</div><div class="row">';
     if ($page < 1) {
         $page = 1;
     }
@@ -191,7 +202,7 @@ if (!isset($_GET['action'])) {
         }
 
         $title .= ' - ' . $_GET['open'];
-        echo'<strong>' . $language['file'] . ': <a href="' . DIRECTORY . 'zip/down/' . $id . '/' . str_replace(
+        echo '<strong>' . $language['file'] . ': <a href="' . DIRECTORY . 'zip/down/' . $id . '/' . str_replace(
             '"',
             '&quot;',
             $_GET['open']
@@ -274,7 +285,7 @@ if (!isset($_GET['action'])) {
     }
 }
 
-echo'- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file']
+echo '- <a href="' . DIRECTORY . 'view/' . $id . '">' . $language['go to the description of the file']
     . '</a><br/>- <a href="' . DIRECTORY . $back['id'] . '">' . $language['go to the category'] . '</a><br/>- <a href="'
     . DIRECTORY . '">' . $language['downloads'] . '</a><br/>- <a href="' . $setup['site_url'] . '">' . $language['home']
     . '</a></div>';
