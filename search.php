@@ -81,7 +81,7 @@ if ($word != '') {
 
 ###############Постраничная навигация###############
     $pages = ceil($all / $onpage);
-    if (!$pages) {
+    if ($pages < 1) {
         $pages = 1;
     }
     if ($page > $pages || $page < 1) {

@@ -103,6 +103,9 @@ if ($page > 1) {
 
 $content = str_to_utf8($content);
 $pages = ceil(filesize($v['path']) / $setup['lib']);
+if ($page > $pages) {
+    $page = 1;
+}
 
 
 $template->assign('content', $content);

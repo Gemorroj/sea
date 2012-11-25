@@ -38,8 +38,8 @@ RewriteRule ^service/*$ ./service.php [QSA,NC]
 
 
 RewriteRule ^zip/([0-9]+)/*([0-9]*)/*$ ./zip.php?id=$1&page=$2 [QSA,NC]
-RewriteRule ^zip/preview/([0-9]+)/(.+)/([0-9]*)/*$ ./zip.php?action=preview&id=$1&open=$2&page=$3 [QSA,NC]
-RewriteRule ^zip/down/([0-9]+)/(.+)/*$ ./zip.php?action=down&id=$1&open=$2 [QSA,NC]
+RewriteRule ^zip/preview/([0-9]+)/(.+)/([0-9]*)/*$ ./zip.php?action=preview&id=$1&name=$2&page=$3 [QSA,NC]
+RewriteRule ^zip/down/([0-9]+)/(.+)/*$ ./zip.php?action=down&id=$1&name=$2 [QSA,NC]
 
 
 

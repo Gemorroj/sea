@@ -1357,53 +1357,43 @@ function ext_to_mime($ext = '')
             return 'application/octet-stream';
             break;
 
-
         case 'jar':
             return 'application/java-archive';
             break;
-
 
         case 'jad':
             return 'text/vnd.sun.j2me.app-descriptor';
             break;
 
-
         case 'cab':
             return 'application/vnd.ms-cab-compressed';
             break;
-
 
         case 'sis':
             return 'application/vnd.symbian.install';
             break;
 
-
         case 'zip':
             return 'application/x-zip';
             break;
-
 
         case 'rar':
             return 'application/x-rar-compressed';
             break;
 
-
         case '7z':
             return 'application/x-7z-compressed';
             break;
-
 
         case 'gz':
         case 'tgz':
             return 'application/x-gzip';
             break;
 
-
         case 'bz':
         case 'bz2':
             return 'application/x-bzip';
             break;
-
 
         case 'jpg':
         case 'jpe':
@@ -1411,21 +1401,17 @@ function ext_to_mime($ext = '')
             return 'image/jpeg';
             break;
 
-
         case 'gif':
             return 'image/gif';
             break;
-
 
         case 'png':
             return 'image/png';
             break;
 
-
         case 'bmp':
             return 'image/bmp';
             break;
-
 
         case 'txt':
         case 'dat':
@@ -1442,49 +1428,41 @@ function ext_to_mime($ext = '')
         case 'js':
         case 'xml':
         case 'sql':
+        case 'tpl':
             return 'text/plain';
             break;
-
 
         case 'mmf':
             return 'application/x-smaf';
             break;
 
-
         case 'mid':
             return 'audio/mid';
             break;
-
 
         case 'mp3':
             return 'audio/mpeg';
             break;
 
-
         case 'amr':
             return 'audio/amr';
             break;
-
 
         case 'wav':
             return 'audio/x-wav';
             break;
 
-
         case 'mp4':
             return 'video/mp4';
             break;
-
 
         case 'wmv':
             return 'video/x-ms-wmv';
             break;
 
-
         case '3gp':
             return 'video/3gpp';
             break;
-
 
         case 'flv':
             return 'video/x-flv';
@@ -1494,24 +1472,20 @@ function ext_to_mime($ext = '')
             return 'video/x-msvideo';
             break;
 
-
         case 'mpg':
         case 'mpe':
         case 'mpeg':
             return 'video/mpeg';
             break;
 
-
         case 'pdf':
             return 'application/pdf';
             break;
-
 
         case 'doc':
         case 'docx':
             return 'application/msword';
             break;
-
 
         case 'swf':
             return 'application/x-shockwave-flash';
