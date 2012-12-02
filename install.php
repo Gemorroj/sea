@@ -264,7 +264,6 @@ if (!@$_GET['level']) {
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prew', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'sort', 'name');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand', '10');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'hackmess', 'Error!');", $mysql);
     mysql_query(
         "INSERT INTO `setting` (`name`,`value`) VALUES ( 'view_size',  '128*128,120*160,132*176,240*320');",
         $mysql

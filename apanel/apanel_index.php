@@ -44,7 +44,7 @@ $HeadTime = microtime(true);
 
 //------------------------------------------------------------------------------------------
 if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
-    error($setup['hackmess']);
+    error('Error');
 }
 //------------------------------------------------------------------------------------------
 
@@ -95,7 +95,7 @@ if ($page) {
 /*
 $valid_sort = array('name' => '', 'data' => '', 'load' => '', 'size' => '', 'eval' =>'');
 if (!isset($valid_sort[$sort])) {
-    error($setup['hackmess']);
+    error('Error);
 }
 */
 

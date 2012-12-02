@@ -393,7 +393,7 @@ function is_num($txt, $name)
     }
 
     if (intval($txt) < 0) {
-        error($GLOBALS['setup']['hackmess']);
+        error('Error');
     }
 
     return;

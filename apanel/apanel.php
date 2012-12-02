@@ -40,11 +40,15 @@ ignore_user_abort(true);
 $HeadTime = microtime(true);
 chdir('../');
 
-require 'moduls/config.php';
 require 'moduls/header.php';
 
+$template->setTemplate('apanel/index.tpl');
+//TODO:breadcrumbs?
+$template->assign('breadcrumbs', array(
+    'apanel/apanel.php' => 'Admin Panel',
+    '*' => 'Сообщение',
+));
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 
 mysql_query('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1', $mysql);
@@ -53,46 +57,12 @@ if (mysql_result(mysql_query('SELECT COUNT(1) FROM `loginlog`', $mysql), 0) > 21
 }
 ###################################################
 if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
-    error($setup['hackmess']);
+    exit('Error');
 }
 
-$action = isset($_GET['action']) ? $_GET['action'] : '';
+$action = isset($_GET['action']) ? $_GET['action'] : null;
 switch ($action) {
-    case 'exit':
-        session_destroy();
-        echo 'Вы вышли из админки<br/><a href="../">Загрузки</a>';
-        break;
-
-
-    default:
-        echo '<div class="mblock">Админка</div>
-<div class="row"><a href="apanel_news.php">Новости</a> (' . intval(
-            mysql_result(mysql_query('SELECT COUNT(1) FROM `news`', $mysql), 0)
-        ) . ')</div>
-<div class="row"><a href="apanel_index.php">Файловый менеджер</a></div>
-<div class="row"><a href="apanel_scan.php">Полное обновление БД</a></div>
-<div class="row"><a href="apanel.php?action=rot">Очистка БД от мусора</a></div>
-<div class="row"><a href="apanel.php?action=upload">Upload файлов</a></div>
-<div class="row"><a href="apanel.php?action=import">Импорт файлов</a></div>
-<div class="row"><a href="apanel.php?action=setting">Настройки</a></div>
-<div class="row"><a href="apanel.php?action=modules">Модули</a></div>
-<div class="row"><a href="apanel.php?action=service">Сервис</a></div>
-<div class="row"><a href="apanel.php?action=exchanger">Обменник</a></div>
-<div class="row"><a href="apanel.php?action=library">Библиотека</a></div>
-<div class="row"><a href="apanel.php?action=sec">Безопасность</a></div>
-<div class="row"><a href="apanel.php?action=log">Лог авторизаций</a></div>
-<div class="row"><a href="apanel.php?action=buy">Реклама</a></div>
-<div class="row"><a href="apanel.php?action=id3">MP3 теги</a></div>
-<div class="row"><a href="apanel.php?action=mark">Маркер картинок</a></div>
-<div class="row"><a href="apanel.php?action=optm">Оптимизация БД</a></div>
-<div class="row"><a href="apanel.php?action=clean">Очистка БД</a></div>
-<div class="row"><a href="apanel.php?action=cleancomm">Очистка комментариев к файлам</a></div>
-<div class="row"><a href="apanel.php?action=cleancomm_news">Очистка комментариев к новостям</a></div>
-<div class="row"><a href="apanel.php?action=exit">Выход</a></div>';
-        break;
-
-
-// расширенное сервисное использование
+    // расширенное сервисное использование
     case 'service':
         if ($_POST) {
             switch ($_GET['mode']) {
@@ -107,9 +77,11 @@ switch ($action) {
                             $mysql
                         )
                     ) {
-                        echo '<div class="row">Настройки изменены<br/></div>';
+                        $template->assign('message', 'Настройки изменены');
+                        $template->send();
                     } else {
-                        error('Ошибка: ' . mysql_error($mysql));
+                        $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                        $template->send();
                     }
                     break;
 
@@ -119,9 +91,11 @@ switch ($action) {
                         mysql_query('DELETE FROM `users_profiles` WHERE `id` = ' . $user, $mysql)
                         && mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . $user, $mysql)
                     ) {
-                        echo '<div class="row">Пользователь удален<br/></div>';
+                        $template->assign('message', 'Пользователь удален');
+                        $template->send();
                     } else {
-                        error('Ошибка: ' . mysql_error($mysql));
+                        $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                        $template->send();
                     }
                     break;
             }
@@ -171,9 +145,11 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
                     $mysql
                 )
             ) {
-                echo '<div class="row">Настройки изменены<br/></div>';
+                $template->assign('message', 'Настройки изменены');
+                $template->send();
             } else {
-                error('Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->send();
             }
 
         } else {
@@ -207,9 +183,11 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
                 mysql_query('REPLACE INTO setting(name, value) VALUES("lib", "' . $lib . '")', $mysql)
                 && mysql_query('REPLACE INTO setting(name, value) VALUES("lib_str", "' . $lib_str . '")', $mysql)
             ) {
-                echo '<div class="row">Настройки изменены<br/></div>';
+                $template->assign('message', 'Настройки изменены');
+                $template->send();
             } else {
-                error('Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->send();
             }
         } else {
             echo '<div class="mblock">
@@ -274,9 +252,10 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
                         $mysql
                     )
                 ) {
-                    echo 'Настройки изменены';
+                    $template->assign('message', 'Настройки изменены');
                 } else {
-                    echo 'Ошибка: ' . mysql_error($mysql);
+                    $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                    $template->send();
                 }
             } else {
                 $q = mysql_query(
@@ -370,7 +349,8 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
                         }
                     }
                 }
-                echo 'Всего картинок: ' . $all . ', промаркированы: ' . $i;
+                $template->assign('message', 'Всего картинок: ' . $all . ', промаркированы: ' . $i);
+                $template->send();
             }
         }
         break;
@@ -596,7 +576,8 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
                     $id3->write();
                 }
 
-                echo 'Теги заданы для ' . $all . ' файлов';
+                $template->assign('message', 'Теги заданы для ' . $all . ' файлов');
+                $template->send();
             }
         }
         break;
@@ -611,9 +592,11 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
             $query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
         }
         if (mysql_query($query, $mysql)) {
-            echo '<div class="mblock">Приоритет каталога ' . $file_info['name'] . ' изменен!</div>';
+            $template->assign('message', 'Приоритет каталога ' . $file_info['name'] . ' изменен');
+            $template->send();
         } else {
-            echo '<div class="minizag">Ошибка при изменении приоритета</div>';
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->send();
         }
         break;
 
@@ -656,7 +639,8 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
         );
 
         if (!is_dir($file_info['path'])) {
-            error('Такой категории не существует.');
+            $template->assign('error', 'Такой категории не существует');
+            $template->send();
         }
 
         echo'<div class="mblock">Будет пересканирована директория <strong>' . $file_info['path']
@@ -696,18 +680,22 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
             $to = $file_info['path'] . 'folder.png';
 
             if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
-                error('Поддерживаются иконки только png формата');
+                $template->assign('error', 'Поддерживаются иконки только png формата');
+                $template->send();
             }
             if (file_exists($to)) {
-                error('Файл уже существует');
+                $template->assign('error', 'Файл уже существует');
+                $template->send();
             }
             chmod($file_info['path'], 0777);
             if (move_uploaded_file($_FILES['ico']['tmp_name'], $to)) {
-                echo 'Закачка иконки прошла успешно.<br/>';
                 chmod($to, 0644);
+                $template->assign('message', 'Закачка иконки прошла успешно');
+                $template->send();
             } else {
-                echo 'Закачка иконки окончилась неудачно.<br/>';
                 //chmod($file_info['path'], 0777);
+                $template->assign('error', 'Закачка иконки окончилась неудачно');
+                $template->send();
             }
         }
         break;
@@ -718,13 +706,16 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
         $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
 
         if (!file_exists($file_info['path'] . 'folder.png')) {
-            error('Иконки к данной папке не существует');
+            $template->assign('error', 'Иконки к данной папке не существует');
+            $template->send();
         }
 
         if (unlink($file_info['path'] . 'folder.png')) {
-            echo 'Удаление иконки прошло успешно.<br/>';
+            $template->assign('message', 'Удаление иконки прошло успешно');
+            $template->send();
         } else {
-            echo 'Удаление иконки окончилось неудачно.<br/>';
+            $template->assign('error', 'Удаление иконки окончилось неудачно');
+            $template->send();
         }
         break;
 
@@ -739,9 +730,11 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
         $zip = new PclZip($file['path']);
 
         if ($zip->extract(PCLZIP_OPT_PATH, $dir)) {
-            error('Ахрив распакован в ' . $dir . '<br/>Не забудьте обновить БД.');
+            $template->assign('message', 'Ахрив распакован в ' . $dir . '. Не забудьте обновить БД');
+            $template->send();
         } else {
-            error('Ошибка при распаковке.');
+            $template->assign('error', 'Ошибка при распаковке архива');
+            $template->send();
         }
         break;
 
@@ -749,7 +742,8 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
 ######################################УДАЛЕНИЕ ПАПКИ######################################################
     case 'redir':
         if (!$setup['delete_dir']) {
-            error($setup['hackmess']);
+            $template->assign('error', 'Error');
+            $template->send();
         }
         if (!$_GET['level']) {
             echo
@@ -761,7 +755,8 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
             );
 
             if (!is_dir($file['path'])) {
-                error('Такой категории не существует!');
+                $template->assign('error', 'Такой категории не существует!');
+                $template->send();
             }
 
             $ex = explode('/', $file['path']);
@@ -773,10 +768,12 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
 
             foreach (glob($file['path'] . '*') as $vv) {
                 if (is_dir($vv)) {
-                    error('Разрешено удалять только папки с 1 уровнем вложенности!');
+                    $template->assign('error', 'Разрешено удалять только папки с 1 уровнем вложенности!');
+                    $template->send();
                 } else {
                     if (!unlink($vv)) {
-                        error('Ошибка при удалении файла ' . htmlspecialchars($vv, ENT_NOQUOTES));
+                        $template->assign('error', 'Ошибка при удалении файла ' . $vv);
+                        $template->send();
                     }
                 }
             }
@@ -785,15 +782,18 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
                 $mysql
             )
             ) {
-                error('Ошибка при удалении файлов из базы');
+                $template->assign('error', 'Ошибка при удалении файлов из базы');
+                $template->send();
             }
 
             if (!rmdir($file['path'])) {
-                error('Ошибка при удалении каталога');
+                $template->assign('error', 'Ошибка при удалении каталога');
+                $template->send();
             }
 
             if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-                error('Ошибка при удалении каталога из базы');
+                $template->assign('error', 'Ошибка при удалении каталога из базы');
+                $template->send();
             }
 
 
@@ -811,14 +811,16 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
 ######################################УДАЛЕНИЕ ФАЙЛА###############################################
     case 'refile':
         if (!$setup['delete_dir']) {
-            error($setup['hackmess']);
+            $template->assign('error', 'Error');
+            $template->send();
         }
         $file = mysql_fetch_assoc(
             mysql_query('SELECT `path`, `hidden`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql)
         );
 
         if (!is_file($file['path'])) {
-            error('Такого файла не существует!');
+            $template->assign('error', 'Такого файла не существует!');
+            $template->send();
         }
 
         $ex = explode('/', $file['path']);
@@ -833,11 +835,13 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
         }
 
         if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-            error('Ошибка при удалении файла из базы');
+            $template->assign('error', 'Ошибка при удалении файла из базы');
+            $template->send();
         }
 
         if (!unlink($file['path'])) {
-            error('Ошибка при удалении файла ' . htmlspecialchars($file['path'], ENT_NOQUOTES));
+            $template->assign('error', 'Ошибка при удалении файла ' . $file['path']);
+            $template->send();
         }
 
         if ($file['attach']) {
@@ -848,7 +852,8 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
             dir_count($file['path'], false);
         }
 
-        echo 'Файл <strong>' . htmlspecialchars($file['path'], ENT_NOQUOTES) . '</strong> удален!';
+        $template->assign('message', 'Файл ' . $file['path'] . ' удален');
+        $template->send();
         break;
 
 
@@ -877,7 +882,8 @@ XHTML код отображаемый снизу:
 </div>';
         } else {
             if ($_POST['text'] == '') {
-                error('Не заполнено поле');
+                $template->assign('error', 'Не заполнено поле');
+                $template->send();
             }
 
             if (
@@ -912,9 +918,11 @@ XHTML код отображаемый снизу:
                     $mysql
                 )
             ) {
-                echo 'Настройки сохранены.';
+                $template->assign('message', 'Настройки сохранены');
+                $template->send();
             } else {
-                error('Ошибка при записи в БД.<br/>' . mysql_error($mysql));
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->send();
             }
         }
         break;
@@ -925,7 +933,8 @@ XHTML код отображаемый снизу:
         if ($_POST) {
             foreach ($_POST['new'] as $k => $v) {
                 if ($v == '') {
-                    error('Укажите название папки на ' . htmlspecialchars($k, ENT_NOQUOTES));
+                    $template->assign('error', 'Укажите название папки на ' . $k);
+                    $template->send();
                 }
             }
             $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
@@ -946,9 +955,12 @@ XHTML код отображаемый снизу:
             );
             $error = mysql_error($mysql);
             if ($error) {
-                error('Ошибка при переименовании.<br/>' . $error);
+                $template->assign('error', 'Ошибка: ' . $error);
+                $template->send();
+            } else {
+                $template->assign('message', 'Файл переименован');
+                $template->send();
             }
-            echo 'Файл переименован';
         } else {
             $file = mysql_fetch_assoc(
                 mysql_query(
@@ -971,18 +983,23 @@ XHTML код отображаемый снизу:
         mysql_query('DELETE FROM `comments` WHERE `file_id` = ' . $id, $mysql);
         $error = mysql_error($mysql);
         if ($error) {
-            error('Ошибка при сбросе.<br/>' . $error);
+            $template->assign('error', 'Ошибка: ' . $error);
+            $template->send();
+        } else {
+            $template->assign('message', 'Комментарии удалены');
+            $template->send();
         }
-        echo 'Комментарии удалены.';
         break;
 
 
 ##############################################ОЧИСТКА РЕЙТИНГА К ФАЙЛУ#######################################
     case 'cleareval':
         if (mysql_query('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ' . $id, $mysql)) {
-            echo 'Рейтинг удален.';
+            $template->assign('message', 'Рейтинг сброшен');
+            $template->send();
         } else {
-            error('Ошибка при сбросе рейтинга.<br/>' . mysql_error($mysql));
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->send();
         }
         break;
 
@@ -993,7 +1010,8 @@ XHTML код отображаемый снизу:
         while ($arr = mysql_fetch_row($q)) {
             mysql_query('OPTIMIZE TABLE `' . $arr[0] . '`;', $mysql);
         }
-        echo 'Таблицы оптимизированы.';
+        $template->assign('message', 'Таблицы оптимизированы');
+        $template->send();
         break;
 
 
@@ -1003,9 +1021,11 @@ XHTML код отображаемый снизу:
             echo 'Будут удалены все данные БД, включая описания, счетчики закачек, рейтинги и комментарии. Продолжить?<br/><a href="apanel.php?action=clean&amp;level=1">Да, продолжить</a>';
         } else {
             if (mysql_query('TRUNCATE TABLE `files`;', $mysql) && mysql_query('TRUNCATE TABLE `comments`;', $mysql)) {
-                echo 'Таблицы очищены.<br/>';
+                $template->assign('message', 'Таблицы очищены');
+                $template->send();
             } else {
-                error('Ошбка: ' . mysql_error($mysql));
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->send();
             }
         }
         break;
@@ -1017,9 +1037,11 @@ XHTML код отображаемый снизу:
             echo 'Будут удалены все комментарии к файлам! Продолжить?<br/><a href="apanel.php?action=cleancomm&amp;level=1">Да, продолжить</a>';
         } else {
             if (mysql_query('TRUNCATE TABLE `comments`;', $mysql)) {
-                echo 'Таблица комментариев очищена.<br/>';
+                $template->assign('message', 'Таблица комментариев очищена');
+                $template->send();
             } else {
-                error('Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->send();
             }
         }
         break;
@@ -1031,9 +1053,11 @@ XHTML код отображаемый снизу:
             echo 'Будут удалены все комментарии к новстям! Продолжить?<br/><a href="apanel.php?action=cleancomm_news&amp;level=1">Да, продолжить</a>';
         } else {
             if (mysql_query('TRUNCATE TABLE `news_comments`;', $mysql)) {
-                echo 'Таблица комментариев очищена.<br/>';
+                $template->assign('message', 'Таблица комментариев очищена');
+                $template->send();
             } else {
-                error('Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->send();
             }
         }
         break;
@@ -1050,14 +1074,16 @@ XHTML код отображаемый снизу:
             }
             //chmod($_GET['dir'].'/'.$f, 0666);
             if (!unlink($_GET['dir'] . '/' . $f)) {
-                $err .= htmlspecialchars($_GET['dir'] . '/' . $f, ENT_NOQUOTES) . '<br/>';
+                $err .= $_GET['dir'] . '/' . $f . '; ';
             }
         }
 
         if ($err) {
-            error('Не удалось удалить следующие файлы:<br/>' . $err);
+            $template->assign('error', 'Не удалось удалить следующие файлы: ' . $err);
+            $template->send();
         } else {
-            echo 'Кэш успешно очищен.<br/>';
+            $template->assign('message', 'Кэш очищен');
+            $template->send();
         }
         break;
 
@@ -1093,12 +1119,12 @@ Description<br/>
                 $mysql
             )
             ) {
-                echo 'Данные изменены<br/>';
+                $template->assign('message', 'Данные изменены');
+                $template->send();
             } else {
-                error('Данные не изменены');
+                $template->assign('error', 'Данные не изменены');
+                $template->send();
             }
-
-            echo '<a href="apanel_index.php">Файл-менеджер</a>';
         }
         break;
 
@@ -1127,19 +1153,21 @@ Description<br/>
 
             if ($_POST['text'] == '') {
                 if (unlink($about)) {
-                    echo 'Описание удалено<br/>';
+                    $template->assign('message', 'Описание удалено');
+                    $template->send();
                 } else {
-                    error('Описание не удалено');
+                    $template->assign('error', 'Описание не удалено');
+                    $template->send();
                 }
             } else {
                 if (file_put_contents($about, trim($_POST['text']))) {
-                    echo 'Описание изменено<br/>';
+                    $template->assign('message', 'Описание изменено');
+                    $template->send();
                 } else {
-                    error('Описание не изменено');
+                    $template->assign('error', 'Описание не изменено');
+                    $template->send();
                 }
             }
-
-            echo '<a href="apanel_view.php?id=' . $id . '">К описанию</a>';
         }
         break;
 
@@ -1171,7 +1199,8 @@ Description<br/>
         } else {
             $newpath = trim($_POST['topath']);
             if ($newpath == '') {
-                error('Нет конечного пути!');
+                $template->assign('error', 'Нет конечного пути!');
+                $template->send();
             }
 
             $text = explode("\n", $_POST['files']);
@@ -1183,10 +1212,12 @@ Description<br/>
                 }
                 $to = $newpath . trim($parametr[1]);
                 if (file_exists($to)) {
-                    error('Файл <strong>' . htmlspecialchars($to, ENT_NOQUOTES) . '</strong> уже существует');
+                    $template->assign('error', 'Файл ' . $to . ' уже существует');
+                    $template->send();
                 }
                 if (!checkExt(pathinfo(trim($parametr[0]), PATHINFO_EXTENSION))) {
-                    error($setup['hackmess']);
+                    $template->assign('error', 'Error');
+                    $template->send();
                 }
                 chmod($newpath, 0777);
 
@@ -1215,10 +1246,8 @@ Description<br/>
                     dir_count($infolder, true);
                 } else {
                     $err = error_get_last();
-                    error(
-                        'Импорт файла ' . htmlspecialchars($parametr[1], ENT_NOQUOTES) . ' не удался<br/>'
-                            . $err['message']
-                    );
+                    $template->assign('error', 'Импорт файла ' . $parametr[1] . ' не удался: ' . $err['message']);
+                    $template->send();
                 }
             }
             chmod($newpath, 0777);
@@ -1247,7 +1276,8 @@ Description<br/>
             $ext = strtolower($ex['extension']);
 
             if ($ext != 'gif' && $ext != 'jpg' && $ext != 'jpe' && $ext != 'jpeg' && $ext != 'png') {
-                error('Поддерживаются скриншоты только gif, jpeg, png форматов');
+                $template->assign('error', 'Поддерживаются скриншоты только gif, jpeg, png форматов');
+                $template->send();
             }
 
             chmods($to);
@@ -1268,10 +1298,8 @@ Description<br/>
                 img_resize($to, $thumb, 0, 0, $setup['marker']);
             } else {
                 $err = error_get_last();
-                error(
-                    'Закачка скрина ' . htmlspecialchars($_FILES['scr']['name'], ENT_NOQUOTES)
-                        . ' окончилась неудачно<br/>' . $err['message']
-                );
+                $template->assign('error', 'Закачка скрина ' . $_FILES['scr']['name'] . ' окончилась неудачно: ' . $err['message']);
+                $template->send();
             }
         }
         break;
@@ -1284,10 +1312,12 @@ Description<br/>
         $to2 = $setup['spath'] . $info['path'] . '.jpg'; // имя конечного файла
 
         if (unlink($to) || unlink($to2)) {
-            echo 'Скриншот удален.<br/>';
+            $template->assign('message', 'Скриншот удален');
+            $template->send();
         } else {
             $err = error_get_last();
-            error('Ошибка при удалении скриншота<br/>' . $err['message']);
+            $template->assign('error', 'Ошибка при удалении скриншота: ' . $err['message']);
+            $template->send();
         }
         break;
 
@@ -1297,8 +1327,7 @@ Description<br/>
         if (!$_POST) {
             $dirs = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
 
-            echo '<script type="text/javascript" src="js.js"></script>
-<div class="mblock">Upload файлов (max ' . ini_get('upload_max_filesize') . ')</div>
+            echo '<div class="mblock">Upload файлов (max ' . ini_get('upload_max_filesize') . ')</div>
 <div class="row">Сохранить в:</div>
 <form action="apanel.php?action=upload" method="post" enctype="multipart/form-data">
 <div class="row">
@@ -1328,7 +1357,8 @@ Description<br/>
         } else {
             $newpath = trim($_POST['topath']);
             if ($newpath == '') {
-                error('Нет конечного пути! ' . htmlspecialchars($newpath, ENT_NOQUOTES));
+                $template->assign('error', 'Нет конечного пути!');
+                $template->send();
             }
 
             $a = sizeof($_FILES['userfile']['name']);
@@ -1339,10 +1369,12 @@ Description<br/>
                 $name = $_FILES['userfile']['name'][$i];
                 $to = $newpath . $name;
                 if (!checkExt(pathinfo($name, PATHINFO_EXTENSION))) {
-                    error($setup['hackmess']);
+                    $template->assign('error', 'Error');
+                    $template->send();
                 }
                 if (file_exists($to)) {
-                    error('Файл <strong>' . htmlspecialchars($to, ENT_NOQUOTES) . '</strong> уже существует');
+                    $template->assign('error', 'Файл ' . $to . ' уже существует');
+                    $template->send();
                 }
                 chmod($newpath, 0777);
                 if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to)) {
@@ -1360,7 +1392,8 @@ Description<br/>
                                     pathinfo($_FILES['attach_userfile']['name'][$i][$k], PATHINFO_EXTENSION)
                                 )
                                 ) {
-                                    error($setup['hackmess']);
+                                    $template->assign('error', 'Error');
+                                    $template->send();
                                 }
                                 $dbFiles[] = $_FILES['attach_userfile']['name'][$i][$k];
                                 $files[] = array(
@@ -1399,7 +1432,8 @@ Description<br/>
 
                     chmod($to, 0644);
                 } else {
-                    error('Закачка файла ' . htmlspecialchars($name, ENT_NOQUOTES) . ' окончилась неудачно');
+                    $template->assign('error', 'Закачка файла ' . $name . ' окончилась неудачно');
+                    $template->send();
                 }
             }
             chmod($newpath, 0777);
@@ -1411,11 +1445,13 @@ Description<br/>
     case 'newdir':
         if ($_POST) {
             if (!preg_match('/^[A-Z0-9_\-]+$/i', $_POST['realname'])) {
-                error('Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Z0-9_-]');
+                $template->assign('error', 'Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Z0-9_-]');
+                $template->send();
             }
             foreach ($_POST['new'] as $k => $v) {
                 if ($v == '') {
-                    error('Укажите отображаемые названия папки ' . htmlspecialchars($k, ENT_NOQUOTES));
+                    $template->assign('error', 'Укажите отображаемые названия папки ' . $k);
+                    $template->send();
                 }
             }
 
@@ -1475,9 +1511,11 @@ Description<br/>
             )
             ) {
                 dir_count($d['path'], true);
-                echo 'Новый каталог создан.';
+                $template->assign('message', 'Новый каталог создан');
+                $template->send();
             } else {
-                error('Ошибка при создании нового каталога. - ' . mysql_error($mysql));
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->send();
             }
         } else {
             echo '<div class="mblock">Создание новой категории:</div>
@@ -1580,7 +1618,8 @@ Description<br/>
 
             foreach ($_POST as $key => $value) {
                 if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
-                    error($setup['hackmess']);
+                    $template->assign('error', 'Error');
+                    $template->send();
                 }
                 mysql_query(
                     "REPLACE INTO `setting`(`name`, `value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
@@ -1588,7 +1627,8 @@ Description<br/>
                     $mysql
                 );
             }
-            echo 'Список модулей изменен';
+            $template->assign('message', 'Список модулей изменен');
+            $template->send();
         }
         break;
 
@@ -1624,14 +1664,16 @@ Description<br/>
             is_num($_POST['timeban'], 'timeban');
 
             if (!$_POST['pwd'] || md5($_POST['pwd']) != $setup['password']) {
-                error($setup['hackmess']);
+                $template->assign('error', 'Error');
+                $template->send();
             }
 
             foreach ($_POST as $key => $value) {
                 if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir'
                     && $key != 'delete_file'
                 ) {
-                    error('Не заполнено одно из полей.');
+                    $template->assign('error', 'Не заполнено одно из полей');
+                    $template->send();
                 }
             }
             if ($_POST['password'] != '') {
@@ -1658,161 +1700,23 @@ Description<br/>
                 "UPDATE `setting` SET `value` = '" . $_POST['delete_dir'] . "' WHERE `name` = 'delete_dir';",
                 $mysql
             );
-            echo 'Настройки изменены.';
+            $template->assign('message', 'Настройки изменены');
+            $template->send();
         }
         break;
 
 
 ########################################НАСТРОЙКИ СКРИПТА################################################
     case 'setting':
-        if (!$_POST) {
-            echo '<div class="mblock">Настройки загруз-центра:</div>
-<form action="apanel.php?action=setting" method="post">
-<div class="row">
-Папка с файлами:<br/>
-<input class="enter" name="path" type="text" value="' . $setup['path'] . '"/>
-</div><div class="row">
-Папка с описаниями:<br/>
-<input class="enter" name="opath" type="text" value="' . $setup['opath'] . '"/>
-</div><div class="row">
-Папка с вложениями:<br/>
-<input class="enter" name="apath" type="text" value="' . $setup['apath'] . '"/>
-</div><div class="row">
-Папка со скринами:<br/>
-<input class="enter" name="spath" type="text" value="' . $setup['spath'] . '"/>
-</div><div class="row">
+        $template->setTemplate('apanel/setting.tpl');
 
-Папка c JAVA книгами:<br/>
-<input class="enter" name="jpath" type="text" value="' . $setup['jpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
-                . '?action=clean_cache&amp;dir=' . $setup['jpath'] . '">Очистить</a><br/>
-</div><div class="row">
+        if ($_POST) {
+            $_POST['site_url'] = str_ireplace('http://', '', $_POST['site_url']);
 
-Папка c иконками из JAR файлов:<br/>
-<input class="enter" name="ipath" type="text" value="' . $setup['ipath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
-                . '?action=clean_cache&amp;dir=' . $setup['ipath'] . '">Очистить</a><br/>
-</div><div class="row">
-
-Папка c картинками из ZIP архивов:<br/>
-<input class="enter" name="zppath" type="text" value="' . $setup['zppath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
-                . '?action=clean_cache&amp;dir=' . $setup['zppath'] . '">Очистить</a><br/>
-</div><div class="row">
-
-Папка c ZIP книгами:<br/>
-<input class="enter" name="zpath" type="text" value="' . $setup['zpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
-                . '?action=clean_cache&amp;dir=' . $setup['zpath'] . '">Очистить</a><br/>
-</div><div class="row">
-
-Папка co скриншотами тем:<br/>
-<input class="enter" name="tpath" type="text" value="' . $setup['tpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
-                . '?action=clean_cache&amp;dir=' . $setup['tpath'] . '">Очистить</a><br/>
-</div><div class="row">
-
-Папка co скриншотами видео:<br/>
-<input class="enter" name="ffmpegpath" type="text" value="' . $setup['ffmpegpath'] . '"/> <a href="'
-                . $_SERVER['PHP_SELF'] . '?action=clean_cache&amp;dir=' . $setup['ffmpegpath'] . '">Очистить</a><br/>
-</div><div class="row">
-
-Папка c превьюшками картинок:<br/>
-<input class="enter" name="picpath" type="text" value="' . $setup['picpath'] . '"/> <a href="' . $_SERVER['PHP_SELF']
-                . '?action=clean_cache&amp;dir=' . $setup['picpath'] . '">Очистить</a><br/>
-</div><div class="row">
-
-Папка для нарезок:<br/>
-<input class="enter" name="mp3path" type="text" value="' . $setup['mp3path'] . '"/>  <a href="' . $_SERVER['PHP_SELF']
-                . '?action=clean_cache&amp;dir=' . $setup['mp3path'] . '">Очистить</a><br/>
-</div><div class="row">
-Лимит нарезок (Мб):<br/>
-<input class="enter" name="limit" type="text" value="' . $setup['limit'] . '"/>
-</div><div class="row">
-Кол-во комментариев в описании файла:<br/>
-<input class="enter" name="comments_view" type="text" value="' . $setup['comments_view'] . '"/>
-</div><div class="row">
-
-Файлов на страницу по умолчанию:
-<select class="enter" size="1" name="onpage">
-<option ' . sel(5, $setup['onpage']) . '>5</option>
-<option ' . sel(10, $setup['onpage']) . '>10</option>
-<option ' . sel(15, $setup['onpage']) . '>15</option>
-<option ' . sel(20, $setup['onpage']) . '>20</option>
-<option ' . sel(25, $setup['onpage']) . '>25</option>
-<option ' . sel(30, $setup['onpage']) . '>30</option>
-</select>
-</div><div class="row">
-
-Стиль по умолчанию:
-<select class="enter" size="1" name="css">';
-            foreach (glob('style/*.css', GLOB_NOESCAPE) as $v) {
-                $value = pathinfo($v, PATHINFO_FILENAME);
-                echo'<option value="' . htmlspecialchars($value) . '" ' . sel($value, $setup['css']) . '>'
-                    . htmlspecialchars($value, ENT_NOQUOTES) . '</option>';
-            }
-            echo '</select>
-</div><div class="row">
-
-Язык по умолчанию:';
-            echo Language::getInstance()->selectLangpacks($setup['langpack']);
-            echo '</div><div class="row">
-
-Размер превьюшек (например, 40*40):<br/>
-<input class="enter" name="prev_size" type="text" value="' . $setup['prev_size'] . '"/>
-</div><div class="row">
-
-<div class="row">
-Размеры картинок (например, 128*128,120*160,132*176,240*320):<br/>
-<input class="enter" name="view_size" type="text" value="' . $setup['view_size'] . '"/>
-</div><div class="row">
-
-Число отображаемых символов описания в общем просмотре файлов:<br/>
-<input class="enter" name="desc" type="text" value="' . $setup['desc'] . '"/>
-</div><div class="row">
-
-Номер фрейма для превью видео:<br/>
-<input class="enter" name="ffmpeg_frame" type="text" value="' . $setup['ffmpeg_frame'] . '"/>
-</div><div class="row">
-
-Номера фреймов для превью видео в просмотре файла (например, 25,120,250):<br/>
-<input class="enter" name="ffmpeg_frames" type="text" value="' . $setup['ffmpeg_frames'] . '"/>
-</div><div class="row">
-
-Время новых файлов (дней, 0 - выключено):<br/>
-<input class="enter" name="day_new" type="text" value="' . $setup['day_new'] . '"/>
-</div><div class="row">
-Время онлайна (сек.):<br/>
-<input class="enter" name="online_time" type="text" value="' . $setup['online_time'] . '"/>
-</div><div class="row">
-Число страниц после которого появляется возможность ручного ввода страниц: <br/>
-<input class="enter" name="pagehand" type="text" value="' . $setup['pagehand'] . '"/>
-</div><div class="row">
-Число ТОП файлов:<br/>
-<input class="enter" name="top_num" type="text" value="' . $setup['top_num'] . '"/>
-</div><div class="row">
-Сообщение для особо одаренных:<br/>
-<input class="enter" name="hackmess" type="text" value="' . $setup['hackmess'] . '"/>
-</div><div class="row">
-Сортировка по умолчанию:
-<select class="enter" size="1" name="sort">
-<option value="name" ' . sel('name', $setup['sort']) . '>Имя</option>
-<option value="size" ' . sel('size', $setup['sort']) . '>Размер</option>
-<option value="data" ' . sel('data', $setup['sort']) . '>Дата</option>
-<option value="load" ' . sel('load', $setup['sort']) . '>Популярность</option>
-<option value="eval" ' . sel('eval', $setup['sort']) . '>Рейтинг</option>
-</select></div>
-<div class="row">
-Заголовок:<br/>
-<input class="enter" name="zag" type="text" value="' . $setup['zag'] . '"/>
-</div><div class="row">
-Главная сайта (c http://):<br/>
-<input class="enter" name="site_url" type="text" value="' . $setup['site_url'] . '"/><br/>
-E-mail админа:<br/>
-<input class="enter" name="zakaz_email" type="text" value="' . $setup['zakaz_email'] . '"/><br/>
-<br/>
-<input class="buttom" type="submit" value="Сохранить"/>
-</div>
-</form>';
-        } else {
             foreach ($_POST as $key => $value) {
                 if ($value == '') {
-                    error('Не заполнено одно из полей.');
+                    $template->assign('error', 'Не заполнено одно из полей');
+                    $template->send();
                 }
                 mysql_query(
                     "REPLACE INTO `setting`(`name`,`value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
@@ -1821,31 +1725,42 @@ E-mail админа:<br/>
                 );
                 //print mysql_error($mysql);
             }
-            echo 'Настройки сохранены';
+            $template->assign('message', 'Настройки сохранены');
         }
+
+        $styles = array();
+        foreach (glob(DIR . '/../style/*.css', GLOB_NOESCAPE) as $v) {
+            $styles[] = pathinfo($v, PATHINFO_FILENAME);
+        }
+
+        $langpacks = Language::getInstance()->getLangpacks();
+
+        $template->assign('styles', $styles);
+        $template->assign('langpacks', $langpacks);
         break;
 
 
     case 'del_comment_news_comments':
         if (mysql_query('DELETE FROM `news_comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
-            echo 'Ok<br/>';
+            $template->assign('message', 'Комментарий удален');
+            $template->send();
         } else {
-            error('Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->send();
         }
         break;
 
 
     case 'del_comment_view_comments':
         if (mysql_query('DELETE FROM `comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
-            echo 'Ok<br/>';
+            $template->assign('message', 'Комментарий удален');
+            $template->send();
         } else {
-            error('Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->send();
         }
         break;
 }
 
 
-######################################НОСОК##################################################
-if ($action) {
-    echo '<div class="row"><a href="apanel.php">Админка</a></div>';
-}
+$template->send();

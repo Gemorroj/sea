@@ -80,6 +80,7 @@ class Template extends Smarty
     {
         $this->assign('pageTime', microtime(true) - $GLOBALS['tm']);
         $this->display($this->_template);
+        exit;
     }
 
 

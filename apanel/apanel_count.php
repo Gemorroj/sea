@@ -49,7 +49,7 @@ $HeadTime = microtime(true);
 
 
 if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
-    error($setup['hackmess']);
+    error('Error');
 }
 ////////////////////////////
 
