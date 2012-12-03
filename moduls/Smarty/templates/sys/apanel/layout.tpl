@@ -33,16 +33,14 @@
 
     <div data-role="content">
         <div class="content-primary">
-            {if isset($message)}
-                <div class="ui-bar ui-bar-b">
-                    <h3>Success!</h3>
-                    <p>{$message}</p>
-                </div><br/>
-            {/if}
-
             {if isset($error)}
                 <div class="ui-bar ui-bar-e">
                     <h3>Warning!</h3>
+                    <p>{$error}</p>
+                </div><br/>
+            {elseif isset($message)}
+                <div class="ui-bar ui-bar-b">
+                    <h3>Success!</h3>
                     <p>{$message}</p>
                 </div><br/>
             {/if}

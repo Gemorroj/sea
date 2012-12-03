@@ -1531,109 +1531,6 @@ Description<br/>
         break;
 
 
-#########################################ИЗМЕНЕНИЕ МОДУЛЕЙ###############################################
-    case 'modules':
-        if (!$_POST) {
-            echo '<div class="mblock">Управления модулями:</div>
-<form action="apanel.php?action=modules" method="post">
-<div class="row">
-<input name="comments_change" type="checkbox" value="1" ' . check($setup['comments_change']) . '/>Комментарии<br/>
-<input name="comments_captcha" type="checkbox" value="1" ' . check($setup['comments_captcha']) . '/>Капча к комментариям<br/>
-<input name="eval_change" type="checkbox" value="1" ' . check($setup['eval_change']) . '/>Рейтинг<br/>
-<input name="jad_change" type="checkbox" value="1" ' . check($setup['jad_change']) . '/>Генератор Jad<br/>
-<input name="cut_change" type="checkbox" value="1" ' . check($setup['cut_change']) . '/>Нарезчик MP3<br/>
-<input name="audio_player_change" type="checkbox" value="1" ' . check($setup['audio_player_change']) . '/>Flash плеер MP3<br/>
-<input name="video_player_change" type="checkbox" value="1" ' . check($setup['video_player_change']) . '/>Flash плеер FLV/MP4<br/>
-<input name="zip_change" type="checkbox" value="1" ' . check($setup['zip_change']) . '/>Просмотр архивов<br/>
-<input name="zakaz_change" type="checkbox" value="1" ' . check($setup['zakaz_change']) . '/>Стол заказов<br/>
-<input name="buy_change" type="checkbox" value="1" ' . check($setup['buy_change']) . '/>Рекламный блок<br/>
-<input name="onpage_change" type="checkbox" value="1" ' . check($setup['onpage_change']) . '/>Меню выбора кол-ва файлов на страницу<br/>
-<input name="preview_change" type="checkbox" value="1" ' . check($setup['preview_change']) . '/>Меню выбора отображения предпросмотра<br/>
-<input name="top_change" type="checkbox" value="1" ' . check($setup['top_change']) . '/>ТОП<br/>
-<input name="stat_change" type="checkbox" value="1" ' . check($setup['stat_change']) . '/>Статистика<br/>
-<input name="pagehand_change" type="checkbox" value="1" ' . check($setup['pagehand_change']) . '/>Ручной ввод страниц<br/>
-<input name="search_change" type="checkbox" value="1" ' . check($setup['search_change']) . '/>Поиск файлов<br/>
-<input name="lib_change" type="checkbox" value="1" ' . check($setup['lib_change']) . '/>Библиотека<br/>
-
-<input name="screen_change" type="checkbox" value="1" ' . check($setup['screen_change']) . '/>Уменьшенные скриншоты в общем просмотре<br/>
-<input name="screen_file_change" type="checkbox" value="1" ' . check($setup['screen_file_change']) . '/>Уменьшенные скриншоты в просмотре файла<br/>
-<input name="swf_change" type="checkbox" value="1" ' . check($setup['swf_change']) . '/>SWF превью в общем просмотре<br/>
-<input name="swf_file_change" type="checkbox" value="1" ' . check($setup['swf_file_change']) . '/>SWF превью в просмотре файла<br/>
-<input name="jar_change" type="checkbox" value="1" ' . check($setup['jar_change']) . '/>Иконки JAR файлов в общем просмотре<br/>
-<input name="jar_file_change" type="checkbox" value="1" ' . check($setup['jar_file_change']) . '/>Иконки JAR файлов в просмотре файла<br/>
-
-<input name="anim_change" type="checkbox" value="1" ' . check($setup['anim_change']) . '/>Поддержка анимации<br/>
-<input name="prew" type="checkbox" value="1" ' . check($setup['prew']) . '/>Предпросмотр по умолчанию<br/>
-<input name="lib_desc" type="checkbox" value="1" ' . check($setup['lib_desc']) . '/>Брать первую строку из txt файла как описание<br/>
-<input name="ext" type="checkbox" value="1" ' . check($setup['ext']) . '/>Показ расширения<br/>
-<input name="prev_next" type="checkbox" value="1" ' . check($setup['prev_next']) . '/>Предыдущий/следующий файлы<br/>
-<input name="style_change" type="checkbox" value="1" ' . check($setup['style_change']) . '/>Смена стилей<br/>
-<input name="service_change" type="checkbox" value="1" ' . check($setup['service_change']) . '/>Сервисное использование<br/>
-<input name="service_change_advanced" type="checkbox" value="1" ' . check($setup['service_change_advanced']) . '/>Расширенное сервисное использование<br/>
-<input name="abuse_change" type="checkbox" value="1" ' . check($setup['abuse_change']) . '/>Жалобы<br/>
-<input name="exchanger_change" type="checkbox" value="1" ' . check($setup['exchanger_change']) . '/>Обменник<br/>
-<input name="send_email" type="checkbox" value="1" ' . check($setup['send_email']) . '/>Отправка ссылки на Email<br/>
-<br/>
-<input class="buttom" type="submit" value="Сохранить"/>
-</div>
-</form>';
-        } else {
-            $_POST['comments_change'] = $_POST['comments_change'] ? 1 : 0;
-            $_POST['comments_captcha'] = $_POST['comments_captcha'] ? 1 : 0;
-            $_POST['eval_change'] = $_POST['eval_change'] ? 1 : 0;
-            $_POST['onpage_change'] = $_POST['onpage_change'] ? 1 : 0;
-            $_POST['preview_change'] = $_POST['preview_change'] ? 1 : 0;
-            $_POST['top_change'] = $_POST['top_change'] ? 1 : 0;
-            $_POST['stat_change'] = $_POST['stat_change'] ? 1 : 0;
-            $_POST['search_change'] = $_POST['search_change'] ? 1 : 0;
-            $_POST['pagehand_change'] = $_POST['pagehand_change'] ? 1 : 0;
-            $_POST['zip_change'] = $_POST['zip_change'] ? 1 : 0;
-            $_POST['jad_change'] = $_POST['jad_change'] ? 1 : 0;
-            $_POST['zakaz_change'] = $_POST['zakaz_change'] ? 1 : 0;
-            $_POST['buy_change'] = $_POST['buy_change'] ? 1 : 0;
-            $_POST['cut_change'] = $_POST['cut_change'] ? 1 : 0;
-            $_POST['audio_player_change'] = $_POST['audio_player_change'] ? 1 : 0;
-            $_POST['video_player_change'] = $_POST['video_player_change'] ? 1 : 0;
-            $_POST['lib_change'] = $_POST['lib_change'] ? 1 : 0;
-
-            $_POST['screen_change'] = $_POST['screen_change'] ? 1 : 0;
-            $_POST['screen_file_change'] = $_POST['screen_file_change'] ? 1 : 0;
-            $_POST['swf_change'] = $_POST['swf_change'] ? 1 : 0;
-            $_POST['swf_file_change'] = $_POST['swf_file_change'] ? 1 : 0;
-            $_POST['jar_change'] = $_POST['jar_change'] ? 1 : 0;
-            $_POST['jar_file_change'] = $_POST['jar_file_change'] ? 1 : 0;
-
-            $_POST['anim_change'] = $_POST['anim_change'] ? 1 : 0;
-            $_POST['prew'] = $_POST['prew'] ? 1 : 0;
-            $_POST['lib_desc'] = $_POST['lib_desc'] ? 1 : 0;
-            $_POST['ext'] = $_POST['ext'] ? 1 : 0;
-            $_POST['prev_next'] = $_POST['prev_next'] ? 1 : 0;
-            $_POST['style_change'] = $_POST['style_change'] ? 1 : 0;
-            $_POST['service_change'] = $_POST['service_change'] ? 1 : 0;
-            $_POST['service_change_advanced'] = $_POST['service_change_advanced'] ? 1 : 0;
-            $_POST['abuse_change'] = $_POST['abuse_change'] ? 1 : 0;
-            $_POST['exchanger_change'] = $_POST['exchanger_change'] ? 1 : 0;
-            $_POST['send_email'] = $_POST['send_email'] ? 1 : 0;
-
-
-            foreach ($_POST as $key => $value) {
-                if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
-                    $template->assign('error', 'Error');
-                    $template->send();
-                }
-                mysql_query(
-                    "REPLACE INTO `setting`(`name`, `value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
-                        . intval($value) . "');",
-                    $mysql
-                );
-            }
-            $template->assign('message', 'Список модулей изменен');
-            $template->send();
-        }
-        break;
-
-
-########################################БЕЗОПАСНОСТЬ################################################
     case 'sec':
         if (!$_POST) {
             echo '<div class="mblock">Безопасность:</div>
@@ -1706,7 +1603,63 @@ Description<br/>
         break;
 
 
-########################################НАСТРОЙКИ СКРИПТА################################################
+    case 'modules':
+        $template->setTemplate('apanel/modules.tpl');
+
+        if ($_POST) {
+            $_POST['comments_change'] = $_POST['comments_change'] ? 1 : 0;
+            $_POST['comments_captcha'] = $_POST['comments_captcha'] ? 1 : 0;
+            $_POST['eval_change'] = $_POST['eval_change'] ? 1 : 0;
+            $_POST['onpage_change'] = $_POST['onpage_change'] ? 1 : 0;
+            $_POST['preview_change'] = $_POST['preview_change'] ? 1 : 0;
+            $_POST['top_change'] = $_POST['top_change'] ? 1 : 0;
+            $_POST['stat_change'] = $_POST['stat_change'] ? 1 : 0;
+            $_POST['search_change'] = $_POST['search_change'] ? 1 : 0;
+            $_POST['pagehand_change'] = $_POST['pagehand_change'] ? 1 : 0;
+            $_POST['zip_change'] = $_POST['zip_change'] ? 1 : 0;
+            $_POST['jad_change'] = $_POST['jad_change'] ? 1 : 0;
+            $_POST['zakaz_change'] = $_POST['zakaz_change'] ? 1 : 0;
+            $_POST['buy_change'] = $_POST['buy_change'] ? 1 : 0;
+            $_POST['cut_change'] = $_POST['cut_change'] ? 1 : 0;
+            $_POST['audio_player_change'] = $_POST['audio_player_change'] ? 1 : 0;
+            $_POST['video_player_change'] = $_POST['video_player_change'] ? 1 : 0;
+            $_POST['lib_change'] = $_POST['lib_change'] ? 1 : 0;
+
+            $_POST['screen_change'] = $_POST['screen_change'] ? 1 : 0;
+            $_POST['screen_file_change'] = $_POST['screen_file_change'] ? 1 : 0;
+            $_POST['swf_change'] = $_POST['swf_change'] ? 1 : 0;
+            $_POST['swf_file_change'] = $_POST['swf_file_change'] ? 1 : 0;
+            $_POST['jar_change'] = $_POST['jar_change'] ? 1 : 0;
+            $_POST['jar_file_change'] = $_POST['jar_file_change'] ? 1 : 0;
+
+            $_POST['anim_change'] = $_POST['anim_change'] ? 1 : 0;
+            $_POST['prew'] = $_POST['prew'] ? 1 : 0;
+            $_POST['lib_desc'] = $_POST['lib_desc'] ? 1 : 0;
+            $_POST['ext'] = $_POST['ext'] ? 1 : 0;
+            $_POST['prev_next'] = $_POST['prev_next'] ? 1 : 0;
+            $_POST['style_change'] = $_POST['style_change'] ? 1 : 0;
+            $_POST['service_change'] = $_POST['service_change'] ? 1 : 0;
+            $_POST['service_change_advanced'] = $_POST['service_change_advanced'] ? 1 : 0;
+            $_POST['abuse_change'] = $_POST['abuse_change'] ? 1 : 0;
+            $_POST['exchanger_change'] = $_POST['exchanger_change'] ? 1 : 0;
+            $_POST['send_email'] = $_POST['send_email'] ? 1 : 0;
+
+            foreach ($_POST as $key => $value) {
+                if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
+                    $template->assign('error', 'Error');
+                    break;
+                }
+                mysql_query(
+                    "REPLACE INTO `setting`(`name`, `value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
+                        . intval($value) . "');",
+                    $mysql
+                );
+            }
+            $template->assign('message', 'Список модулей изменен');
+        }
+        break;
+
+
     case 'setting':
         $template->setTemplate('apanel/setting.tpl');
 
@@ -1716,14 +1669,13 @@ Description<br/>
             foreach ($_POST as $key => $value) {
                 if ($value == '') {
                     $template->assign('error', 'Не заполнено одно из полей');
-                    $template->send();
+                    break;
                 }
                 mysql_query(
                     "REPLACE INTO `setting`(`name`,`value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
                         . mysql_real_escape_string($value, $mysql) . "');",
                     $mysql
                 );
-                //print mysql_error($mysql);
             }
             $template->assign('message', 'Настройки сохранены');
         }
@@ -1743,10 +1695,8 @@ Description<br/>
     case 'del_comment_news_comments':
         if (mysql_query('DELETE FROM `news_comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
             $template->assign('message', 'Комментарий удален');
-            $template->send();
         } else {
             $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
-            $template->send();
         }
         break;
 
@@ -1754,10 +1704,8 @@ Description<br/>
     case 'del_comment_view_comments':
         if (mysql_query('DELETE FROM `comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
             $template->assign('message', 'Комментарий удален');
-            $template->send();
         } else {
             $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
-            $template->send();
         }
         break;
 }
