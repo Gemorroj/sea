@@ -57,23 +57,23 @@
                     <li><a href="apanel_news.php">Новости</a></li>
                     <li><a href="apanel_index.php">Файловый менеджер</a></li>
                     <li><a href="apanel_scan.php">Полное обновление БД</a></li>
-                    <li {if $smarty.get.action == 'rot'}data-theme="a"{/if}><a href="apanel.php?action=rot">Очистка БД от мусора</a></li>
-                    <li {if $smarty.get.action == 'upload'}data-theme="a"{/if}><a href="apanel.php?action=upload">Upload файлов</a></li>
-                    <li {if $smarty.get.action == 'import'}data-theme="a"{/if}><a href="apanel.php?action=import">Импорт файлов</a></li>
-                    <li {if $smarty.get.action == 'setting'}data-theme="a"{/if}><a href="apanel.php?action=setting">Настройки</a></li>
-                    <li {if $smarty.get.action == 'modules'}data-theme="a"{/if}><a href="apanel.php?action=modules">Модули</a></li>
-                    <li {if $smarty.get.action == 'service'}data-theme="a"{/if}><a href="apanel.php?action=service">Сервис</a></li>
-                    <li {if $smarty.get.action == 'exchanger'}data-theme="a"{/if}><a href="apanel.php?action=exchanger">Обменник</a></li>
-                    <li {if $smarty.get.action == 'library'}data-theme="a"{/if}><a href="apanel.php?action=library">Библиотека</a></li>
-                    <li {if $smarty.get.action == 'sec'}data-theme="a"{/if}><a href="apanel.php?action=sec">Безопасность</a></li>
-                    <li {if $smarty.get.action == 'log'}data-theme="a"{/if}><a href="apanel.php?action=log">Лог авторизаций</a></li>
-                    <li {if $smarty.get.action == 'buy'}data-theme="a"{/if}><a href="apanel.php?action=buy">Реклама</a></li>
-                    <li {if $smarty.get.action == 'id3'}data-theme="a"{/if}><a href="apanel.php?action=id3">MP3 теги</a></li>
-                    <li {if $smarty.get.action == 'mark'}data-theme="a"{/if}><a href="apanel.php?action=mark">Маркер картинок</a></li>
-                    <li {if $smarty.get.action == 'optm'}data-theme="a"{/if}><a href="apanel.php?action=optm">Оптимизация БД</a></li>
-                    <li {if $smarty.get.action == 'clean'}data-theme="a"{/if}><a href="apanel.php?action=clean">Очистка БД</a></li>
-                    <li {if $smarty.get.action == 'cleancomm'}data-theme="a"{/if}><a href="apanel.php?action=cleancomm">Очистка комментариев к файлам</a></li>
-                    <li {if $smarty.get.action == 'cleancomm_news'}data-theme="a"{/if}><a href="apanel.php?action=cleancomm_news">Очистка комментариев к новостям</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'rot'}data-theme="a"{/if}><a href="apanel.php?action=rot">Очистка БД от мусора</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'upload'}data-theme="a"{/if}><a href="apanel.php?action=upload">Upload файлов</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'import'}data-theme="a"{/if}><a href="apanel.php?action=import">Импорт файлов</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'setting'}data-theme="a"{/if}><a href="apanel.php?action=setting">Настройки</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'modules'}data-theme="a"{/if}><a href="apanel.php?action=modules">Модули</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'service'}data-theme="a"{/if}><a href="apanel.php?action=service">Сервис</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'exchanger'}data-theme="a"{/if}><a href="apanel.php?action=exchanger">Обменник</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'library'}data-theme="a"{/if}><a href="apanel.php?action=library">Библиотека</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'sec'}data-theme="a"{/if}><a href="apanel.php?action=sec">Безопасность</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'log'}data-theme="a"{/if}><a href="apanel.php?action=log">Лог авторизаций</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'buy'}data-theme="a"{/if}><a href="apanel.php?action=buy">Реклама</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'id3'}data-theme="a"{/if}><a href="apanel.php?action=id3">MP3 теги</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'mark'}data-theme="a"{/if}><a href="apanel.php?action=mark">Маркер картинок</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'optm'}data-theme="a"{/if}><a href="apanel.php?action=optm">Оптимизация БД</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'clean'}data-theme="a"{/if}><a href="apanel.php?action=clean">Очистка БД</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'cleancomm'}data-theme="a"{/if}><a href="apanel.php?action=cleancomm">Очистка комментариев к файлам</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'cleancomm_news'}data-theme="a"{/if}><a href="apanel.php?action=cleancomm_news">Очистка комментариев к новостям</a></li>
                 </ul>
             {/block}
         </div>
