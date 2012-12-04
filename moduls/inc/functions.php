@@ -376,49 +376,6 @@ function retrans($t)
 
 
 /**
- * Число ли
- */
-function is_num($txt, $name)
-{
-    if (isset($_POST[$name])) {
-        $txt = $_POST[$name];
-    } else {
-        if (isset($_GET[$name])) {
-            $txt = $_GET[$name];
-        } else {
-            if (isset($_SESSION[$name])) {
-                $txt = $_SESSION[$name];
-            }
-        }
-    }
-
-    if (intval($txt) < 0) {
-        error('Error');
-    }
-
-    return;
-}
-
-
-/**
- * checked
- */
-function check($value)
-{
-    return $value ? 'checked="checked"' : '';
-}
-
-
-/**
- * selected
- */
-function sel($value, $real)
-{
-    return $value == $real ? 'selected="selected"' : '';
-}
-
-
-/**
  * $_GET -> $_SESSION
  */
 function get2ses($name)
@@ -430,6 +387,7 @@ function get2ses($name)
         $_SESSION[$name] = $_GET[$name];
     }
 
+    // да, именно переменная переменных
     return $$name = $_SESSION[$name];
 }
 

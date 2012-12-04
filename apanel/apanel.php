@@ -162,12 +162,8 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
             echo '<div class="mblock">
 <form action="apanel.php?action=exchanger" method="post">
 <div class="row">
-Отправлять уведомления на Email о новых файлах: <input type="checkbox" name="exchanger_notice" ' . check(
-                $setup['exchanger_notice']
-            ) . '/><br/>
-Делать загруженные файлы невидимыми: <input type="checkbox" name="exchanger_hidden" ' . check(
-                $setup['exchanger_hidden']
-            ) . '/><br/>
+Отправлять уведомления на Email о новых файлах: <input type="checkbox" name="exchanger_notice" ' . ($setup['exchanger_notice'] ? 'checked="checked"' : '') . '/><br/>
+Делать загруженные файлы невидимыми: <input type="checkbox" name="exchanger_hidden" ' . ($setup['exchanger_hidden'] ? 'checked="checked"' : '') . '/><br/>
 Регулярное выпажение для проверки имени файла:<br/>
 <input type="text" value="' . htmlspecialchars($setup['exchanger_name'], ENT_NOQUOTES) . '" name="exchanger_name"/><br/>
 Расширения файлов, разрешенные для загрузки, перечисленные через запятую:<br/>
@@ -873,13 +869,13 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
 XHTML код отображаемый сверху:
 <textarea class="enter" cols="32" rows="5" name="text">' . htmlspecialchars($setup['buy'], ENT_NOQUOTES) . '</textarea><br/>
 В случайном порядке:
-<input name="randbuy" type="checkbox" ' . check($setup['randbuy']) . '/><br/>
+<input name="randbuy" type="checkbox" ' . ($setup['randbuy'] ? 'checked="checked"' : '') . '/><br/>
 Количество отображаемых строк:
 <input name="countbuy" type="text" value="' . intval($setup['countbuy']) . '" size="3"/><br/>
 XHTML код отображаемый снизу:
 <textarea class="enter" cols="32" rows="5" name="banner">' . htmlspecialchars($setup['banner'], ENT_NOQUOTES) . '</textarea><br/>
 В случайном порядке:
-<input name="randbanner" type="checkbox" ' . check($setup['randbanner']) . '/><br/>
+<input name="randbanner" type="checkbox" ' . ($setup['randbanner'] ? 'checked="checked"' : '') . '/><br/>
 Количество отображаемых строк:
 <input name="countbanner" type="text" value="' . intval($setup['countbanner']) . '" size="3"/><br/>
 <input class="buttom" type="submit" value="Сохранить"/>
@@ -1538,43 +1534,23 @@ Description<br/>
 
 
     case 'sec':
-        if (!$_POST) {
-            echo '<div class="mblock">Безопасность:</div>
-<form action="apanel.php?action=sec" method="post">
-<div class="row">
-Пароль(если не хотим менять оставляем пустым): <br/>
-<input class="enter" name="password" type="password" value=""/>
-</div><div class="row">
-Число неверных попыток ввода пароля до блокировки: <br/>
-<input class="enter" name="countban" type="text" value="' . $setup['countban'] . '"/>
-</div><div class="row">
-Время блокировки(сек.): <br/>
-<input class="enter" name="timeban" type="text" value="' . $setup['timeban'] . '"/><br/>
-<input name="autologin" type="checkbox" value="ON" ' . check($setup['autologin']) . '/>Автологин<br/>
-<input name="delete_file" type="checkbox" value="ON" ' . check($setup['delete_file']) . '/>Функция удаления файлов<br/>
-<input name="delete_dir" type="checkbox" value="ON" ' . check($setup['delete_dir']) . '/>Функция удаления каталогов
-</div><div class="row">
-Введите текущий пароль для подтверждения: <br/>
-<input class="enter" name="pwd" type="password" value=""/><br/>
-<input class="buttom" type="submit" value="Сохранить"/>
-</div>
-</form>';
-        } else {
-            $_POST['autologin'] = $_POST['autologin'] ? 1 : 0;
-            $_POST['delete_dir'] = $_POST['delete_dir'] ? 1 : 0;
-            $_POST['delete_file'] = $_POST['delete_file'] ? 1 : 0;
-            is_num($_POST['countban'], 'countban');
-            is_num($_POST['timeban'], 'timeban');
+        $template->setTemplate('apanel/sec.tpl');
 
+        if ($_POST) {
             if (!$_POST['pwd'] || md5($_POST['pwd']) != $setup['password']) {
-                $template->assign('error', 'Error');
+                $template->assign('error', 'Неверный пароль');
                 $template->send();
             }
 
+            $_POST['autologin'] = $_POST['autologin'] ? 1 : 0;
+            $_POST['delete_dir'] = $_POST['delete_dir'] ? 1 : 0;
+            $_POST['delete_file'] = $_POST['delete_file'] ? 1 : 0;
+            $_POST['countban'] = intval($_POST['countban']);
+            $_POST['timeban'] = intval($_POST['timeban']);
+
+
             foreach ($_POST as $key => $value) {
-                if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir'
-                    && $key != 'delete_file'
-                ) {
+                if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir' && $key != 'delete_file') {
                     $template->assign('error', 'Не заполнено одно из полей');
                     $template->send();
                 }
@@ -1604,7 +1580,6 @@ Description<br/>
                 $mysql
             );
             $template->assign('message', 'Настройки изменены');
-            $template->send();
         }
         break;
 

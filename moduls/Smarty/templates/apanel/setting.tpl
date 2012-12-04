@@ -1,9 +1,10 @@
 {extends file='../sys/apanel/layout.tpl'}
 
-
+{* TODO:доделать формы везде по аналогии с доками jquery modile (data-role="fieldcontain" и др) *}
 {block content}
 <form action="apanel.php?action=setting" method="post">
-    <label>Папка с файлами:
+    <label>
+        Папка с файлами:
         <input type="text" name="path" value="{$setup.path}" />
     </label>
 

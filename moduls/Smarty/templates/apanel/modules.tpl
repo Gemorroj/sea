@@ -1,6 +1,6 @@
 {extends file='../sys/apanel/layout.tpl'}
 
-
+{* TODO:доделать формы везде по аналогии с доками jquery modile (data-role="fieldcontain" и др) *}
 {block content}
 <form action="apanel.php?action=modules" method="post">
     {html_checkboxes name="comments_change" selected=$setup.comments_change options=[1=>'Комментарии']}
