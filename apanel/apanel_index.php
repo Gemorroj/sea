@@ -43,7 +43,7 @@ require 'moduls/header.php';
 $HeadTime = microtime(true);
 
 //------------------------------------------------------------------------------------------
-if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
+if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
     error('Error');
 }
 //------------------------------------------------------------------------------------------

@@ -85,7 +85,7 @@ if ($setup['autologin']
         || (@$_GET['p'] && md5($_GET['p']) == $setup['password']))
 ) {
     $_SESSION['ipu'] = $_SERVER['REMOTE_ADDR'];
-    $_SESSION['autorise'] = $setup['password'];
+    $_SESSION['authorise'] = $setup['password'];
     mysql_query(
         "INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('" . mysql_real_escape_string(
             $_SERVER['HTTP_USER_AGENT'],

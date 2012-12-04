@@ -9,7 +9,7 @@
         {foreach $comments as $comment}
             <div class="{cycle values="row,row2"}">
 
-                {if (isset($smarty.session.autorise) && $smarty.session.autorise == $setup.password)}
+                {if (isset($smarty.session.authorise) && $smarty.session.authorise == $setup.password)}
                     <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?comment={$comment.id}&amp;action=del_comment_{$comments_module}" title="del">[X]</a>
                 {/if}
 

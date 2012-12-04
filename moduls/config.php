@@ -40,6 +40,8 @@ $mysql = mysql_connect('127.0.0.1', 'mysql', 'mysql') or die('Could not connect'
 mysql_select_db('sea', $mysql) or die('Could not db');
 mysql_set_charset('utf8', $mysql);
 
+session_name('sea');
+session_start() or die('Can not start session');
 
 $setting = mysql_query('SELECT * FROM setting', $mysql);
 $setup = array();

@@ -56,8 +56,14 @@ if (mysql_result(mysql_query('SELECT COUNT(1) FROM `loginlog`', $mysql), 0) > 21
     mysql_query('DELETE FROM `loginlog` WHERE `id` <> 1 ORDER BY `id` LIMIT 1', $mysql);
 }
 ###################################################
-if ($_SESSION['autorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
-    exit('Error');
+if (!$_SESSION) {
+    exit('Не запущена сессия');
+}
+if (!isset($_SESSION['authorise']) || !isset($_SESSION['ipu'])) {
+    exit('В сессии недостаточно данных для авторизации');
+}
+if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
+    exit('Авторизация не пройдена');
 }
 
 $action = isset($_GET['action']) ? $_GET['action'] : null;
@@ -1574,7 +1580,7 @@ Description<br/>
                 }
             }
             if ($_POST['password'] != '') {
-                $_SESSION['autorise'] = md5($_POST['password']);
+                $_SESSION['authorise'] = md5($_POST['password']);
                 mysql_query(
                     "UPDATE `setting` SET `value` = '" . md5($_POST['password']) . "' WHERE `name` = 'password';",
                     $mysql
