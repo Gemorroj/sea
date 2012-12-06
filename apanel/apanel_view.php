@@ -374,7 +374,7 @@ echo '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '" method="post" e
 
 echo '<hr style="margin:2px"/>' . $tmp . '
 <form action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '" method="post">
-<div>Папка:
+<div>Директория:
 <select name="folder" class="buttom">
 <option value="' . $setup['path'] . '/">/</option>';
 $dirs = mysql_query('SELECT `id`, `path` FROM `files` WHERE `dir` = "1"', $mysql);

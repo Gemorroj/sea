@@ -188,7 +188,7 @@ if ($sort == 'name') {
 }
 
 echo'Сортировать по:<br/>' . $sortlink . '<br/><a href="apanel.php?id=' . $id
-    . '&amp;action=newdir">Новая папка</a></div>';
+    . '&amp;action=newdir">Новая директория</a></div>';
 //------------------------------------------------------------------------------------------
 if (!$all) {
     echo '<div class="no">[Раздел пуст]<br/></div>';

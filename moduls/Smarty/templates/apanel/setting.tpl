@@ -1,155 +1,165 @@
 {extends file='../sys/apanel/layout.tpl'}
 
-{* TODO:доделать формы везде по аналогии с доками jquery modile (data-role="fieldcontain" и др) *}
+
 {block content}
 <form action="apanel.php?action=setting" method="post">
-    <label>
-        Папка с файлами:
-        <input type="text" name="path" value="{$setup.path}" />
-    </label>
+    <div data-role="fieldcontain">
+        <label for="path">Директория с файлами:</label>
+        <input type="text" id="path" name="path" value="{$setup.path}" />
+    </div>
 
-    <label>
-        Папка с описаниями:
-        <input name="opath" type="text" value="{$setup.opath}"/>
-    </label>
-    <label>
-        Папка с вложениями:
-        <input name="apath" type="text" value="{$setup.apath}"/>
-    </label>
-    <label>
-        Папка со скринами:
-        <input name="spath" type="text" value="{$setup.spath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="opath">Директория с описаниями:</label>
+        <input id="opath" name="opath" type="text" value="{$setup.opath}"/>
+    </div>
 
-    <label>
-        Папка c JAVA книгами: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.jpath}">Очистить</a>
-        <input name="jpath" type="text" value="{$setup.jpath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="apath">Директория с вложениями:</label>
+        <input id="apath" name="apath" type="text" value="{$setup.apath}"/>
+    </div>
 
-    <label>
-        Папка c иконками из JAR файлов: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.ipath}">Очистить</a>
-        <input name="ipath" type="text" value="{$setup.ipath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="spath">Директория со скринами:</label>
+        <input id="spath" name="spath" type="text" value="{$setup.spath}"/>
+    </div>
 
-    <label>
-        Папка c картинками из ZIP архивов: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.zppath}">Очистить</a>
-        <input name="zppath" type="text" value="{$setup.zppath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="jpath">Директория c JAVA книгами:</label>
+        <input id="jpath" name="jpath" type="text" value="{$setup.jpath}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.jpath}">Очистить</a>
+    </div>
 
-    <label>
-        Папка c ZIP книгами: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.zpath}">Очистить</a>
-        <input name="zpath" type="text" value="{$setup.zpath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="ipath">Директория c иконками из JAR файлов:</label>
+        <input id="ipath" name="ipath" type="text" value="{$setup.ipath}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.ipath}">Очистить</a>
+    </div>
 
-    <label>
-        Папка co скриншотами тем: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.tpath}">Очистить</a>
-        <input name="tpath" type="text" value="{$setup.tpath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="zppath">Директория c картинками из ZIP архивов:</label>
+        <input id="zppath" name="zppath" type="text" value="{$setup.zppath}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.zppath}">Очистить</a>
+    </div>
 
-    <label>
-        Папка co скриншотами видео: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.ffmpegpath}">Очистить</a>
-        <input name="ffmpegpath" type="text" value="{$setup.ffmpegpath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="zpath">Директория c ZIP книгами:</label>
+        <input id="zpath" name="zpath" type="text" value="{$setup.zpath}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.zpath}">Очистить</a>
+    </div>
 
-    <label>
-        Папка c превьюшками картинок: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.picpath}">Очистить</a>
-        <input name="picpath" type="text" value="{$setup.picpath}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="tpath">Директория co скриншотами тем:</label>
+        <input id="tpath" name="tpath" type="text" value="{$setup.tpath}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.tpath}">Очистить</a>
+    </div>
 
-    <label>
-        Папка для нарезок: <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.mp3path}">Очистить</a>
-        <input name="mp3path" type="text" value="{$setup.mp3path}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="ffmpegpath">Директория co скриншотами видео:</label>
+        <input id="ffmpegpath" name="ffmpegpath" type="text" value="{$setup.ffmpegpath}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.ffmpegpath}">Очистить</a>
+    </div>
 
-    <label>
-        Лимит нарезок (Мб):
-        <input name="limit" type="number" value="{$setup.limit}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="picpath">Директория c превьюшками картинок:</label>
+        <input id="picpath" name="picpath" type="text" value="{$setup.picpath}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.picpath}">Очистить</a>
+    </div>
 
-    <label>
-        Количество комментариев в описании файла:
-        <input name="comments_view" type="number" value="{$setup.comments_view}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="mp3path">Директория для нарезок:</label>
+        <input id="mp3path" name="mp3path" type="text" value="{$setup.mp3path}"/>
+        <a data-icon="delete" data-role="button" data-mini="true" data-inline="true" href="apanel.php?action=clean_cache&amp;dir={$setup.mp3path}">Очистить</a>
+    </div>
 
-    <label>
-        Файлов на страницу по умолчанию:
-        {html_options name=onpage options=[5=>5,10=>10,15=>15,20=>20,25=>25,30=>30] selected=$setup.onpage}
-    </label>
+    <div data-role="fieldcontain">
+        <label for="limit">Лимит нарезок (Мб):</label>
+        <input id="limit" name="limit" type="number" value="{$setup.limit}"/>
+    </div>
 
-    <label>
-        Стиль по умолчанию:
-        {html_options name=css values=$styles output=$styles selected=$setup.css}
-    </label>
+    <div data-role="fieldcontain">
+        <label for="comments_view">Количество комментариев в описании файла:</label>
+        <input id="comments_view" name="comments_view" type="number" value="{$setup.comments_view}"/>
+    </div>
 
-    <label>
-        Язык по умолчанию:
-        {html_options name=langpack values=$langpacks output=$langpacks selected=$setup.langpack}
-    </label>
+    <div data-role="fieldcontain">
+        <label for="onpage">Файлов на страницу по умолчанию:</label>
+        {html_options id='onpage' name='onpage' options=[5=>5,10=>10,15=>15,20=>20,25=>25,30=>30] selected=$setup.onpage}
+    </div>
 
-    <label>
-        Размер превьюшек (например, 40*40):
-        <input pattern="[0-9]+\*[0-9]+" name="prev_size" type="text" value="{$setup.prev_size}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="css">Стиль по умолчанию:</label>
+        {html_options id='css' name='css' values=$styles output=$styles selected=$setup.css}
+    </div>
 
-    <label>
-        Размеры картинок (например, 128*128,120*160,132*176,240*320):
-        <input pattern="[0-9\*,]+" name="view_size" type="text" value="{$setup.view_size}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="langpack">Язык по умолчанию:</label>
+        {html_options id='langpack' name='langpack' values=$langpacks output=$langpacks selected=$setup.langpack}
+    </div>
 
-    <label>
-        Число отображаемых символов описания в общем просмотре файлов:
-        <input name="desc" type="number" value="{$setup.desc}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="">Размер превьюшек (например, 40*40):</label>
+        <input id="" pattern="[0-9]+\*[0-9]+" name="prev_size" type="text" value="{$setup.prev_size}"/>
+    </div>
 
-    <label>
-        Номер фрейма для превью видео:
-        <input name="ffmpeg_frame" type="number" value="{$setup.ffmpeg_frame}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="view_size">Размеры картинок (например, 128*128,120*160,132*176,240*320):</label>
+        <input id="view_size" pattern="[0-9\*,]+" name="view_size" type="text" value="{$setup.view_size}"/>
+    </div>
 
-    <label>
-        Номера фреймов для превью видео в просмотре файла (например, 25,120,250):
-        <input pattern="[0-9,]+" name="ffmpeg_frames" type="text" value="{$setup.ffmpeg_frames}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="desc">Число отображаемых символов описания в общем просмотре файлов:</label>
+        <input id="desc" name="desc" type="number" value="{$setup.desc}"/>
+    </div>
 
-    <label>
-        Время новых файлов (дней, 0 - выключено):
-        <input name="day_new" type="number" value="{$setup.day_new}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="ffmpeg_frame">Номер фрейма для превью видео:</label>
+        <input id="ffmpeg_frame" name="ffmpeg_frame" type="number" value="{$setup.ffmpeg_frame}"/>
+    </div>
 
-    <label>
-        Время онлайна (сек.):
-        <input name="online_time" type="number" value="{$setup.online_time}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="ffmpeg_frames">Номера фреймов для превью видео в просмотре файла (например, 25,120,250):</label>
+        <input id="ffmpeg_frames" pattern="[0-9,]+" name="ffmpeg_frames" type="text" value="{$setup.ffmpeg_frames}"/>
+    </div>
 
-    <label>
-        Число страниц после которого появляется возможность ручного ввода страниц:
-        <input name="pagehand" type="number" value="{$setup.pagehand}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="day_new">Время новых файлов (дней, 0 - выключено):</label>
+        <input id="day_new" name="day_new" type="number" value="{$setup.day_new}"/>
+    </div>
 
-    <label>
-        Число ТОП файлов:
-        <input name="top_num" type="number" value="{$setup.top_num}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="online_time">Время онлайна (сек.):</label>
+        <input id="online_time" name="online_time" type="number" value="{$setup.online_time}"/>
+    </div>
 
-    <label>
-        Сортировка по умолчанию:
-        {html_options name=sort options=['name'=>'Имя','size'=>'Размер','data'=>'Дата','load'=>'Популярность','eval'=>'Рейтинг'] selected=$setup.sort}
-    </label>
+    <div data-role="fieldcontain">
+        <label for="pagehand">Число страниц после которого появляется возможность ручного ввода страниц:</label>
+        <input id="pagehand" name="pagehand" type="number" value="{$setup.pagehand}"/>
+    </div>
 
-    <label>
-        Заголовок:
-        <input name="zag" type="text" value="{$setup.zag}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="top_num">Число ТОП файлов:</label>
+        <input id="top_num" name="top_num" type="number" value="{$setup.top_num}"/>
+    </div>
 
-    <label>
-        Главная сайта:
-        <input name="site_url" type="url" value="http://{$setup.site_url}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="sort">Сортировка по умолчанию:</label>
+        {html_options id='sort' name='sort' options=['name'=>'Имя','size'=>'Размер','data'=>'Дата','load'=>'Популярность','eval'=>'Рейтинг'] selected=$setup.sort}
+    </div>
 
-    <label>
-        E-mail админа:
-        <input name="zakaz_email" type="email" value="{$setup.zakaz_email}"/>
-    </label>
+    <div data-role="fieldcontain">
+        <label for="zag">Заголовок:</label>
+        <input id="zag" name="zag" type="text" value="{$setup.zag}"/>
+    </div>
+
+    <div data-role="fieldcontain">
+        <label for="site_url">Главная сайта:</label>
+        <input id="site_url" name="site_url" type="url" value="http://{$setup.site_url}"/>
+    </div>
+
+    <div data-role="fieldcontain">
+        <label for="zakaz_email">E-mail админа:</label>
+        <input id="zakaz_email" name="zakaz_email" type="email" value="{$setup.zakaz_email}"/>
+    </div>
 
     <input type="submit" value="Сохранить"/>
 </form>

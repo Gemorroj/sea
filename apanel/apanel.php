@@ -805,7 +805,7 @@ ID: <input type="text" name="user" size="4"/> <input class="buttom" type="submit
                 chmod($f_chmod . '/', 0777);
             }
 
-            echo 'Каталог успешно удален!<div class="mblock" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в папках<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
+            echo 'Каталог успешно удален!<div class="mblock" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в директориях<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
         }
         break;
 

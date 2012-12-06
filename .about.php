@@ -61,7 +61,7 @@ switch ($act) {
         <legend>Рассортировка описаний из 1 папки в требуемую структуру</legend>
         <form action="' . $_SERVER['PHP_SELF'] . '?act=sort_about" method="post">
         <div>
-        Папка с описаниями:<br/><input type="text" name="about_folder" value="' . dirname(__FILE__) . '"/> <input type="submit"/>
+        Директория с описаниями:<br/><input type="text" name="about_folder" value="' . dirname(__FILE__) . '"/> <input type="submit"/>
         </div>
         </form>
         </fieldset>
@@ -69,7 +69,7 @@ switch ($act) {
         <legend>Рассортировка скриншотов из 1 папки в требуемую структуру</legend>
         <form action="' . $_SERVER['PHP_SELF'] . '?act=sort_screen" method="post">
         <div>
-        Папка со скриншотами:<br/><input type="text" name="screen_folder" value="' . dirname(__FILE__) . '"/> <input type="submit"/>
+        Директория со скриншотами:<br/><input type="text" name="screen_folder" value="' . dirname(__FILE__) . '"/> <input type="submit"/>
         </div>
         </form>
         </fieldset>';
