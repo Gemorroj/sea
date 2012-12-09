@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="{$smarty.const.DIRECTORY}apanel/jquery/jquery.mobile-1.2.0.min.css"/>
     <script src="{$smarty.const.DIRECTORY}apanel/jquery/jquery-1.8.3.min.js"></script>
     <script src="{$smarty.const.DIRECTORY}apanel/jquery/jquery.mobile-1.2.0.min.js"></script>
-    <script src="{$smarty.const.DIRECTORY}apanel/apanel.js"></script>
     <title>Admin panel</title>
     <style type="text/css">
         .content-primary {
@@ -36,12 +35,12 @@
             {if isset($error)}
                 <div class="ui-bar ui-bar-e">
                     <h3>Warning!</h3>
-                    <p>{$error}</p>
+                    <p>{$error|nl2br}</p>
                 </div><br/>
             {elseif isset($message)}
                 <div class="ui-bar ui-bar-b">
                     <h3>Success!</h3>
-                    <p>{$message}</p>
+                    <p>{$message|nl2br}</p>
                 </div><br/>
             {/if}
 
@@ -55,14 +54,14 @@
                     <li><a href="apanel_news.php">Новости</a></li>
                     <li><a href="apanel_index.php">Файловый менеджер</a></li>
                     <li><a href="apanel_scan.php">Полное обновление БД</a></li>
-                    <li {if isset($smarty.get.action) && $smarty.get.action == 'rot'}data-theme="a"{/if}><a href="apanel.php?action=rot">Очистка БД от мусора</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'checkdb'}data-theme="a"{/if}><a href="apanel.php?action=checkdb">Очистка БД от мусора</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'upload'}data-theme="a"{/if}><a href="apanel.php?action=upload">Upload файлов</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'import'}data-theme="a"{/if}><a href="apanel.php?action=import">Импорт файлов</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'setting'}data-theme="a"{/if}><a href="apanel.php?action=setting">Настройки</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'modules'}data-theme="a"{/if}><a href="apanel.php?action=modules">Модули</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'service'}data-theme="a"{/if}><a href="apanel.php?action=service">Сервис</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'exchanger'}data-theme="a"{/if}><a href="apanel.php?action=exchanger">Обменник</a></li>
-                    <li {if isset($smarty.get.action) && $smarty.get.action == 'library'}data-theme="a"{/if}><a href="apanel.php?action=library">Библиотека</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'lib'}data-theme="a"{/if}><a href="apanel.php?action=lib">Библиотека</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'sec'}data-theme="a"{/if}><a href="apanel.php?action=sec">Безопасность</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'log'}data-theme="a"{/if}><a href="apanel.php?action=log">Лог авторизаций</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'buy'}data-theme="a"{/if}><a href="apanel.php?action=buy">Реклама</a></li>

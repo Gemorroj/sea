@@ -405,6 +405,9 @@ echo '</div><div class="iblock">';
 if ($setup['cut_change'] && ($ext == 'mp3' || $ext == 'wav')) {
     echo '<strong><a href="../cut.php?id=' . $id . '">Нарезка</a></strong><br/>';
 }
+if ($ext == 'mp3') {
+    echo '<strong><a href="apanel.php?id=' . $id . '&amp;action=id3_file">MP3 теги</a></strong><br/>';
+}
 
 ###############Просмотр архива####################
 if ($setup['zip_change'] && $ext == 'zip') {

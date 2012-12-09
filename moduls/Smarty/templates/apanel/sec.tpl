@@ -19,18 +19,15 @@
         </div>
 
         <div data-role="fieldcontain">
-            <label for="autologin">Автологин</label>
-            <input type="checkbox" id="autologin" name="autologin" value="1" />
+            {html_checkboxes name="autologin" selected=$setup.autologin options=[1=>'Автологин']}
         </div>
 
         <div data-role="fieldcontain">
-            <label for="delete_file">Функция удаления файлов</label>
-            <input type="checkbox" id="delete_file" name="delete_file" value="1" />
+            {html_checkboxes name="delete_file" selected=$setup.delete_file options=[1=>'Функция удаления файлов']}
         </div>
 
         <div data-role="fieldcontain">
-            <label for="delete_dir">Функция удаления каталогов</label>
-            <input type="checkbox" id="delete_dir" name="delete_dir" value="1" />
+            {html_checkboxes name="delete_dir" selected=$setup.delete_dir options=[1=>'Функция удаления каталогов']}
         </div>
 
         <div data-role="fieldcontain">
