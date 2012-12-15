@@ -68,7 +68,7 @@ if (!isset($_POST['p']) && !isset($_GET['p'])) {
                 <legend>Вход для администратора</legend>
                 <form method="post" action="' . $_SERVER['PHP_SELF'] . '">
                     <div>
-                        Пароль: <input class="enter" type="password" name="p"/><br/>
+                        <label>Пароль: <input type="password" name="p" /></label><br/>
                         <input type="submit" value="Войти"/>
                     </div>
                 </form>

@@ -986,8 +986,16 @@ function simple_resize($data)
 
 /**
  * Ресайзер картинок
+ *
+ * @param string $in
+ * @param string $out
+ * @param int $w
+ * @param int $h
+ * @param bool $marker
+ *
+ * @return bool
  */
-function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
+function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
 {
     if (!is_writable(dirname($out))) {
         return false;
@@ -1095,7 +1103,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
             // SWF
             rename($in, $out);
 
-            return;
+            return true;
             break;
 
 
@@ -1107,7 +1115,7 @@ function img_resize($in = '', $out = '', $w = '', $h = '', $marker = false)
 
 
         default:
-            return;
+            return false;
             break;
     }
 

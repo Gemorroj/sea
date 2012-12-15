@@ -2,7 +2,7 @@
 
 
 {block content}
-<h3>Создание новой директории</h3>
+<h3>Создание директории</h3>
 
 <form action="apanel.php?action=newdir" method="post">
     <div data-role="fieldcontain">

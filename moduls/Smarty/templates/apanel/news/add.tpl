@@ -2,7 +2,7 @@
 
 
 {block content}
-<h3>Добавление новости</h3>
+<h3>Создание новости</h3>
 
 <form action="apanel.php?action=add_news" method="post">
     {foreach $langpacks as $langpack}
