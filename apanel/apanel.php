@@ -587,6 +587,99 @@ Description<br/>
 
 
 
+
+
+
+
+
+
+
+    case 'edit_news':
+        $template->setTemplate('apanel/news/edit.tpl');
+
+        $langpacks = Language::getInstance()->getLangpacks();
+        $template->assign('langpacks', $langpacks);
+
+        if ($_POST) {
+            foreach ($_POST['new'] as $k => $v) {
+                if ($v == '') {
+                    $template->assign('error', $k . ': введите текст новости.');
+                    $template->send();
+                }
+            }
+
+            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
+            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+
+            mysql_query(
+                "
+                UPDATE `news`
+                SET `news` = '" . $eng . "',
+                `rus_news` = '" . $rus . "',
+                `aze_news` = '" . $aze . "',
+                `tur_news` = '" . $tur . "'
+                WHERE `id` = " . intval($_GET['news']),
+                $mysql
+            );
+
+            if ($err = mysql_error($mysql)) {
+                $template->assign('error', 'Ошибка: ' . $err);
+            } else {
+                $template->assign('message', 'Новость изменена');
+            }
+        }
+
+        $q = mysql_query('
+            SELECT *, ' . Language::getInstance()->buildNewsQuery() . '
+            FROM `news`
+            WHERE `id` = ' . intval($_GET['news'])
+        );
+        $news = mysql_fetch_assoc($q);
+        $template->assign('news', $news);
+
+        break;
+
+
+    case 'add_news':
+        $template->setTemplate('apanel/news/add.tpl');
+
+        $langpacks = Language::getInstance()->getLangpacks();
+        $template->assign('langpacks', $langpacks);
+
+        if ($_POST) {
+            foreach ($_POST['new'] as $k => $v) {
+                if ($v == '') {
+                    $template->assign('error', $k . ': введите текст новости.');
+                    $template->send();
+                }
+            }
+
+            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
+            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+
+            mysql_query(
+                "
+                INSERT INTO `news` (
+                    `news`, `rus_news`, `aze_news`, `tur_news`, `time`
+                ) VALUES (
+                    '" . $eng . "', '" . $rus . "', '" . $aze . "', '" . $tur . "', " . $_SERVER['REQUEST_TIME'] . "
+                )",
+                $mysql
+            );
+
+            if ($err = mysql_error($mysql)) {
+                $template->assign('error', 'Ошибка: ' . $err);
+            } else {
+                $template->assign('message', 'Новость добавлена');
+            }
+        }
+        break;
+
+
     case 'scan':
         $template->setTemplate('apanel/scan.tpl');
 
@@ -1408,6 +1501,15 @@ Description<br/>
         break;
 
 
+    case 'del_news':
+        if (mysql_query('DELETE FROM `news` WHERE `id` = ' . intval($_GET['news']), $mysql)) {
+            $template->assign('message', 'Новость удалена');
+        } else {
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+        }
+        break;
+
+
     case 'del_comment_news_comments':
         if (mysql_query('DELETE FROM `news_comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
             $template->assign('message', 'Комментарий удален');
@@ -1455,6 +1557,15 @@ Description<br/>
 
     case 'clean':
         if (mysql_query('TRUNCATE TABLE `files`;', $mysql) && mysql_query('TRUNCATE TABLE `comments`;', $mysql)) {
+            $template->assign('message', 'Таблицы очищены');
+        } else {
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+        }
+        break;
+
+
+    case 'cleannews':
+        if (mysql_query('TRUNCATE TABLE `news`;', $mysql) && mysql_query('TRUNCATE TABLE `news_comments`;', $mysql)) {
             $template->assign('message', 'Таблицы очищены');
         } else {
             $template->assign('error', 'Ошибка: ' . mysql_error($mysql));

@@ -226,24 +226,6 @@ class Language
      *
      * @return array
      */
-    private function _normalizeNewsDefaults($defaults)
-    {
-        $out = array();
-        foreach ($defaults as $k => $v) {
-            if (array_key_exists($k, $this->_dbNewsCorrelation)) {
-                $out[$this->_dbFilesCorrelation[$k]] = $v;
-            }
-        }
-
-        return $out;
-    }
-
-
-    /**
-     * @param $defaults
-     *
-     * @return array
-     */
     private function _normalizeFilesDefaults($defaults)
     {
         $out = array();
@@ -276,31 +258,6 @@ class Language
                 $v,
                 ENT_NOQUOTES
             ) . ')<br/>';
-        }
-
-        return $str;
-    }
-
-
-    /**
-     * Показываем поля ввода для всех языковых пакетов
-     *
-     * @param array $defaults
-     *
-     * @return string
-     */
-    public function newsLangpacks($defaults = array())
-    {
-        $defaults = $this->_normalizeNewsDefaults($defaults);
-
-        $str = '';
-
-        foreach ($this->getLangpacks() as $v) {
-            $str .= htmlspecialchars($v, ENT_NOQUOTES) . '<br/><textarea name="new[' . htmlspecialchars($v)
-                . ']" rows="3" cols="64">' . (array_key_exists($v, $defaults) ? htmlspecialchars(
-                $defaults[$v],
-                ENT_NOQUOTES
-            ) : '') . '</textarea><br/>';
         }
 
         return $str;

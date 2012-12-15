@@ -8,6 +8,12 @@
     {else}
         {foreach $news as $v}
             <div class="{cycle values="row,row2"}">
+
+                {if (isset($smarty.session.authorise) && $smarty.session.authorise == $setup.password)}
+                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=del_news" title="del">[X]</a>
+                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=edit_news" title="edit">[E]</a>
+                {/if}
+
                 {$v.time|dateFormatExtended}<br/>
                 <span style="font-size:9px;">{$v.news|bbcode nofilter}</span><br/>
                 <a href="{$smarty.const.DIRECTORY}news_comments/{$v.id}">{$language.comments}</a> [{$v.count}]
