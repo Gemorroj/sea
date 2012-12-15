@@ -44,10 +44,12 @@ require 'moduls/header.php';
 
 $template->setTemplate('apanel/index.tpl');
 //TODO:breadcrumbs?
+/*
 $template->assign('breadcrumbs', array(
     'apanel/apanel.php' => 'Admin Panel',
     '*' => 'Сообщение',
 ));
+*/
 
 
 
@@ -67,158 +69,123 @@ if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER
 }
 
 
-$action = isset($_GET['action']) ? $_GET['action'] : null;
-switch ($action) {
-######################################ПРИОРИТЕТ######################################################
-    case 'pos':
-        $file_info = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-        if ($_GET['to'] == 'down') {
-            $query = 'UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ' . $id;
-        } else {
-            $query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
-        }
-        if (mysql_query($query, $mysql)) {
-            $template->assign('message', 'Приоритет каталога ' . $file_info['name'] . ' изменен');
-            $template->send();
-        } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+switch (isset($_GET['action']) ? $_GET['action'] : null) {
+    case 'rename':
+        $template->setTemplate('apanel/files/rename.tpl');
+
+        $info = mysql_fetch_assoc(
+            mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql)
+        );
+        if (!$info) {
+            $template->assign('error', 'Директория или файл не найдены');
             $template->send();
         }
-        break;
 
+        $template->assign('info', $info);
 
+        $langpacks = Language::getInstance()->getLangpacks();
+        $template->assign('langpacks', $langpacks);
 
-######################################Добавление иконки######################################################
-    case 'addico':
-        $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-        if (!$_FILES) {
-            echo '<div class="mblock">Загрузка иконки к папке</div>
-<div class="row">
-<form action="apanel.php?action=addico&amp;id=' . $id . '" method="post" enctype="multipart/form-data">
-<div class="row">
-Файл будет скопирован в назначенную папку:<br/>
-<input name="ico" type="file"/><br/>
-<input class="buttom" type="submit" value="Добавить"/>
-</div>
-</form>
-</div>';
-        } else {
-            $to = $file_info['path'] . 'folder.png';
-
-            if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
-                $template->assign('error', 'Поддерживаются иконки только png формата');
-                $template->send();
+        if ($_POST) {
+            foreach ($_POST['new'] as $k => $v) {
+                if ($v == '') {
+                    $template->assign('error', $k . ': укажите название');
+                    $template->send();
+                }
             }
-            if (file_exists($to)) {
-                $template->assign('error', 'Файл уже существует');
-                $template->send();
-            }
-            chmod($file_info['path'], 0777);
-            if (move_uploaded_file($_FILES['ico']['tmp_name'], $to)) {
-                chmod($to, 0644);
-                $template->assign('message', 'Закачка иконки прошла успешно');
-                $template->send();
+            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
+            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
+            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
+            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+
+            mysql_query(
+                "
+                UPDATE `files`
+                SET name = '" . $eng . "',
+                rus_name = '" . $rus . "',
+                aze_name = '" . $aze . "',
+                tur_name = '" . $tur . "'
+                WHERE `id` = " . $id
+                ,
+                $mysql
+            );
+            $error = mysql_error($mysql);
+            if ($error) {
+                $template->assign('error', 'Ошибка: ' . $error);
             } else {
-                //chmod($file_info['path'], 0777);
-                $template->assign('error', 'Закачка иконки окончилась неудачно');
-                $template->send();
+                $template->assign('message', 'Название изменено');
             }
         }
         break;
 
 
-######################################удаление иконки######################################################
-    case 'reico':
-        $file_info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-
-        if (!file_exists($file_info['path'] . 'folder.png')) {
-            $template->assign('error', 'Иконки к данной папке не существует');
-            $template->send();
-        }
-
-        if (unlink($file_info['path'] . 'folder.png')) {
-            $template->assign('message', 'Удаление иконки прошло успешно');
-            $template->send();
-        } else {
-            $template->assign('error', 'Удаление иконки окончилось неудачно');
-            $template->send();
-        }
-        break;
-
-
-######################################УДАЛЕНИЕ ПАПКИ######################################################
-    case 'redir':
+    case 'del_dir':
         if (!$setup['delete_dir']) {
             $template->assign('error', 'Error');
             $template->send();
         }
-        if (!$_GET['level']) {
-            echo
-                'Будут удалены все файлы в каталоге, а также сам каталог. Продолжить?<br/><a href="apanel.php?action=redir&amp;level=1&amp;id='
-                    . $id . '">Да, продолжить</a>';
-        } else {
-            $file = mysql_fetch_assoc(
-                mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id . ' ORDER BY `name`', $mysql)
-            );
 
-            if (!is_dir($file['path'])) {
-                $template->assign('error', 'Такой категории не существует!');
+        $info = mysql_fetch_assoc(
+            mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql)
+        );
+        if (!$info) {
+            $template->assign('error', 'Директория не найдена');
+            $template->send();
+        }
+
+        $ex = explode('/', $info['path']);
+        $f_chmod = '';
+        foreach ($ex as $chmod) {
+            $f_chmod .= $chmod . '/';
+            chmod($f_chmod, 0777);
+        }
+
+        foreach (glob($info['path'] . '*') as $vv) {
+            if (is_dir($vv)) {
+                $template->assign('error', 'Разрешено удалять только директории с одним уровнем вложенности');
                 $template->send();
-            }
-
-            $ex = explode('/', $file['path']);
-            $f_chmod = '';
-            foreach ($ex as $chmod) {
-                $f_chmod .= $chmod . '/';
-                chmod($f_chmod, 0777);
-            }
-
-            foreach (glob($file['path'] . '*') as $vv) {
-                if (is_dir($vv)) {
-                    $template->assign('error', 'Разрешено удалять только папки с 1 уровнем вложенности!');
+            } else {
+                if (!unlink($vv)) {
+                    $err = error_get_last();
+                    $template->assign('error', 'Ошибка: ' . $err['message']);
                     $template->send();
-                } else {
-                    if (!unlink($vv)) {
-                        $template->assign('error', 'Ошибка при удалении файла ' . $vv);
-                        $template->send();
-                    }
                 }
             }
-            if (!mysql_query(
-                "DELETE FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($file['path'], $mysql) . "'",
-                $mysql
-            )
-            ) {
-                $template->assign('error', 'Ошибка при удалении файлов из базы');
-                $template->send();
-            }
-
-            if (!rmdir($file['path'])) {
-                $template->assign('error', 'Ошибка при удалении каталога');
-                $template->send();
-            }
-
-            if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-                $template->assign('error', 'Ошибка при удалении каталога из базы');
-                $template->send();
-            }
-
-
-            $f_chmod = '';
-            foreach ($ex as $chmod) {
-                $f_chmod .= $chmod . '/';
-                chmod($f_chmod . '/', 0777);
-            }
-
-            scannerCount();
-
-            echo 'Каталог успешно удален!';
         }
+        if (!mysql_query(
+            "DELETE FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($info['path'], $mysql) . "'",
+            $mysql
+        )
+        ) {
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->send();
+        }
+
+        if (!rmdir($info['path'])) {
+            $err = error_get_last();
+            $template->assign('error', 'Ошибка: ' . $err['message']);
+            $template->send();
+        }
+
+        if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->send();
+        }
+
+
+        $f_chmod = '';
+        foreach ($ex as $chmod) {
+            $f_chmod .= $chmod . '/';
+            chmod($f_chmod . '/', 0777);
+        }
+
+        scannerCount();
+
+        $template->assign('message', 'Каталог удален');
         break;
 
 
-######################################УДАЛЕНИЕ ФАЙЛА###############################################
-    case 'refile':
+    case 'del_file':
         if (!$setup['delete_dir']) {
             $template->assign('error', 'Error');
             $template->send();
@@ -226,9 +193,8 @@ switch ($action) {
         $file = mysql_fetch_assoc(
             mysql_query('SELECT `path`, `hidden`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql)
         );
-
-        if (!is_file($file['path'])) {
-            $template->assign('error', 'Такого файла не существует!');
+        if (!$file) {
+            $template->assign('error', 'Файл не найден');
             $template->send();
         }
 
@@ -244,12 +210,13 @@ switch ($action) {
         }
 
         if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-            $template->assign('error', 'Ошибка при удалении файла из базы');
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
             $template->send();
         }
 
         if (!unlink($file['path'])) {
-            $template->assign('error', 'Ошибка при удалении файла ' . $file['path']);
+            $err = error_get_last();
+            $template->assign('error', 'Ошибка: ' . $err['message']);
             $template->send();
         }
 
@@ -261,85 +228,75 @@ switch ($action) {
             dir_count($file['path'], false);
         }
 
-        $template->assign('message', 'Файл ' . $file['path'] . ' удален');
-        $template->send();
+        $template->assign('message', 'Файл удален');
         break;
 
 
-######################################ПЕРЕИМЕНОВАНИЕ##################################################
-    case 'rename':
-        if ($_POST) {
-            foreach ($_POST['new'] as $k => $v) {
-                if ($v == '') {
-                    $template->assign('error', 'Укажите название папки на ' . $k);
-                    $template->send();
-                }
-            }
-            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
-            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
-            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
-            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+    case 'priority':
+        $info = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `dir` = "1" AND `id` = ' . $id, $mysql));
+        if (!$info) {
+            $template->assign('error', 'Директория не найдена');
+            $template->send();
+        }
 
-            mysql_query(
-                "
-        UPDATE `files`
-        SET name = '" . $eng . "',
-        rus_name = '" . $rus . "',
-        aze_name = '" . $aze . "',
-        tur_name = '" . $tur . "'
-        WHERE `id` = " . $id
-                ,
-                $mysql
-            );
-            $error = mysql_error($mysql);
-            if ($error) {
-                $template->assign('error', 'Ошибка: ' . $error);
-                $template->send();
-            } else {
-                $template->assign('message', 'Файл переименован');
-                $template->send();
-            }
+        if ($_GET['to'] == 'down') {
+            $query = 'UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ' . $id;
         } else {
-            $file = mysql_fetch_assoc(
-                mysql_query(
-                    'SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `id` = ' . $id,
-                    $mysql
-                )
-            );
+            $query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
+        }
 
-            echo
-                '<div class="mblock">Введите новое имя:</div><div class="row"><form method="post" action="apanel.php?action=rename&amp;id='
-                    . $id . '"><div class="row">';
-            echo Language::getInstance()->filesLangpacks($file);
-            echo '<input class="buttom" type="submit" value="Готово"/></div></form></div>';
+        if (mysql_query($query, $mysql)) {
+            $template->assign('message', 'Приоритет директории изменен');
+        } else {
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
         }
         break;
 
 
-#########################################SEO########################################
-    case 'seo':
-        if (!$_POST) {
-            $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
-            $seo = unserialize($file['seo']);
+    case 'about':
+        $template->setTemplate('apanel/files/about.tpl');
 
-            echo '<div class="mblock">SEO <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES) . '</strong></div>
-<div class="row">
-<form action="apanel.php?action=seo&amp;id=' . $id . '" method="post">
-<div class="row">Title<br/>
-<input style="width: 95%" type="text" name="title" value="' . htmlspecialchars($seo['title']) . '"/><br/>
-Keywords<br/>
-<input style="width: 95%" type="text" name="keywords" value="' . htmlspecialchars($seo['keywords']) . '"/><br/>
-Description<br/>
-<input style="width: 95%" type="text" name="description" value="' . htmlspecialchars($seo['description']) . '"/><br/>
-<input class="buttom" type="submit" value="Изменить"/>
-</div>
-</form></div>';
-        } else {
+        $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$file) {
+            $template->assign('error', 'Файл не найден');
+            $template->send();
+        }
+
+        $about = $setup['opath'] . mb_substr($file['path'], mb_strlen($setup['path'])) . '.txt';
+
+        if ($_POST) {
+            chmods($about);
+
+            if ($_POST['about'] == '') {
+                if (unlink($about)) {
+                    $template->assign('message', 'Описание удалено');
+                } else {
+                    $err = error_get_last();
+                    $template->assign('error', 'Ошибка: ' . $err['message']);
+                }
+            } else {
+                if (file_put_contents($about, trim($_POST['about']))) {
+                    $template->assign('message', 'Описание изменено');
+                } else {
+                    $err = error_get_last();
+                    $template->assign('error', 'Ошибка: ' . $err['message']);
+                }
+            }
+        }
+
+        $template->assign('about', file_get_contents($about));
+        break;
+
+
+    case 'seo':
+        $template->setTemplate('apanel/files/seo.tpl');
+
+        if ($_POST) {
             $seo = serialize(
                 array(
-                    'title' => $_POST['title'],
-                    'keywords' => $_POST['keywords'],
-                    'description' => $_POST['description']
+                     'title' => $_POST['title'],
+                     'keywords' => $_POST['keywords'],
+                     'description' => $_POST['description']
                 )
             );
             if (mysql_query(
@@ -348,89 +305,49 @@ Description<br/>
             )
             ) {
                 $template->assign('message', 'Данные изменены');
-                $template->send();
             } else {
-                $template->assign('error', 'Данные не изменены');
-                $template->send();
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
             }
         }
+
+        $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$file) {
+            $template->assign('error', 'Файл не найден');
+            $template->send();
+        }
+
+        $seo = unserialize($file['seo']);
+
+        $template->assign('file', $file);
+        $template->assign('seo', $seo);
         break;
 
 
-#########################################ДОБАВЛЕНИЕ И ИЗМЕНЕНИЕ ОПИСАНИЯ########################################
-    case 'about':
-        $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-        $about = $setup['opath'] . mb_substr($file['path'], mb_strlen($setup['path'])) . '.txt';
+    case 'add_screen':
+        $template->setTemplate('apanel/files/add_screen.tpl');
 
-        if (!$_POST) {
-            echo'<div class="mblock">Описание файла/директории <strong>' . htmlspecialchars($file['name'], ENT_NOQUOTES)
-                . '</strong></div>
-<div class="row">
-<form action="apanel.php?action=about&amp;id=' . $id . '" method="post">
-<div class="row">
-<textarea class="enter" cols="70" rows="10" name="text">' . htmlspecialchars(
-                file_get_contents($about),
-                ENT_NOQUOTES,
-                'UTF-8'
-            ) . '</textarea><br/><br/>
-<input class="buttom" type="submit" value="Написать"/>
-</div>
-</form></div>';
-        } else {
-            chmods($about);
-
-            if ($_POST['text'] == '') {
-                if (unlink($about)) {
-                    $template->assign('message', 'Описание удалено');
-                    $template->send();
-                } else {
-                    $template->assign('error', 'Описание не удалено');
-                    $template->send();
-                }
-            } else {
-                if (file_put_contents($about, trim($_POST['text']))) {
-                    $template->assign('message', 'Описание изменено');
-                    $template->send();
-                } else {
-                    $template->assign('error', 'Описание не изменено');
-                    $template->send();
-                }
+        if ($_FILES) {
+            $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+            if (!$info) {
+                $template->assign('error', 'Не найдена директория');
+                $template->send();
             }
-        }
-        break;
 
+            $info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
+            $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
+            $thumb = $setup['spath'] . $info['path'] . '.thumb.gif'; // имя конечного файла
 
-#####################################АПЛОАД скрина###################################################
-    case 'screen':
-        $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-        $info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
-        $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
-        $thumb = $setup['spath'] . $info['path'] . '.thumb.gif'; // имя конечного файла
-
-        if (!$_FILES) {
-            echo '<div class="mblock">Загрузка скрина (JPEG, GIF, PNG)</div>
-<form action="apanel.php?action=screen&amp;id=' . $id . '" method="post" enctype="multipart/form-data">
-<div class="row">
-Файл будет скопирован в папку со скриншотами:<br/>
-<input name="scr" type="file"/><br/>
-<input class="buttom" type="submit" value="Добавить"/>
-</div>
-</form>';
-        } else {
-            $ex = pathinfo($_FILES['scr']['name']);
+            $ex = pathinfo($_FILES['screen']['name']);
             $ext = strtolower($ex['extension']);
 
             if ($ext != 'gif' && $ext != 'jpg' && $ext != 'jpe' && $ext != 'jpeg' && $ext != 'png') {
-                $template->assign('error', 'Поддерживаются скриншоты только gif, jpeg, png форматов');
+                $template->assign('error', 'Поддерживаются скриншоты только gif, jpeg и png форматов');
                 $template->send();
             }
 
             chmods($to);
 
-            if (move_uploaded_file($_FILES['scr']['tmp_name'], $to)) {
-                echo'Закачка скрина ' . htmlspecialchars($_FILES['scr']['name'], ENT_NOQUOTES)
-                    . ' прошла успешно.<br/>';
-
+            if (move_uploaded_file($_FILES['screen']['tmp_name'], $to)) {
                 if ($ext == 'jpg' || $ext == 'jpe' || $ext == 'jpeg') {
                     $im = imagecreatefromjpeg($to);
                     imagegif($im, $to);
@@ -441,72 +358,88 @@ Description<br/>
                     imagedestroy($im);
                 }
                 img_resize($to, $thumb, 0, 0, $setup['marker']);
+
+                $template->assign('message', 'Скриншот добавлен');
             } else {
                 $err = error_get_last();
-                $template->assign('error', 'Закачка скрина ' . $_FILES['scr']['name'] . ' окончилась неудачно: ' . $err['message']);
-                $template->send();
+                $template->assign('error', 'Ошибка: ' . $err['message']);
             }
         }
         break;
 
 
-#########################################################################################################
     case 'del_screen':
         $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$info) {
+            $template->assign('error', 'Не найдена директория');
+            $template->send();
+        }
+
         $info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
         $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
         $to2 = $setup['spath'] . $info['path'] . '.jpg'; // имя конечного файла
 
         if (unlink($to) || unlink($to2)) {
             $template->assign('message', 'Скриншот удален');
-            $template->send();
         } else {
             $err = error_get_last();
-            $template->assign('error', 'Ошибка при удалении скриншота: ' . $err['message']);
-            $template->send();
+            $template->assign('error', 'Ошибка: ' . $err['message']);
         }
         break;
 
 
+    case 'add_ico':
+        $template->setTemplate('apanel/files/add_ico.tpl');
+
+        if ($_FILES) {
+            $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+            if (!$info) {
+                $template->assign('error', 'Не найдена директория');
+                $template->send();
+            }
+
+            $to = $info['path'] . 'folder.png';
+
+            if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
+                $template->assign('error', 'Поддерживаются иконки только png формата');
+                $template->send();
+            }
+            if (file_exists($to)) {
+                $template->assign('error', 'Иконка уже существует');
+                $template->send();
+            }
+            if (move_uploaded_file($_FILES['ico']['tmp_name'], $to)) {
+                chmod($to, 0644);
+                $template->assign('message', 'Загрузка иконки прошла успешно');
+            } else {
+                $template->assign('error', 'Загрузка иконки окончилась неудачно');
+            }
+        }
+        break;
 
 
+    case 'del_ico':
+        $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$info) {
+            $template->assign('error', 'Не найдена директория');
+            $template->send();
+        }
+
+        if (!file_exists($info['path'] . 'folder.png')) {
+            $template->assign('error', 'Иконки к данной папке не существует');
+            $template->send();
+        }
+
+        if (unlink($info['path'] . 'folder.png')) {
+            $template->assign('message', 'Удаление иконки прошло успешно');
+        } else {
+            $template->assign('error', 'Удаление иконки окончилось неудачно');
+        }
+        break;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    case 'newdir':
-        $template->setTemplate('apanel/files/newdir.tpl');
+    case 'add_dir':
+        $template->setTemplate('apanel/files/add_dir.tpl');
 
         $langpacks = Language::getInstance()->getLangpacks();
         $template->assign('langpacks', $langpacks);

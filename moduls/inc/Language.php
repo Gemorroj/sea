@@ -196,47 +196,4 @@ class Language
     {
         return $this->_language;
     }
-
-
-    /**
-     * @param $defaults
-     *
-     * @return array
-     */
-    private function _normalizeFilesDefaults($defaults)
-    {
-        $out = array();
-        foreach ($defaults as $k => $v) {
-            if (array_key_exists($k, $this->_dbFilesCorrelation)) {
-                $out[$this->_dbFilesCorrelation[$k]] = $v;
-            }
-        }
-
-        return $out;
-    }
-
-
-    /**
-     * Показываем поля ввода для всех языковых пакетов
-     *
-     * @param array $defaults
-     *
-     * @return string
-     */
-    public function filesLangpacks($defaults = array())
-    {
-        $defaults = $this->_normalizeFilesDefaults($defaults);
-
-        $str = '';
-
-        foreach ($this->getLangpacks() as $v) {
-            $str .= '<input class="enter" name="new[' . htmlspecialchars($v) . ']" type="text" size="70" value="'
-                . (array_key_exists($v, $defaults) ? htmlspecialchars($defaults[$v]) : '') . '"/>(' . htmlspecialchars(
-                $v,
-                ENT_NOQUOTES
-            ) . ')<br/>';
-        }
-
-        return $str;
-    }
 }

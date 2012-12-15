@@ -4,7 +4,7 @@
 {block content}
 <h3>Создание директории</h3>
 
-<form action="apanel.php?action=newdir" method="post">
+<form action="apanel.php?action=add_dir" method="post">
     <div data-role="fieldcontain">
         <label for="topath">Создать в:</label>
         {html_options id='topath' name='topath' options=$dirs}

@@ -53,7 +53,7 @@
                     <li data-role="list-divider">Admin Panel</li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'add_news'}data-theme="a"{/if}><a href="apanel.php?action=add_news">Создать новость</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'scan'}data-theme="a"{/if}><a href="apanel.php?action=scan">Полное обновление БД</a></li>
-                    <li {if isset($smarty.get.action) && $smarty.get.action == 'newdir'}data-theme="a"{/if}><a href="apanel.php?action=newdir">Создать директорию</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'add_dir'}data-theme="a"{/if}><a href="apanel.php?action=add_dir">Создать директорию</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'upload'}data-theme="a"{/if}><a href="apanel.php?action=upload">Загрузка файлов</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'import'}data-theme="a"{/if}><a href="apanel.php?action=import">Импорт файлов</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'setting'}data-theme="a"{/if}><a href="apanel.php?action=setting">Настройки</a></li>
