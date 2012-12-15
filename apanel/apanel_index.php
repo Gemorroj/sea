@@ -187,8 +187,7 @@ if ($sort == 'name') {
     }
 }
 
-echo'Сортировать по:<br/>' . $sortlink . '<br/><a href="apanel.php?id=' . $id
-    . '&amp;action=newdir">Новая директория</a></div>';
+echo'Сортировать по:<br/>' . $sortlink . '</div>';
 //------------------------------------------------------------------------------------------
 if (!$all) {
     echo '<div class="no">[Раздел пуст]<br/></div>';
@@ -283,7 +282,7 @@ while ($v = mysql_fetch_assoc($query)) {
         $ext = strtolower($ex['extension']);
         $filename = $ex['basename'];
 
-        $v['size'] = '(' . size($v['size']) . ')';
+        $v['size'] = '(' . $v['size'] . ')';
 
         if (!file_exists('ext/' . $ext . '.png')) {
             $ico = '<img src="../ext/stand.png" alt=""/>';
@@ -291,7 +290,7 @@ while ($v = mysql_fetch_assoc($query)) {
             $ico = '<img src="../ext/' . $ext . '.png" alt=""/>';
         }
 
-        $v['timeupload'] = tm($v['timeupload']);
+        $v['timeupload'] = $v['timeupload'];
 
         if ($setup['ext']) {
             $extension = '(' . $ext . ')';
@@ -303,12 +302,6 @@ while ($v = mysql_fetch_assoc($query)) {
             $dl = '[<a class="no" href="apanel.php?action=refile&amp;id=' . $v['id'] . '">D</a>]';
         } else {
             $dl = '';
-        }
-
-        if ($ext == 'zip') {
-            $unzip = '[<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=unpack">U</a>]';
-        } else {
-            $unzip = '';
         }
 
         if (!is_file($setup['spath'] . '/' . $filename . '.gif')) {
@@ -339,7 +332,7 @@ while ($v = mysql_fetch_assoc($query)) {
         ) . '</a></strong>' . $extension . $v['size'] . '[<a class="yes" href="apanel.php?id=' . $v['id']
             . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id']
             . '&amp;action=rename">R</a>][<a class="yes" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]'
-            . $unzip . $dl . '[' . $add_screen . ']' . $desc;
+            . $dl . '[' . $add_screen . ']' . $desc;
 
         if ($sort == 'data') {
             echo '<br/>Добавлен: ' . $v['timeupload'];
@@ -405,5 +398,5 @@ if ($pages > 1) {
     }
 }
 //------------------------------------------------------------------------------------------
-echo '<code>[R] - переименование, [O] - описание, [K] - SEO, [D] - удаление, [S] - скриншот, [F] - обновить в БД, [U] - распаковать архив, [I] - иконка, [Up/Down] - выше/ниже</code>
+echo '<code>[R] - переименование, [O] - описание, [K] - SEO, [D] - удаление, [S] - скриншот, [F] - обновить в БД, [I] - иконка, [Up/Down] - выше/ниже</code>
 <div class="iblock"><a href="apanel.php">Админка</a></div>';

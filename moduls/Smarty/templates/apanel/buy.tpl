@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Реклама</h3>
+
 <form action="apanel.php?action=buy" method="post">
     <div class="ui-body ui-body-c">
         <div data-role="fieldcontain">

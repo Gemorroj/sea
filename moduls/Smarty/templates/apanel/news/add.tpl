@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Добавление новости</h3>
+
 <form action="apanel.php?action=add_news" method="post">
     {foreach $langpacks as $langpack}
         <div data-role="fieldcontain">

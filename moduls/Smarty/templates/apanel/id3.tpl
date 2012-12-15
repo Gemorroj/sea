@@ -2,7 +2,7 @@
 
 
 {block content}
-<h4>Модуль задаст всем MP3 файлам указанные теги. Если поле пустое, то тег изменяться не будет</h4>
+<h3>Модуль задаст всем MP3 файлам Idv1/Idv2 теги. Если поле пустое, то тег изменяться не будет</h3>
 
 <form action="apanel.php?action=id3" method="post">
     <div data-role="fieldcontain">

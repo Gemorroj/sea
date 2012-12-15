@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Маркер картинок</h3>
+
 <div class="ui-body ui-body-c">
     <form action="apanel.php?action=mark" method="post">
         <fieldset data-role="controlgroup" data-type="horizontal">

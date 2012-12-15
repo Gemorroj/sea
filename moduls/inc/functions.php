@@ -681,9 +681,8 @@ function scanner($path = '', $cont = 'folder.png')
     static $errors = array();
 
     if (is_readable($path) === false) {
-        $errors[] = $path . ' - не доступно для чтения. Вероятно, не хватает прав.';
-
-        return array();
+        $errors[] = $path . ': не доступно для чтения. Вероятно, не хватает прав.';
+        return array('folders' => $folders, 'files' => $files, 'errors' => $errors);
     }
 
     chmod($path, 0777);
@@ -694,11 +693,14 @@ function scanner($path = '', $cont = 'folder.png')
         }
 
         $f = str_replace('//', '/', $path . '/' . $file);
+        $pathinfo = pathinfo($f);
 
         $is_dir = is_dir($f);
         if ($is_dir === true) {
             $f .= '/';
         }
+        $is_file = ($pathinfo['basename'] != $cont && is_file($f) === true);
+
 
         $q = mysql_query(
             'SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = "'
@@ -718,12 +720,14 @@ function scanner($path = '', $cont = 'folder.png')
                 if ($is_dir === true) {
                     $folders++;
                     scanner($f);
+                } else if ($is_file === true) {
+                    $files++;
                 }
                 continue;
             }
         }
 
-        $pathinfo = pathinfo($f);
+
 
         $aze_name = $tur_name = $rus_name = $name = $pathinfo['filename'];
         if ($name == '') {
@@ -738,7 +742,6 @@ function scanner($path = '', $cont = 'folder.png')
             $rus_name = trans($rus_name);
         }
 
-        var_dump($f);
         if ($is_dir) {
             // скриншоты
             $screen = $GLOBALS['setup']['spath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
@@ -767,7 +770,7 @@ function scanner($path = '', $cont = 'folder.png')
 
             $folders++;
             scanner($f);
-        } else if ($pathinfo['basename'] != $cont && is_file($f) === true) {
+        } else if ($is_file === true) {
             $files++;
             if (!_scannerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
                 $errors[] = mysql_error($GLOBALS['mysql']);

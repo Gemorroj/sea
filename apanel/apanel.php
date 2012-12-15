@@ -146,25 +146,6 @@ switch ($action) {
         break;
 
 
-######################################РАСПАКОВЩИК###############################################
-    case 'unpack':
-        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-        $dir = dirname($file['path']) . '/';
-        chmod($dir, 0777);
-
-        include 'moduls/PEAR/pclzip.lib.php';
-        $zip = new PclZip($file['path']);
-
-        if ($zip->extract(PCLZIP_OPT_PATH, $dir)) {
-            $template->assign('message', 'Ахрив распакован в ' . $dir . '. Не забудьте обновить БД');
-            $template->send();
-        } else {
-            $template->assign('error', 'Ошибка при распаковке архива');
-            $template->send();
-        }
-        break;
-
-
 ######################################УДАЛЕНИЕ ПАПКИ######################################################
     case 'redir':
         if (!$setup['delete_dir']) {
@@ -487,32 +468,77 @@ Description<br/>
         break;
 
 
-######################################СОЗДАНИЕ НОВОГО КАТАЛОГА##############################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     case 'newdir':
+        $template->setTemplate('apanel/files/newdir.tpl');
+
+        $langpacks = Language::getInstance()->getLangpacks();
+        $template->assign('langpacks', $langpacks);
+
         if ($_POST) {
             if (!preg_match('/^[A-Z0-9_\-]+$/i', $_POST['realname'])) {
-                $template->assign('error', 'Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Z0-9_-]');
+                $template->assign('error', 'Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Za-z0-9_-]');
                 $template->send();
             }
-            foreach ($_POST['new'] as $k => $v) {
+            foreach ($_POST['dir'] as $k => $v) {
                 if ($v == '') {
-                    $template->assign('error', 'Укажите отображаемые названия папки ' . $k);
+                    $template->assign('error', $k . ': укажите название директории.');
                     $template->send();
                 }
             }
-
-            // берем корень
-            if ($id) {
-                $d = mysql_fetch_assoc(mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id, $mysql));
-            } else {
-                $d['path'] = $setup['path'] . '/';
+            if ($_POST['topath'] == '') {
+                $template->assign('error', $k . ': укажите название директории.');
+                $template->send();
             }
 
-            chmod($d['path'], 0777);
-            /////////
 
-            $directory = $d['path'] . $_POST['realname'] . '/';
-            //print $directory;
+            $newpath = trim($_POST['topath']);
+            if ($newpath == '') {
+                $template->assign('error', 'Нет конечного пути!');
+                $template->send();
+            }
+            if (!is_writable($newpath)) {
+                $template->assign('error', 'Директория ' . $newpath . ' недоступна для записи');
+                $template->send();
+            }
+
+            $directory = $newpath . $_POST['realname'] . '/';
 
             $temp = mb_substr($directory, mb_strlen($setup['path']), mb_strlen($directory));
 
@@ -524,10 +550,10 @@ Description<br/>
             $attach = $setup['apath'] . '/' . $temp;
 
             $dirnew = array();
-            $dirnew['english'] = mysql_real_escape_string($_POST['new']['english'], $mysql);
-            $dirnew['russian'] = mysql_real_escape_string($_POST['new']['russian'], $mysql);
-            $dirnew['azerbaijan'] = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
-            $dirnew['turkey'] = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+            $dirnew['english'] = mysql_real_escape_string($_POST['dir']['english'], $mysql);
+            $dirnew['russian'] = mysql_real_escape_string($_POST['dir']['russian'], $mysql);
+            $dirnew['azerbaijan'] = mysql_real_escape_string($_POST['dir']['azerbaijan'], $mysql);
+            $dirnew['turkey'] = mysql_real_escape_string($_POST['dir']['turkey'], $mysql);
 
 
             mkdir($directory, 0777);
@@ -547,51 +573,36 @@ Description<br/>
 
 
             // заносим в бд
-            // пока поддержка только английского и русского языков
             if (mysql_query(
-                "INSERT INTO `files` (`dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`) VALUES ('1', 0, '"
-                    . mysql_real_escape_string($directory, $mysql) . "', '" . $dirnew['english'] . "', '"
-                    . $dirnew['russian'] . "', '" . $dirnew['azerbaijan'] . "', '" . $dirnew['turkey'] . "', '"
-                    . mysql_real_escape_string($d['path'], $mysql) . "', " . $_SERVER['REQUEST_TIME'] . ");",
+                "INSERT INTO `files`
+                (`dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`)
+                VALUES (
+                    '1',
+                    0,
+                    '" . mysql_real_escape_string($directory, $mysql) . "',
+                    '" . $dirnew['english'] . "',
+                    '" . $dirnew['russian'] . "',
+                    '" . $dirnew['azerbaijan'] . "',
+                    '" . $dirnew['turkey'] . "',
+                    '" . mysql_real_escape_string($newpath, $mysql) . "',
+                    " . $_SERVER['REQUEST_TIME'] . "
+                );",
                 $mysql
-            )
-            ) {
-                dir_count($d['path'], true);
+            )) {
+                dir_count($newpath, true);
                 $template->assign('message', 'Новый каталог создан');
-                $template->send();
             } else {
                 $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
-                $template->send();
             }
-        } else {
-            echo '<div class="mblock">Создание новой категории:</div>
-    <form action="apanel.php?action=newdir&amp;id=' . $id . '" method="post">
-    <div class="row">
-    Имя новой папки [A-Z0-9_-]:<br/>
-    <input type="text" name="realname" size="70" class="enter" /><br/>';
-            echo Language::getInstance()->filesLangpacks();
-            echo '<input class="buttom" type="submit" value="Добавить"/>
-    </div>
-    </form>';
         }
+
+        $q = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
+        $dirs = array();
+        while ($item = mysql_fetch_assoc($q)) {
+            $dirs[$item['path']] = $item['path'];
+        }
+        $template->assign('dirs', $dirs);
         break;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     case 'edit_news':
@@ -708,7 +719,7 @@ Description<br/>
         $data = scanner($scan);
         scannerCount();
 
-        if (isset($data['errors']) && $data['errors']) {
+        if ($data['errors']) {
             $template->assign('error', implode("\n", $data['errors']));
         }
 

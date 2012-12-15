@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Лог авторизаций</h3>
+
 <ul data-role="listview" data-filter="true" data-inset="true">
     <li data-role="list-divider" role="heading">Лог последних 50 посещений админки ([User-Agent] [IP] [Time]):</li>
     {foreach from=$logs item=log}

@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Обменник</h3>
+
 <form action="apanel.php?action=exchanger" method="post">
     <div data-role="fieldcontain">
         {html_checkboxes name="exchanger_notice" selected=$setup.exchanger_notice options=[1=>'Отправлять уведомления на Email о новых файлах']}

@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Модули</h3>
+
 <form action="apanel.php?action=modules" method="post">
     <fieldset data-role="controlgroup">
         {html_checkboxes name="comments_change" selected=$setup.comments_change options=[1=>'Комментарии']}

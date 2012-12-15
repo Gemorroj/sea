@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Загрузка файлов</h3>
+
 <form action="apanel.php?action=upload" method="post" enctype="multipart/form-data">
     <div data-role="fieldcontain">
         <label for="topath">Сохранить в:</label>
@@ -9,8 +11,8 @@
     </div>
 
     <div data-role="fieldcontain">
-        <label for="userfile">Upload файлов (max {ini_get('upload_max_filesize')})</label>
-        <input id="userfile" name="userfile[]" type="file" multiple="multiple" />
+        <label for="userfile">Загрузка файлов (max {ini_get('upload_max_filesize')})</label>
+        <input required="required" id="userfile" name="userfile[]" type="file" multiple="multiple" />
     </div>
 
     <input type="submit" value="Сохранить"/>

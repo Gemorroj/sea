@@ -2,6 +2,8 @@
 
 
 {block content}
+<h3>Изменение новости</h3>
+
 <form action="apanel.php?action=edit_news&amp;news={$smarty.get.news}" method="post">
     {foreach $langpacks as $langpack}
         <div data-role="fieldcontain">
