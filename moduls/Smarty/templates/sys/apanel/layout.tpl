@@ -69,7 +69,7 @@
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'optm'}data-theme="a"{/if}><a href="apanel.php?action=optm">Оптимизация БД</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'checkdb'}data-theme="a"{/if}><a href="apanel.php?action=checkdb">Очистка БД от мусора</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'clean'}data-theme="a"{/if}><a href="apanel.php?action=clean">Очистка БД</a></li>
-                    <li {if isset($smarty.get.action) && $smarty.get.action == 'cleannews'}data-theme="a"{/if}><a href="apanel.php?action=cleannews">Очистить новости</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'cleannews'}data-theme="a"{/if}><a href="apanel.php?action=cleannews">Очистка новостей</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'cleancomm'}data-theme="a"{/if}><a href="apanel.php?action=cleancomm">Очистка комментариев к файлам</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'cleancomm_news'}data-theme="a"{/if}><a href="apanel.php?action=cleancomm_news">Очистка комментариев к новостям</a></li>
                 </ul>

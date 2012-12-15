@@ -199,29 +199,6 @@ class Language
 
 
     /**
-     * Показываем список доступных языковых пакетов
-     *
-     * @param string $default
-     *
-     * @return string
-     */
-    public function selectLangpacks($default = '')
-    {
-        $str = '<select class="enter" name="langpack">';
-
-        foreach ($this->getLangpacks() as $v) {
-            $str
-                .= '<option value="' . htmlspecialchars($v) . '" ' . ($default == $v ? 'selected="selected"' : '') . '>'
-                . htmlspecialchars($v, ENT_NOQUOTES) . '</option>';
-        }
-
-        $str .= '</select>';
-
-        return $str;
-    }
-
-
-    /**
      * @param $defaults
      *
      * @return array
