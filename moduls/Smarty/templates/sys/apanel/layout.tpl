@@ -53,7 +53,7 @@
                     <li data-role="list-divider">Admin Panel</li>
                     <li><a href="apanel_news.php">Новости</a></li>
                     <li><a href="apanel_index.php">Файловый менеджер</a></li>
-                    <li><a href="apanel_scan.php">Полное обновление БД</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'scan'}data-theme="a"{/if}><a href="apanel.php?action=scan">Полное обновление БД</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'checkdb'}data-theme="a"{/if}><a href="apanel.php?action=checkdb">Очистка БД от мусора</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'upload'}data-theme="a"{/if}><a href="apanel.php?action=upload">Upload файлов</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'import'}data-theme="a"{/if}><a href="apanel.php?action=import">Импорт файлов</a></li>

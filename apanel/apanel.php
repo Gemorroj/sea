@@ -66,6 +66,7 @@ if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER
     exit('Авторизация не пройдена');
 }
 
+
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 switch ($action) {
 ######################################ПРИОРИТЕТ######################################################
@@ -85,23 +86,6 @@ switch ($action) {
         }
         break;
 
-
-######################################Скан директории######################################################
-    case 'flash':
-        $file_info = mysql_fetch_assoc(
-            mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id . ' AND `dir` = "1"', $mysql)
-        );
-
-        if (!is_dir($file_info['path'])) {
-            $template->assign('error', 'Такой категории не существует');
-            $template->send();
-        }
-
-        echo'<div class="mblock">Будет пересканирована директория <strong>' . $file_info['path']
-            . '</strong><br/>Для продолжения нажмите на <a class="yes" href="apanel_scan.php?scan=' . rawurlencode(
-            $file_info['path']
-        ) . '">ЭТУ</a> ссылку<br/></div>';
-        break;
 
 
 ######################################Добавление иконки######################################################
@@ -245,7 +229,9 @@ switch ($action) {
                 chmod($f_chmod . '/', 0777);
             }
 
-            echo 'Каталог успешно удален!<div class="mblock" style="color:#b00;">Внимание! Теперь следует пересчитать количество файлов в директориях<br/>Для продолжения нажмите на <a href="apanel_count.php">ЭТУ</a> ссылку</div>';
+            scannerCount();
+
+            echo 'Каталог успешно удален!';
         }
         break;
 
@@ -601,33 +587,42 @@ Description<br/>
 
 
 
+    case 'scan':
+        $template->setTemplate('apanel/scan.tpl');
+
+        $scan = $setup['path'];
+
+        if (isset($_GET['id'])) {
+            $info = mysql_fetch_assoc(
+                mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id . ' AND `dir` = "1"', $mysql)
+            );
+
+            if (!$info || is_dir($info['path']) === false) {
+                $template->assign('error', 'Такой категории не существует');
+                $template->send();
+            } else {
+                $scan = $info['path'];
+            }
+        }
+
+        @set_time_limit(99999);
+        @ini_set('max_execution_time', 99999);
+        @ignore_user_abort(true);
+
+        ini_set('memory_limit', '256M');
 
 
+        $data = scanner($scan);
+        scannerCount();
+
+        if (isset($data['errors']) && $data['errors']) {
+            $template->assign('error', implode("\n", $data['errors']));
+        }
+
+        $template->assign('data', $data);
+        break;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// редактор MP3 тегов
     case 'id3_file':
         $template->setTemplate('apanel/id3_file.tpl');
 
@@ -1394,6 +1389,8 @@ Description<br/>
 
 
     case 'checkdb':
+        $template->setTemplate('apanel/checkdb.tpl');
+
         $d = 0;
         $r = mysql_query('SELECT `id`, `path` FROM `files`', $mysql);
         while ($row = mysql_fetch_assoc($r)) {
@@ -1407,7 +1404,7 @@ Description<br/>
             }
         }
 
-        $template->assign('message', 'Удалено неверных записей: ' . $d);
+        $template->assign('count', $d);
         break;
 
 

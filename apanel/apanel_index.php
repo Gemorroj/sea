@@ -259,7 +259,7 @@ while ($v = mysql_fetch_assoc($query)) {
             $v['name'],
             ENT_NOQUOTES
         ) . '</a></strong>(' . $v['dir_count'] . ')' . $new_all . ' [<a class="yes" href="apanel.php?id=' . $v['id']
-            . '&amp;action=flash">F</a>][<a class="yes" href="apanel.php?id=' . $v['id']
+            . '&amp;action=scan">F</a>][<a class="yes" href="apanel.php?id=' . $v['id']
             . '&amp;action=seo">K</a>][<a class="yes" href="apanel.php?id=' . $v['id']
             . '&amp;action=rename">R</a>][<a class="no" href="apanel.php?id=' . $v['id'] . '&amp;action=about">O</a>]'
             . $dl . $addico . $updown;

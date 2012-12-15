@@ -574,7 +574,7 @@ function checkExt($ext)
  *
  * @return bool
  */
-function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $insert = true)
+function _scannerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $insert = true)
 {
     if ($dir) {
         if ($insert) {
@@ -674,25 +674,19 @@ function _scanerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $
  *
  * @return array
  */
-function scaner($path = '', $cont = 'folder.png')
+function scanner($path = '', $cont = 'folder.png')
 {
     static $folders = 0;
     static $files = 0;
     static $errors = array();
 
-    // заглушка
-    echo 'scan ' . htmlspecialchars($path, ENT_NOQUOTES) . '...' . str_repeat(' ', 56) . '<br/>';
-    ob_flush();
-
-    if (!is_readable($path)) {
-        echo 'Error<br/>';
+    if (is_readable($path) === false) {
+        $errors[] = $path . ' - не доступно для чтения. Вероятно, не хватает прав.';
 
         return array();
     }
 
-
     chmod($path, 0777);
-    $tmp = 0;
 
     foreach (array_diff(scandir($path, 0), array('.', '..')) as $file) {
         if ($file[0] === '.') {
@@ -702,7 +696,7 @@ function scaner($path = '', $cont = 'folder.png')
         $f = str_replace('//', '/', $path . '/' . $file);
 
         $is_dir = is_dir($f);
-        if ($is_dir) {
+        if ($is_dir === true) {
             $f .= '/';
         }
 
@@ -717,25 +711,16 @@ function scaner($path = '', $cont = 'folder.png')
         }
 
         $insert = true;
-        if (mysql_num_rows($q)) {
+        if (mysql_num_rows($q) > 0) {
             $insert = false;
             $row = mysql_fetch_assoc($q);
             if ($row['name'] != '' && $row['rus_name'] != '' && $row['aze_name'] != '' && $row['tur_name'] != '') {
-                if ($is_dir) {
+                if ($is_dir === true) {
                     $folders++;
-                    scaner($f);
+                    scanner($f);
                 }
                 continue;
             }
-        }
-
-
-        $tmp++;
-        if ($tmp > 500) {
-            $tmp = 0;
-            // такая вот хуита... =( забиваем буфер
-            echo 'scan ' . htmlspecialchars($f, ENT_NOQUOTES) . '...' . str_repeat(' ', 512 /*4096*/) . '<br/>';
-            ob_flush();
         }
 
         $pathinfo = pathinfo($f);
@@ -748,12 +733,12 @@ function scaner($path = '', $cont = 'folder.png')
         }
 
         // транслит
-        if ($name[0] == '!') {
+        if ($name[0] === '!') {
             $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
             $rus_name = trans($rus_name);
         }
 
-
+        var_dump($f);
         if ($is_dir) {
             // скриншоты
             $screen = $GLOBALS['setup']['spath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
@@ -771,33 +756,51 @@ function scaner($path = '', $cont = 'folder.png')
 
             // вложения
             $attach = $GLOBALS['setup']['apath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
-            if (!file_exists($attach)) {
+            if (file_exists($attach) === false) {
                 mkdir($attach, 0777);
             }
             chmod($attach, 0777);
 
-            if (!_scanerDb($f, $name, $rus_name, $aze_name, $tur_name, true, $insert)) {
+            if (!_scannerDb($f, $name, $rus_name, $aze_name, $tur_name, true, $insert)) {
                 $errors[] = mysql_error($GLOBALS['mysql']);
             }
 
             $folders++;
-            scaner($f);
-        } else {
-            if (is_file($f)) {
-
-                $files++;
-                if ($pathinfo['basename'] == $cont) {
-                    continue;
-                } else {
-                    if (!_scanerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
-                        $errors[] = mysql_error($GLOBALS['mysql']);
-                    }
-                }
+            scanner($f);
+        } else if ($pathinfo['basename'] != $cont && is_file($f) === true) {
+            $files++;
+            if (!_scannerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
+                $errors[] = mysql_error($GLOBALS['mysql']);
             }
         }
     }
 
     return array('folders' => $folders, 'files' => $files, 'errors' => $errors);
+}
+
+
+/**
+ * Обновление кол-ва файлов в директориях
+ */
+function scannerCount()
+{
+    $res = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1" GROUP BY `path`', $GLOBALS['mysql']);
+    while ($dir = mysql_fetch_row($res)) {
+        $dir = mysql_real_escape_string($dir[0], $GLOBALS['mysql']);
+
+        mysql_query(
+            'UPDATE `files` SET `dir_count` = ' . intval(
+                mysql_result(
+                    mysql_query(
+                        'SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE "' . str_replace(array('_', '%'), array('\_', '\%'), $dir) . '%" AND `hidden` = "0"',
+                        $GLOBALS['mysql']
+                    ),
+                    0
+                )
+            ) . ' WHERE `path`="' . $dir . '"',
+            $GLOBALS['mysql']
+        );
+    }
 }
 
 
