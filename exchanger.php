@@ -66,9 +66,13 @@ if ($_POST) {
     }
 
     $path = mysql_result(
-        mysql_query(
-            'SELECT `path` FROM `files` WHERE `id` = ' . intval($_POST['topath'])
-                . ' AND `dir` = "1" AND `hidden` = "0"',
+        mysql_query('
+            SELECT `path`
+            FROM `files`
+            WHERE `id` = ' . intval($_POST['topath']) . '
+            AND `dir` = "1"
+            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
+            ',
             $mysql
         ),
         0
@@ -161,7 +165,12 @@ if ($_POST) {
         );
     }
 } else {
-    $dirs = mysql_query('SELECT `id`, `path` FROM `files` WHERE `dir` = "1" AND `hidden` = "0"', $mysql);
+    $dirs = mysql_query('
+        SELECT `id`, `path`
+        FROM `files`
+        WHERE `dir` = "1"
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
+    ', $mysql);
     while ($item = mysql_fetch_assoc($dirs)) {
         $arr = explode('/', $item['path']);
         $all = sizeof($arr) - 1;

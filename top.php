@@ -60,7 +60,12 @@ if ($prew != 0 && $prew != 1) {
 }
 
 
-$all = mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `hidden` = "0" AND `dir` = "0";', $mysql), 0);
+$all = mysql_result(mysql_query('
+    SELECT COUNT(1)
+    FROM `files`
+    WHERE `dir` = "0"
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
+', $mysql), 0);
 $all = $all > $setup['top_num'] ? $setup['top_num'] : $all;
 
 $onpage = $onpage > $all ? $all : $onpage;
@@ -120,7 +125,8 @@ $query = mysql_query(
     `no`,
     0 AS `count`
     FROM `files`
-    WHERE `hidden` = "0" AND `dir` = "0"
+    WHERE `dir` = "0"
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
     ORDER BY ' . $mode . '
     LIMIT ' . $start . ', ' . $onpage,
     $mysql

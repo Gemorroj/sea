@@ -69,8 +69,12 @@ if ($word != '') {
     $sqlLikeWord = str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($word, $mysql));
 
     $all = mysql_result(
-        mysql_query(
-            'SELECT COUNT(1) FROM `files` WHERE `hidden` = "0" AND `name` LIKE "%' . $sqlLikeWord . '%"',
+        mysql_query('
+            SELECT COUNT(1)
+            FROM `files`
+            WHERE `name` LIKE "%' . $sqlLikeWord . '%"
+            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
+            ',
             $mysql
         ),
         0
@@ -126,11 +130,16 @@ if ($word != '') {
         `timeupload`,
         `yes`,
         `no`,
-        (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . (
-            $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . ' AND `hidden` = "0") AS `count`
+        (
+            SELECT COUNT(1)
+            FROM `files`
+            WHERE `infolder` = `v`
+            AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . '
+            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
+        ) AS `count`
         FROM `files`
-        WHERE `hidden` = "0"
-        AND `name` LIKE "%' . $sqlLikeWord . '%"
+        WHERE `name` LIKE "%' . $sqlLikeWord . '%"
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
         ORDER BY ' . $mode . '
         LIMIT ' . $start . ', ' . $onpage,
         $mysql

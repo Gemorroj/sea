@@ -124,7 +124,7 @@ if ($setup['prev_next']) {
         FROM `files`
         WHERE `infolder` = "' . $sql_dir . '"
         AND `dir` = "0"
-        AND `hidden` = "0"
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
     ',
             $mysql
         ),
@@ -140,7 +140,7 @@ if ($setup['prev_next']) {
             FROM `files`
             WHERE `infolder` = "' . $sql_dir . '"
             AND `dir` = "0"
-            AND `hidden` = "0"
+            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
             AND `id` > ' . $id
                 ,
                 $mysql
@@ -154,7 +154,7 @@ if ($setup['prev_next']) {
             FROM `files`
             WHERE `infolder` = "' . $sql_dir . '"
             AND `dir` = "0"
-            AND `hidden` = "0"
+            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
             AND `id` < ' . $id
                 ,
                 $mysql
@@ -178,10 +178,7 @@ if ($setup['prev_next']) {
 }
 
 
-if (!$seo['title']) {
-    $seo['title'] = $v['name'];
-}
-
+$template->assign('dirs', (IS_ADMIN === true ? getAllDirs() : array()));
 $template->assign('prevNext', $prevNext);
 $template->assign('file', $v);
 $template->assign('directory', $directory);
@@ -189,10 +186,7 @@ $template->assign('vote', $vote);
 $template->assign('rate', $rate);
 $template->assign('commentsCount', $commentsCount);
 $template->assign('comments', $comments);
-$template->assign('breadcrumbs', array(
-    $directory['id'] => $directory['name'],
-    'view/' . $id => $v['name']
-));
 
+$template->assign('breadcrumbs', getBreadcrumbs($v, false));
 
 $template->send();

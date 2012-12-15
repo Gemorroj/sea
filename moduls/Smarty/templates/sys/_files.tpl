@@ -16,7 +16,7 @@
 
 
             {* администрирование *}
-            {if (isset($smarty.session.authorise) && $smarty.session.authorise == $setup.password)}
+            {if $smarty.const.IS_ADMIN}
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=scan" title="Сканировать директорию">F</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=seo" title="SEO">K</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=rename" title="Переименовать директорию">R</a>]
@@ -25,6 +25,11 @@
                     [<a class="no" href="{$smarty.const.DIRECTORY}apanel/apanel.php?action=del_ico&amp;id={$dir.id}" title="Удалить иконку">S</a>]
                 {else}
                     [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?action=add_ico&amp;id={$dir.id}" title="Добавить иконку">S</a>]
+                {/if}
+                {if $dir.hidden}
+                    [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=hidden&amp;hide=0" title="Сделать видимым">H</a>]
+                {else}
+                    [<a class="no" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=hidden&amp;hide=1" title="Сделать невидимым">H</a>]
                 {/if}
                 {if $setup.delete_dir}
                     [<a class="no" href="{$smarty.const.DIRECTORY}apanel/apanel.php?action=del_dir&amp;id={$dir.id}" title="Удалить директорию">D</a>]
@@ -86,14 +91,19 @@
 
 
             {* администрирование *}
-            {if (isset($smarty.session.authorise) && $smarty.session.authorise == $setup.password)}
+            {if $smarty.const.IS_ADMIN}
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=seo" title="SEO">K</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=rename" title="Переименовать файл">R</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=about" title="Описание">O</a>]
                 {if $f.screen}
                     [<a class="no" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=del_screen" title="Удалить скриншот">S</a>]
                 {else}
-                    [<a class="yes" href={$smarty.const.DIRECTORY}"apanel/apanel.php?id={$f.id}&amp;action=add_screen" title="Добавить скриншот">S</a>]
+                    [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=add_screen" title="Добавить скриншот">S</a>]
+                {/if}
+                {if $f.hidden}
+                    [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=hidden&amp;hide=0" title="Сделать видимым">H</a>]
+                {else}
+                    [<a class="no" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=hidden&amp;hide=1" title="Сделать невидимым">H</a>]
                 {/if}
                 {if $setup.delete_file}
                     [<a class="no" href="{$smarty.const.DIRECTORY}apanel/apanel.php?action=del_file&amp;id={$f.id}" title="Удалить файл">D</a>]
@@ -105,6 +115,6 @@
 {/if}
 
 {* администрирование *}
-{if (isset($smarty.session.authorise) && $smarty.session.authorise == $setup.password)}
-    <div class="iblock"><code>[F] - сканировать директорию, [K] - SEO, [R] - переименование, [O] - описание, [D] - удаление, [S] - скриншот, [Up/Down] - приоритет</code></div>
+{if $smarty.const.IS_ADMIN}
+    <div class="iblock"><code>[F] - сканировать директорию, [K] - SEO, [R] - переименование, [O] - описание, [D] - удаление, [S] - скриншот, [H] - видимость, [Up/Down] - приоритет</code></div>
 {/if}

@@ -808,6 +808,73 @@ function scannerCount()
 
 
 /**
+ * Массив всех директорий
+ *
+ * @return array
+ */
+function getAllDirs()
+{
+    $dirs = array($GLOBALS['setup']['path'] . '/' => $GLOBALS['setup']['path'] . '/');
+
+    $q = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $GLOBALS['mysql']);
+    while ($item = mysql_fetch_assoc($q)) {
+        $dirs[$item['path']] = $item['path'];
+    }
+
+    return $dirs;
+}
+
+
+/**
+ * Бредкрамбсы для директорий или файлов
+ *
+ * @param array $info
+ * @param bool $is_dir
+ *
+ * @return array
+ */
+function getBreadcrumbs($info, $is_dir = false)
+{
+    global $seo;
+
+    $ex = explode('/', rtrim($info['path'], '/'));
+
+    $breadcrumbs = array();
+    if ($ex) {
+        $path = array_shift($ex) . '/';
+
+        $sql = '
+        SELECT `id`,
+        ' . Language::getInstance()->buildFilesQuery() . '
+        FROM `files`
+        WHERE `path` IN(';
+
+        for ($i = 0, $l = sizeof($ex); $i < $l; ++$i) {
+            if (!$is_dir && ($i + 1) === $l) {
+                $path .= $ex[$i];
+            } else {
+                $path .= $ex[$i] . '/';
+            }
+
+            $sql .= '"' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '",';
+        }
+        $sql = rtrim($sql, ',') . ')';
+
+        $q = mysql_query($sql, $GLOBALS['mysql']);
+        while ($s = mysql_fetch_assoc($q)) {
+            $breadcrumbs[$s['id']] = $s['name'];
+        }
+    }
+
+    if (!$seo['title']) {
+        $seo['title'] = implode(' / ', $breadcrumbs);
+    }
+
+    return $breadcrumbs;
+}
+
+
+/**
  * Изменение количества файлов в директориях
  *
  * @param string $path      директория
@@ -1672,7 +1739,7 @@ function getFileInfo ($id)
             SELECT *, ' . Language::getInstance()->buildFilesQuery() . '
             FROM `files`
             WHERE `id` = ' . intval($id) . '
-            AND `hidden` = "0"
+            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
         ',
             $GLOBALS['mysql']
         )

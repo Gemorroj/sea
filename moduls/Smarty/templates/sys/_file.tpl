@@ -112,5 +112,19 @@
             <a href="{$link}">{$val}</a><br/>
         {/foreach}
     {/if}
-
 </div>
+
+
+{* администрирование *}
+{if $smarty.const.IS_ADMIN}
+<div class="iblock">
+    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$id}&amp;action=move" method="post">
+        <div>
+            <label for="topath">Директория:</label>
+            {html_options id='topath' name='topath' options=$dirs selected=$file.infolder}
+            <br/>
+            <input type="submit" value="Переместить" class="buttom"/>
+        </div>
+    </form>
+</div>
+{/if}

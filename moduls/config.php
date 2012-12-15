@@ -49,6 +49,8 @@ while ($set = mysql_fetch_assoc($setting)) {
     $setup[$set['name']] = $set['value'];
 }
 
+define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == $setup['password']));
+
 
 define('DIR', dirname(__FILE__));
 set_include_path(

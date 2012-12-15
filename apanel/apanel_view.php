@@ -135,78 +135,11 @@ $back = mysql_fetch_array(
 //------------------------------------------------------------------------------------------
 
 
-if (isset($_GET['hidden'])) {
-    if ($_GET['hidden'] == 1 && $file_info['hidden'] == 0) {
-        if (mysql_query('UPDATE `files` SET `hidden` = "1" WHERE `id` = ' . $id)) {
-            $file_info['hidden'] = 1;
-            dir_count($file_info['infolder'], false);
-        }
-    } else {
-        if ($_GET['hidden'] == 0 && $file_info['hidden'] == 1) {
-            if (mysql_query('UPDATE `files` SET `hidden` = "0" WHERE `id` = ' . $id)) {
-                $file_info['hidden'] = 0;
-                dir_count($file_info['infolder'], true);
-            }
-        }
-    }
-} else {
-    if (isset($_POST['folder'])) {
-        $folder = mysql_fetch_assoc(
-            mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . intval($_POST['folder']), $mysql)
-        );
-
-        if (!$folder) {
-            echo '<div class="red">Указанной директории не существует. Файл не перемещен<br/></div>';
-        } else {
-            if (file_exists($folder['path'] . $filename)) {
-                echo '<div class="red">Файл с таким именем в указанной директории уже есть. Файл не перемещен<br/></div>';
-            } else {
-                if (rename($file_info['path'], $folder['path'] . $filename)) {
-                    if (mysql_query(
-                        'UPDATE `files` SET `path` = "' . mysql_real_escape_string($folder['path'] . $filename, $mysql)
-                            . '", `infolder` = "' . mysql_real_escape_string($folder['path'], $mysql)
-                            . '" WHERE `id` = '
-                            . $id,
-                        $mysql
-                    )
-                    ) {
-
-                        if (!$file_info['hidden']) {
-                            dir_count($dir, false);
-                            dir_count($folder['path'], true);
-                        }
-
-                        $path1 = strstr($file_info['path'], '/'); // убираем папку с загрузками
-                        $path2 = strstr($folder['path'], '/'); // убираем папку с загрузками
-
-                        // перемещаем скриншоты и описания
-                        if (is_file($setup['spath'] . $path1 . '.gif')) {
-                            rename($setup['spath'] . $path1 . '.gif', $setup['spath'] . $path2 . $filename . '.gif');
-                        }
-                        if (is_file($setup['spath'] . $path1 . '.jpg')) {
-                            rename($setup['spath'] . $path1 . '.jpg', $setup['spath'] . $path2 . $filename . '.jpg');
-                        }
-                        if (is_file($setup['opath'] . $path1 . '.txt')) {
-                            rename($setup['opath'] . $path1 . '.txt', $setup['opath'] . $path2 . $filename . '.txt');
-                        }
-                        echo '<div class="green">Файл перемещен<br/></div>';
-                    } else {
-                        rename($folder['path'] . $filename, $file_info['path']);
-                        echo '<div class="red">Ошибка записи в БД<br/>' . mysql_error($mysql) . '</div>';
-                    }
-                } else {
-                    echo '<div class="red">Ошибка переименования файла<br/></div>';
-                }
-            }
-        }
-        exit;
-    }
-}
 
 
 $all_comments = mysql_result(mysql_query('SELECT COUNT(1) FROM `comments` WHERE file_id = ' . $id, $mysql), 0);
 
-$file_info['size'] = '(' . size($file_info['size']) . ')';
+$file_info['size'] = '(' . ($file_info['size']) . ')';
 
 ###############Вывод###################
 echo '<div class="mblock">Досье на файл ' . htmlspecialchars($filename, ENT_NOQUOTES) . '</div>
@@ -216,11 +149,11 @@ echo '<div class="mblock">Досье на файл ' . htmlspecialchars($filenam
 
 ###############Недавнее скачивание###################
 if ($file_info['timeload']) {
-    $file_info['timeload'] = tm($file_info['timeload']);
+    $file_info['timeload'] = ($file_info['timeload']);
     echo '<strong>Недавнее скачивание:</strong><br/>' . $file_info['timeload'] . '<br/>';
 }
 
-$file_info['timeupload'] = tm($file_info['timeupload']);
+$file_info['timeupload'] = ($file_info['timeupload']);
 ###############Время добавления######################
 echo '<strong>Время добавления:</strong><br/>' . $file_info['timeupload'];
 ###############Особый размер для картинок############

@@ -80,11 +80,12 @@ if ($id) {
             '
         SELECT `t1`.`path`,
         `t1`.`seo`,
+        ' . Language::getInstance()->buildFilesQuery('t1') . ',
         COUNT(1) AS `all`
         FROM `files` AS `t1`
-        LEFT JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path` AND `t2`.`hidden` = "0"
+        LEFT JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path` ' . (IS_ADMIN !== true ? 'AND `t2`.`hidden` = "0"' : '') . '
         WHERE `t1`.`id` = ' . $id . '
-        AND `t1`.`hidden` = "0"
+        ' . (IS_ADMIN !== true ? 'AND `t1`.`hidden` = "0"' : '') . '
         GROUP BY `t1`.`id`
         ORDER BY NULL',
             $mysql
@@ -99,7 +100,7 @@ if ($id) {
         SELECT COUNT(1)
         FROM `files`
         WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
-        AND `hidden` = "0"
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
     ',
             $mysql
         ),
@@ -131,35 +132,7 @@ $template->assign('page', $page);
 $template->assign('pages', $pages);
 
 ###############Готовим заголовок###################
-$ex = explode('/', $d['path']);
-$sz = sizeof($ex) - 2;
-
-unset($ex[0], $ex[$sz + 1]);
-$path = $setup['path'] . '/';
-
-$breadcrumbs = array();
-if ($ex) {
-    $implode
-        = '
-        SELECT `id`,
-        ' . Language::getInstance()->buildFilesQuery() . '
-        FROM `files`
-        WHERE `path` IN(';
-    foreach ($ex as $v) {
-        $path .= $v . '/';
-        $implode .= '"' . mysql_real_escape_string($path, $mysql) . '",';
-    }
-
-
-    $q = mysql_query(rtrim($implode, ',') . ')', $mysql);
-    while ($s = mysql_fetch_assoc($q)) {
-        $breadcrumbs[$s['id']] = $s['name'];
-        if (!$seo['title']) {
-            $seo['title'] = '/' . $s['name'];
-        }
-    }
-}
-$template->assign('breadcrumbs', $breadcrumbs);
+$template->assign('breadcrumbs', getBreadcrumbs($d, true));
 
 
 /// новости
@@ -194,11 +167,17 @@ $query = mysql_query(
     `timeupload`,
     `yes`,
     `no`,
-    (SELECT COUNT(1) FROM `files` WHERE `infolder` = `v` AND `timeupload` > ' . (
-        $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . ' AND `hidden` = "0") AS `count`
+    `hidden`,
+    (
+        SELECT COUNT(1)
+        FROM `files`
+        WHERE `infolder` = `v`
+        AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . '
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
+    ) AS `count`
     FROM `files`
     WHERE `infolder` = "' . mysql_real_escape_string($d['path'], $mysql) . '"
-    AND `hidden` = "0"
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
     ORDER BY ' . $mode . '
     LIMIT ' . $start . ', ' . $onpage,
     $mysql

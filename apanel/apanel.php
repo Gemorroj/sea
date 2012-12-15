@@ -70,6 +70,87 @@ if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER
 
 
 switch (isset($_GET['action']) ? $_GET['action'] : null) {
+    case 'move':
+        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$file) {
+            $template->assign('error', 'Файл не найден');
+            $template->send();
+        }
+
+        $folder = $_POST['topath'];
+        $filename = basename($file['path']);
+
+        if (!is_dir($folder)) {
+            $template->assign('error', 'Указанной директории не существует');
+            $template->send();
+        }
+        if (!is_writeable($folder)) {
+            $template->assign('error', 'Указанная директория не доступна для записи');
+            $template->send();
+        }
+        if (file_exists($folder . $filename)) {
+            $template->assign('error', 'Файл с таким именем в указанной директории уже есть');
+            $template->send();
+        }
+        if (!rename($file['path'], $folder . $filename)) {
+            $err = error_get_last();
+            $template->assign('error', 'Ошибка: ' . $err['message']);
+            $template->send();
+        }
+
+        if (mysql_query('
+            UPDATE `files`
+            SET `path` = "' . mysql_real_escape_string($folder . $filename, $mysql) . '",
+            `infolder` = "' . mysql_real_escape_string($folder, $mysql) . '"
+            WHERE `id` = ' . $id,
+            $mysql
+        )) {
+            dir_count($folder, false);
+            dir_count($folder['path'], true);
+
+            $path1 = strstr($file['path'], '/'); // убираем папку с загрузками
+            $path2 = strstr($folder['path'], '/'); // убираем папку с загрузками
+
+            // перемещаем скриншоты и описания
+            if (is_file($setup['spath'] . $path1 . '.gif')) {
+                rename($setup['spath'] . $path1 . '.gif', $setup['spath'] . $path2 . $filename . '.gif');
+            }
+            if (is_file($setup['spath'] . $path1 . '.jpg')) {
+                rename($setup['spath'] . $path1 . '.jpg', $setup['spath'] . $path2 . $filename . '.jpg');
+            }
+            if (is_file($setup['opath'] . $path1 . '.txt')) {
+                rename($setup['opath'] . $path1 . '.txt', $setup['opath'] . $path2 . $filename . '.txt');
+            }
+
+            $template->assign('message', 'Файл перемещен');
+        } else {
+            rename($folder . $filename, $file['path']); // переименовываем обратно
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+        }
+        break;
+
+
+    case 'hidden':
+        $info = mysql_fetch_assoc(mysql_query('SELECT 1 FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$info) {
+            $template->assign('error', 'Директория или файл не найдены');
+            $template->send();
+        }
+
+        if ($_GET['hide'] == '1') {
+            $query = 'UPDATE `files` SET `hidden` = "1" WHERE `id` = ' . $id;
+        } else {
+            $query = 'UPDATE `files` SET `hidden` = "0" WHERE `id` = ' . $id;
+        }
+
+        if (mysql_query($query, $mysql)) {
+            $template->assign('message', 'Видимость изменена');
+        } else {
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+        }
+        break;
+
+
     case 'rename':
         $template->setTemplate('apanel/files/rename.tpl');
 
@@ -191,7 +272,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
         $file = mysql_fetch_assoc(
-            mysql_query('SELECT `path`, `hidden`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql)
+            mysql_query('SELECT `path`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql)
         );
         if (!$file) {
             $template->assign('error', 'Файл не найден');
@@ -224,16 +305,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             del_attach($file['infolder'], $id, unserialize($file['attach']));
         }
 
-        if (!$file['hidden']) {
-            dir_count($file['path'], false);
-        }
+        dir_count($file['path'], false);
 
         $template->assign('message', 'Файл удален');
         break;
 
 
     case 'priority':
-        $info = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `dir` = "1" AND `id` = ' . $id, $mysql));
+        $info = mysql_fetch_assoc(mysql_query('SELECT 1 FROM `files` WHERE `dir` = "1" AND `id` = ' . $id, $mysql));
         if (!$info) {
             $template->assign('error', 'Директория не найдена');
             $template->send();
@@ -529,12 +608,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
         }
 
-        $q = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
-        $dirs = array();
-        while ($item = mysql_fetch_assoc($q)) {
-            $dirs[$item['path']] = $item['path'];
-        }
-        $template->assign('dirs', $dirs);
+        $template->assign('dirs', getAllDirs());
         break;
 
 
@@ -955,14 +1029,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'import':
         $template->setTemplate('apanel/import.tpl');
 
-        $q = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
-        $dirs = array();
-
-        while ($item = mysql_fetch_assoc($q)) {
-            $dirs[$item['path']] = $item['path'];
-        }
-
-        $template->assign('dirs', $dirs);
+        $template->assign('dirs', getAllDirs());
 
 
         if ($_POST) {
@@ -1041,14 +1108,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'upload':
         $template->setTemplate('apanel/upload.tpl');
 
-        $q = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $mysql);
-        $dirs = array();
-
-        while ($item = mysql_fetch_assoc($q)) {
-            $dirs[$item['path']] = $item['path'];
-        }
-
-        $template->assign('dirs', $dirs);
+        $template->assign('dirs', getAllDirs());
 
 
         if ($_POST) {
