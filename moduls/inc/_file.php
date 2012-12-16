@@ -35,7 +35,7 @@ if ($v['attach']) {
     $attach = unserialize($v['attach']);
     if ($attach) {
         foreach ($attach as $k => $val) {
-            $v['attachments'][DIRECTORY . $setup['apath'] . dirname($screen) . '/' . $id . '_' . $k . '_' . $val] = $val;
+            $v['attachments'][$k] = array('name' => $val, 'link' => DIRECTORY . $setup['apath'] . dirname($screen) . '/' . $id . '_' . $k . '_' . $val);
         }
     }
 }

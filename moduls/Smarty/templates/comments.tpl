@@ -10,7 +10,7 @@
             <div class="{cycle values="row,row2"}">
 
                 {if $smarty.const.IS_ADMIN}
-                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?comment={$comment.id}&amp;action=del_comment_{$comments_module}" title="del">[X]</a>
+                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?comment={$comment.id}&amp;action=del_comment_{$comments_module}" title="Удалить">[X]</a>
                 {/if}
 
                 <strong>{$comment.name}</strong> ({$comment.time|dateFormatExtended})<br/>

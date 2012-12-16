@@ -838,10 +838,11 @@ function getBreadcrumbs($info, $is_dir = false)
     global $seo;
 
     $ex = explode('/', rtrim($info['path'], '/'));
+    $l = sizeof($ex);
 
     $breadcrumbs = array();
-    if ($ex) {
-        $path = array_shift($ex) . '/';
+    if ($l > 1) {
+        $path = '';
 
         $sql = '
         SELECT `id`,
@@ -849,7 +850,7 @@ function getBreadcrumbs($info, $is_dir = false)
         FROM `files`
         WHERE `path` IN(';
 
-        for ($i = 0, $l = sizeof($ex); $i < $l; ++$i) {
+        for ($i = 0; $i < $l; ++$i) {
             if (!$is_dir && ($i + 1) === $l) {
                 $path .= $ex[$i];
             } else {
@@ -866,7 +867,7 @@ function getBreadcrumbs($info, $is_dir = false)
         }
     }
 
-    if (!$seo['title']) {
+    if (isset($seo['title']) === false || $seo['title'] == '') {
         $seo['title'] = implode(' / ', $breadcrumbs);
     }
 

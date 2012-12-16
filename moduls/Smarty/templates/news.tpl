@@ -10,8 +10,8 @@
             <div class="{cycle values="row,row2"}">
 
                 {if $smarty.const.IS_ADMIN}
-                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=del_news" title="del">[X]</a>
-                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=edit_news" title="edit">[E]</a>
+                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=del_news" title="Удалить">[X]</a>
+                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=edit_news" title="Изменить">[E]</a>
                 {/if}
 
                 {$v.time|dateFormatExtended}<br/>

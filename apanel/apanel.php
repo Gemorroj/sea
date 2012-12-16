@@ -70,6 +70,83 @@ if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER
 
 
 switch (isset($_GET['action']) ? $_GET['action'] : null) {
+    case 'add_attach':
+        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$file) {
+            $template->assign('error', 'Файл не найден');
+            $template->send();
+        }
+
+        if (!$_FILES || !isset($_FILES['attach'])) {
+            $template->assign('error', 'Нет загружаемого файла');
+            $template->send();
+        }
+        if ($_FILES['attach']['error']) {
+            $template->assign('error', 'Ошибка при загрузке файла. Код ошибки: ' . $_FILES['attach']['error']);
+            $template->send();
+        }
+        if (!checkExt(pathinfo($_FILES['attach']['name'], PATHINFO_EXTENSION))) {
+            $template->assign('error', 'Недоступное расширение для загрузки');
+            $template->send();
+        }
+
+        if ($file['attach']) {
+            $attach = unserialize($file['attach']);
+            $key = sizeof($attach);
+        } else {
+            $attach = array();
+            $key = 0;
+        }
+
+        if (add_attach($file['infolder'], $id, array($key => $_FILES['attach']))) {
+            $attach[$key] = $_FILES['attach']['name'];
+            if (mysql_query('UPDATE `files` SET `attach` = "' . mysql_real_escape_string(serialize($attach), $mysql) . '" WHERE `id` = ' . $id, $mysql)) {
+                $template->assign('message', 'Вложение добавлено');
+            } else {
+                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            }
+        } else {
+            $err = error_get_last();
+            $template->assign('error', 'Ошибка: ' . $err['message']);
+        }
+        break;
+
+
+    case 'del_attach':
+        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        if (!$file) {
+            $template->assign('error', 'Файл не найден');
+            $template->send();
+        }
+
+        $attach = unserialize($file['attach']);
+        $name = '';
+        if (isset($attach[$_GET['attach']])) {
+            $name = $attach[$_GET['attach']];
+            unset($attach[$_GET['attach']]);
+        }
+
+        $result = null;
+        if (!$attach) {
+            $result = mysql_query('UPDATE `files` SET `attach` = NULL WHERE `id` = ' . $id, $mysql);
+        } else {
+            $result = mysql_query('
+                UPDATE `files`
+                SET `attach` = "' . mysql_real_escape_string(serialize($attach), $mysql) . '"
+                WHERE `id` = ' . $id,
+                $mysql
+            );
+        }
+
+        if ($result) {
+            del_attach($file['infolder'], $id, array($_GET['attach'] => $name));
+            $template->assign('message', 'Вложение удалено');
+        } else {
+            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+        }
+        break;
+
+
     case 'move':
         $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
         if (!$file) {
@@ -1541,7 +1618,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         break;
 
 
-    case 'cleareval':
+    case 'clearrate':
         if (mysql_query('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ' . $id, $mysql)) {
             $template->assign('message', 'Рейтинг сброшен');
         } else {

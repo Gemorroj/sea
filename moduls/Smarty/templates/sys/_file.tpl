@@ -107,9 +107,9 @@
     {/if}
 
     {if $file.attachments}
-        <strong>{$language.attachments}:</strong>
-        {foreach $file.attachments as $link => $val}
-            <a href="{$link}">{$val}</a><br/>
+        <strong>{$language.attachments}:</strong><br/>
+        {foreach $file.attachments as $key => $val}
+            <a href="{$val.link}">{$val.name}</a> [<a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=del_attach&amp;attach={$key}" class="no">X</a>]<br/>
         {/foreach}
     {/if}
 </div>
@@ -121,9 +121,17 @@
     <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$id}&amp;action=move" method="post">
         <div>
             <label for="topath">Директория:</label>
-            {html_options id='topath' name='topath' options=$dirs selected=$file.infolder}
+            {html_options class='buttom' id='topath' name='topath' options=$dirs selected=$file.infolder}
             <br/>
             <input type="submit" value="Переместить" class="buttom"/>
+        </div>
+    </form>
+
+    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$id}&amp;action=add_attach" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="attach">Вложение:</label>
+            <input id="attach" name="attach" type="file" class="buttom"/><br/>
+            <input class="buttom" type="submit" value="Добавить"/>
         </div>
     </form>
 </div>
