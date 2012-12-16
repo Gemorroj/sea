@@ -131,7 +131,7 @@ switch ($action) {
 
             $zipFileType = 'image';
             $zipFileData = DIRECTORY . $f;
-        } else if ($mime == 'text/plain') {
+        } elseif ($mime == 'text/plain') {
             $content = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
             $content = str_to_utf8($content[0]['content']);
 

@@ -17,14 +17,14 @@ $v['flash_file'] = '';
 // Скриншот
 if (file_exists($setup['spath'] . $screen . '.gif')) {
     $v['screen'] = DIRECTORY . $setup['spath'] . $screen . '.gif';
-} else if (file_exists($setup['spath'] . $screen . '.jpg')) {
+} elseif (file_exists($setup['spath'] . $screen . '.jpg')) {
     $v['screen'] = DIRECTORY . $setup['spath'] . $screen . '.jpg';
 }
 
 // Описание
 if (file_exists($setup['opath'] . '/' . $screen . '.txt')) {
     $v['description'] = trim(file_get_contents($setup['opath'] . '/' . $screen . '.txt'));
-} else if ($setup['lib_desc'] && $ext == 'txt') {
+} elseif ($setup['lib_desc'] && $ext == 'txt') {
     $fp = fopen($v['path'], 'r');
     $v['description'] = trim(fgets($fp, 1024));
     fclose($fp);
@@ -87,7 +87,7 @@ if ($ext == 'thm' || $ext == 'nth' || $ext == 'utz' || $ext == 'sdt' || $ext == 
     if ($setup['screen_file_change']) {
         if (file_exists($setup['tpath'] . '/' . $prev_pic . '.gif')) {
             $v['screen_file'] = DIRECTORY . $setup['tpath'] . '/' . $prev_pic . '.gif';
-        } else if (file_exists($setup['tpath'] . '/' . $prev_pic . '.gif.swf')) {
+        } elseif (file_exists($setup['tpath'] . '/' . $prev_pic . '.gif.swf')) {
             $v['flash_file'] = DIRECTORY . $setup['tpath'] . '/' . $prev_pic . '.gif.swf';
         } else {
             $v['screen_file'] = DIRECTORY . 'theme/' . $id;
@@ -106,7 +106,7 @@ if ($setup['swf_file_change'] && $ext == 'swf') {
 if ($setup['jar_file_change'] && $ext == 'jar') {
     if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
         $v['screen_file'] = DIRECTORY . $setup['ipath'] . '/' . $prev_pic . '.png';
-    } else if (jar_ico($v['path'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
+    } elseif (jar_ico($v['path'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
         $v['screen_file'] = DIRECTORY . $setup['ipath'] . '/' . $prev_pic . '.png';
     }
 }

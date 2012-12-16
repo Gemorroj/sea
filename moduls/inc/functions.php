@@ -720,7 +720,7 @@ function scanner($path = '', $cont = 'folder.png')
                 if ($is_dir === true) {
                     $folders++;
                     scanner($f);
-                } else if ($is_file === true) {
+                } elseif ($is_file === true) {
                     $files++;
                 }
                 continue;
@@ -770,7 +770,7 @@ function scanner($path = '', $cont = 'folder.png')
 
             $folders++;
             scanner($f);
-        } else if ($is_file === true) {
+        } elseif ($is_file === true) {
             $files++;
             if (!_scannerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
                 $errors[] = mysql_error($GLOBALS['mysql']);

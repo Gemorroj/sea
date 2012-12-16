@@ -71,7 +71,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
     } else {
         error($language['user_not_found']);
     }
-} else if (isset($_GET['act']) && $_GET['act'] == 'registration') {
+} elseif (isset($_GET['act']) && $_GET['act'] == 'registration') {
     if ($_POST) {
         $_POST['style'] = ltrim($_POST['style'], 'http://');
         $_POST['url'] = ltrim($_POST['url'], 'http://');
@@ -148,7 +148,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             }
         }
     }
-} else if (isset($_GET['act']) && $_GET['act'] == 'pass') {
+} elseif (isset($_GET['act']) && $_GET['act'] == 'pass') {
     $id = intval($_POST['id']);
     $q = mysql_query('SELECT `mail` FROM `users_profiles` WHERE `id` = ' . $id, $mysql);
     if (mysql_num_rows($q) && $mail = mysql_result($q, 0)) {

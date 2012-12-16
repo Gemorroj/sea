@@ -53,7 +53,7 @@ $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $name;
 if (file_exists($name)) {
     header('Location: ' . $location, true, 301);
     exit;
-} else if (file_exists($name . '.swf')) {
+} elseif (file_exists($name . '.swf')) {
     header('Location: ' . $location . '.swf', true, 301);
     exit;
 }
@@ -90,7 +90,7 @@ if ($ext == 'nth') {
     } else {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
-} else if ($ext == 'thm') {
+} elseif ($ext == 'thm') {
     require_once 'moduls/PEAR/Archive/Tar.php';
 
     $thm = new Archive_Tar($v['path']);
@@ -139,7 +139,7 @@ if ($ext == 'nth') {
     } else {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
-} else if ($ext == 'sdt') {
+} elseif ($ext == 'sdt') {
     require_once 'moduls/PEAR/pclzip.lib.php';
 
     $sdt = new PclZip($v['path']);
@@ -245,7 +245,7 @@ if ($ext == 'nth') {
     } else {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
-} else if ($ext == 'scs') {
+} elseif ($ext == 'scs') {
     require_once 'moduls/PEAR/pclzip.lib.php';
 
     $scs = new PclZip($v['path']);
@@ -276,7 +276,7 @@ if ($ext == 'nth') {
 
     file_put_contents($name, $content[0]['content']);
     img_resize($name, $name, 0, 0, $setup['marker']);
-} else if ($ext == 'utz') {
+} elseif ($ext == 'utz') {
     require_once 'moduls/PEAR/pclzip.lib.php';
 
     $utz = new PclZip($v['path']);
@@ -307,7 +307,7 @@ if ($ext == 'nth') {
     } else {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
-} else if ($ext == 'apk') {
+} elseif ($ext == 'apk') {
     require_once 'moduls/PEAR/pclzip.lib.php';
 
     $apk = new PclZip($v['path']);
