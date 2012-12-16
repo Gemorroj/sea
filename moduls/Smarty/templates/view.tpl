@@ -25,7 +25,16 @@
 
     {if ($setup['eval_change'])}
         <div class="iblock">
-            <strong>{$language.rating}</strong>: (<span class="yes">+{$file.yes}</span>/<span class="no">-{$file.no}</span>)<br/>
+            <strong>{$language.rating}</strong>: (<span class="yes">+{$file.yes}</span>/<span class="no">-{$file.no}</span>)
+
+
+            {* администрирование *}
+            {if $smarty.const.IS_ADMIN}
+                <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=clearrate" title="Очистить" class="no">[X]</a>
+            {/if}
+
+
+            <br/>
             <img src="{$smarty.const.DIRECTORY}rate/{$rate}" alt="" style="margin: 1px;"/><br/>
             {if $vote == null}
                 {$language.net}: <span class="yes"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=1">{$language.yes}</a></span>/<span class="no"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=0">{$language.no}</a></span>
@@ -94,7 +103,15 @@
         {/if}
 
         {if ($setup['comments_change'])}
-            <strong><a href="{$smarty.const.DIRECTORY}view_comments/{$id}">{$language.comments} [{$commentsCount}]</a></strong><br/>
+            <strong><a href="{$smarty.const.DIRECTORY}view_comments/{$id}">{$language.comments} [{$commentsCount}]</a></strong>
+
+
+            {* администрирование *}
+            {if $smarty.const.IS_ADMIN}
+                <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=clearcomm" title="Очистить" class="no">[X]</a>
+            {/if}
+
+            <br/>
         {/if}
     </div>
 {/block}
