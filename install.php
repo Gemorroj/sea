@@ -63,17 +63,17 @@ if (!@$_GET['level']) {
     $er = '';
 
     chmod('files/', 0777);
-    chmod('about/', 0777);
-    chmod('attach/', 0777);
-    chmod('screen/', 0777);
-    chmod('data/mp3/', 0777);
-    chmod('data/zip/', 0777);
-    chmod('data/zip_pic/', 0777);
-    chmod('data/jar/', 0777);
-    chmod('data/jar_ico/', 0777);
-    chmod('data/theme/', 0777);
-    chmod('data/ffmpeg/', 0777);
-    chmod('data/pic/', 0777);
+    chmod('cache/about/', 0777);
+    chmod('cache/attach/', 0777);
+    chmod('cache/screen/', 0777);
+    chmod('cache/data/mp3/', 0777);
+    chmod('cache/data/zip/', 0777);
+    chmod('cache/data/zip_pic/', 0777);
+    chmod('cache/data/jar/', 0777);
+    chmod('cache/data/jar_ico/', 0777);
+    chmod('cache/data/theme/', 0777);
+    chmod('cache/data/ffmpeg/', 0777);
+    chmod('cache/data/pic/', 0777);
 
     mysql_query(
         'DROP TABLE `files`,`comments`,`online`,`setting`,`loginlog`,`news`,`news_comments`,`users_profiles`,`users_settings`;',
@@ -248,17 +248,17 @@ if (!@$_GET['level']) {
         $mysql
     );
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'path', 'files');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'opath','about');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'apath','attach');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'spath', 'screen');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jpath', 'data/jar');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ipath', 'data/jar_ico');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zpath', 'data/zip');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zppath', 'data/zip_pic');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'tpath', 'data/theme');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'mp3path', 'data/mp3');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpegpath', 'data/ffmpeg');", $mysql);
-    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'picpath', 'data/pic');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'opath', 'cache/about');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'apath', 'cache/attach');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'spath', 'cache/screen');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jpath', 'cache/data/jar');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ipath', 'cache/data/jar_ico');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zpath', 'cache/data/zip');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zppath', 'cache/data/zip_pic');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'tpath', 'cache/data/theme');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'mp3path', 'cache/data/mp3');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpegpath', 'cache/data/ffmpeg');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'picpath', 'cache/data/pic');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'limit', '10');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'onpage', '10');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prew', '1');", $mysql);
