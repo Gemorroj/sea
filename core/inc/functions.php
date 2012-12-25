@@ -865,6 +865,12 @@ function getBreadcrumbs($info, $is_dir = false)
         while ($s = mysql_fetch_assoc($q)) {
             $breadcrumbs[$s['id']] = $s['name'];
         }
+        if (!$is_dir) {
+            end($breadcrumbs);
+            $key = key($breadcrumbs);
+            $val = array_pop($breadcrumbs);
+            $breadcrumbs['view/' . $key] = $val;
+        }
     }
 
     if (isset($seo['title']) === false || $seo['title'] == '') {

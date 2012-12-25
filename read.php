@@ -62,11 +62,10 @@ $sql_dir = mysql_real_escape_string($v['infolder'], $mysql);
 // Директория
 $directory = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
 $template->assign('directory', $directory);
-$template->assign('breadcrumbs', array(
-  $directory['id'] => $directory['name'],
-  'view/' . $id => $v['name'],
-  'read/' . $id => $language['read']
-));
+
+$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs['read/' . $id] = $language['read'];
+$template->assign('breadcrumbs', $breadcrumbs);
 
 
 $seo = unserialize($v['seo']);

@@ -56,13 +56,10 @@ $seo['title'] = $language['splitting'] . ' - ' . $v['name'];
 $template->setTemplate('cut.tpl');
 $template->assign('file', $v);
 $template->assignByRef('cut', $cut);
-$template->assign(
-    'breadcrumbs',
-    array(
-         'view/' . $id => $v['name'],
-         'cut/' . $id => $language['splitting']
-    )
-);
+
+$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs['cut/' . $id] = $language['splitting'];
+$template->assign('breadcrumbs', $breadcrumbs);
 
 
 if ($_POST) {

@@ -51,13 +51,10 @@ if (!is_file($v['path'])) {
 $seo['title'] = $language['send_a_link_to_email'] . ' - ' . $v['name'];
 $template->setTemplate('email.tpl');
 $template->assign('file', $v);
-$template->assign(
-    'breadcrumbs',
-    array(
-        'view/' . $id => $v['name'],
-        'email/' . $id => $language['send_a_link_to_email']
-    )
-);
+
+$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs['email/' . $id] = $language['send_a_link_to_email'];
+$template->assign('breadcrumbs', $breadcrumbs);
 
 
 if (isset($_POST['email'])) {

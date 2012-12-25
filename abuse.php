@@ -49,13 +49,11 @@ if (!is_file($v['path'])) {
 }
 
 $seo['title'] = $language['complain_about_a_file'] . ' - ' . $v['name'];
-$template->assign(
-    'breadcrumbs',
-    array(
-        'view/' . $id => $v['name'],
-        'abuse/' . $id => $language['complain_about_a_file']
-    )
-);
+
+$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs['abuse/' . $id] = $language['complain_about_a_file'];
+$template->assign('breadcrumbs', $breadcrumbs);
+
 
 if (mail(
     $setup['zakaz_email'],

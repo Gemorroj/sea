@@ -62,11 +62,10 @@ $seo['title'] .= ' - ' . $language['comments'];
 
 
 $template->setTemplate('comments.tpl');
-$template->assign('breadcrumbs', array(
-    $directory['id'] => $directory['name'],
-    'view/' . $id => $v['name'],
-    'view_comments/' . $id => $language['comments']
-));
+
+$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs['view_comments/' . $id] = $language['comments'];
+$template->assign('breadcrumbs', $breadcrumbs);
 
 $template->assign('comments_module', 'view_comments');
 $template->assign('comments_module_backlink', DIRECTORY . 'view/' . $id);
