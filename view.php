@@ -78,7 +78,7 @@ if (isset($_GET['eval']) && $setup['eval_change']) {
 }
 // рейтинг
 $rate = $v['yes'] + $v['no'];
-$rate = $rate ? round($v['yes'] / $i * 100, 0) : 50;
+$rate = $rate ? round($v['yes'] / $rate * 100, 0) : 50;
 
 
 #######Получаем имя файла и обратный каталог#####

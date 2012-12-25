@@ -54,7 +54,7 @@ class Template extends Smarty
             ->registerPlugin('function', 'paginationExtended', array($this, 'paginationExtended'))
             ->loadFilter('variable', 'htmlspecialchars');
 
-        $this->compile_check = true;
+        $this->compile_check = false;
     }
 
 

@@ -11,7 +11,7 @@
 {block content}
     {include file='sys/_file.tpl'}
 
-    {if $setup.prev_next}
+    {if $setup.prev_next && ($prevNext.prev || $prevNext.next)}
         <div class="iblock">
             {if $prevNext.prev}
                 &#171; ({$prevNext.prev.index})<a href="{$smarty.const.DIRECTORY}view/{$prevNext.prev.id}">{$language.prev}</a>

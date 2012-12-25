@@ -72,9 +72,10 @@
 
     {if (($file.ext == '3gp' || $file.ext == 'avi' || $file.ext == 'mp4' || $file.ext == 'flv') && extension_loaded('ffmpeg'))}
         {if $setup.screen_file_change}
-            {foreach from=$setup.ffmpeg_frames|explode:',' key=i item=frame}
-                <a href="{$smarty.const.DIRECTORY}view/{$id}?frame={$frame}">[{$i + 1}]</a>,
+            {foreach ','|explode:$setup.ffmpeg_frames as $i => $frame}
+                <a href="{$smarty.const.DIRECTORY}view/{$id}?frame={$frame}">[{$i + 1}]</a>{if !$frame@last}, {/if}
             {/foreach}
+            <br/>
         {/if}
 
         {$language.codec}: {$file.info.getVideoCodec}<br/>
