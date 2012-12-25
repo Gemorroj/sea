@@ -14,7 +14,7 @@ while ($v = mysql_fetch_assoc($query)) {
         if (file_exists($v['v'] . 'folder.png')) {
             $v['ico'] = DIRECTORY . $v['v'] . 'folder.png';
         } else {
-            $v['ico'] = DIRECTORY . 'ext/dir.png';
+            $v['ico'] = DIRECTORY . '/style/ext/dir.png';
         }
 
         $directories[] = $v;
@@ -85,10 +85,10 @@ while ($v = mysql_fetch_assoc($query)) {
         }
 
         //Иконка к файлу
-        if (file_exists('ext/' . $ext . '.png')) {
-            $v['ico'] = DIRECTORY . 'ext/' . $ext . '.png';
+        if (file_exists('style/ext/' . $ext . '.png')) {
+            $v['ico'] = DIRECTORY . 'style/ext/' . $ext . '.png';
         } else {
-            $v['ico'] = DIRECTORY . 'ext/stand.png';
+            $v['ico'] = DIRECTORY . 'style/ext/stand.png';
         }
 
 

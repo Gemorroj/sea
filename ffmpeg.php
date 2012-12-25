@@ -56,8 +56,7 @@ $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['ffmpegpath']
 if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
     $mov = new ffmpeg_movie($pic, false);
     if (!$mov) {
-        header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'dis/load.png', true, 301);
-        exit;
+        exit('Error');
     }
 
     while (!$fr = $mov->getFrame($i)) {
