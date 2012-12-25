@@ -47,7 +47,7 @@
             {if $prew && $f.pre}
                 {if $f.ext == 'swf'}
                     <object style="width: 128px; height: 128px;"><param name="movie" value="{$f.pre}"><embed src="{$f.pre}" style="width: 128px; height: 128px;"></embed></param></object>
-                    {else}
+                {else}
                     {* gif,png,jpg *}
                     <img style="margin: 1px;" src="{$f.pre}" alt=""/>
                 {/if}
@@ -57,6 +57,13 @@
             {if $setup.screen_change && $f.screen}
                 <img style="margin: 1px;" src="{$f.screen}" alt=""/>
             {/if}
+
+
+            {* перенос строки, если был скриншот или превью *}
+            {if ($prew && $f.pre) || ($setup.screen_change && $f.screen)}
+                <br/>
+            {/if}
+
 
             <img src="{$f.ico}" alt=""/>
             <strong><a href="{$smarty.const.DIRECTORY}view/{$f.id}">{$f.name}</a></strong>

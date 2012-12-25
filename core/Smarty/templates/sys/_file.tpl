@@ -2,12 +2,12 @@
     <strong>{$language.size}:</strong> {$file.size|sizeFormatExtended}<br/>
     <strong>{$language.downloaded}:</strong> {$file.loads} {$language.times}<br/>
     <strong>{$language.time_additions}:</strong> {$file.timeupload|dateFormatExtended}<br/>
-{if $file.timeload}
-    <strong>{$language.recent}:</strong> {$file.timeload|dateFormatExtended}<br/>
-{/if}
+    {if $file.timeload}
+        <strong>{$language.recent}:</strong> {$file.timeload|dateFormatExtended}<br/>
+    {/if}
 </div>
-<div class="row">
 
+<div class="row2">
     {if $setup.screen_file_change}
         {if $file.screen_file}
             <img src="{$file.screen_file}" alt=""/><br/>
@@ -21,8 +21,8 @@
         {/if}
     {/if}
 
-    {if ($file.ext == 'gif' || $file.ext == 'jpg' || $file.ext == 'jpeg' || $file.ext == 'jpe' || $file.ext == 'png' || $file.ext == 'bmp')}
 
+    {if ($file.ext == 'gif' || $file.ext == 'jpg' || $file.ext == 'jpeg' || $file.ext == 'jpe' || $file.ext == 'png' || $file.ext == 'bmp')}
         {$file.imagesize.w}x{$file.imagesize.h}<br/>
         <strong>{$language.custom_size}:</strong>
 
@@ -69,8 +69,8 @@
         {/if}
     {/if}
 
-    {if (($file.ext == '3gp' || $file.ext == 'avi' || $file.ext == 'mp4' || $file.ext == 'flv') && extension_loaded('ffmpeg'))}
 
+    {if (($file.ext == '3gp' || $file.ext == 'avi' || $file.ext == 'mp4' || $file.ext == 'flv') && extension_loaded('ffmpeg'))}
         {if $setup.screen_file_change}
             {foreach from=$setup.ffmpeg_frames|explode:',' key=i item=frame}
                 <a href="{$smarty.const.DIRECTORY}view/{$id}?frame={$frame}">[{$i + 1}]</a>,
@@ -82,6 +82,7 @@
         {$language.time}: {mktime(0, 0, round($file.info.getDuration))|date_format:'H:i:s'}<br/>
         {$language.bitrate}: {round($file.info.getBitRate / 1024)} Kbps<br/>
     {/if}
+
 
     {if ($file.ext == 'thm' || $file.ext == 'nth' || $file.ext == 'utz' || $file.ext == 'sdt' || $file.ext == 'scs' || $file.ext == 'apk')}
         {if $file.info.author}
