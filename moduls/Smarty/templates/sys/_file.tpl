@@ -109,7 +109,7 @@
     {if $file.attachments}
         <strong>{$language.attachments}:</strong><br/>
         {foreach $file.attachments as $key => $val}
-            <a href="{$val.link}">{$val.name}</a> [<a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=del_attach&amp;attach={$key}" class="no">X</a>]<br/>
+            <a href="{$val.link}">{$val.name}</a> <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=del_attach&amp;attach={$key}" title="Удалить" class="no" onclick="return window.confirm('Удалить вложение?');">[X]</a><br/>
         {/foreach}
     {/if}
 </div>

@@ -699,7 +699,7 @@ function scanner($path = '', $cont = 'folder.png')
         if ($is_dir === true) {
             $f .= '/';
         }
-        $is_file = ($pathinfo['basename'] != $cont && is_file($f) === true);
+        $is_file = ($is_dir === false && $pathinfo['basename'] != $cont && is_file($f) === true);
 
 
         $q = mysql_query(
@@ -729,7 +729,7 @@ function scanner($path = '', $cont = 'folder.png')
 
 
 
-        $aze_name = $tur_name = $rus_name = $name = $pathinfo['filename'];
+        $aze_name = $tur_name = $rus_name = $name = ($is_dir === true ? $pathinfo['basename'] : $pathinfo['filename']);
         if ($name == '') {
             $tmpErr = error_get_last();
             $errors[] = $tmpErr['message'];
@@ -742,7 +742,7 @@ function scanner($path = '', $cont = 'folder.png')
             $rus_name = trans($rus_name);
         }
 
-        if ($is_dir) {
+        if ($is_dir === true) {
             // скриншоты
             $screen = $GLOBALS['setup']['spath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
             if (!file_exists($screen)) {

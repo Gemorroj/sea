@@ -52,7 +52,6 @@
                 <ul data-role="listview">
                     <li data-role="list-divider">Admin Panel</li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'add_news'}data-theme="a"{/if}><a href="apanel.php?action=add_news">Создать новость</a></li>
-                    <li {if isset($smarty.get.action) && $smarty.get.action == 'scan'}data-theme="a"{/if}><a href="apanel.php?action=scan">Полное обновление БД</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'add_dir'}data-theme="a"{/if}><a href="apanel.php?action=add_dir">Создать директорию</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'upload'}data-theme="a"{/if}><a href="apanel.php?action=upload">Загрузка файлов</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'import'}data-theme="a"{/if}><a href="apanel.php?action=import">Импорт файлов</a></li>
@@ -67,6 +66,7 @@
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'id3'}data-theme="a"{/if}><a href="apanel.php?action=id3">MP3 теги</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'mark'}data-theme="a"{/if}><a href="apanel.php?action=mark">Маркер картинок</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'optm'}data-theme="a"{/if}><a href="apanel.php?action=optm">Оптимизация БД</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'scan'}data-theme="a"{/if}><a href="apanel.php?action=scan">Полное обновление БД</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'checkdb'}data-theme="a"{/if}><a href="apanel.php?action=checkdb">Очистка БД от мусора</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'clean'}data-theme="a"{/if}><a href="apanel.php?action=clean">Очистка БД</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'cleannews'}data-theme="a"{/if}><a href="apanel.php?action=cleannews">Очистка новостей</a></li>

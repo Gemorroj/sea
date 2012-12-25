@@ -30,7 +30,7 @@
 
             {* администрирование *}
             {if $smarty.const.IS_ADMIN}
-                <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=clearrate" title="Очистить" class="no">[X]</a>
+                <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=clearrate" title="Очистить" class="no" onclick="return window.confirm('Очистить рейтинг?');">[X]</a>
             {/if}
 
 
@@ -108,7 +108,7 @@
 
             {* администрирование *}
             {if $smarty.const.IS_ADMIN}
-                <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=clearcomm" title="Очистить" class="no">[X]</a>
+                <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=clearcomm" title="Очистить" class="no" onclick="return window.confirm('Очистить комментарии?');">[X]</a>
             {/if}
 
             <br/>
