@@ -34,7 +34,7 @@
  */
 
 
-require '../../../moduls/config.php';
+require '../../../core/config.php';
 
 
 $password = mt_rand(1000, mt_getrandmax());

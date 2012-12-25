@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 ###############Если стол выключен###############
 if (!$setup['zakaz_change']) {
     error('Not found');

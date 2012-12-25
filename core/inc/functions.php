@@ -1118,7 +1118,7 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
 
 
                     if ($marker) {
-                        $image_p = marker($image_p, imagecreatefrompng($dir . '/../marker.png'));
+                        $image_p = marker($image_p, imagecreatefrompng($dir . '/../resources/marker.png'));
                     }
 
                     imagegif($image_p, $tmp2);
@@ -1192,7 +1192,7 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
     imagecopyresampled($new, $old, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
     if ($marker) {
-        $new = marker($new, imagecreatefrompng($dir . '/../marker.png'));
+        $new = marker($new, imagecreatefrompng($dir . '/../resources/marker.png'));
     }
 
 

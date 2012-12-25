@@ -35,7 +35,7 @@
 
 
 define('APANEL', true);
-require '../moduls/config.php';
+require '../core/config.php';
 
 $HeadTime = microtime(true);
 

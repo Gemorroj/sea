@@ -35,7 +35,7 @@
 
             {if $setup.comments_captcha}
                 <label>
-                    <img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.DIRECTORY}moduls/kcaptcha/index.php?{session_name()}={session_id()}" /><br/>
+                    <img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.DIRECTORY}core/kcaptcha/index.php?{session_name()}={session_id()}" /><br/>
                     {$language.code}: <input class="enter" type="number" min="0" max="9999" required="required" name="keystring" size="5" maxlength="4"/><br/>
                 </label>
             {/if}

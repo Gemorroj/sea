@@ -35,12 +35,10 @@
 
 
 if (!extension_loaded('ffmpeg')) {
-    header('Content-Type: image/png');
-    readfile(dirname(__FILE__) . '/moduls/marker.png');
-    exit;
+    exit('Error');
 }
 
-require 'moduls/config.php';
+require 'core/config.php';
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 $id = intval($_GET['id']);

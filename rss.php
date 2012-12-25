@@ -34,8 +34,8 @@
  */
 
 
-require 'moduls/config.php';
-require 'moduls/inc/Rss.php';
+require 'core/config.php';
+require 'core/inc/Rss.php';
 
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 

@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 
 $template->setTemplate('settings.tpl');
 

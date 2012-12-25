@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/config.php';
+require 'core/config.php';
 
 
 set_time_limit(999);

@@ -62,13 +62,13 @@
         {/if}
 
         {if ($setup.audio_player_change && $file.ext == 'mp3')}
-        <object type="application/x-shockwave-flash" data="{$smarty.const.DIRECTORY}moduls/flash/player_mp3_maxi.swf" width="180" height="20">
+        <object type="application/x-shockwave-flash" data="{$smarty.const.DIRECTORY}core/resources/flash/player_mp3_maxi.swf" width="180" height="20">
             <param name="FlashVars" value="mp3={$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}&amp;width=180&amp;volume=50&amp;showvolume=1&amp;buttonwidth=20&amp;sliderheight=8&amp;volumewidth=50&amp;volumeheight=8" />
         </object><br/>
         {/if}
 
         {if ($setup.video_player_change && ($file.ext == 'flv' || $file.ext == 'mp4'))}
-        <object type="application/x-shockwave-flash" data="{$smarty.const.DIRECTORY}moduls/flash/player_flv_maxi.swf" width="240" height="180">
+        <object type="application/x-shockwave-flash" data="{$smarty.const.DIRECTORY}core/resources/flash/player_flv_maxi.swf" width="240" height="180">
             <param name="allowFullScreen" value="true" />
             <param name="FlashVars" value="flv={$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}&amp;title={$file.name|rawurlencode}&amp;startimage={$smarty.const.DIRECTORY}ffmpeg/{$id}?frame={$setup.ffmpeg_frame}&amp;width=240&amp;height=180&amp;margin=3&amp;volume=100&amp;showvolume=1&amp;showtime=1&amp;showplayer=always&amp;showloading=always&amp;showfullscreen=1&amp;showiconplay=1" />
         </object><br/>

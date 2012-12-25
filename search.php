@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 ###############Если поиск выключен###############
 if (!$setup['search_change']) {
     error('Not found');
@@ -145,7 +145,7 @@ if ($word != '') {
         $mysql
     );
 
-    require 'moduls/inc/_files.php';
+    require 'core/inc/_files.php';
 }
 
 $template->assign('directories', $directories);

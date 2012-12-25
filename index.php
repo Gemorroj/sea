@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 
 
 ###############Проверка переменных###############
@@ -183,7 +183,7 @@ $query = mysql_query(
     $mysql
 );
 
-require 'moduls/inc/_files.php';
+require 'core/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);

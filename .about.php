@@ -37,7 +37,7 @@
 //error_reporting(0);
 set_time_limit(9999);
 header('Content-type: text/html; charset=utf-8');
-require 'moduls/config.php';
+require 'core/config.php';
 
 
 echo '<?xml version="1.0" encoding="UTF-8"?>

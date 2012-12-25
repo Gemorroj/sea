@@ -1969,7 +1969,7 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
     || ($basename == 'read.php' && @$_GET['page'] > 1))
     && !isset($_SESSION['password'])
 ) {
-    require_once dirname(__FILE__) . '/../moduls/header.php';
+    require_once dirname(__FILE__) . '/../core/header.php';
 
 
     require dirname(__FILE__) . '/geoip/geoip.inc';

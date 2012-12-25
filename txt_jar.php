@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/config.php';
+require 'core/config.php';
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 // Проверка переменных
@@ -53,13 +53,13 @@ if (file_exists($v['path'])) {
     if (!file_exists($tmp)) {
         $f = str_to_utf8(file_get_contents($v['path']));
 
-        copy('moduls/book.zip', $tmp);
-        copy('moduls/props.ini', $setup['jpath'] . '/props.ini');
-        copy('moduls/MANIFEST.MF', $setup['jpath'] . '/MANIFEST.MF');
+        copy('core/resources/book.zip', $tmp);
+        copy('core/resources/props.ini', $setup['jpath'] . '/props.ini');
+        copy('core/resources/MANIFEST.MF', $setup['jpath'] . '/MANIFEST.MF');
 
         $arr = str_split($f, 25600);
         $all = sizeof($arr);
-        $ar = file('moduls/props.ini');
+        $ar = file('core/resources/props.ini');
 
         $ar[] = chr(0) . chr(10) . chr(0) . wordwrap('J/textfile.txt.label=1', 1, chr(0), true);
         for ($i = 1; $i < $all; ++$i) {
@@ -79,9 +79,9 @@ MIDlet-1: ' . $nm . ', /icon.png, br.BookReader
 MIDlet-Version: 1.6
 MIDlet-Info-URL: http://' . $_SERVER['HTTP_HOST'] . '
 MIDlet-Delete-Confirm: GoodBye =)'
-        );
+        , FILE_APPEND);
 
-        include 'moduls/PEAR/pclzip.lib.php';
+        include 'core/PEAR/pclzip.lib.php';
         $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
         //echo 'ERROR : '.$zip->errorInfo(true);
 

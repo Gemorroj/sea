@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 
 // Если жалобы выключены
 if (!$setup['abuse_change']) {

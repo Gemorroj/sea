@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/config.php';
+require 'core/config.php';
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 // Проверка переменных
@@ -49,7 +49,7 @@ if (file_exists($v['path'])) {
     $tmp = $setup['zpath'] . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.zip';
 
     if (!file_exists($tmp)) {
-        include 'moduls/PEAR/pclzip.lib.php';
+        include 'core/PEAR/pclzip.lib.php';
 
         $zip = new PclZip($tmp);
 

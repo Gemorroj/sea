@@ -33,7 +33,7 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-require 'moduls/header.php';
+require 'core/header.php';
 
 // Если комментарии выключены
 if (!$setup['comments_change']) {

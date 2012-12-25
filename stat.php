@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 ###############Если статистика выключена###############
 if (!$setup['stat_change']) {
     error('Not found');

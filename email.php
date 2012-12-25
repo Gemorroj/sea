@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 
 // Если email выключен
 if (!$setup['send_email']) {

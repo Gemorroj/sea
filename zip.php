@@ -34,8 +34,8 @@
  */
 
 
-require 'moduls/header.php';
-require 'moduls/PEAR/pclzip.lib.php';
+require 'core/header.php';
+require 'core/PEAR/pclzip.lib.php';
 
 
 // если просмотр zip

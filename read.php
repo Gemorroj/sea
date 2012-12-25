@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 
 // если библиотека отключена
 if (!$setup['lib_change']) {

@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/config.php';
+require 'core/config.php';
 
 define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 

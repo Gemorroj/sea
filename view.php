@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 
 // Получаем инфу о файле
 $v = getFileInfo($id);
@@ -91,7 +91,7 @@ $v['ext'] = $ext;
 
 
 // данные по файлам
-require 'moduls/inc/_file.php';
+require 'core/inc/_file.php';
 
 
 $sql_dir = mysql_real_escape_string($dir, $mysql);

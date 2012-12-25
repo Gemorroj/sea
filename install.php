@@ -34,7 +34,7 @@
  */
 
 error_reporting(0);
-require 'moduls/config.php';
+require 'core/config.php';
 
 set_time_limit(999);
 ignore_user_abort(true);

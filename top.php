@@ -34,7 +34,7 @@
  */
 
 
-require 'moduls/header.php';
+require 'core/header.php';
 ###############Если топ выключен###############
 if (!$setup['top_change']) {
     error('Not found');
@@ -133,7 +133,7 @@ $query = mysql_query(
 );
 
 
-require 'moduls/inc/_files.php';
+require 'core/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);
