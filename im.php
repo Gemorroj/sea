@@ -36,7 +36,6 @@
 
 require 'core/config.php';
 
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 $id = intval($_REQUEST['id']);
 $resize = true;

@@ -35,7 +35,7 @@
 
 
 require 'core/config.php';
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
+
 
 // Проверка переменных
 $id = intval($_GET['id']);

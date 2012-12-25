@@ -40,13 +40,6 @@ require_once dirname(__FILE__) . '/config.php';
 header('Content-type: text/html; charset=utf-8');
 
 
-if (defined('APANEL')) {
-    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname(dirname($_SERVER['PHP_SELF'])) . '/'));
-} else {
-    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
-}
-
-
 // заменяем языковой пакет
 isset($_POST['langpack']) && Language::getInstance()->setLangpack($_POST['langpack']);
 isset($_GET['langpack']) && Language::getInstance()->setLangpack($_GET['langpack']);
@@ -57,10 +50,10 @@ $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $seo = array();
 
 
-require DIR . '/inc/_style.php';
-require DIR . '/inc/_buy.php';
-require DIR . '/inc/_online.php';
-require DIR . '/inc/_service.php';
+require CORE_DIRECTORY . '/inc/_style.php';
+require CORE_DIRECTORY . '/inc/_buy.php';
+require CORE_DIRECTORY . '/inc/_online.php';
+require CORE_DIRECTORY . '/inc/_service.php';
 
 
 $template = new Template();

@@ -44,10 +44,10 @@ class Template extends Smarty
     {
         parent::__construct();
 
-        $this->setTemplateDir(DIR . '/Smarty/templates/')
-            ->setCompileDir(DIR . '/Smarty/templates_c/')
-            ->setConfigDir(DIR . '/Smarty/configs/')
-            ->setCacheDir(DIR . '/Smarty/cache/')
+        $this->setTemplateDir(CORE_DIRECTORY . '/Smarty/templates/')
+            ->setCompileDir(CORE_DIRECTORY . '/Smarty/templates_c/')
+            ->setConfigDir(CORE_DIRECTORY . '/Smarty/configs/')
+            ->setCacheDir(CORE_DIRECTORY . '/Smarty/cache/')
             ->registerPlugin('modifier', 'dateFormatExtended', array($this, 'dateFormatExtended'))
             ->registerPlugin('modifier', 'sizeFormatExtended', array($this, 'sizeFormatExtended'))
             ->registerPlugin('modifier', 'bbcode', array($this, 'bbcode'))

@@ -88,7 +88,7 @@ class Language
     {
         if ($langpack && in_array($langpack, $this->getLangpacks())) {
             $this->_langpack = $_SESSION['langpack'] = $langpack;
-            $this->_language = include DIR . '/language/' . $this->_langpack . '.dat';
+            $this->_language = include CORE_DIRECTORY . '/resources/language/' . $this->_langpack . '.dat';
 
             return true;
         }
@@ -110,7 +110,7 @@ class Language
         } else {
             $this->_langpack = $_SESSION['langpack'];
         }
-        $this->_language = include DIR . '/language/' . $this->_langpack . '.dat';
+        $this->_language = include CORE_DIRECTORY . '/resources/language/' . $this->_langpack . '.dat';
     }
 
 
@@ -119,7 +119,7 @@ class Language
      */
     private function _loadLangpacks()
     {
-        foreach (glob(DIR . '/language/*.dat') as $v) {
+        foreach (glob(CORE_DIRECTORY . '/resources/language/*.dat') as $v) {
             $this->_langpacks[] = pathinfo($v, PATHINFO_FILENAME);
         }
     }

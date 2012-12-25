@@ -814,8 +814,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3_file':
         $template->setTemplate('apanel/id3_file.tpl');
 
-        include 'core/PEAR/MP3/Id.php';
-        include 'core/inc/mp3.class.php';
+        include CORE_DIRECTORY . '/PEAR/MP3/Id.php';
+        include CORE_DIRECTORY . '/inc/mp3.class.php';
         $id3 = new MP3_Id();
 
         $genres = $id3->genres();
@@ -844,7 +844,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
         if ($_POST) {
-            @unlink(dirname(__FILE__) . '/../core/cache/' . $id . '.dat');
+            @unlink(CORE_DIRECTORY . '/cache/' . $id . '.dat');
 
             $name = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
             $artist = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
@@ -896,8 +896,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3':
         $template->setTemplate('apanel/id3.tpl');
 
-        include 'core/PEAR/MP3/Id.php';
-        include 'core/inc/mp3.class.php';
+        include CORE_DIRECTORY . '/PEAR/MP3/Id.php';
+        include CORE_DIRECTORY . '/inc/mp3.class.php';
         $id3 = new MP3_Id();
 
         $genres = $id3->genres();
@@ -928,7 +928,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
             $all = 0;
             $write = 0;
-            $cacheDir = dirname(__FILE__) . '/../core/cache';
+            $cacheDir = CORE_DIRECTORY . '/cache';
             $q = mysql_query('SELECT `path`, `id` FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")', $mysql);
             while ($f = mysql_fetch_assoc($q)) {
                 $all++;
@@ -1072,7 +1072,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                             ($w / 2) - ($textLen * 3),
                             $y,
                             $color,
-                            'core/resources/font.ttf',
+                            CORE_DIRECTORY . '/resources/font.ttf',
                             $_POST['text']
                         );
 
@@ -1551,7 +1551,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         $styles = array();
-        foreach (glob(DIR . '/../style/*.css', GLOB_NOESCAPE) as $v) {
+        foreach (glob(CORE_DIRECTORY . '/../style/*.css', GLOB_NOESCAPE) as $v) {
             $styles[] = pathinfo($v, PATHINFO_FILENAME);
         }
 

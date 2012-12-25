@@ -37,7 +37,6 @@
 require 'core/config.php';
 
 ini_set('memory_limit', '128M');
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 $id = intval($_GET['id']);
 

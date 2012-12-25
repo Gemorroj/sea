@@ -37,7 +37,6 @@
 require 'core/config.php';
 require 'core/inc/Rss.php';
 
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 $link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
 

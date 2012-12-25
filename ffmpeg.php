@@ -39,7 +39,6 @@ if (!extension_loaded('ffmpeg')) {
 }
 
 require 'core/config.php';
-define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 
 $id = intval($_GET['id']);
 $frame = $i = $_GET['frame'] ? abs($_GET['frame']) : $setup['ffmpeg_frame'] + 1;
@@ -64,7 +63,7 @@ if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic
         }
     }
 
-    $tmp = DIR . '/cache/' . uniqid() . '.tmp';
+    $tmp = CORE_DIRECTORY . '/cache/' . uniqid() . '.tmp';
     imagegif($fr->toGDImage(), $tmp);
     img_resize($tmp, $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif', 0, 0, $setup['marker']);
     unlink($tmp);

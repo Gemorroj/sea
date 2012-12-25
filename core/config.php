@@ -43,29 +43,36 @@ mysql_set_charset('utf8', $mysql);
 session_name('sea');
 session_start() or die('Can not start session');
 
-$setting = mysql_query('SELECT * FROM setting', $mysql);
+$q = mysql_query('SELECT * FROM setting', $mysql);
 $setup = array();
-while ($set = mysql_fetch_assoc($setting)) {
+while ($set = mysql_fetch_assoc($q)) {
     $setup[$set['name']] = $set['value'];
 }
 
 define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == $setup['password']));
 
 
-define('DIR', dirname(__FILE__));
+define('CORE_DIRECTORY', dirname(__FILE__));
+if (defined('APANEL') === true) {
+    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname(dirname($_SERVER['PHP_SELF'])) . '/'));
+} else {
+    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
+}
+
+
 set_include_path(
     get_include_path() . PATH_SEPARATOR .
-        DIR . DIRECTORY_SEPARATOR . 'PEAR'
+        CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
 );
 
 
-require_once DIR . '/inc/functions.php';
-require_once DIR . '/inc/Language.php';
+require_once CORE_DIRECTORY . '/inc/functions.php';
+require_once CORE_DIRECTORY . '/inc/Language.php';
 
 
-require_once DIR . '/Smarty/libs/Smarty.class.php';
-require_once DIR . '/inc/Template.php';
+require_once CORE_DIRECTORY . '/Smarty/libs/Smarty.class.php';
+require_once CORE_DIRECTORY . '/inc/Template.php';
 
 
 // Подключаем модуль партнерки
-//require DIR . '/../partner/inc.php';
+//require CORE_CORE_DIRECTORY '/../partner/inc.php';

@@ -110,9 +110,9 @@ if ($sort == 'date') {
 }
 
 
-$query = mysql_query(
-    '
+$query = mysql_query('
     SELECT `id`,
+    `hidden`,
     `dir`,
     `dir_count`,
     `path` AS `v`,
