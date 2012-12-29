@@ -19,6 +19,7 @@ return array(
     'top20' => 'TOP %files% dosyalar',
     'empty' => 'Kategori boş',
     'new' => 'Yeni!',
+    'new_files' => 'New files',
     'pages' => 'Sayfa',
     'page' => 'Page %page% of %pages%',
     'statistics' => 'İstatistik',

@@ -19,6 +19,7 @@ return array(
     'top20' => 'TOP %files% files',
     'empty' => 'Category is empty',
     'new' => 'New!',
+    'new_files' => 'New files',
     'pages' => 'Pages',
     'page' => 'Page %page% of %pages%',
     'settings' => 'Settings',

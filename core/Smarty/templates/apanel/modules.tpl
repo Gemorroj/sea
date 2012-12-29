@@ -19,6 +19,7 @@
         {html_checkboxes name="onpage_change" selected=$setup.onpage_change options=[1=>'Форма выбора кол-ва файлов на страницу']}
         {html_checkboxes name="preview_change" selected=$setup.preview_change options=[1=>'Форма выбора предпросмотра']}
         {html_checkboxes name="top_change" selected=$setup.top_change options=[1=>'ТОП']}
+        {html_checkboxes name="new_change" selected=$setup.new_change options=[1=>'Новые файлы']}
         {html_checkboxes name="stat_change" selected=$setup.stat_change options=[1=>'Статистика']}
         {html_checkboxes name="pagehand_change" selected=$setup.pagehand_change options=[1=>'Ручной ввод страниц']}
         {html_checkboxes name="search_change" selected=$setup.search_change options=[1=>'Поиск файлов']}

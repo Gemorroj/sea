@@ -19,6 +19,7 @@ return array(
     'top20' => 'ТОП %files% файлов',
     'empty' => 'Раздел пуст',
     'new' => 'New!',
+    'new_files' => 'Новые файлы',
     'pages' => 'Страницы',
     'page' => 'Страница %page% из %pages%',
     'settings' => 'Настройки',

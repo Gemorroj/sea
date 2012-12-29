@@ -19,6 +19,7 @@ return array(
     'top20' => 'TOP %files% fayllar',
     'empty' => 'Bölmə boş',
     'new' => 'Yeni!',
+    'new_files' => 'New files',
     'pages' => 'Səhifə',
     'page' => 'Page %page% of %pages%',
     'settings' => 'Düzəlişlər',

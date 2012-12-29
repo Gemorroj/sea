@@ -322,6 +322,7 @@ if (!@$_GET['level']) {
 
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zag', 'Downloads');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'day_new', '2');", $mysql);
+    mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'new_change', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_change', '1');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_captcha', '0');", $mysql);
     mysql_query("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_view', '3');", $mysql);

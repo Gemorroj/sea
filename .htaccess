@@ -34,6 +34,7 @@ RewriteRule ^jad/([0-9]+)/*$ ./jad.php?id=$1 [QSA,NC]
 
 RewriteRule ^search/*([0-9]*)/*$ ./search.php?page=$1 [QSA,NC]
 RewriteRule ^top/*([0-9]*)/*$ ./top.php?page=$1 [QSA,NC]
+RewriteRule ^new/*([0-9]*)/*$ ./new.php?page=$1 [QSA,NC]
 
 RewriteRule ^service/*$ ./service.php [QSA,NC]
 

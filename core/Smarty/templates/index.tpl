@@ -17,6 +17,10 @@
             {if $setup.top_change}
                 <a href="{$smarty.const.DIRECTORY}top">{$language.top20|replace:'%files%':$setup.top_num}</a><br/>
             {/if}
+
+            {if $setup.new_change}
+                <a href="{$smarty.const.DIRECTORY}new">{$language.new_files}</a><br/>
+            {/if}
         </div>
     {/if}
 {/block}

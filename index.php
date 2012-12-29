@@ -58,20 +58,14 @@ $template->assign('sort', $sort);
 
 if ($sort == 'date') {
     $mode = '`priority` DESC, `timeupload` DESC';
+} else if ($sort == 'size') {
+    $mode = '`priority` DESC, `size` ASC';
+} else if ($sort == 'load') {
+    $mode = '`priority` DESC, `loads` DESC';
+} else if ($sort == 'eval' && $setup['eval_change']) {
+    $mode = '`priority` DESC, `yes` DESC , `no` ASC';
 } else {
-    if ($sort == 'size') {
-        $mode = '`priority` DESC, `size` ASC';
-    } else {
-        if ($sort == 'load') {
-            $mode = '`priority` DESC, `loads` DESC';
-        } else {
-            if ($sort == 'eval' && $setup['eval_change']) {
-                $mode = '`priority` DESC, `yes` DESC , `no` ASC';
-            } else {
-                $mode = '`priority` DESC, `name` ASC';
-            }
-        }
-    }
+    $mode = '`priority` DESC, `name` ASC';
 }
 ###############Получаем текущий каталог#############
 if ($id) {

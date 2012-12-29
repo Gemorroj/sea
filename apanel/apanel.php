@@ -1483,6 +1483,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $_POST['onpage_change'] = $_POST['onpage_change'] ? 1 : 0;
             $_POST['preview_change'] = $_POST['preview_change'] ? 1 : 0;
             $_POST['top_change'] = $_POST['top_change'] ? 1 : 0;
+            $_POST['new_change'] = $_POST['new_change'] ? 1 : 0;
             $_POST['stat_change'] = $_POST['stat_change'] ? 1 : 0;
             $_POST['search_change'] = $_POST['search_change'] ? 1 : 0;
             $_POST['pagehand_change'] = $_POST['pagehand_change'] ? 1 : 0;
@@ -1519,9 +1520,10 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     $template->assign('error', 'Error');
                     break;
                 }
-                mysql_query(
-                    "REPLACE INTO `setting`(`name`, `value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
-                        . intval($value) . "');",
+                mysql_query("
+                    REPLACE INTO `setting`(`name`, `value`)
+                    VALUES('" . mysql_real_escape_string($key, $mysql) . "', '" . intval($value) . "');
+                ",
                     $mysql
                 );
             }
