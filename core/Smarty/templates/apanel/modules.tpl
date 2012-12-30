@@ -11,8 +11,8 @@
         {html_checkboxes name="eval_change" selected=$setup.eval_change options=[1=>'Рейтинг']}
         {html_checkboxes name="jad_change" selected=$setup.jad_change options=[1=>'Генератор Jad']}
         {html_checkboxes name="cut_change" selected=$setup.cut_change options=[1=>'Нарезчик Mp3']}
-        {html_checkboxes name="audio_player_change" selected=$setup.audio_player_change options=[1=>'Flash плеер Mp3']}
-        {html_checkboxes name="video_player_change" selected=$setup.video_player_change options=[1=>'Flash плеер Flv/Mp4']}
+        {html_checkboxes name="audio_player_change" selected=$setup.audio_player_change options=[1=>'Flash/Html5 плеер Mp3/Ogg/Aac']}
+        {html_checkboxes name="video_player_change" selected=$setup.video_player_change options=[1=>'Flash/Html5 плеер Flv/Mp4/Webm']}
         {html_checkboxes name="zip_change" selected=$setup.zip_change options=[1=>'Просмотр архивов']}
         {html_checkboxes name="zakaz_change" selected=$setup.zakaz_change options=[1=>'Стол заказов']}
         {html_checkboxes name="buy_change" selected=$setup.buy_change options=[1=>'Рекламный блок']}

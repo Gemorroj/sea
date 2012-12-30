@@ -39,7 +39,7 @@
     {/if}
 
 
-    {if ($file.ext == 'mp3' || $file.ext == 'wav' || $file.ext == 'ogg')}
+    {if ($file.ext == 'mp3' || $file.ext == 'wav' || $file.ext == 'ogg' || $file.ext == 'aac')}
         <strong>{$language.info}:</strong><br/>
         {$language.channels}: {$file.info.channels}<br/>
         {$language.framerate}: {$file.info.sampleRate} Hz<br/>
@@ -70,7 +70,7 @@
     {/if}
 
 
-    {if (($file.ext == '3gp' || $file.ext == 'avi' || $file.ext == 'mp4' || $file.ext == 'flv') && extension_loaded('ffmpeg'))}
+    {if (($file.ext == '3gp' || $file.ext == 'avi' || $file.ext == 'mp4' || $file.ext == 'flv' || $file.ext == 'webm') && extension_loaded('ffmpeg'))}
         {if $setup.screen_file_change}
             {foreach ','|explode:$setup.ffmpeg_frames as $i => $frame}
                 <a href="{$smarty.const.DIRECTORY}view/{$id}?frame={$frame}">[{$i + 1}]</a>{if !$frame@last}, {/if}

@@ -7,6 +7,8 @@
         <title>{$setup.zag} - {$seo.title|default:'/'}</title>
         <meta name="keywords" content="{$seo.keywords|default:'sea downloads'}"/>
         <meta name="description" content="{$seo.description|default:'sea downloads'}"/>
+        {block javascripts}{/block}
+        {block styles}{/block}
     </head>
     <body>
         <div>

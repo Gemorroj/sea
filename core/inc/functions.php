@@ -1540,6 +1540,14 @@ function ext_to_mime($ext = '')
         case 'apk':
             return 'application/vnd.android.package-archive';
             break;
+
+        case 'webm':
+            return 'video/webm';
+            break;
+
+        case 'ogg':
+            return 'audio/ogg';
+            break;
     }
 }
 

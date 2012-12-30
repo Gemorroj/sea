@@ -7,8 +7,45 @@
     </div>
 {/block}
 
+
+{block javascripts}
+    {assign var="audio_player" value=($setup.audio_player_change && ($file.ext == 'mp3' || $file.ext == 'ogg' || $file.ext == 'aac'))}
+    {assign var="video_player" value=($setup.video_player_change && ($file.ext == 'flv' || $file.ext == 'mp4' || $file.ext == 'webm'))}
+
+    {if $audio_player}
+        <script type="text/javascript" src="{$smarty.const.DIRECTORY}style/jwplayer/jwplayer.js"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                jwplayer("audio_player").setup({
+                    'file': "{$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}",
+                    'title': "{$file.name}",
+                    'height': 40,
+                    'width': 320
+                });
+            };
+        </script>
+    {elseif $video_player}
+        <script type="text/javascript" src="{$smarty.const.DIRECTORY}style/jwplayer/jwplayer.js"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                jwplayer("video_player").setup({
+                    {if extension_loaded('ffmpeg')}'image': "{$smarty.const.DIRECTORY}ffmpeg/{$id}",{/if}
+                    'file': "{$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}",
+                    'title': "{$file.name}",
+                    'height': 180,
+                    'width': 320
+                });
+            };
+        </script>
+    {/if}
+{/block}
+
+
 {* просмотр файла *}
 {block content}
+    {assign var="audio_player" value=($setup.audio_player_change && ($file.ext == 'mp3' || $file.ext == 'ogg' || $file.ext == 'aac'))}
+    {assign var="video_player" value=($setup.video_player_change && ($file.ext == 'flv' || $file.ext == 'mp4' || $file.ext == 'webm'))}
+
     {include file='sys/_file.tpl'}
 
     {if $setup.prev_next && ($prevNext.prev || $prevNext.next)}
@@ -57,23 +94,16 @@
         </div>
     {/if}
     <div class="iblock">
+        {if $audio_player}
+            <div id="audio_player"></div>
+        {elseif $video_player}
+            <div id="video_player"></div>
+        {/if}
+
+
         {if ($setup.cut_change && $file.ext == 'mp3')}
             <strong><a href="{$smarty.const.DIRECTORY}cut/{$id}">{$language.splitting}</a></strong><br/>
         {/if}
-
-        {if ($setup.audio_player_change && $file.ext == 'mp3')}
-        <object type="application/x-shockwave-flash" data="{$smarty.const.DIRECTORY}core/resources/flash/player_mp3_maxi.swf" width="180" height="20">
-            <param name="FlashVars" value="mp3={$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}&amp;width=180&amp;volume=50&amp;showvolume=1&amp;buttonwidth=20&amp;sliderheight=8&amp;volumewidth=50&amp;volumeheight=8" />
-        </object><br/>
-        {/if}
-
-        {if ($setup.video_player_change && ($file.ext == 'flv' || $file.ext == 'mp4'))}
-        <object type="application/x-shockwave-flash" data="{$smarty.const.DIRECTORY}core/resources/flash/player_flv_maxi.swf" width="240" height="180">
-            <param name="allowFullScreen" value="true" />
-            <param name="FlashVars" value="flv={$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}&amp;title={$file.name|rawurlencode}&amp;startimage={$smarty.const.DIRECTORY}ffmpeg/{$id}?frame={$setup.ffmpeg_frame}&amp;width=240&amp;height=180&amp;margin=3&amp;volume=100&amp;showvolume=1&amp;showtime=1&amp;showplayer=always&amp;showloading=always&amp;showfullscreen=1&amp;showiconplay=1" />
-        </object><br/>
-        {/if}
-
 
         {if ($setup.zip_change && $file.ext == 'zip')}
             <strong><a href="{$smarty.const.DIRECTORY}zip/{$id}">{$language.view_archive}</a></strong><br/>

@@ -154,6 +154,8 @@ AddType audio/vnd.qcelp .qcp
 AddType audio/aiff .aiff
 AddType audio/x-wav .wav
 AddType audio/x-ms-wma .wma
+AddType audio/ogg .ogg
+AddType audio/flac .flac
 
 AddType image/vnd.wap.wbmp .wbmp
 AddType image/bmp .bmx
@@ -183,6 +185,7 @@ AddType video/x-ms-wmv .wmv
 AddType video/x-ms-asf .asf
 AddType video/x-ivf .ivf
 AddType video/x-flv .flv
+AddType video/webm .webm
 
 AddType x-world/x-vrml .wrl
 
