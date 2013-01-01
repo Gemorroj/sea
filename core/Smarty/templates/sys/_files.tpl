@@ -1,4 +1,4 @@
-{if $allItemsInDir < 1}
+{if $paginatorConf.items < 1}
     <strong>[{$language.empty}]</strong>
     {else}
     {* папки *}

@@ -5,7 +5,7 @@
     {include file='sys/_files.tpl'}
 
     {* пагинация *}
-    {paginationExtended page=$page pages=$pages url="{$smarty.const.DIRECTORY}top"}
+    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}top"}
 {/block}
 
 {block footer}

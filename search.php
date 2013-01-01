@@ -49,68 +49,31 @@ $template->assign('word', $word);
 $template->assign('breadcrumbs', array('search' => $language['search']));
 
 
-$onpage = get2ses('onpage');
-$prew = get2ses('prew');
-$sort = get2ses('sort');
-$page = isset($_GET['page']) ? abs($_GET['page']) : 0;
-
-
-if ($onpage < 3) {
-    $onpage = $setup['onpage'];
-}
-
-if ($prew != 0 && $prew != 1) {
-    $prew = $setup['preview'];
-}
-
-$all = $pages = $directories = $files = 0;
+$paginatorConf = array();
+$directories = $files = 0;
 
 if ($word != '') {
-    $sqlLikeWord = str_replace(array('%', '_'), array('\%', '\_'), mysql_real_escape_string($word, $mysql));
+    $mysqldb = MysqlDb::getInstance();
+    $sqlLikeWord = '%' . $mysqldb->escapeLike($word) . '%';
 
-    $all = mysql_result(
-        mysql_query('
-            SELECT COUNT(1)
-            FROM `files`
-            WHERE `name` LIKE "%' . $sqlLikeWord . '%"
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-            ',
-            $mysql
-        ),
-        0
+    $q = $mysqldb->prepare('
+        SELECT COUNT(1)
+        FROM `files`
+        WHERE `name` LIKE ?
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
+    $q->execute(array($sqlLikeWord));
+    $all = $q->fetchColumn();
+
     $all = $all > $setup['top_num'] ? $setup['top_num'] : $all;
 
-    $onpage = $onpage > $all ? $all : $onpage;
+    $paginatorConf = getPaginatorConf($all);
 
-###############Постраничная навигация###############
-    $pages = ceil($all / $onpage);
-    if ($pages < 1) {
-        $pages = 1;
-    }
-    if ($page > $pages || $page < 1) {
-        $page = 1;
-    }
-
-    $start = ($page - 1) * $onpage;
-    if ($start > $all || $start < 0) {
-        $start = 0;
-    }
-
-    if ($sort == 'date') {
-        $mode = '`priority` DESC, `timeupload` DESC';
-    } else if ($sort == 'size') {
-        $mode = '`priority` DESC, `size` ASC';
-    } else if ($sort == 'load') {
-        $mode = '`priority` DESC, `loads` DESC';
-    } else if ($sort == 'eval' && $setup['eval_change']) {
-        $mode = '`priority` DESC, `yes` DESC , `no` ASC';
-    } else {
-        $mode = '`priority` DESC, `name` ASC';
-    }
+    ###############Постраничная навигация###############
+    $template->assign('paginatorConf', $paginatorConf);
 
 
-    $query = mysql_query('
+    $query = $mysqldb->prepare('
         SELECT `id`,
         `hidden`,
         `dir`,
@@ -127,25 +90,26 @@ if ($word != '') {
             SELECT COUNT(1)
             FROM `files`
             WHERE `infolder` = `v`
-            AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . '
+            AND `timeupload` > ?
             ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
         ) AS `count`
         FROM `files`
-        WHERE `name` LIKE "%' . $sqlLikeWord . '%"
+        WHERE `name` LIKE ?
         ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-        ORDER BY ' . $mode . '
-        LIMIT ' . $start . ', ' . $onpage,
-        $mysql
-    );
+        ORDER BY ' . getSortMode() . '
+        LIMIT ?, ?
+    ');
+    $query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new']), PDO::PARAM_INT);
+    $query->bindValue(2, $sqlLikeWord);
+    $query->bindValue(3, $paginatorConf['start'], PDO::PARAM_INT);
+    $query->bindValue(4, $paginatorConf['onpage'], PDO::PARAM_INT);
+
+    $query->execute();
 
     require 'core/inc/_files.php';
 }
 
+$template->assign('paginatorConf', $paginatorConf);
 $template->assign('directories', $directories);
 $template->assign('files', $files);
-$template->assign('allItemsInDir', $all);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
-$template->assign('prew', $prew);
-$template->assign('sort', $sort);
 $template->send();

@@ -35,7 +35,7 @@
 
 
 require 'core/config.php';
-require 'core/inc/Rss.php';
+require 'core/classes/Rss.php';
 
 
 $link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
@@ -43,19 +43,15 @@ $link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
 
 $rss = new Rss($language['news'], $link, $language['news']);
 
-$q = mysql_query(
-    '
-    SELECT ' . Language::getInstance()->buildNewsQuery() . ',
-    `time`
+
+$q = MysqlDb::getInstance()->query('
+    SELECT ' . Language::getInstance()->buildNewsQuery() . ', `time`
     FROM `news`
     ORDER BY `id` DESC
     LIMIT 0, 10
-',
-    $mysql
-);
+');
 
-
-while ($arr = mysql_fetch_assoc($q)) {
+foreach ($q as $arr) {
     $date = new DateTime('@' . $arr['time']);
 
     $rss->addItem(

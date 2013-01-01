@@ -17,7 +17,7 @@
                 <label>
                     {$language.save}
                     <select class="buttom" name="topath">
-                        {foreach $folders as $k => $v}
+                        {foreach $dirs as $k => $v}
                             <option value="{$k}">{$v}</option>
                         {/foreach}
                     </select><br/>

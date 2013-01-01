@@ -29,8 +29,7 @@ mod by Gemorroj
 Текст должен быть в кодировке UTF-8, так же следите за разметкой, т.к. символы <>& не фильтруются (есть возможность в описаниях писать html код)
 То же самое касается и скриншотов, они должны находиться в папке screen/ с такой же структурой, как и в папке files/. Возможные расширения скриншотов - .jpg или .gif
 Например, есть файл files/xxx/photo.jpg, в таком случае его скриншот должен находиться тут cache/screen/xxx/photo.jpg.jpg
-Если Вы пользовались старыми версиями скрипта Sea Downloads, то вам потребуется перенести описания и скриншоты в папки, требуемые новой версией скрипта. Для этого Вы можете воспользоваться специально написанным для таких целей скриптом .about.php
-Переименуйте его в about.php и зайдите через браузер. Далее, следуйте инструкциям скрипта.
+Если Вы пользовались старыми версиями скрипта Sea Downloads, то вам потребуется перенести описания и скриншоты в папки, требуемые новой версией скрипта.
 Маркер наносимый на картинки находится тут core/resources/marker.png замените его на свой
 Чтобы ЗЦ был был на русском/английском или других доступных языках, следует перейти по ссылке http://путь к скрипту/?langpack=russian или http://путь к скрипту/?langpack=english соответственно
 Автологин в админку выглядит так http://example.com/apanel/?p=пароль
@@ -59,12 +58,18 @@ mod by Gemorroj
 
 Чтобы вывести общее количество файлов следует выполнить следующий код
 
-mysql_connect('хост', 'юзер', 'пароль');
-mysql_select_db('БД');
-echo mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0" AND `hidden` = "0"'), 0);
+require_once 'path_to_sea/core/classes/MysqlDb.php';
+MysqlDb::setOptions(array(
+    'host' => 'localhost',
+    'dbname' => 'sea',
+    'username' => 'root',
+    'password' => '',
+));
+$db = MysqlDb::getInstance();
+echo $db->query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0" AND `hidden` = "0"')->fetchColumn();
 
-то же самое но с ограничением на какую-либо папку 
-echo mysql_result(mysql_query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0" AND `hidden` = "0" AND `infolder` LIKE("files/dir/%")'), 0);
+то же самое но с ограничением на какую-либо папку
+echo $db->query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0" AND `hidden` = "0" AND `infolder` LIKE("files/dir/%")')->fetchColumn();
 где "files/dir/%" - маска поиска.
 
 

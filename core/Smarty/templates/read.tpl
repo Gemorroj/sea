@@ -10,7 +10,7 @@
     {/if}
 
     {* пагинация *}
-    {paginationExtended page=$page pages=$pages url="{$smarty.const.DIRECTORY}read/{$id}"}
+    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}read/{$id}"}
 {/block}
 
 

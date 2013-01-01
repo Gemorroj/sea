@@ -1,7 +1,17 @@
 <?php
 $directories = $files = array();
 
-while ($v = mysql_fetch_assoc($query)) {
+$sort = get2ses('sort');
+$prew = get2ses('prew');
+if ($prew != '0' && $prew != '1') {
+    $prew = $setup['preview'];
+}
+
+$template->assign('prew', $prew);
+$template->assign('sort', $sort);
+
+
+foreach ($query as $v) {
     $screen = strstr($v['v'], '/'); // убираем папку с загрузками
 
     if ($setup['desc'] && file_exists($setup['opath'] . $screen . '.txt')) {

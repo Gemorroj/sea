@@ -35,17 +35,28 @@
 
 
 //error_reporting(0);
+
+require_once 'Smarty/libs/Smarty.class.php';
+require_once 'classes/Template.php';
+require_once 'classes/MysqlDb.php';
+
+require_once 'classes/functions.php';
+require_once 'classes/Language.php';
+
 // данные для соединения с БД
-$mysql = mysql_connect('127.0.0.1', 'mysql', 'mysql') or die('Could not connect');
-mysql_select_db('sea', $mysql) or die('Could not db');
-mysql_set_charset('utf8', $mysql);
+MysqlDb::setOptions(array(
+    'host' => '127.0.0.1',
+    'username' => 'mysql',
+    'password' => 'mysql',
+    'dbname' => 'sea',
+));
+$mysqldb = MysqlDb::getInstance();
 
 session_name('sea');
 session_start() or die('Can not start session');
 
-$q = mysql_query('SELECT * FROM setting', $mysql);
 $setup = array();
-while ($set = mysql_fetch_assoc($q)) {
+foreach ($mysqldb->query('SELECT name, value FROM setting') as $set) {
     $setup[$set['name']] = $set['value'];
 }
 
@@ -64,14 +75,6 @@ set_include_path(
     get_include_path() . PATH_SEPARATOR .
         CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
 );
-
-
-require_once CORE_DIRECTORY . '/inc/functions.php';
-require_once CORE_DIRECTORY . '/inc/Language.php';
-
-
-require_once CORE_DIRECTORY . '/Smarty/libs/Smarty.class.php';
-require_once CORE_DIRECTORY . '/inc/Template.php';
 
 
 // Подключаем модуль партнерки

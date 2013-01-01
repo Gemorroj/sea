@@ -45,29 +45,22 @@ $template->setTemplate('stat.tpl');
 $seo['title'] = $language['statistics'];
 
 
-$stat = mysql_fetch_assoc(
-    mysql_query(
-        '
+$mysqldb = MysqlDb::getInstance();
+
+
+$stat = $mysqldb->query('
     SELECT COUNT(1) AS all_files, SUM(`loads`) AS total_downloads, SUM(`size`) AS total_volume
     FROM `files`
     WHERE `dir` = "0"
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-',
-        $mysql
-    )
-);
-$stat['total_new_files'] = mysql_result(
-    mysql_query(
-        '
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+)->fetch();
+
+$stat['total_new_files'] = $mysqldb->query('
     SELECT COUNT(1)
     FROM `files`
     WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . '
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-',
-        $mysql
-    ),
-    0
-);
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+)->fetchColumn();
 
 
 $template->assign('stat', $stat);

@@ -53,26 +53,17 @@ if (!is_file($v['path'])) {
 
 $template->setTemplate('zip.tpl');
 
-
-$sql_dir = mysql_real_escape_string($v['infolder'], $mysql);
 // Директория
-$directory = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
+$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q->execute(array($v['infolder']));
+$directory = $q->fetch();
+
 $template->assign('directory', $directory);
 
 
 $breadcrumbs = getBreadcrumbs($v, false);
 $breadcrumbs['zip/' . $id] = $language['view_archive'];
 $template->assign('breadcrumbs', $breadcrumbs);
-
-
-$onpage = get2ses('onpage');
-if ($onpage < 3) {
-    $onpage = $setup['onpage'];
-}
-$page = isset($_GET['page']) ? abs($_GET['page']) : 1;
-if ($page < 1) {
-    $page = 1;
-}
 
 
 $seo = unserialize($v['seo']);
@@ -82,10 +73,9 @@ if (!$seo['title']) {
 $seo['title'] .= ' - ' . $language['view_archive'];
 
 
+$paginatorConf = array();
 $zipFiles = array();
-$all = 0;
 $size = 0;
-$pages = 0;
 $zipFileName = '';
 $zipFileType = '';
 $zipFileData = '';
@@ -136,10 +126,12 @@ switch ($action) {
             $content = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
             $content = str_to_utf8($content[0]['content']);
 
-            $pages = floor(mb_strlen($content) / $setup['lib']);
-            $content = mb_substr($content, $page * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
+            $paginatorConf = getPaginatorConf(PHP_INT_MAX);
+            $paginatorConf['pages'] = floor(mb_strlen($content) / $setup['lib']);
 
-            if ($page > 1) {
+            $content = mb_substr($content, $paginatorConf['page'] * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
+
+            if ($paginatorConf['page'] > 1) {
                 $i = 0;
                 foreach (str_split($content) as $val) {
                     if ($val == ' ' || $val == "\n" || $val == "\r" || $val == "\t") {
@@ -161,18 +153,9 @@ switch ($action) {
         if (!($list = $zip->listContent())) {
             error('Can not list archive');
         }
+        $paginatorConf = getPaginatorConf(sizeof($list));
 
-        $all = sizeof($list);
-        $pages = ceil($all / $onpage);
-        if ($pages < 1) {
-            $pages = 1;
-        }
-        if ($page > $pages) {
-            $page = 1;
-        }
-
-
-        for ($i = ($page - 1) * $onpage, $end = $page * $onpage; $i < $end; ++$i) {
+        for ($i = ($paginatorConf['page'] - 1) * $paginatorConf['onpage'], $end = $paginatorConf['page'] * $paginatorConf['onpage']; $i < $end; ++$i) {
             if (isset($list[$i]) && !$list[$i]['folder']) {
                 $size += $list[$i]['size'];
                 $zipFiles[] = $list[$i];
@@ -188,8 +171,6 @@ $template->assign('zipFileType', $zipFileType);
 $template->assign('zipFileData', $zipFileData);
 $template->assign('file', $v);
 $template->assign('zipFiles', $zipFiles);
-$template->assign('allItemsInDir', $all);
 $template->assign('allItemsSize', $size);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
+$template->assign('paginatorConf', $paginatorConf);
 $template->send();

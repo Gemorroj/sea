@@ -36,49 +36,37 @@ if ($setup['buy_change']) {
 
 // модуль расширенного сервиса
 $serviceBanner = $serviceBuy = array();
-if ($setup['service_change_advanced']) {
+if ($setup['service_change_advanced'] && ($setup['service_head'] || $setup['service_foot'])) {
     $user = isset($_GET['user']) ? $_GET['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
-    $user = intval($user);
 
     if ($user) {
+        $q = MysqlDb::getInstance()->prepare('
+            SELECT `name`, `value`
+            FROM `users_settings`
+            WHERE `parent_id` = ?
+            AND `position` = ?
+            LIMIT ?
+        ');
+
         if ($setup['service_head']) {
-            $head = mysql_query(
-                '
-                SELECT `name`, `value`
-                FROM `users_settings`
-                WHERE `parent_id` = ' . $user . '
-                AND `position` = "0"
-            ',
-                $mysql
-            );
-            $all = mysql_num_rows($head);
-            $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
-            if ($all) {
-                for ($i = 0; $i < $all; ++$i) {
-                    $q = mysql_fetch_assoc($head);
-                    $serviceBuy[$q['value']] = $q['name'];
-                    ;
-                }
+            $q->bindValue(1, $user);
+            $q->bindValue(2, '0');
+            $q->bindValue(3, intval($setup['service_head']), PDO::PARAM_INT);
+            $q->execute();
+
+            foreach ($q as $head) {
+                $serviceBuy[$head['value']] = $head['name'];
             }
         }
 
         if ($setup['service_foot']) {
-            $foot = mysql_query(
-                '
-                SELECT `name`, `value`
-                FROM `users_settings`
-                WHERE `parent_id` = ' . $user . '
-                AND `position` = "1"
-            ',
-                $mysql
-            );
-            $all = mysql_num_rows($foot);
-            $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
-            if ($all) {
-                for ($i = 0; $i < $all; ++$i) {
-                    $q = mysql_fetch_assoc($foot);
-                    $serviceBanner[$q['value']] = $q['name'];
-                }
+            $q->bindValue(1, $user);
+            $q->bindValue(2, '1');
+            $q->bindValue(3, intval($setup['service_foot']), PDO::PARAM_INT);
+            $q->execute();
+
+            foreach ($q as $foot) {
+                $serviceBanner[$foot['value']] = $foot['name'];
             }
         }
     }

@@ -41,33 +41,18 @@ $template->setTemplate('news.tpl');
 $seo['title'] = $language['news'];
 $template->assign('breadcrumbs', array('news' => $language['news']));
 
-$onpage = get2ses('onpage');
-$page = isset($_GET['page']) ? abs($_GET['page']) : 0;
-
-if ($onpage < 3) {
-    $onpage = $setup['onpage'];
-}
-
+$mysqldb = MysqlDb::getInstance();
 
 // всего новостей
-$all = mysql_result(mysql_query('SELECT COUNT(1) FROM `news`', $mysql), 0);
+$all = $mysqldb->query('SELECT COUNT(1) FROM `news`')->fetchColumn();
 
-$pages = ceil($all / $onpage);
-if (!$pages) {
-    $pages = 1;
-}
-if ($page > $pages || $page < 1) {
-    $page = 1;
-}
+$paginatorConf = getPaginatorConf($all);
 
-$start = ($page - 1) * $onpage;
-if ($start > $all || $start < 0) {
-    $start = 0;
-}
+###############Постраничная навигация###############
+$template->assign('paginatorConf', $paginatorConf);
 
 
-$query = mysql_query(
-    '
+$q = $mysqldb->prepare('
     SELECT `news`.`id`,
     ' . Language::getInstance()->buildNewsQuery() . ',
     `news`.`time`,
@@ -77,17 +62,14 @@ $query = mysql_query(
     WHERE `news`.`id` > 0
     GROUP BY `news`.`id`
     ORDER BY `news`.`id` DESC
-    LIMIT ' . $start . ', ' . $onpage,
-    $mysql
-);
+    LIMIT ?, ?
+');
+$q->bindValue(1, $paginatorConf['start'], PDO::PARAM_INT);
+$q->bindValue(2, $paginatorConf['onpage'], PDO::PARAM_INT);
 
-$news = array();
-while ($row = mysql_fetch_assoc($query)) {
-    $news[] = $row;
-}
+$q->execute();
 
-$template->assign('allItemsInDir', $all);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
+$news = $q->fetchAll();
+
 $template->assign('news', $news);
 $template->send();

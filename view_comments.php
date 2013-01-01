@@ -47,11 +47,12 @@ if (!is_file($v['path'])) {
 }
 
 
+$mysqldb = Mysqldb::getInstance();
 
-$sql_dir = mysql_real_escape_string($v['infolder'], $mysql);
 // Директория
-$directory = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
-
+$q = $mysqldb->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q->execute(array($v['infolder']));
+$directory = $q->fetch();
 
 
 $seo = unserialize($v['seo']);
@@ -72,44 +73,30 @@ $template->assign('comments_module_backlink', DIRECTORY . 'view/' . $id);
 $template->assign('comments_module_backname', $v['name']);
 
 
-$onpage = get2ses('onpage');
-$page = isset($_GET['page']) ? abs($_GET['page']) : 0;
-
-if ($onpage < 3) {
-    $onpage = $setup['onpage'];
-}
-
 // всего комментариев
-$all = mysql_result(mysql_query('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ' . $id, $mysql), 0);
+$q = $mysqldb->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
+$q->execute(array($id));
+$all = $q->fetchColumn();
 
-$pages = ceil($all / $onpage);
-if (!$pages) {
-    $pages = 1;
-}
-if ($page > $pages || $page < 1) {
-    $page = 1;
-}
+$paginatorConf = getPaginatorConf($all);
 
-$start = ($page - 1) * $onpage;
-if ($start > $all || $start < 0) {
-    $start = 0;
-}
+###############Постраничная навигация###############
+$template->assign('paginatorConf', $paginatorConf);
 
 
-$query = mysql_query(
-    '
+$query = $mysqldb->prepare('
     SELECT *
     FROM `comments`
-    WHERE `file_id` = ' . $id . '
+    WHERE `file_id` = ?
     ORDER BY `id` DESC
-    LIMIT ' . $start . ', ' . $onpage
-    ,
-    $mysql
-);
-$comments = array();
-while ($row = mysql_fetch_assoc($query)) {
-    $comments[] = $row;
-}
+    LIMIT ?, ?
+');
+$query->bindValue(1, $id, PDO::PARAM_INT);
+$query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
+$query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
+
+$query->execute();
+$comments = $query->fetchAll();
 
 
 ###############Запись###########################
@@ -130,39 +117,32 @@ if ($_POST) {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $msgSql = mysql_real_escape_string($_POST['msg'], $mysql);
-    $nameSql = mysql_real_escape_string($_POST['name'], $mysql);
+    $q = $mysqldb->prepare('SELECT 1 FROM `comments` WHERE `file_id` = ? AND `text` = ? LIMIT 1');
+    $q->execute(array($id, $_POST['msg']));
 
-    if (mysql_fetch_row(
-        mysql_query("SELECT 1 FROM `comments` WHERE `file_id` = ' . $id . ' AND `text` = '" . $msgSql . "' LIMIT 1", $mysql)
-    )
-    ) {
+    if ($q->rowCount() > 0) {
         error($language['why_repeat_myself']);
     }
 
     //Если нет ошибок пишем в базу
     setcookie('sea_name', $_POST['name'], time() + 86400000);
 
-    $q = mysql_query(
-        "
+    $q = $mysqldb->prepare('
         INSERT INTO `comments` (
             `file_id`, `name`, `text`, `time`
         ) VALUES (
-            " . $id . ", '" . $nameSql . "', '" . $msgSql . "', " . $_SERVER['REQUEST_TIME'] . "
+            ?, ?, ?, UNIX_TIMESTAMP()
         )
-    ",
-        $mysql
-    );
+    ');
+    $result = $q->execute(array($id, $_POST['name'], $_POST['msg']));
 
-    if (!$q) {
+    if (!$result) {
         error($language['error']);
     }
 
     message($language['your_comment_has_been_successfully_added']);
 }
 
-$template->assign('allItemsInDir', $all);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
+
 $template->assign('comments', $comments);
 $template->send();

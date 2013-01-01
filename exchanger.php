@@ -46,8 +46,10 @@ $template->setTemplate('exchanger.tpl');
 
 $seo['title'] = $language['upload_file'];
 
-$folders = array();
+$dirs = array();
 $insertId = null;
+
+$mysqldb = MysqlDb::getInstance();
 
 if ($_POST) {
     if (!$_FILES['file'] || $_FILES['file']['error']) {
@@ -65,29 +67,26 @@ if ($_POST) {
         error($language['not_a_valid_file_name']);
     }
 
-    $path = mysql_result(
-        mysql_query('
-            SELECT `path`
-            FROM `files`
-            WHERE `id` = ' . intval($_POST['topath']) . '
-            AND `dir` = "1"
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-            ',
-            $mysql
-        ),
-        0
+    $q = $mysqldb->prepare('
+        SELECT `path`
+        FROM `files`
+        WHERE `id` = ?
+        AND `dir` = "1"
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
+    $q->execute(array($setup['path'] . $_POST['topath']));
+    $path = $q->fetchColumn();
 
     if (!$path) {
         error($language['you_have_specified_the_correct_path_to_load']);
     }
     $pathname = $path . $_FILES['file']['name'];
 
-    $q = mysql_query(
-        'SELECT 1 FROM `files` WHERE `path` = "' . mysql_real_escape_string($pathname, $mysql) . '"',
-        $mysql
-    );
-    if (mysql_num_rows($q)) {
+
+    $q = $mysqldb->prepare('SELECT 1 FROM `files` WHERE `path` = ?');
+    $q->execute(array($pathname));
+
+    if ($q->rowCount() > 0) {
         error($language['file_with_this_name_already_exists']);
     }
 
@@ -95,28 +94,28 @@ if ($_POST) {
         error($language['an_error_occurred_while_copying_files']);
     }
 
-    $q = mysql_query(
-        "
+    $q = $mysqldb->prepare('
         INSERT INTO `files` (
-            `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`, `hidden`
-        ) VALUES (
-            '" . mysql_real_escape_string($pathname, $mysql) . "',
-            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
-            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
-            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
-            '" . mysql_real_escape_string($pathinfo['filename'], $mysql) . "',
-            '" . mysql_real_escape_string($path, $mysql) . "',
-            " . filesize($pathname) . ",
-            " . filectime($pathname) . ",
-            '" . ($setup['exchanger_hidden'] ? 1 : 0) . "'
-        )",
-        $mysql
-    );
-    if (!$q) {
+            `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`, `hidden`
+        ) VALUES ("0", ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ');
+    $result = $q->execute(array(
+        $pathname,
+        $pathinfo['filename'],
+        $pathinfo['filename'],
+        $pathinfo['filename'],
+        $pathinfo['filename'],
+        $path,
+        filesize($pathname),
+        filectime($pathname),
+        ($setup['exchanger_hidden'] ? 1 : 0)
+    ));
+
+    if (!$result) {
         unlink($pathname);
         error($language['error_writing_to_database']);
     }
-    $insertId = mysql_insert_id($mysql);
+    $insertId = $mysqldb->lastInsertId();
     if (!$setup['exchanger_hidden']) {
         dir_count($path, true);
     }
@@ -165,41 +164,11 @@ if ($_POST) {
         );
     }
 } else {
-    $dirs = mysql_query('
-        SELECT `id`, `path`
-        FROM `files`
-        WHERE `dir` = "1"
-        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-    ', $mysql);
-    while ($item = mysql_fetch_assoc($dirs)) {
-        $arr = explode('/', $item['path']);
-        $all = sizeof($arr) - 1;
-        $in = array();
-        for ($i = 0; $i < $all; ++$i) {
-            if ($i > 0) {
-                $in[$i] = $in[$i - 1] . mysql_real_escape_string($arr[$i], $mysql) . '/';
-            } else {
-                $in[$i] = mysql_real_escape_string($arr[$i], $mysql) . '/';
-            }
-        }
-
-        $names = '';
-        $q = mysql_query(
-            'SELECT ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` IN ("' . implode(
-                '","',
-                $in
-            ) . '")',
-            $mysql
-        );
-        while ($arrn = mysql_fetch_assoc($q)) {
-            $names .= $arrn['name'] . '/';
-        }
-        $folders[$item['id']] = $names;
-    }
+    $dirs = getAllDirs();
 }
 
 $template->assign('insertId', $insertId);
 $template->assign('upload_max_filesize', ini_get('upload_max_filesize'));
-$template->assign('folders', $folders);
+$template->assign('dirs', $dirs);
 $template->assign('breadcrumbs', array('exchanger' => $language['upload_file']));
 $template->send();

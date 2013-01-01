@@ -96,10 +96,10 @@ class Template extends Smarty
     {
         $language = Language::getInstance()->getLanguage();
 
-        if (date('Y.m.d', $str) == date('Y.m.d', $_SERVER['REQUEST_TIME'])) {
+        if (date('Y.m.d', $str) === date('Y.m.d', $_SERVER['REQUEST_TIME'])) {
             return $language['today'] . ' ' . date('H:i', $str);
         } else {
-            if (date('Y.m.d', $str) == date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
+            if (date('Y.m.d', $str) === date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
                 return $language['yesterday'] . ' ' . date('H:i', $str);
             } else {
                 return date('Y.m.d H:i', $str);

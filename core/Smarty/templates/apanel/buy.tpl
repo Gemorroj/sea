@@ -7,8 +7,8 @@
 <form action="apanel.php?action=buy" method="post">
     <div class="ui-body ui-body-c">
         <div data-role="fieldcontain">
-            <label for="text">XHTML код отображаемый сверху:</label>
-            <textarea cols="32" rows="5" name="text" id="text">{$setup.buy}</textarea>
+            <label for="buy">XHTML код отображаемый сверху:</label>
+            <textarea cols="32" rows="5" name="buy" id="buy">{$setup.buy}</textarea>
         </div>
 
         <div data-role="fieldcontain">

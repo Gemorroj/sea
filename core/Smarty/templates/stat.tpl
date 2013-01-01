@@ -8,7 +8,7 @@
         {$language.total_new_files}: <strong>{$stat.total_new_files}</strong><br/>
         {$language.total_volume}: <strong>{$stat.total_volume|sizeFormatExtended}</strong><br/>
         {$language.total_downloads}: <strong>{$stat.total_downloads}</strong><br/>
-        {$language.maximum_online}: <strong>{$setup.online_max}</strong> ({$setup.online_max_time|strtotime|dateFormatExtended})<br/>
+        {$language.maximum_online}: <strong>{$setup.online_max}</strong> ({$setup.online_max_time|dateFormatExtended})<br/>
     </div>
 {/block}
 

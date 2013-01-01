@@ -3,7 +3,7 @@
 
 {* новости *}
 {block content}
-    {if $allItemsInDir < 1}
+    {if $paginatorConf.items < 1}
         <strong>[{$language.empty}]</strong>
     {else}
         {foreach $news as $v}
@@ -22,7 +22,7 @@
     {/if}
 
     {* пагинация *}
-    {paginationExtended page=$page pages=$pages url="{$smarty.const.DIRECTORY}news"}
+    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}news"}
 {/block}
 
 

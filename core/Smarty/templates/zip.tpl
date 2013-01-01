@@ -19,27 +19,24 @@
             {/if}
 
             {* пагинация *}
-            {paginationExtended page=$page pages=$pages url="{$smarty.const.DIRECTORY}zip/preview/{$id}/{$zipFileName|rawurlencode|replace:'%2F':'/'}"}
+            {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}zip/preview/{$id}/{$zipFileName|rawurlencode|replace:'%2F':'/'}"}
         {/if}
-
     {else}
-        {$language.all_files}: {$allItemsInDir}<br/>
+        {$language.all_files}: {$paginatorConf.items}<br/>
         {$language.the_unpacked_archive}: {$allItemsSize|sizeFormatExtended}<br/>
 
-        {if $allItemsInDir < 1}
-        <strong>[{$language.empty}]</strong>
-            {else}
+        {if $paginatorConf.items < 1}
+            <strong>[{$language.empty}]</strong>
+        {else}
             {foreach $zipFiles as $zipFile}
-            <div class="{cycle values="row,row2"}">
-
-                <a href="{$smarty.const.DIRECTORY}zip/preview/{$id}/{$zipFile.filename|rawurlencode|replace:'%2F':'/'}/">{$zipFile.filename}</a> ({$zipFile.size|sizeFormatExtended})<br/>
-
-            </div>
+                <div class="{cycle values="row,row2"}">
+                    <a href="{$smarty.const.DIRECTORY}zip/preview/{$id}/{$zipFile.filename|rawurlencode|replace:'%2F':'/'}/">{$zipFile.filename}</a> ({$zipFile.size|sizeFormatExtended})<br/>
+                </div>
             {/foreach}
         {/if}
 
         {* пагинация *}
-        {paginationExtended page=$page pages=$pages url="{$smarty.const.DIRECTORY}zip/{$id}"}
+        {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}zip/{$id}"}
     {/if}
 {/block}
 

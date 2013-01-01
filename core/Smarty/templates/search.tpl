@@ -6,7 +6,7 @@
 {block header}
     {if $word != ''}
         <div class="iblock">
-            {$language.upon_request|replace:'%word%':$word|replace:'%all%':$allItemsInDir}
+            {$language.upon_request|replace:'%word%':$word|replace:'%all%':$paginatorConf.items}
         </div>
     {/if}
 {/block}
@@ -16,7 +16,7 @@
         {include file='sys/_files.tpl'}
 
         {* пагинация *}
-        {paginationExtended page=$page pages=$pages url="{$smarty.const.DIRECTORY}search" query=['word'=>$word]}
+        {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}search" query=['word'=>$word]}
     {/if}
 
     {* поиск *}

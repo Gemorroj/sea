@@ -41,8 +41,11 @@ if (!$setup['comments_change']) {
 }
 
 // Получаем инфу о новости
-$news = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildNewsQuery() . ' FROM `news`', $mysql), 0);
-if (!$news['news']) {
+$q = $mysqldb->prepare('SELECT *, ' . Language::getInstance()->buildNewsQuery() . ' FROM `news` WHERE `id` = ?');
+$q->execute(array($id));
+$news = $q->fetch();
+
+if (!$news || !$news['news']) {
     error('Not found');
 }
 
@@ -60,39 +63,31 @@ $template->assign('comments_module', 'news_comments');
 $template->assign('comments_module_backlink', DIRECTORY . 'news');
 $template->assign('comments_module_backname', $language['news']);
 
-$onpage = get2ses('onpage');
-$page = isset($_GET['page']) ? abs($_GET['page']) : 0;
-
-if ($onpage < 3) {
-    $onpage = $setup['onpage'];
-}
-
 
 // всего комментариев
-$all = mysql_result(mysql_query('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ' . $id, $mysql), 0);
+$q = $mysqldb->prepare('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ?');
+$q->execute(array($id));
+$all = $q->fetchColumn();
 
-$pages = ceil($all / $onpage);
-if (!$pages) {
-    $pages = 1;
-}
-if ($page > $pages || $page < 1) {
-    $page = 1;
-}
+$paginatorConf = getPaginatorConf($all);
 
-$start = ($page - 1) * $onpage;
-if ($start > $all || $start < 0) {
-    $start = 0;
-}
+###############Постраничная навигация###############
+$template->assign('paginatorConf', $paginatorConf);
 
 
-$query = mysql_query(
-    'SELECT * FROM `news_comments` WHERE `id_news` = ' . $id . ' ORDER BY `id` DESC LIMIT ' . $start . ', ' . $onpage,
-    $mysql
-);
-$comments = array();
-while ($row = mysql_fetch_assoc($query)) {
-    $comments[] = $row;
-}
+$query = $mysqldb->prepare('
+    SELECT *
+    FROM `news_comments`
+    WHERE `id_news` = ?
+    ORDER BY `id` DESC
+    LIMIT ?, ?
+');
+$query->bindValue(1, $id, PDO::PARAM_INT);
+$query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
+$query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
+
+$query->execute();
+$comments = $query->fetchAll();
 
 
 ###############Запись###########################
@@ -113,38 +108,31 @@ if ($_POST) {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $msgSql = mysql_real_escape_string($_POST['msg'], $mysql);
-    $nameSql = mysql_real_escape_string($_POST['name'], $mysql);
+    $q = $mysqldb->prepare('SELECT 1 FROM `news_comments` WHERE `id_news` = ? AND `text` = ? LIMIT 1');
+    $q->execute(array($id, $_POST['msg']));
 
-    if (mysql_fetch_row(
-        mysql_query("SELECT 1 FROM `news_comments` WHERE `id_news` = ' . $id . ' AND `text` = '" . $msgSql . "' LIMIT 1", $mysql)
-    )
-    ) {
+    if ($q->rowCount() > 0) {
         error($language['why_repeat_myself']);
     }
 
     //Если нет ошибок пишем в базу
     setcookie('sea_name', $_POST['name'], time() + 86400000);
 
-    $q = mysql_query(
-        "
+    $q = $mysqldb->prepare('
         INSERT INTO `news_comments` (
-            `id_news`, `text`, `name`, `time`
+            `id_news`, `name`, `text`, `time`
         ) VALUES (
-            " . $id . ", '" . $msgSql . "', '" . $nameSql . "', " . $_SERVER['REQUEST_TIME'] . "
-        );",
-        $mysql
-    );
+            ?, ?, ?, UNIX_TIMESTAMP()
+        )
+    ');
+    $result = $q->execute(array($id, $_POST['name'], $_POST['msg']));
 
-    if (!$q) {
+    if (!$result) {
         error($language['error']);
     }
 
     message($language['your_comment_has_been_successfully_added']);
 }
 
-$template->assign('allItemsInDir', $all);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
 $template->assign('comments', $comments);
 $template->send();

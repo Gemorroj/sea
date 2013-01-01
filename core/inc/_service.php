@@ -12,26 +12,19 @@ if ($setup['service_change']) {
 
 if ($setup['service_change_advanced']) {
     $user = isset($_GET['user']) ? $_GET['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
-    $user = intval($user);
 
     if ($user) {
-        $_SESSION['user'] = $user;
+        $q = MysqlDb::getInstance()->prepare('SELECT `url`, `name`, `style` FROM `users_profiles` WHERE `id` = ?');
 
-        $q = mysql_fetch_row(
-            mysql_query(
-                '
-            SELECT `url`, `name`, `style`
-            FROM `users_profiles`
-            WHERE `id` = ' . $user
-                ,
-                $mysql
-            )
-        );
-        $_SESSION['site_url'] = $setup['site_url'] = $q[0];
-        //$_SESSION['site_name'] = $setup['site_name'] = $q[1];
+        if ($q->execute(array($user)) && $q->rowCount() > 0) {
+            $fetch = $q->fetch();
+            $_SESSION['user'] = $user;
+            $_SESSION['site_url'] = $setup['site_url'] = $fetch['url'];
+            //$_SESSION['site_name'] = $setup['site_name'] = $fetch['name'];
 
-        if ($q[2] && $q[2] != @$_SESSION['style']) {
-            $_SESSION['style'] = $style = $q[2];
+            if ($fetch['style'] && $fetch['style'] != @$_SESSION['style']) {
+                $_SESSION['style'] = $style = $fetch['style'];
+            }
         }
     }
 }

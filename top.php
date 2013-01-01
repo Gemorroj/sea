@@ -45,66 +45,21 @@ $seo['title'] = str_replace('%files%', $setup['top_num'], $language['top20']);
 $template->assign('breadcrumbs', array('top' => $seo['title']));
 
 
-$onpage = get2ses('onpage');
-$prew = get2ses('prew');
-$sort = get2ses('sort');
-$page = isset($_GET['page']) ? abs($_GET['page']) : 0;
-
-
-if ($onpage < 3) {
-    $onpage = $setup['onpage'];
-}
-
-if ($prew != 0 && $prew != 1) {
-    $prew = $setup['preview'];
-}
-
-
-$all = mysql_result(mysql_query('
+$all = $mysqldb->query('
     SELECT COUNT(1)
     FROM `files`
     WHERE `dir` = "0"
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-', $mysql), 0);
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+)->fetchColumn();
 $all = $all > $setup['top_num'] ? $setup['top_num'] : $all;
 
-$onpage = $onpage > $all ? $all : $onpage;
+$paginatorConf = getPaginatorConf($all);
 
 ###############Постраничная навигация###############
-$pages = ceil($all / $onpage);
-if (!$pages) {
-    $pages = 1;
-}
-if ($page > $pages || $page < 1) {
-    $page = 1;
-}
-
-$start = ($page - 1) * $onpage;
-if ($start > $all || $start < 0) {
-    $start = 0;
-}
-
-$template->assign('allItemsInDir', $all);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
-$template->assign('prew', $prew);
-$template->assign('sort', $sort);
+$template->assign('paginatorConf', $paginatorConf);
 
 
-if ($sort == 'date') {
-    $mode = '`priority` DESC, `timeupload` DESC';
-} else if ($sort == 'size') {
-    $mode = '`priority` DESC, `size` ASC';
-} else if ($sort == 'load') {
-    $mode = '`priority` DESC, `loads` DESC';
-} else if ($sort == 'eval' && $setup['eval_change']) {
-    $mode = '`priority` DESC, `yes` DESC , `no` ASC';
-} else {
-    $mode = '`priority` DESC, `name` ASC';
-}
-
-
-$query = mysql_query('
+$query = $mysqldb->prepare('
     SELECT `id`,
     `hidden`,
     `dir`,
@@ -121,11 +76,13 @@ $query = mysql_query('
     FROM `files`
     WHERE `dir` = "0"
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-    ORDER BY ' . $mode . '
-    LIMIT ' . $start . ', ' . $onpage,
-    $mysql
-);
+    ORDER BY ' . getSortMode() . '
+    LIMIT ?, ?
+');
+$query->bindValue(1, $paginatorConf['start'], PDO::PARAM_INT);
+$query->bindValue(2, $paginatorConf['onpage'], PDO::PARAM_INT);
 
+$query->execute();
 
 require 'core/inc/_files.php';
 

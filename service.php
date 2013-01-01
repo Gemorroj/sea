@@ -46,20 +46,19 @@ $template->setTemplate('service.tpl');
 
 $seo['title'] = $language['advanced_service'];
 
+$mysqldb = MysqlDb::getInstance();
 
 if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
-    $q = mysql_query(
-        '
+    $q = $mysqldb->prepare('
         SELECT *
         FROM `users_profiles`
-        WHERE `id` = ' . intval($_GET['id']) . '
-        AND `pass` = "' . md5($_GET['pass']) . '"'
-        ,
-        $mysql
-    );
+        WHERE `id` = ?
+        AND `pass` = MD5(?)
+    ');
+    $q->execute(array($_GET['id'], $_GET['pass']));
 
-    if (mysql_num_rows($q)) {
-        $assoc = mysql_fetch_assoc($q);
+    if ($q->rowCount() > 0) {
+        $assoc = $q->fetch();
         $_SESSION['id'] = $assoc['id'];
         $_SESSION['name'] = $assoc['name'];
         $_SESSION['url'] = $assoc['url'];
@@ -102,33 +101,30 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             error($error);
         }
 
-        $url = mysql_real_escape_string($_POST['url'], $mysql);
-        $pass = md5($_POST['pass']);
-        $mail = mysql_real_escape_string($_POST['mail'], $mysql);
-        $name = mysql_real_escape_string($_POST['name'], $mysql);
-        $style = mysql_real_escape_string($_POST['style'], $mysql);
 
-        if (mysql_num_rows(
-            mysql_query(
-                '
-            SELECT 1
-            FROM `users_profiles`
-            WHERE `url` = "' . $url . '"'
-                ,
-                $mysql
-            )
-        )
-        ) {
+        $q = $mysqldb->prepare('SELECT 1 FROM `users_profiles` WHERE `url` = ?');
+        $q->execute(array($_POST['url']));
+
+        if ($q->rowCount() > 0) {
             // Такой URL уже есть
             error($language['duplicate_url']);
         } else {
-            if (mysql_query(
-                'INSERT INTO `users_profiles` SET `name` = "' . $name . '", `url` = "' . $url . '", `pass` = "' . $pass
-                    . '", `mail` = "' . $mail . '", `style` = "' . $style . '"',
-                $mysql
-            )
-            ) {
-                $_SESSION['id'] = mysql_insert_id($mysql);
+            $mysqldb->prepare('
+                INSERT INTO `users_profiles` (
+                    `name`, `url`, `pass`, `mail`, `style`
+                ) VALUES (
+                    ?, ?, MD5(?), ?, ?
+                )
+            ')->execute(array(
+                $_POST['name'],
+                $_POST['url'],
+                $_POST['pass'],
+                $_POST['mail'],
+                $_POST['style']
+            ));
+
+            if ($result) {
+                $_SESSION['id'] = $mysqldb->lastInsertId();
                 $_SESSION['name'] = $_POST['name'];
                 $_SESSION['url'] = $_POST['url'];
                 $_SESSION['mail'] = $_POST['mail'];
@@ -149,11 +145,14 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         }
     }
 } elseif (isset($_GET['act']) && $_GET['act'] == 'pass') {
-    $id = intval($_POST['id']);
-    $q = mysql_query('SELECT `mail` FROM `users_profiles` WHERE `id` = ' . $id, $mysql);
-    if (mysql_num_rows($q) && $mail = mysql_result($q, 0)) {
+    $q = $mysqldb->prepare('SELECT `mail` FROM `users_profiles` WHERE `id` = ?');
+    $q->execute(array($_POST['id']));
+    $mail = $q->fetchColumn();
+
+    if ($mail) {
         $pass = pass();
-        mysql_query('UPDATE `users_profiles` SET `pass` = "' . md5($pass) . '" WHERE `id` = ' . $id, $mysql);
+        $mysqldb->prepare('UPDATE `users_profiles` SET `pass` = MD5(?) WHERE `id` = ?')->execute(array($pass, $_POST['id']));
+
         mail(
             $mail,
             '=?utf-8?B?' . base64_encode('Change Password ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
@@ -174,25 +173,29 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             default:
                 $head = $foot = array();
 
+                $q = $mysqldb->prepare('
+                    SELECT `name`, `value`
+                    FROM `users_settings`
+                    WHERE `parent_id` = ?
+                    AND `position` = ?
+                    LIMIT ?
+                ');
+
                 if ($setup['service_head']) {
-                    $q = mysql_query(
-                        'SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id']
-                            . ' AND `position` = "0"',
-                        $mysql
-                    );
-                    for ($i = 1; $i <= $setup['service_head']; ++$i) {
-                        $head[$i] = mysql_fetch_assoc($q);
-                    }
+                    $q->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
+                    $q->bindValue(2, '0');
+                    $q->bindValue(3, intval($setup['service_head']), PDO::PARAM_INT);
+                    $q->execute();
+
+                    $head = $q->fetchAll();
                 }
                 if ($setup['service_foot']) {
-                    $q = mysql_query(
-                        'SELECT `name`, `value` FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id']
-                            . ' AND `position` = "1"',
-                        $mysql
-                    );
-                    for ($i = 1; $i <= $setup['service_foot']; ++$i) {
-                        $foot[$i] = mysql_fetch_assoc($q);
-                    }
+                    $q->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
+                    $q->bindValue(2, '1');
+                    $q->bindValue(3, intval($setup['service_foot']), PDO::PARAM_INT);
+                    $q->execute();
+
+                    $foot = $q->fetchAll();
                 }
 
                 $template->assign('head', $head);
@@ -209,22 +212,30 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 $_SESSION['mail'] = $_POST['mail'];
 
 
-                $key = 0;
+                $mysqldb->prepare('
+                    UPDATE `users_profiles`
+                    SET `name` = ?,
+                    `url` = ?,
+                    `mail` = ?,
+                    `style` = ?
+                    WHERE `id` = ?
+                ')->execute(array(
+                    $_POST['name'],
+                    $_POST['url'],
+                    $_POST['mail'],
+                    $_POST['style'],
+                    $_SESSION['id']
+                ));
 
-                mysql_query(
-                    '
-                UPDATE `users_profiles`
-                SET
-                `name` = "' . mysql_real_escape_string($_POST['name'], $mysql) . '",
-                `url` = "' . mysql_real_escape_string($_POST['url'], $mysql) . '",
-                `mail` = "' . mysql_real_escape_string($_POST['mail'], $mysql) . '",
-                `style` = "' . mysql_real_escape_string($_POST['style'], $mysql) . '",
-                WHERE `id` = ' . (int)$_SESSION['id']
-                    ,
-                    $mysql
-                );
-                mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . (int)$_SESSION['id'], $mysql);
-                $sql = 'INSERT INTO `users_settings` (`parent_id`, `position`, `name`, `value`) VALUES';
+                $mysqldb->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?')->execute(array($_SESSION['id']));
+
+                $q = $mysqldb->prepare('
+                    INSERT INTO `users_settings` (
+                        `parent_id`, `position`, `name`, `value`
+                    ) VALUES (
+                        ?, ?, ?, ?
+                    )
+                ');
 
                 $all = sizeof($_POST['head']['name']);
                 $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
@@ -232,11 +243,12 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     $name = $_POST['head']['name'][$i];
                     $value = ltrim($_POST['head']['value'][$i], 'http://');
                     if ($name && $value) {
-                        $sql
-                            .=
-                            '(' . (int)$_SESSION['id'] . ', "0", "' . mysql_real_escape_string($name, $mysql) . '", "'
-                                . mysql_real_escape_string($value, $mysql) . '"),';
-                        $key++;
+                        $q->execute(array(
+                            $_SESSION['id'],
+                            '0',
+                            $name,
+                            $value
+                        ));
                     }
                 }
 
@@ -246,28 +258,19 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     $name = $_POST['foot']['name'][$i];
                     $value = ltrim($_POST['foot']['value'][$i], 'http://');
                     if ($name && $value) {
-                        $sql
-                            .=
-                            '(' . (int)$_SESSION['id'] . ', "1", "' . mysql_real_escape_string($name, $mysql) . '", "'
-                                . mysql_real_escape_string($value, $mysql) . '"),';
-                        $key++;
+                        $q->execute(array(
+                             $_SESSION['id'],
+                             '1',
+                             $name,
+                             $value
+                        ));
                     }
                 }
 
-                if ($key) {
-                    $r = mysql_query(rtrim($sql, ','), $mysql);
-                } else {
-                    $r = true;
-                }
+                //$mysqldb->exec('OPTIMIZE TABLE `users_profiles`, `users_settings`');
+                //$mysqldb->exec('ANALYZE TABLE `users_profiles`, `users_settings`');
 
-                mysql_query('OPTIMIZE TABLE `users_profiles`, `users_settings`', $mysql);
-                mysql_query('ANALYZE TABLE `users_profiles`, `users_settings`', $mysql);
-
-                if ($r) {
-                    message($language['settings_saved']);
-                } else {
-                    error($language['error']);
-                }
+                message($language['settings_saved']);
                 break;
 
 

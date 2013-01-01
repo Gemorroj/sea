@@ -380,15 +380,81 @@ function retrans($t)
  */
 function get2ses($name)
 {
-    if (!isset($_SESSION[$name])) {
+    if (isset($_SESSION[$name]) === false) {
         $_SESSION[$name] = $GLOBALS['setup'][$name];
     }
-    if (isset($_GET[$name])) {
+    if (isset($_GET[$name]) === true) {
         $_SESSION[$name] = $_GET[$name];
     }
 
     // да, именно переменная переменных
     return $$name = $_SESSION[$name];
+}
+
+
+/**
+ * @return string
+ */
+function getSortMode()
+{
+    global $setup;
+    $sort = get2ses('sort');
+
+    if ($sort === 'date') {
+        $mode = '`priority` DESC, `timeupload` DESC';
+    } elseif ($sort === 'size') {
+        $mode = '`priority` DESC, `size` ASC';
+    } elseif ($sort === 'load') {
+        $mode = '`priority` DESC, `loads` DESC';
+    } elseif ($sort === 'eval' && $setup['eval_change']) {
+        $mode = '`priority` DESC, `yes` DESC , `no` ASC';
+    } else {
+        $mode = '`priority` DESC, `name` ASC';
+    }
+
+    return $mode;
+}
+
+
+/**
+ * @param int $items
+ *
+ * @return array
+ */
+function getPaginatorConf($items)
+{
+    global $setup;
+    $onpage = get2ses('onpage');
+
+    $items = intval($items);
+    $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
+
+    $onpage = $onpage > $items ? $items : $onpage;
+    if ($onpage < 3) {
+        $onpage = $setup['onpage'];
+    }
+
+    $pages = ceil($items / $onpage);
+
+    if ($pages < 1) {
+        $pages = 1;
+    }
+    if ($page > $pages || $page < 1) {
+        $page = 1;
+    }
+
+    $start = ($page - 1) * $onpage;
+    if ($start > $items || $start < 0) {
+        $start = 0;
+    }
+
+    return array(
+        'start' => (int)$start,
+        'page' => (int)$page,
+        'pages' => (int)$pages,
+        'onpage' => (int)$onpage,
+        'items' => (int)$items,
+    );
 }
 
 
@@ -572,97 +638,59 @@ function checkExt($ext)
  * @param bool   $dir
  * @param bool   $insert
  *
- * @return bool
+ * @return PDOStatement
  */
 function _scannerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, $insert = true)
 {
-    if ($dir) {
-        if ($insert) {
-            $q = mysql_query(
-                '
-                INSERT INTO `files` (
-                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`
-                ) VALUES (
-                    "1",
-                    "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string(dirname($path) . '/', $GLOBALS['mysql']) . '",
-                    0,
-                    "' . filectime($path) . '"
-                )
-            ',
-                $GLOBALS['mysql']
-            );
-        } else {
-            $q = mysql_query(
-                '
-                UPDATE `files`
-                SET `name` = IF(`name` <> "", `name`, "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '"),
-                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string(
-                    $rus_name,
-                    $GLOBALS['mysql']
-                ) . '"),
-                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string(
-                    $aze_name,
-                    $GLOBALS['mysql']
-                ) . '"),
-                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string(
-                    $tur_name,
-                    $GLOBALS['mysql']
-                ) . '")
-                WHERE `path` = "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '"
-            ',
-                $GLOBALS['mysql']
-            );
-        }
-    } else {
-        if ($insert) {
-            $q = mysql_query(
-                '
-                INSERT INTO `files` (
-                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size` ,`timeupload`
-                ) VALUES (
-                    "0",
-                    "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($rus_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($aze_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string($tur_name, $GLOBALS['mysql']) . '",
-                    "' . mysql_real_escape_string(dirname($path) . '/', $GLOBALS['mysql']) . '",
-                    "' . filesize($path) . '",
-                    "' . filectime($path) . '"
-                )
-            ',
-                $GLOBALS['mysql']
-            );
-        } else {
-            $q = mysql_query(
-                '
-                UPDATE `files`
-                SET `name` = IF(`name` <> "", `name`, "' . mysql_real_escape_string($name, $GLOBALS['mysql']) . '"),
-                `rus_name` = IF(`rus_name` <> "", `rus_name`, "' . mysql_real_escape_string(
-                    $rus_name,
-                    $GLOBALS['mysql']
-                ) . '"),
-                `aze_name` = IF(`aze_name` <> "", `aze_name`, "' . mysql_real_escape_string(
-                    $aze_name,
-                    $GLOBALS['mysql']
-                ) . '"),
-                `tur_name` = IF(`tur_name` <> "", `tur_name`, "' . mysql_real_escape_string(
-                    $tur_name,
-                    $GLOBALS['mysql']
-                ) . '")
-                WHERE `path` = "' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '"
-            ',
-                $GLOBALS['mysql']
-            );
-        }
+    static $preparedQueryInsert = null;
+    static $preparedQueryUpdate = null;
+
+    if ($preparedQueryInsert === null) {
+        $preparedQueryInsert = MysqlDb::getInstance()->prepare('
+            INSERT INTO `files` (
+                `dir`, `size`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`
+            ) VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+        ');
+    }
+    if ($preparedQueryUpdate === null) {
+        $preparedQueryUpdate = MysqlDb::getInstance()->prepare('
+            UPDATE `files`
+            SET `name` = IF(`name` <> "", `name`, ?),
+            `rus_name` = IF(`rus_name` <> "", `rus_name`, ?),
+            `aze_name` = IF(`aze_name` <> "", `aze_name`, ?),
+            `tur_name` = IF(`tur_name` <> "", `tur_name`, ?)
+            WHERE `path` = ?
+        ');
     }
 
-    return $q;
+    if ($insert) {
+        if ($dir) {
+            $preparedQueryInsert->bindValue(1, '1');
+            $preparedQueryInsert->bindValue(2, 0);
+        } else {
+            $preparedQueryInsert->bindValue(1, '0');
+            $preparedQueryInsert->bindValue(2, filesize($path));
+        }
+        $preparedQueryInsert->bindValue(3, $path);
+        $preparedQueryInsert->bindValue(4, $name);
+        $preparedQueryInsert->bindValue(5, $rus_name);
+        $preparedQueryInsert->bindValue(6, $aze_name);
+        $preparedQueryInsert->bindValue(7, $tur_name);
+        $preparedQueryInsert->bindValue(8, dirname($path) . '/');
+        $preparedQueryInsert->bindValue(9, filectime($path));
+
+        return $preparedQueryInsert;
+    } else {
+        $preparedQueryUpdate->bindValue(1, $name);
+        $preparedQueryUpdate->bindValue(2, $rus_name);
+        $preparedQueryUpdate->bindValue(3, $aze_name);
+        $preparedQueryUpdate->bindValue(4, $tur_name);
+        $preparedQueryUpdate->bindValue(5, $path);
+
+        return $preparedQueryUpdate;
+    }
 }
 
 
@@ -679,6 +707,12 @@ function scanner($path = '', $cont = 'folder.png')
     static $folders = 0;
     static $files = 0;
     static $errors = array();
+    static $preparedQuery = null;
+
+    if ($preparedQuery === null) {
+        $preparedQuery = MysqlDb::getInstance()->prepare('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = ?');
+    }
+
 
     if (is_readable($path) === false) {
         $errors[] = $path . ': не доступно для чтения. Вероятно, не хватает прав.';
@@ -701,21 +735,15 @@ function scanner($path = '', $cont = 'folder.png')
         }
         $is_file = ($is_dir === false && $pathinfo['basename'] != $cont && is_file($f) === true);
 
-
-        $q = mysql_query(
-            'SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = "'
-                . mysql_real_escape_string($f, $GLOBALS['mysql']) . '"'
-        );
-
-        if (!$q) {
-            $errors[] = mysql_error($GLOBALS['mysql']);
+        if (!$preparedQuery->execute(array($f))) {
+            $errors[] = implode("\n", $preparedQuery->errorInfo());
             continue;
         }
 
         $insert = true;
-        if (mysql_num_rows($q) > 0) {
+        if ($preparedQuery->rowCount() > 0) {
             $insert = false;
-            $row = mysql_fetch_assoc($q);
+            $row = $preparedQuery->fetch();
             if ($row['name'] != '' && $row['rus_name'] != '' && $row['aze_name'] != '' && $row['tur_name'] != '') {
                 if ($is_dir === true) {
                     $folders++;
@@ -745,14 +773,14 @@ function scanner($path = '', $cont = 'folder.png')
         if ($is_dir === true) {
             // скриншоты
             $screen = $GLOBALS['setup']['spath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
-            if (!file_exists($screen)) {
+            if (file_exists($screen) === false) {
                 mkdir($screen, 0777);
             }
             chmod($screen, 0777);
 
             // описания
             $desc = $GLOBALS['setup']['opath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
-            if (!file_exists($desc)) {
+            if (file_exists($desc) === false) {
                 mkdir($desc, 0777);
             }
             chmod($desc, 0777);
@@ -764,16 +792,18 @@ function scanner($path = '', $cont = 'folder.png')
             }
             chmod($attach, 0777);
 
-            if (!_scannerDb($f, $name, $rus_name, $aze_name, $tur_name, true, $insert)) {
-                $errors[] = mysql_error($GLOBALS['mysql']);
+            $q = _scannerDb($f, $name, $rus_name, $aze_name, $tur_name, true, $insert);
+            if (!$q->execute()) {
+                $errors[] = implode("\n", $q->errorInfo());
             }
 
             $folders++;
             scanner($f);
         } elseif ($is_file === true) {
             $files++;
-            if (!_scannerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert)) {
-                $errors[] = mysql_error($GLOBALS['mysql']);
+            $q = _scannerDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert);
+            if (!$q->execute()) {
+                $errors[] = implode("\n", $q->errorInfo());
             }
         }
     }
@@ -787,22 +817,16 @@ function scanner($path = '', $cont = 'folder.png')
  */
 function scannerCount()
 {
-    $res = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1" GROUP BY `path`', $GLOBALS['mysql']);
-    while ($dir = mysql_fetch_row($res)) {
-        $dir = mysql_real_escape_string($dir[0], $GLOBALS['mysql']);
+    $mysqldb = Mysqldb::getInstance();
 
-        mysql_query(
-            'UPDATE `files` SET `dir_count` = ' . intval(
-                mysql_result(
-                    mysql_query(
-                        'SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE "' . str_replace(array('_', '%'), array('\_', '\%'), $dir) . '%" AND `hidden` = "0"',
-                        $GLOBALS['mysql']
-                    ),
-                    0
-                )
-            ) . ' WHERE `path`="' . $dir . '"',
-            $GLOBALS['mysql']
-        );
+    $q1 = $mysqldb->prepare('SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE ? AND `hidden` = "0"');
+    $q2 = $mysqldb->prepare('UPDATE `files` SET `dir_count` = ? WHERE `path` = ?');
+
+    foreach ($mysqldb->query('SELECT `path` FROM `files` WHERE `dir` = "1" GROUP BY `path`') as $dir) {
+        $q1->execute(array($mysqldb->escapeLike($dir['path'])));
+        $count = $q1->fetchColumn();
+
+        $q2->execute(array($count, $dir['path']));
     }
 }
 
@@ -814,10 +838,10 @@ function scannerCount()
  */
 function getAllDirs()
 {
-    $dirs = array($GLOBALS['setup']['path'] . '/' => $GLOBALS['setup']['path'] . '/');
+    global $setup;
+    $dirs = array('/' => '/');
 
-    $q = mysql_query('SELECT `path` FROM `files` WHERE `dir` = "1"', $GLOBALS['mysql']);
-    while ($item = mysql_fetch_assoc($q)) {
+    foreach (Mysqldb::getInstance()->query('SELECT SUBSTR(`path`, ' . (strlen($setup['path']) + 1) . ') AS `path` FROM `files` WHERE `dir` = "1"') as $item) {
         $dirs[$item['path']] = $item['path'];
     }
 
@@ -838,31 +862,30 @@ function getBreadcrumbs($info, $is_dir = false)
     global $seo;
 
     $ex = explode('/', rtrim($info['path'], '/'));
-    $l = sizeof($ex);
+    $all = sizeof($ex);
 
     $breadcrumbs = array();
-    if ($l > 1) {
-        $path = '';
+    if ($all > 1) {
+        $path = array();
+        $prefix = '';
 
-        $sql = '
-        SELECT `id`,
-        ' . Language::getInstance()->buildFilesQuery() . '
-        FROM `files`
-        WHERE `path` IN(';
-
-        for ($i = 0; $i < $l; ++$i) {
-            if (!$is_dir && ($i + 1) === $l) {
-                $path .= $ex[$i];
+        for ($i = 0; $i < $all; ++$i) {
+            if (!$is_dir && ($i + 1) === $all) {
+                $path[] = $prefix . $ex[$i];
             } else {
-                $path .= $ex[$i] . '/';
+                $path[] = $prefix . $ex[$i] . '/';
+                $prefix .= $ex[$i] . '/';
             }
-
-            $sql .= '"' . mysql_real_escape_string($path, $GLOBALS['mysql']) . '",';
         }
-        $sql = rtrim($sql, ',') . ')';
 
-        $q = mysql_query($sql, $GLOBALS['mysql']);
-        while ($s = mysql_fetch_assoc($q)) {
+        $q = Mysqldb::getInstance()->prepare('
+            SELECT `id`, ' . Language::getInstance()->buildFilesQuery() . '
+            FROM `files`
+            WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')
+        ');
+        $q->execute($path);
+
+        foreach ($q as $s) {
             $breadcrumbs[$s['id']] = $s['name'];
         }
         if (!$is_dir) {
@@ -893,21 +916,20 @@ function dir_count($path = '', $increment = true)
 {
     $in = array();
     $arr = explode('/', $path);
-    for ($i = 0, $all = sizeof($arr); $i < $all; ++$i) {
+    $all = sizeof($arr);
+    for ($i = 0; $i < $all; ++$i) {
         if ($i > 0) {
-            $in[$i] = $in[$i - 1] . mysql_real_escape_string($arr[$i], $GLOBALS['mysql']) . '/';
+            $in[$i] = $in[$i - 1] . $arr[$i] . '/';
         } else {
-            $in[$i] = mysql_real_escape_string($arr[$i], $GLOBALS['mysql']) . '/';
+            $in[$i] = $arr[$i] . '/';
         }
     }
 
-    return mysql_query(
-        '
+    return Mysqldb::getInstance()->prepare('
         UPDATE `files`
         SET `dir_count` = `dir_count` ' . ($increment ? '+' : '-') . ' 1
-        WHERE `path` IN ("' . implode('","', $in) . '")',
-        $GLOBALS['mysql']
-    );
+        WHERE `path` IN (' . rtrim(str_repeat('?,', $all), ',') . ')
+    ')->execute($in);
 }
 
 
@@ -1183,8 +1205,8 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
 
         case 6:
             // BMP
-            include_once $dir . '/bmp.php';
-            $old = imagecreatefrombmp($in, $dir . '/../cache/');
+            include_once $dir . '/Bmp.php';
+            $old = Bmp::imagecreatefrombmp($in, $dir . '/../cache/');
             break;
 
 
@@ -1330,7 +1352,7 @@ function pass($min = 6, $max = 8)
  */
 function str_to_utf8($str)
 {
-    if (@mb_convert_encoding($str, 'UTF-8', 'UTF-8') != $str) {
+    if (@mb_convert_encoding($str, 'UTF-8', 'UTF-8') !== $str) {
         $str = mb_convert_encoding($str, 'UTF-8', 'Windows-1251');
     }
 
@@ -1381,7 +1403,7 @@ function go($pg = 0, $all = 0, $str)
         $go = '<a href="' . $str . '/1">1</a> ... ' . $go;
     }
 
-    if ($go == $pg . ' ') {
+    if ($go === $pg . ' ') {
         return '';
     } else {
         return '<div class="row">&#160;' . $go . '</div>';
@@ -1749,16 +1771,33 @@ function isValidEmail ($email)
  */
 function getFileInfo ($id)
 {
-    return mysql_fetch_assoc(
-        mysql_query('
-            SELECT *, ' . Language::getInstance()->buildFilesQuery() . '
-            FROM `files`
-            WHERE `id` = ' . intval($id) . '
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-        ',
-            $GLOBALS['mysql']
-        )
+    $q = MysqlDb::getInstance()->prepare('
+        SELECT *, ' . Language::getInstance()->buildFilesQuery() . '
+        FROM `files`
+        WHERE `id` = ?
+        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
+    $q->execute(array($id));
+    return $q->fetch();
+}
+
+
+/**
+ * Данные новости из БД
+ *
+ * @param int $id
+ *
+ * @return array
+ */
+function getNewsInfo ($id)
+{
+    $q = MysqlDb::getInstance()->prepare('
+        SELECT *, ' . Language::getInstance()->buildNewsQuery() . '
+        FROM `news`
+        WHERE `id` = ?
+    ');
+    $q->execute(array($id));
+    return $q->fetch();
 }
 
 
@@ -1771,13 +1810,12 @@ function getFileInfo ($id)
  */
 function updFileLoad ($id)
 {
-    return mysql_unbuffered_query('
+    return MysqlDb::getInstance()->prepare('
         UPDATE `files`
         SET `loads` = `loads` + 1,
-        `timeload` = ' . $_SERVER['REQUEST_TIME'] . '
-        WHERE `id` = ' . intval($id),
-        $GLOBALS['mysql']
-    );
+        `timeload` = ?
+        WHERE `id` = ?
+    ')->execute(array($_SERVER['REQUEST_TIME'], $id));
 }
 
 
@@ -1785,7 +1823,7 @@ function hex2rgb($hex)
 {
     $hex = str_replace('#', '', $hex);
 
-    if (strlen($hex) == 3) {
+    if (strlen($hex) === 3) {
         $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
         $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
         $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));

@@ -73,11 +73,11 @@
 
             <br/>
             <img src="{$smarty.const.DIRECTORY}rate/{$rate}" alt="" style="margin: 1px;"/><br/>
-            {if $vote == null}
+            {if $vote === null}
                 {$language.net}: <span class="yes"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=1">{$language.yes}</a></span>/<span class="no"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=0">{$language.no}</a></span>
-            {elseif $vote == 'success'}
+            {elseif $vote === true}
                 {$language.true_voice}
-            {elseif $vote == 'fail'}
+            {elseif $vote === false}
                 {$language.false_voice}
             {/if}
         </div>

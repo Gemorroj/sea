@@ -40,86 +40,103 @@ require 'core/config.php';
 set_time_limit(999);
 ignore_user_abort(true);
 
+$mysqldb = MysqlDb::getInstance();
 
-mysql_query("CREATE TABLE `users_profiles` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `url` varchar(255) NOT NULL COMMENT 'ссылка на главную партнера',
-  `name` varchar(255) NOT NULL COMMENT 'название ссылки',
-  `pass` char(32) NOT NULL default '',
-  `mail` varchar(255) NOT NULL,
-  `style` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
-$mysql);
-
-
-mysql_query("CREATE TABLE `users_settings` (
-  `parent_id` int(10) unsigned NOT NULL,
-  `position` enum('0','1') NOT NULL default '0' COMMENT 'позиция ссылки. 0 - верх, 1 - низ',
-  `name` varchar(255) NOT NULL COMMENT 'название ссылки',
-  `value` varchar(255) default NULL COMMENT 'текст ссылки',
-  KEY `parent_id` (`parent_id`),
-  KEY `parent_id_position` (`parent_id`,`position`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;",
-$mysql);
+if (!$setup['version']) {
+    $mysqldb->exec("
+        CREATE TABLE `users_profiles` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `url` varchar(255) NOT NULL COMMENT 'ссылка на главную партнера',
+            `name` varchar(255) NOT NULL COMMENT 'название ссылки',
+            `pass` char(32) NOT NULL default '',
+            `mail` varchar(255) NOT NULL,
+            `style` varchar(255) NOT NULL,
+            PRIMARY KEY (`id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1
+    ");
 
 
-mysql_query("ALTER TABLE `files`
-    CHANGE `yes` `yes` MEDIUMINT( 4 ) UNSIGNED NOT NULL DEFAULT '0',
-    CHANGE `no` `no` MEDIUMINT( 4 ) UNSIGNED NOT NULL DEFAULT '0'",
-$mysql);
-mysql_query('ALTER TABLE `files` DROP INDEX `size`', $mysql);
-mysql_query('ALTER TABLE `files` DROP INDEX `rus_name`', $mysql);
-mysql_query('ALTER TABLE `files` DROP INDEX `dir`', $mysql);
-mysql_query('ALTER TABLE `files` ADD INDEX (`yes`)', $mysql);
-mysql_query('ALTER TABLE `files` DROP INDEX `path`, ADD UNIQUE `path` ( `path` )', $mysql);
-mysql_query("ALTER TABLE `files` ADD `hidden` ENUM( '0', '1' ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0'", $mysql);
+    $mysqldb->exec("
+        CREATE TABLE `users_settings` (
+            `parent_id` int(10) unsigned NOT NULL,
+            `position` enum('0','1') NOT NULL default '0' COMMENT 'позиция ссылки. 0 - верх, 1 - низ',
+            `name` varchar(255) NOT NULL COMMENT 'название ссылки',
+            `value` varchar(255) default NULL COMMENT 'текст ссылки',
+            KEY `parent_id` (`parent_id`),
+            KEY `parent_id_position` (`parent_id`,`position`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8
+    ");
 
 
-mysql_query('TRUNCATE TABLE `online`', $mysql);
-mysql_query("ALTER TABLE `online`
-    CHANGE `id` `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT ,
-    CHANGE `ip` `ip` VARCHAR( 23 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-    CHANGE `time` `time` DATETIME NOT NULL",
-$mysql);
-mysql_query('ALTER TABLE `online` DROP `id`', $mysql);
-mysql_query('ALTER TABLE `online` ENGINE = MEMORY', $mysql);
+    $mysqldb->exec("
+        ALTER TABLE `files`
+            CHANGE `yes` `yes` MEDIUMINT( 4 ) UNSIGNED NOT NULL DEFAULT '0',
+            CHANGE `no` `no` MEDIUMINT( 4 ) UNSIGNED NOT NULL DEFAULT '0'
+    ");
+    $mysqldb->exec('ALTER TABLE `files` DROP INDEX `size`');
+    $mysqldb->exec('ALTER TABLE `files` DROP INDEX `rus_name`');
+    $mysqldb->exec('ALTER TABLE `files` DROP INDEX `dir`');
+    $mysqldb->exec('ALTER TABLE `files` ADD INDEX (`yes`)');
+    $mysqldb->exec('ALTER TABLE `files` DROP INDEX `path`, ADD UNIQUE `path` ( `path` )');
+    $mysqldb->exec("ALTER TABLE `files` ADD `hidden` ENUM( '0', '1' ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0'");
 
 
-mysql_query("ALTER TABLE `loginlog`
-    CHANGE `id` `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT ,
-    CHANGE `ua` `ua` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-    CHANGE `ip` `ip` VARCHAR( 23 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-    CHANGE `time` `time` INT( 10 ) UNSIGNED NOT NULL ,
-    CHANGE `access_num` `access_num` TINYINT( 3 ) UNSIGNED NOT NULL",
-$mysql);
-
-mysql_query("ALTER TABLE `loginlog` ROW_FORMAT = FIXED;", $mysql);
-mysql_query("ALTER TABLE `setting` ROW_FORMAT = FIXED;", $mysql);
-mysql_query("ALTER TABLE `users_profiles` ROW_FORMAT = FIXED;", $mysql);
-mysql_query("ALTER TABLE `users_settings` ROW_FORMAT = FIXED;", $mysql);
-
-mysql_query("ALTER TABLE `files` ADD COLUMN `attach` TEXT DEFAULT NULL;", $mysql);
-
-mysql_query("ALTER TABLE `files` ADD COLUMN `seo` TEXT DEFAULT NULL;", $mysql);
+    $mysqldb->exec('TRUNCATE TABLE `online`');
+    $mysqldb->exec("
+        ALTER TABLE `online`
+            CHANGE `id` `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT ,
+            CHANGE `ip` `ip` VARCHAR( 23 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            CHANGE `time` `time` DATETIME NOT NULL
+    ");
+    $mysqldb->exec('ALTER TABLE `online` DROP `id`');
+    $mysqldb->exec('ALTER TABLE `online` ENGINE = MEMORY');
 
 
-mysql_query("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '08-04-2012');", $mysql);
+    $mysqldb->exec("
+        ALTER TABLE `loginlog`
+            CHANGE `id` `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT ,
+            CHANGE `ua` `ua` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            CHANGE `ip` `ip` VARCHAR( 23 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            CHANGE `time` `time` INT( 10 ) UNSIGNED NOT NULL ,
+            CHANGE `access_num` `access_num` TINYINT( 3 ) UNSIGNED NOT NULL
+    ");
 
-mysql_query("ALTER TABLE `files` ADD `aze_name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `rus_name` ,
-ADD `tur_name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_name`", $mysql);
-mysql_query("ALTER TABLE `news` ADD `aze_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `rus_news` ,
-ADD `tur_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_news`", $mysql);
+    $mysqldb->exec("ALTER TABLE `loginlog` ROW_FORMAT = FIXED");
+    $mysqldb->exec("ALTER TABLE `setting` ROW_FORMAT = FIXED");
+    $mysqldb->exec("ALTER TABLE `users_profiles` ROW_FORMAT = FIXED");
+    $mysqldb->exec("ALTER TABLE `users_settings` ROW_FORMAT = FIXED");
+
+    $mysqldb->exec("ALTER TABLE `files` ADD COLUMN `attach` TEXT DEFAULT NULL");
+    $mysqldb->exec("ALTER TABLE `files` ADD COLUMN `seo` TEXT DEFAULT NULL");
+
+    $mysqldb->exec("
+        ALTER TABLE `files`
+            ADD `aze_name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `rus_name` ,
+            ADD `tur_name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_name`
+    ");
+    $mysqldb->exec("
+        ALTER TABLE `news`
+            ADD `aze_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `rus_news` ,
+            ADD `tur_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_news`
+    ");
+
+    $setup['version'] = 2;
+}
 
 
+if ($setup['version'] < 3) {
+    $mysqldb->exec("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '3')");
+    $mysqldb->exec("RENAME TABLE `komments` TO `comments`");
+    $mysqldb->exec("RENAME TABLE `news_komments` TO `news_comments`");
+    $mysqldb->exec("DELETE FROM `setting` WHERE `name` = 'klimit'");
+    $mysqldb->exec("UPDATE `setting` SET `name` = 'comments_change' WHERE `name` = 'komments_change'");
+    $mysqldb->exec("UPDATE `setting` SET `name` = 'comments_view' WHERE `name` = 'komments_view'");
+    $mysqldb->exec("UPDATE `setting` SET `name` = 'comments_captcha' WHERE `name` = 'komments_captcha'");
+    $mysqldb->exec("UPDATE `setting` SET `value` = UNIX_TIMESTAMP() WHERE `name` = 'online_max_time'");
 
-// new
-mysql_query("RENAME TABLE `komments`  TO `comments`", $mysql);
-mysql_query("RENAME TABLE `news_komments`  TO `news_comments`", $mysql);
-mysql_query("DELETE FROM `setting` WHERE `name` = 'klimit'", $mysql);
-mysql_query("UPDATE `setting` SET `name` = 'comments_change' WHERE `name` = 'komments_change'", $mysql);
-mysql_query("UPDATE `setting` SET `name` = 'comments_view' WHERE `name` = 'komments_view'", $mysql);
-mysql_query("UPDATE `setting` SET `name` = 'comments_captcha' WHERE `name` = 'komments_captcha'", $mysql);
+    $setup['version'] = 3;
+}
 
+$mysqldb->prepare("INSERT INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $setup['version']));
 
 header('Location: http://' . $_SERVER['HTTP_HOST'] . str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) . '/');

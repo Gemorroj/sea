@@ -43,20 +43,10 @@ chdir('../');
 require 'core/header.php';
 
 $template->setTemplate('apanel/index.tpl');
-//TODO:breadcrumbs?
-/*
-$template->assign('breadcrumbs', array(
-    'apanel/apanel.php' => 'Admin Panel',
-    '*' => 'Сообщение',
-));
-*/
 
 
 
-mysql_query('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1', $mysql);
-if (mysql_result(mysql_query('SELECT COUNT(1) FROM `loginlog`', $mysql), 0) > 21) {
-    mysql_query('DELETE FROM `loginlog` WHERE `id` <> 1 ORDER BY `id` LIMIT 1', $mysql);
-}
+$mysqldb->exec('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1');
 ###################################################
 if (!$_SESSION) {
     exit('Не запущена сессия');
@@ -71,7 +61,7 @@ if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER
 
 switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'add_attach':
-        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             $template->send();
@@ -100,20 +90,21 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         if (add_attach($file['infolder'], $id, array($key => $_FILES['attach']))) {
             $attach[$key] = $_FILES['attach']['name'];
-            if (mysql_query('UPDATE `files` SET `attach` = "' . mysql_real_escape_string(serialize($attach), $mysql) . '" WHERE `id` = ' . $id, $mysql)) {
+            $q = $mysqldb->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
+            if ($q->execute(array(serialize($attach), $id))) {
                 $template->assign('message', 'Вложение добавлено');
             } else {
-                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', implode("\n", $q->errorInfo()));
             }
         } else {
             $err = error_get_last();
-            $template->assign('error', 'Ошибка: ' . $err['message']);
+            $template->assign('error', $err['message']);
         }
         break;
 
 
     case 'del_attach':
-        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             $template->send();
@@ -126,29 +117,26 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             unset($attach[$_GET['attach']]);
         }
 
-        $result = null;
+        $q = $mysqldb->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
         if (!$attach) {
-            $result = mysql_query('UPDATE `files` SET `attach` = NULL WHERE `id` = ' . $id, $mysql);
+            $q->bindValue(1, null, PDO::PARAM_NULL);
+            $q->bindValue(2, $id, PDO::PARAM_INT);
         } else {
-            $result = mysql_query('
-                UPDATE `files`
-                SET `attach` = "' . mysql_real_escape_string(serialize($attach), $mysql) . '"
-                WHERE `id` = ' . $id,
-                $mysql
-            );
+            $q->bindValue(1, serialize($attach));
+            $q->bindValue(2, $id, PDO::PARAM_INT);
         }
 
-        if ($result) {
+        if ($q->execute()) {
             del_attach($file['infolder'], $id, array($_GET['attach'] => $name));
             $template->assign('message', 'Вложение удалено');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
 
     case 'move':
-        $file = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
+        $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             $template->send();
@@ -171,17 +159,12 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
         if (!rename($file['path'], $folder . $filename)) {
             $err = error_get_last();
-            $template->assign('error', 'Ошибка: ' . $err['message']);
+            $template->assign('error', $err['message']);
             $template->send();
         }
 
-        if (mysql_query('
-            UPDATE `files`
-            SET `path` = "' . mysql_real_escape_string($folder . $filename, $mysql) . '",
-            `infolder` = "' . mysql_real_escape_string($folder, $mysql) . '"
-            WHERE `id` = ' . $id,
-            $mysql
-        )) {
+        $q = $mysqldb->prepare('UPDATE `files` SET `path` = ?, `infolder` = ? WHERE `id` = ?');
+        if ($q->execute(array($folder . $filename, $folder, $id))) {
             dir_count($folder, false);
             dir_count($folder['path'], true);
 
@@ -202,28 +185,29 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->assign('message', 'Файл перемещен');
         } else {
             rename($folder . $filename, $file['path']); // переименовываем обратно
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
 
     case 'hidden':
-        $info = mysql_fetch_assoc(mysql_query('SELECT 1 FROM `files` WHERE `id` = ' . $id, $mysql));
-        if (!$info) {
+        $file = getFileInfo($id);
+        if (!$file) {
             $template->assign('error', 'Директория или файл не найдены');
             $template->send();
         }
 
+        $q = $mysqldb->prepare('UPDATE `files` SET `hidden` = ? WHERE `id` = ?');
         if ($_GET['hide'] == '1') {
-            $query = 'UPDATE `files` SET `hidden` = "1" WHERE `id` = ' . $id;
+            $result = $q->execute(array('1', $id));
         } else {
-            $query = 'UPDATE `files` SET `hidden` = "0" WHERE `id` = ' . $id;
+            $result = $q->execute(array('0', $id));
         }
 
-        if (mysql_query($query, $mysql)) {
+        if ($result) {
             $template->assign('message', 'Видимость изменена');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
@@ -231,15 +215,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'rename':
         $template->setTemplate('apanel/files/rename.tpl');
 
-        $info = mysql_fetch_assoc(
-            mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql)
-        );
-        if (!$info) {
+        $file = getFileInfo($id);
+        if (!$file) {
             $template->assign('error', 'Директория или файл не найдены');
             $template->send();
         }
 
-        $template->assign('info', $info);
+        $template->assign('info', $file);
 
         $langpacks = Language::getInstance()->getLangpacks();
         $template->assign('langpacks', $langpacks);
@@ -251,25 +233,17 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     $template->send();
                 }
             }
-            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
-            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
-            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
-            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
 
-            mysql_query(
-                "
-                UPDATE `files`
-                SET name = '" . $eng . "',
-                rus_name = '" . $rus . "',
-                aze_name = '" . $aze . "',
-                tur_name = '" . $tur . "'
-                WHERE `id` = " . $id
-                ,
-                $mysql
-            );
-            $error = mysql_error($mysql);
-            if ($error) {
-                $template->assign('error', 'Ошибка: ' . $error);
+            $q = $mysqldb->prepare('UPDATE `files` SET name = ?, rus_name = ?, aze_name = ?, tur_name = ? WHERE `id` = ?');
+            $result = $q->execute(array(
+                 $_POST['new']['english'],
+                 $_POST['new']['russian'],
+                 $_POST['new']['azerbaijan'],
+                 $_POST['new']['turkey']
+            ));
+
+            if (!$result) {
+                $template->assign('error', implode("\n", $q->errorInfo()));
             } else {
                 $template->assign('message', 'Название изменено');
             }
@@ -283,50 +257,47 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $info = mysql_fetch_assoc(
-            mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql)
-        );
-        if (!$info) {
+        $file = getFileInfo($id);
+        if (!$file) {
             $template->assign('error', 'Директория не найдена');
             $template->send();
         }
 
-        $ex = explode('/', $info['path']);
+        $ex = explode('/', $file['path']);
         $f_chmod = '';
         foreach ($ex as $chmod) {
             $f_chmod .= $chmod . '/';
             chmod($f_chmod, 0777);
         }
 
-        foreach (glob($info['path'] . '*') as $vv) {
+        foreach (glob($file['path'] . '*') as $vv) {
             if (is_dir($vv)) {
                 $template->assign('error', 'Разрешено удалять только директории с одним уровнем вложенности');
                 $template->send();
             } else {
                 if (!unlink($vv)) {
                     $err = error_get_last();
-                    $template->assign('error', 'Ошибка: ' . $err['message']);
+                    $template->assign('error', $err['message']);
                     $template->send();
                 }
             }
         }
-        if (!mysql_query(
-            "DELETE FROM `files` WHERE `infolder` = '" . mysql_real_escape_string($info['path'], $mysql) . "'",
-            $mysql
-        )
-        ) {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+
+        $q = $mysqldb->prepare('DELETE FROM `files` WHERE `infolder` = ?');
+        if ($q->execute(array($file['path']))) {
+            $template->assign('error', implode("\n", $q->errorInfo()));
             $template->send();
         }
 
-        if (!rmdir($info['path'])) {
+        if (!rmdir($file['path'])) {
             $err = error_get_last();
-            $template->assign('error', 'Ошибка: ' . $err['message']);
+            $template->assign('error', $err['message']);
             $template->send();
         }
 
-        if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+        $q = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
+        if (!$q->execute(array($id))) {
+            $template->assign('error', implode("\n", $q->errorInfo()));
             $template->send();
         }
 
@@ -348,9 +319,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->assign('error', 'Error');
             $template->send();
         }
-        $file = mysql_fetch_assoc(
-            mysql_query('SELECT `path`, `infolder`, `attach` FROM `files` WHERE `id` = ' . $id, $mysql)
-        );
+        $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             $template->send();
@@ -367,14 +336,15 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             @chmod($f_chmod, 0777);
         }
 
-        if (!mysql_query('DELETE FROM `files` WHERE `id` = ' . $id, $mysql)) {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+        $q = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
+        if (!$q->execute(array($id))) {
+            $template->assign('error', implode("\n", $q->errorInfo()));
             $template->send();
         }
 
         if (!unlink($file['path'])) {
             $err = error_get_last();
-            $template->assign('error', 'Ошибка: ' . $err['message']);
+            $template->assign('error', $err['message']);
             $template->send();
         }
 
@@ -389,22 +359,22 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'priority':
-        $info = mysql_fetch_assoc(mysql_query('SELECT 1 FROM `files` WHERE `dir` = "1" AND `id` = ' . $id, $mysql));
-        if (!$info) {
+        $file = getFileInfo($id);
+        if (!$file) {
             $template->assign('error', 'Директория не найдена');
             $template->send();
         }
 
         if ($_GET['to'] == 'down') {
-            $query = 'UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ' . $id;
+            $q = $mysqldb->prepare('UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ?');
         } else {
-            $query = 'UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ' . $id;
+            $q = $mysqldb->prepare('UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ?');
         }
 
-        if (mysql_query($query, $mysql)) {
+        if ($q->execute(array($id))) {
             $template->assign('message', 'Приоритет директории изменен');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
@@ -412,7 +382,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'about':
         $template->setTemplate('apanel/files/about.tpl');
 
-        $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `path` FROM `files` WHERE `id` = ' . $id, $mysql));
+        $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             $template->send();
@@ -428,14 +398,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     $template->assign('message', 'Описание удалено');
                 } else {
                     $err = error_get_last();
-                    $template->assign('error', 'Ошибка: ' . $err['message']);
+                    $template->assign('error', $err['message']);
                 }
             } else {
                 if (file_put_contents($about, trim($_POST['about']))) {
                     $template->assign('message', 'Описание изменено');
                 } else {
                     $err = error_get_last();
-                    $template->assign('error', 'Ошибка: ' . $err['message']);
+                    $template->assign('error', $err['message']);
                 }
             }
         }
@@ -447,6 +417,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'seo':
         $template->setTemplate('apanel/files/seo.tpl');
 
+        $file = getFileInfo($id);
+        if (!$file) {
+            $template->assign('error', 'Файл не найден');
+            $template->send();
+        }
+
+        $seo = unserialize($file['seo']);
+
         if ($_POST) {
             $seo = serialize(
                 array(
@@ -455,24 +433,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                      'description' => $_POST['description']
                 )
             );
-            if (mysql_query(
-                'UPDATE `files` SET `seo` = "' . mysql_real_escape_string($seo, $mysql) . '" WHERE `id` = ' . $id,
-                $mysql
-            )
-            ) {
+
+            $q = $mysqldb->prepare('UPDATE `files` SET `seo` = ? WHERE `id` = ?');
+            if ($q->execute(array($seo, $id))) {
                 $template->assign('message', 'Данные изменены');
             } else {
-                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', implode("\n", $q->errorInfo()));
             }
         }
-
-        $file = mysql_fetch_assoc(mysql_query('SELECT `name`, `seo` FROM `files` WHERE `id` = ' . $id, $mysql));
-        if (!$file) {
-            $template->assign('error', 'Файл не найден');
-            $template->send();
-        }
-
-        $seo = unserialize($file['seo']);
 
         $template->assign('file', $file);
         $template->assign('seo', $seo);
@@ -483,15 +451,15 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/files/add_screen.tpl');
 
         if ($_FILES) {
-            $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-            if (!$info) {
+            $file = getFileInfo($id);
+            if (!$file) {
                 $template->assign('error', 'Не найдена директория');
                 $template->send();
             }
 
-            $info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
-            $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
-            $thumb = $setup['spath'] . $info['path'] . '.thumb.gif'; // имя конечного файла
+            $file['path'] = strstr($file['path'], '/'); // убираем папку с загрузками
+            $to = $setup['spath'] . $file['path'] . '.gif'; // имя конечного файла
+            $thumb = $setup['spath'] . $file['path'] . '.thumb.gif'; // имя конечного файла
 
             $ex = pathinfo($_FILES['screen']['name']);
             $ext = strtolower($ex['extension']);
@@ -518,28 +486,28 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $template->assign('message', 'Скриншот добавлен');
             } else {
                 $err = error_get_last();
-                $template->assign('error', 'Ошибка: ' . $err['message']);
+                $template->assign('error', $err['message']);
             }
         }
         break;
 
 
     case 'del_screen':
-        $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-        if (!$info) {
+        $file = getFileInfo($id);
+        if (!$file) {
             $template->assign('error', 'Не найдена директория');
             $template->send();
         }
 
-        $info['path'] = strstr($info['path'], '/'); // убираем папку с загрузками
-        $to = $setup['spath'] . $info['path'] . '.gif'; // имя конечного файла
-        $to2 = $setup['spath'] . $info['path'] . '.jpg'; // имя конечного файла
+        $file['path'] = strstr($file['path'], '/'); // убираем папку с загрузками
+        $to = $setup['spath'] . $file['path'] . '.gif'; // имя конечного файла
+        $to2 = $setup['spath'] . $file['path'] . '.jpg'; // имя конечного файла
 
         if (unlink($to) || unlink($to2)) {
             $template->assign('message', 'Скриншот удален');
         } else {
             $err = error_get_last();
-            $template->assign('error', 'Ошибка: ' . $err['message']);
+            $template->assign('error', $err['message']);
         }
         break;
 
@@ -548,13 +516,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/files/add_ico.tpl');
 
         if ($_FILES) {
-            $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-            if (!$info) {
+            $file = getFileInfo($id);
+            if (!$file) {
                 $template->assign('error', 'Не найдена директория');
                 $template->send();
             }
 
-            $to = $info['path'] . 'folder.png';
+            $to = $file['path'] . 'folder.png';
 
             if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
                 $template->assign('error', 'Поддерживаются иконки только png формата');
@@ -575,18 +543,18 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_ico':
-        $info = mysql_fetch_assoc(mysql_query('SELECT * FROM `files` WHERE `id` = ' . $id, $mysql));
-        if (!$info) {
+        $file = getFileInfo($id);
+        if (!$file) {
             $template->assign('error', 'Не найдена директория');
             $template->send();
         }
 
-        if (!file_exists($info['path'] . 'folder.png')) {
+        if (!file_exists($file['path'] . 'folder.png')) {
             $template->assign('error', 'Иконки к данной папке не существует');
             $template->send();
         }
 
-        if (unlink($info['path'] . 'folder.png')) {
+        if (unlink($file['path'] . 'folder.png')) {
             $template->assign('message', 'Удаление иконки прошло успешно');
         } else {
             $template->assign('error', 'Удаление иконки окончилось неудачно');
@@ -617,7 +585,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
 
 
-            $newpath = trim($_POST['topath']);
+            $newpath = $setup['path'] . trim($_POST['topath']);
             if ($newpath == '') {
                 $template->assign('error', 'Нет конечного пути!');
                 $template->send();
@@ -638,13 +606,6 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             // вложения
             $attach = $setup['apath'] . '/' . $temp;
 
-            $dirnew = array();
-            $dirnew['english'] = mysql_real_escape_string($_POST['dir']['english'], $mysql);
-            $dirnew['russian'] = mysql_real_escape_string($_POST['dir']['russian'], $mysql);
-            $dirnew['azerbaijan'] = mysql_real_escape_string($_POST['dir']['azerbaijan'], $mysql);
-            $dirnew['turkey'] = mysql_real_escape_string($_POST['dir']['turkey'], $mysql);
-
-
             mkdir($directory, 0777);
             chmod($directory, 0777); // fix
 
@@ -662,26 +623,26 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
             // заносим в бд
-            if (mysql_query(
-                "INSERT INTO `files`
-                (`dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`)
-                VALUES (
-                    '1',
-                    0,
-                    '" . mysql_real_escape_string($directory, $mysql) . "',
-                    '" . $dirnew['english'] . "',
-                    '" . $dirnew['russian'] . "',
-                    '" . $dirnew['azerbaijan'] . "',
-                    '" . $dirnew['turkey'] . "',
-                    '" . mysql_real_escape_string($newpath, $mysql) . "',
-                    " . $_SERVER['REQUEST_TIME'] . "
-                );",
-                $mysql
-            )) {
+            $q = $mysqldb->prepare('
+                INSERT INTO `files` (
+                    `dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`
+                ) VALUES (?, ? , ?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP())
+            ');
+            $result = $q->execute(array(
+                '1',
+                '0',
+                $directory,
+                $_POST['dir']['english'],
+                $_POST['dir']['russian'],
+                $_POST['dir']['azerbaijan'],
+                $_POST['dir']['turkey'],
+                $newpath
+            ));
+            if ($result) {
                 dir_count($newpath, true);
                 $template->assign('message', 'Новый каталог создан');
             } else {
-                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', implode("\n", $q->errorInfo()));
             }
         }
 
@@ -703,37 +664,23 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 }
             }
 
-            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
-            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
-            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
-            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+            $q = $mysqldb->prepare('UPDATE `news` SET `news` = ?, `rus_news` = ?, `aze_news` = ?, `tur_news` = ? WHERE `id` = ?');
+            $result = $q->execute(array(
+                $_POST['new']['english'],
+                $_POST['new']['russian'],
+                $_POST['new']['azerbaijan'],
+                $_POST['new']['turkey'],
+                $_GET['news']
+            ));
 
-            mysql_query(
-                "
-                UPDATE `news`
-                SET `news` = '" . $eng . "',
-                `rus_news` = '" . $rus . "',
-                `aze_news` = '" . $aze . "',
-                `tur_news` = '" . $tur . "'
-                WHERE `id` = " . intval($_GET['news']),
-                $mysql
-            );
-
-            if ($err = mysql_error($mysql)) {
-                $template->assign('error', 'Ошибка: ' . $err);
+            if (!$result) {
+                $template->assign('error', implode("\n", $q->errorInfo()));
             } else {
                 $template->assign('message', 'Новость изменена');
             }
         }
 
-        $q = mysql_query('
-            SELECT *, ' . Language::getInstance()->buildNewsQuery() . '
-            FROM `news`
-            WHERE `id` = ' . intval($_GET['news'])
-        );
-        $news = mysql_fetch_assoc($q);
-        $template->assign('news', $news);
-
+        $template->assign('news', getNewsInfo($_GET['news']));
         break;
 
 
@@ -751,23 +698,18 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 }
             }
 
-            $eng = mysql_real_escape_string($_POST['new']['english'], $mysql);
-            $rus = mysql_real_escape_string($_POST['new']['russian'], $mysql);
-            $aze = mysql_real_escape_string($_POST['new']['azerbaijan'], $mysql);
-            $tur = mysql_real_escape_string($_POST['new']['turkey'], $mysql);
+            $q = $mysqldb->prepare('
+                INSERT INTO `news` SET `news` = ?, `rus_news` = ?, `aze_news` = ?, `tur_news` = ?, `time` = UNIX_TIMESTAMP()
+            ');
+            $result = $q->execute(array(
+                $_POST['new']['english'],
+                $_POST['new']['russian'],
+                $_POST['new']['azerbaijan'],
+                $_POST['new']['turkey']
+            ));
 
-            mysql_query(
-                "
-                INSERT INTO `news` (
-                    `news`, `rus_news`, `aze_news`, `tur_news`, `time`
-                ) VALUES (
-                    '" . $eng . "', '" . $rus . "', '" . $aze . "', '" . $tur . "', " . $_SERVER['REQUEST_TIME'] . "
-                )",
-                $mysql
-            );
-
-            if ($err = mysql_error($mysql)) {
-                $template->assign('error', 'Ошибка: ' . $err);
+            if (!$result) {
+                $template->assign('error', implode("\n", $q->errorInfo()));
             } else {
                 $template->assign('message', 'Новость добавлена');
             }
@@ -781,15 +723,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $scan = $setup['path'];
 
         if (isset($_GET['id'])) {
-            $info = mysql_fetch_assoc(
-                mysql_query('SELECT `path` FROM `files` WHERE `id` = ' . $id . ' AND `dir` = "1"', $mysql)
-            );
+            $file = getFileInfo($id);
 
-            if (!$info || is_dir($info['path']) === false) {
+            if (!$file || is_dir($file['path']) === false) {
                 $template->assign('error', 'Такой категории не существует');
                 $template->send();
             } else {
-                $scan = $info['path'];
+                $scan = $file['path'];
             }
         }
 
@@ -815,16 +755,16 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/id3_file.tpl');
 
         include CORE_DIRECTORY . '/PEAR/MP3/Id.php';
-        include CORE_DIRECTORY . '/inc/mp3.class.php';
+        include CORE_DIRECTORY . '/classes/mp3.class.php';
         $id3 = new MP3_Id();
 
         $genres = $id3->genres();
         $template->assign('genres', $genres);
 
 
-        $tmp = mysql_fetch_row(mysql_query('SELECT `path` FROM `files` WHERE `id`=' . $id, $mysql));
+        $file = getFileInfo($id);
 
-        $id3->read($tmp[0]);
+        $id3->read($file['path']);
 
         $name = str_to_utf8($id3->name);
         $artists = str_to_utf8($id3->artists);
@@ -856,7 +796,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
             // Записываем Idv2 теги
-            $mp3 = new mp3($tmp[0]);
+            $mp3 = new mp3($file['path']);
             //$mp3->striptags(); // bug
             $mp3->setIdv3_2(
                 $track,
@@ -872,7 +812,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 'http://' . $_SERVER['HTTP_HOST'],
                 ''
             );
-            $mp3->save($tmp[0]);
+            $mp3->save($file['path']);
 
 
             // записываем Idv1 теги
@@ -897,7 +837,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/id3.tpl');
 
         include CORE_DIRECTORY . '/PEAR/MP3/Id.php';
-        include CORE_DIRECTORY . '/inc/mp3.class.php';
+        include CORE_DIRECTORY . '/classes/mp3.class.php';
         $id3 = new MP3_Id();
 
         $genres = $id3->genres();
@@ -929,8 +869,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $all = 0;
             $write = 0;
             $cacheDir = CORE_DIRECTORY . '/cache';
-            $q = mysql_query('SELECT `path`, `id` FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")', $mysql);
-            while ($f = mysql_fetch_assoc($q)) {
+
+            $q = $mysqldb->query('SELECT * FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")');
+            foreach ($q as $f) {
                 $all++;
                 @unlink($cacheDir . '/' . $f['id'] . '.dat');
 
@@ -1000,48 +941,38 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         if ($_POST) {
             if (isset($_POST['marker'])) {
-                if (
-                    mysql_query(
-                        'REPLACE INTO setting(name, value) VALUES("marker", "' . intval($_POST['marker']) . '")',
-                        $mysql
-                    )
-                    && mysql_query(
-                        'REPLACE INTO setting(name, value) VALUES("marker_where", "' . (
-                        $_POST['marker_where'] == 'top' ? 'top' : 'foot') . '")',
-                        $mysql
-                    )
-                ) {
+                $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+                $result1 = $q->execute(array('marker', $_POST['marker']));
+                $result2 = $q->execute(array('marker_where', ($_POST['marker_where'] == 'top' ? 'top' : 'foot')));
+                if ($result1 && $result2) {
                     $template->assign('message', 'Настройки маркера изменены');
                 } else {
-                    $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                    $template->assign('error', implode("\n", $q->errorInfo()));
                 }
             } else {
-                $q = mysql_query(
-                    'SELECT `path` FROM `files` WHERE `path` LIKE "%.jpg" OR `path` LIKE "%.jpe" OR `path` LIKE "%.jpeg" OR `path` LIKE "%.gif" OR `path` LIKE "%.png"',
-                    $mysql
-                );
-                $all = mysql_num_rows($q);
+                $q = $mysqldb->query('SELECT `path` FROM `files` WHERE `path` LIKE "%.jpg" OR `path` LIKE "%.jpe" OR `path` LIKE "%.jpeg" OR `path` LIKE "%.gif" OR `path` LIKE "%.png"');
+                $all = $q->rowCount();
                 $i = 0;
                 $textLen = mb_strlen($_POST['text']);
                 $rgb = hex2rgb($_POST['color']);
 
-                while ($arr = mysql_fetch_row($q)) {
-                    list($w, $h, $type) = getimagesize($arr[0]);
+                foreach ($q as $arr) {
+                    list($w, $h, $type) = getimagesize($arr['path']);
 
 
                     switch ($type) {
                         case 1:
-                            $pic = imagecreatefromgif($arr[0]);
+                            $pic = imagecreatefromgif($arr['path']);
                             break;
 
 
                         case 2:
-                            $pic = imagecreatefromjpeg($arr[0]);
+                            $pic = imagecreatefromjpeg($arr['path']);
                             break;
 
 
                         case 3:
-                            $pic = imagecreatefrompng($arr[0]);
+                            $pic = imagecreatefrompng($arr['path']);
                             break;
 
 
@@ -1113,7 +1044,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $message = array();
             $error = array();
 
-            $newpath = trim($_POST['topath']);
+            $newpath = $setup['path'] . trim($_POST['topath']);
             if ($newpath == '') {
                 $template->assign('error', 'Нет конечного пути!');
                 $template->send();
@@ -1124,8 +1055,15 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
 
             $text = explode("\n", $_POST['files']);
-            $a = sizeof($text);
-            for ($i = 0; $i < $a; ++$i) {
+            $q = $mysqldb->prepare('
+                INSERT INTO `files` (
+                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
+                ) VALUES (
+                    "0", ?, ?, ?, ?, ?, ?, ?, ?
+                )
+            ');
+
+            for ($i = 0, $l = sizeof($text); $i < $l; ++$i) {
                 $parametr = explode('#', trim($text[$i]));
                 if (!isset($parametr[1])) {
                     $parametr[1] = basename(trim($parametr[0]));
@@ -1146,24 +1084,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
 
                     $infolder = dirname($to) . '/';
-                    mysql_query(
-                        "
-                    INSERT INTO `files` (
-                        `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
-                    ) VALUES (
-                        '" . mysql_real_escape_string($to, $mysql) . "',
-                        '" . mysql_real_escape_string($name, $mysql) . "',
-                        '" . mysql_real_escape_string($rus_name, $mysql) . "',
-                        '" . mysql_real_escape_string($aze_name, $mysql) . "',
-                        '" . mysql_real_escape_string($tur_name, $mysql) . "',
-                        '" . mysql_real_escape_string($infolder, $mysql) . "',
-                        " . filesize($to) . ",
-                        " . filectime($to) . "
-                    )",
-                        $mysql
-                    );
-                    dir_count($infolder, true);
 
+                    $q->execute(array(
+                        $to,
+                        $name,
+                        $rus_name,
+                        $aze_name,
+                        $tur_name,
+                        $infolder,
+                        filesize($to),
+                        filectime($to)
+                    ));
+                    dir_count($infolder, true);
+                    chmod($to, 0644);
                     $message[] = 'Импорт файла ' . $parametr[1] . ' удался';
                 } else {
                     $err = error_get_last();
@@ -1192,7 +1125,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $message = array();
             $error = array();
 
-            $newpath = trim($_POST['topath']);
+            $newpath = $setup['path'] . trim($_POST['topath']);
             if ($newpath == '') {
                 $template->assign('error', 'Нет конечного пути');
                 $template->send();
@@ -1202,8 +1135,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $template->send();
             }
 
-            $a = sizeof($_FILES['userfile']['name']);
-            for ($i = 0; $i < $a; ++$i) {
+            $q = $mysqldb->prepare('
+                INSERT INTO `files` (
+                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
+                ) VALUES (
+                    "0", ?, ?, ?, ?, ?, ?, ?, ?
+                )
+            ');
+            for ($i = 0, $l = sizeof($_FILES['userfile']['name']); $i < $l; ++$i) {
                 if (empty($_FILES['userfile']['name'][$i])) {
                     continue;
                 }
@@ -1223,37 +1162,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
                     $infolder = dirname($to) . '/';
 
-
-                    $files = $dbFiles = array();
-
-                    mysql_query(
-                        "
-                    INSERT INTO `files` (
-                        `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`, `attach`
-                    ) VALUES (
-                        '0',
-                        '" . mysql_real_escape_string($to, $mysql) . "',
-                        '" . mysql_real_escape_string($name, $mysql) . "',
-                        '" . mysql_real_escape_string($rus_name, $mysql) . "',
-                        '" . mysql_real_escape_string($aze_name, $mysql) . "',
-                        '" . mysql_real_escape_string($tur_name, $mysql) . "',
-                        '" . mysql_real_escape_string($infolder, $mysql) . "' ,
-                        " . filesize($to) . ",
-                        " . filectime($to) . ",
-                        " . ($dbFiles ? "'" . mysql_real_escape_string(serialize($dbFiles), $mysql) . "'" : 'NULL') . "
-                    );
-                    ",
-                        $mysql
-                    );
-                    $id = mysql_insert_id($mysql);
-                    if ($files) {
-                        add_attach($newpath, $id, $files);
-                    }
+                    $q->execute(array(
+                         $to,
+                         $name,
+                         $rus_name,
+                         $aze_name,
+                         $tur_name,
+                         $infolder,
+                         filesize($to),
+                         filectime($to)
+                    ));
 
                     dir_count($infolder, true);
-
                     chmod($to, 0644);
-
                     $message[] = 'Закачка файла ' . $name . ' прошла успешно';
                 } else {
                     $error[] = 'Закачка файла ' . $name . ' окончилась неудачно';
@@ -1274,37 +1195,29 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'service':
         $template->setTemplate('apanel/service.tpl');
 
-        $users =  mysql_result(mysql_query('SELECT COUNT(1) FROM `users_profiles`', $mysql), 0);
+        $users = $mysqldb->query('SELECT COUNT(1) FROM `users_profiles`')->fetchColumn();
         $template->assign('users', $users);
 
         if ($_POST) {
             switch ($_GET['mode']) {
                 case 'del':
-                    $user = intval($_POST['user']);
-                    if (
-                        mysql_query('DELETE FROM `users_profiles` WHERE `id` = ' . $user, $mysql)
-                        && mysql_query('DELETE FROM `users_settings` WHERE `parent_id` = ' . $user, $mysql)
-                    ) {
+                    $q1 = $mysqldb->prepare('DELETE FROM `users_profiles` WHERE `id` = ?');
+                    $q2 = $mysqldb->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?');
+
+                    if ($q1->execute(array($_POST['user'])) && $q2->execute(array($_POST['user']))) {
                         $template->assign('message', 'Пользователь удален');
                     } else {
-                        $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                        $template->assign('error', implode("\n", $q1->errorInfo()) . implode("\n", $q2->errorInfo()));
                     }
                     break;
 
                 default:
-                    if (
-                        mysql_query(
-                            'REPLACE INTO setting(name, value) VALUES("service_head", "' . abs($_POST['service_head']) . '")',
-                            $mysql
-                        )
-                        && mysql_query(
-                            'REPLACE INTO setting(name, value) VALUES("service_foot", "' . abs($_POST['service_foot']) . '")',
-                            $mysql
-                        )
-                    ) {
+                    $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+
+                    if ($q->execute(array('service_head', $_POST['service_head'])) && $q->execute(array('service_foot', $_POST['service_foot']))) {
                         $template->assign('message', 'Настройки сервиса изменены');
                     } else {
-                        $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                        $template->assign('error', implode("\n", $q->errorInfo()));
                     }
                     break;
             }
@@ -1316,32 +1229,15 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/exchanger.tpl');
 
         if ($_POST) {
-            $exchanger_notice = $_POST['exchanger_notice'] ? 1 : 0;
-            $exchanger_hidden = $_POST['exchanger_hidden'] ? 1 : 0;
-            $exchanger_extensions = mysql_real_escape_string($_POST['exchanger_extensions'], $mysql);
-            $exchanger_name = mysql_real_escape_string($_POST['exchanger_name'], $mysql);
+            $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
-            if (
-                mysql_query(
-                    'REPLACE INTO setting(name, value) VALUES("exchanger_notice", "' . $exchanger_notice . '")',
-                    $mysql
-                )
-                && mysql_query(
-                    'REPLACE INTO setting(name, value) VALUES("exchanger_extensions", "' . $exchanger_extensions . '")',
-                    $mysql
-                )
-                && mysql_query(
-                    'REPLACE INTO setting(name, value) VALUES("exchanger_name", "' . $exchanger_name . '")',
-                    $mysql
-                )
-                && mysql_query(
-                    'REPLACE INTO setting(name, value) VALUES("exchanger_hidden", "' . $exchanger_hidden . '")',
-                    $mysql
-                )
-            ) {
+            if ($q->execute(array('exchanger_notice', ($_POST['exchanger_notice'] ? 1 : 0))) &&
+                $q->execute(array('exchanger_extensions', $_POST['exchanger_extensions'])) &&
+                $q->execute(array('exchanger_name', $_POST['exchanger_name'])) &&
+                $q->execute(array('exchanger_hidden', ($_POST['exchanger_hidden'] ? 1 : 0)))) {
                 $template->assign('message', 'Настройки обменника изменены');
             } else {
-                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', implode("\n", $q->errorInfo()));
             }
         }
         break;
@@ -1351,16 +1247,12 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/lib.tpl');
 
         if ($_POST) {
-            $lib = abs($_POST['lib']);
-            $lib_str = abs($_POST['lib_str']);
+            $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
-            if (
-                mysql_query('REPLACE INTO setting(name, value) VALUES("lib", "' . $lib . '")', $mysql)
-                && mysql_query('REPLACE INTO setting(name, value) VALUES("lib_str", "' . $lib_str . '")', $mysql)
-            ) {
+            if ($q->execute(array('lib', $_POST['lib'])) && $q->execute(array('lib_str', $_POST['lib_str']))) {
                 $template->assign('message', 'Настройки библиотеки изменены');
             } else {
-                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', implode("\n", $q->errorInfo()));
             }
         }
         break;
@@ -1370,41 +1262,17 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/buy.tpl');
 
         if ($_POST) {
-            if (
-                mysql_query(
-                    "REPLACE INTO setting(name, value) VALUES('buy', '" . mysql_real_escape_string(
-                        $_POST['text'],
-                        $mysql
-                    ) . "')",
-                    $mysql
-                )
-                && mysql_query(
-                    "REPLACE INTO setting(name, value) VALUES('randbuy', '" . ($_POST['randbuy'] ? 1 : 0) . "')",
-                    $mysql
-                )
-                && mysql_query(
-                    "REPLACE INTO setting(name, value) VALUES('countbuy', '" . abs($_POST['countbuy']) . "')",
-                    $mysql
-                )
-                && mysql_query(
-                    "REPLACE INTO setting(name, value) VALUES('banner', '" . mysql_real_escape_string(
-                        $_POST['banner'],
-                        $mysql
-                    ) . "')",
-                    $mysql
-                )
-                && mysql_query(
-                    "REPLACE INTO setting(name, value) VALUES('randbanner', '" . ($_POST['randbanner'] ? 1 : 0) . "')",
-                    $mysql
-                )
-                && mysql_query(
-                    "REPLACE INTO setting(name, value) VALUES('countbanner', '" . abs($_POST['countbanner']) . "')",
-                    $mysql
-                )
-            ) {
+            $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+
+            if ($q->execute(array('buy', $_POST['buy'])) &&
+                $q->execute(array('randbuy', ($_POST['randbuy'] ? 1 : 0))) &&
+                $q->execute(array('countbuy', $_POST['countbuy'])) &&
+                $q->execute(array('banner', $_POST['banner'])) &&
+                $q->execute(array('randbanner', ($_POST['randbanner'] ? 1 : 0))) &&
+                $q->execute(array('countbanner', $_POST['countbanner']))) {
                 $template->assign('message', 'Настройки рекламы сохранены');
             } else {
-                $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+                $template->assign('error', implode("\n", $q->errorInfo()));
             }
         }
         break;
@@ -1413,10 +1281,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'log':
         $template->setTemplate('apanel/log.tpl');
 
-        $q = mysql_query('SELECT * FROM `loginlog` WHERE `id` > 1 ORDER BY `time` DESC LIMIT 50', $mysql);
-        while ($log = mysql_fetch_assoc($q)) {
-            $logs[] = $log;
-        }
+        $logs = $mysqldb->query('SELECT * FROM `loginlog` WHERE `id` > 1 ORDER BY `time` DESC LIMIT 50')->fetchAll();
 
         $template->assign('logs', $logs);
         break;
@@ -1434,9 +1299,6 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $_POST['autologin'] = $_POST['autologin'] ? 1 : 0;
             $_POST['delete_dir'] = $_POST['delete_dir'] ? 1 : 0;
             $_POST['delete_file'] = $_POST['delete_file'] ? 1 : 0;
-            $_POST['countban'] = intval($_POST['countban']);
-            $_POST['timeban'] = intval($_POST['timeban']);
-
 
             foreach ($_POST as $key => $value) {
                 if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir' && $key != 'delete_file') {
@@ -1444,30 +1306,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     $template->send();
                 }
             }
+
+            $q = $mysqldb->prepare('UPDATE `setting` SET `value` = ? WHERE `name` = ?');
+
             if ($_POST['password'] != '') {
                 $_SESSION['authorise'] = md5($_POST['password']);
-                mysql_query(
-                    "UPDATE `setting` SET `value` = '" . md5($_POST['password']) . "' WHERE `name` = 'password';",
-                    $mysql
-                );
+                $q->execute(array($_SESSION['authorise'], 'password'));
             }
-            mysql_query(
-                "UPDATE `setting` SET `value` = '" . $_POST['countban'] . "' WHERE `name` = 'countban';",
-                $mysql
-            );
-            mysql_query("UPDATE `setting` SET `value` = '" . $_POST['timeban'] . "' WHERE `name` = 'timeban';", $mysql);
-            mysql_query(
-                "UPDATE `setting` SET `value` = '" . $_POST['autologin'] . "' WHERE `name` = 'autologin';",
-                $mysql
-            );
-            mysql_query(
-                "UPDATE `setting` SET `value` = '" . $_POST['delete_file'] . "' WHERE `name` = 'delete_file';",
-                $mysql
-            );
-            mysql_query(
-                "UPDATE `setting` SET `value` = '" . $_POST['delete_dir'] . "' WHERE `name` = 'delete_dir';",
-                $mysql
-            );
+            $q->execute(array($_POST['countban'], 'countban'));
+            $q->execute(array($_POST['timeban'], 'timeban'));
+            $q->execute(array($_POST['autologin'], 'autologin'));
+            $q->execute(array($_POST['delete_file'], 'delete_file'));
+            $q->execute(array($_POST['delete_dir'], 'delete_dir'));
+
             $template->assign('message', 'Настройки изменены');
         }
         break;
@@ -1515,17 +1366,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $_POST['exchanger_change'] = $_POST['exchanger_change'] ? 1 : 0;
             $_POST['send_email'] = $_POST['send_email'] ? 1 : 0;
 
+            $q = $mysqldb->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
             foreach ($_POST as $key => $value) {
                 if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
                     $template->assign('error', 'Error');
                     break;
                 }
-                mysql_query("
-                    REPLACE INTO `setting`(`name`, `value`)
-                    VALUES('" . mysql_real_escape_string($key, $mysql) . "', '" . intval($value) . "');
-                ",
-                    $mysql
-                );
+                $q->execute(array($key, $value));
             }
             $template->assign('message', 'Список модулей изменен');
         }
@@ -1538,16 +1385,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         if ($_POST) {
             $_POST['site_url'] = str_ireplace('http://', '', $_POST['site_url']);
 
+            $q = $mysqldb->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
             foreach ($_POST as $key => $value) {
                 if ($value == '') {
                     $template->assign('error', 'Не заполнено одно из полей');
                     break;
                 }
-                mysql_query(
-                    "REPLACE INTO `setting`(`name`,`value`) VALUES('" . mysql_real_escape_string($key, $mysql) . "', '"
-                        . mysql_real_escape_string($value, $mysql) . "');",
-                    $mysql
-                );
+                $q->execute(array($key, $value));
             }
             $template->assign('message', 'Настройки сохранены');
         }
@@ -1568,11 +1412,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/checkdb.tpl');
 
         $d = 0;
-        $r = mysql_query('SELECT `id`, `path` FROM `files`', $mysql);
-        while ($row = mysql_fetch_assoc($r)) {
+
+        $q1 = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
+        $q2 = $mysqldb->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
+        foreach ($mysqldb->query('SELECT `id`, `path` FROM `files`') as $row) {
             if (!file_exists($row['path'])) {
-                mysql_query('DELETE FROM `files` WHERE `id` = ' . $row['id'], $mysql);
-                mysql_query('DELETE FROM `comments` WHERE `file_id` = ' . $row['id'], $mysql);
+                $q1->execute(array($row['id']));
+                $q2->execute(array($row['id']));
 
                 dir_count($row['path'], false);
 
@@ -1585,91 +1431,101 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_news':
-        if (mysql_query('DELETE FROM `news` WHERE `id` = ' . intval($_GET['news']), $mysql)) {
+        $q = $mysqldb->prepare('DELETE FROM `news` WHERE `id` = ?');
+
+        if ($q->execute(array($_GET['news']))) {
             $template->assign('message', 'Новость удалена');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
 
     case 'del_comment_news_comments':
-        if (mysql_query('DELETE FROM `news_comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
+        $q = $mysqldb->prepare('DELETE FROM `news_comments` WHERE `id` = ?');
+
+        if ($q->execute(array($_GET['comment']))) {
             $template->assign('message', 'Комментарий удален');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
 
     case 'del_comment_view_comments':
-        if (mysql_query('DELETE FROM `comments` WHERE `id` = ' . intval($_GET['comment']), $mysql)) {
+        $q = $mysqldb->prepare('DELETE FROM `comments` WHERE `id` = ?');
+
+        if ($q->execute(array($_GET['comment']))) {
             $template->assign('message', 'Комментарий удален');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
 
     case 'clearcomm':
-        if (mysql_query('DELETE FROM `comments` WHERE `file_id` = ' . $id, $mysql)) {
+        $q = $mysqldb->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
+
+        if ($q->execute(array($id))) {
             $template->assign('message', 'Комментарии удалены');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
 
     case 'clearrate':
-        if (mysql_query('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ' . $id, $mysql)) {
+        $q = $mysqldb->prepare('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ?');
+
+        if ($q->execute(array($id))) {
             $template->assign('message', 'Рейтинг сброшен');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', implode("\n", $q->errorInfo()));
         }
         break;
 
 
     case 'optm':
-        $q = mysql_query('SHOW TABLES', $mysql);
-        while ($arr = mysql_fetch_row($q)) {
-            mysql_query('OPTIMIZE TABLE `' . $arr[0] . '`;', $mysql);
+        if ($mysqldb->exec('OPTIMIZE TABLE `comments`, `files`, `loginlog`, `news`, `news_comments`, `online`, `setting`, `users_profiles`, `users_settings`') !== false) {
+            $template->assign('message', 'Таблицы оптимизированы');
+        } else {
+            $template->assign('error', 'Ошибка при оптимизации таблиц');
         }
-        $template->assign('message', 'Таблицы оптимизированы');
         break;
 
 
     case 'clean':
-        if (mysql_query('TRUNCATE TABLE `files`;', $mysql) && mysql_query('TRUNCATE TABLE `comments`;', $mysql)) {
+        if ($mysqldb->exec('TRUNCATE TABLE `files`') !== false && $mysqldb->exec('TRUNCATE TABLE `comments`') !== false) {
             $template->assign('message', 'Таблицы очищены');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', 'Ошибка при очистке таблиц');
         }
         break;
 
 
     case 'cleannews':
-        if (mysql_query('TRUNCATE TABLE `news`;', $mysql) && mysql_query('TRUNCATE TABLE `news_comments`;', $mysql)) {
+        if ($mysqldb->exec('TRUNCATE TABLE `news`') !== false && $mysqldb->exec('TRUNCATE TABLE `news_comments`') !== false) {
             $template->assign('message', 'Таблицы очищены');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', 'Ошибка при очистке таблиц');
         }
         break;
 
 
     case 'cleancomm':
-        if (mysql_query('TRUNCATE TABLE `comments`;', $mysql)) {
+        if ($mysqldb->exec('TRUNCATE TABLE `comments`') !== false) {
             $template->assign('message', 'Все комментарии к файлам удалены');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', 'Ошибка при удалении комментариев к файлам');
         }
         break;
 
 
     case 'cleancomm_news':
-        if (mysql_query('TRUNCATE TABLE `news_comments`;', $mysql)) {
+        if ($mysqldb->exec('TRUNCATE TABLE `news_comments`') !== false) {
             $template->assign('message', 'Все комментарии к новостям удалены');
         } else {
-            $template->assign('error', 'Ошибка: ' . mysql_error($mysql));
+            $template->assign('error', 'Ошибка при удалении комментариев к новостям');
         }
         break;
 

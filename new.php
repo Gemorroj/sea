@@ -48,67 +48,27 @@ $template->assign('breadcrumbs', array('new' => $language['new_files']));
 // новизна файла
 $new = ($_SERVER['REQUEST_TIME'] - ($setup['day_new'] * 86400));
 
-
-$onpage = get2ses('onpage');
-$prew = get2ses('prew');
-$sort = get2ses('sort');
-$page = isset($_GET['page']) ? abs($_GET['page']) : 0;
+$mysqldb = MysqlDb::getInstance();
 
 
-if ($onpage < 3) {
-    $onpage = $setup['onpage'];
-}
-
-if ($prew != 0 && $prew != 1) {
-    $prew = $setup['preview'];
-}
-
-
-$all = mysql_result(mysql_query('
+$q = $mysqldb->prepare('
     SELECT COUNT(1)
     FROM `files`
     WHERE `dir` = "0"
-    AND `timeupload` >= ' . $new . '
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-', $mysql), 0);
+    AND `timeupload` >= ?
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+);
+$q->bindValue(1, $new, PDO::PARAM_INT);
+$q->execute();
+$all = $q->fetchColumn();
 
-$onpage = $onpage > $all ? $all : $onpage;
+$paginatorConf = getPaginatorConf($all);
 
 ###############Постраничная навигация###############
-$pages = ceil($all / $onpage);
-if (!$pages) {
-    $pages = 1;
-}
-if ($page > $pages || $page < 1) {
-    $page = 1;
-}
-
-$start = ($page - 1) * $onpage;
-if ($start > $all || $start < 0) {
-    $start = 0;
-}
-
-$template->assign('allItemsInDir', $all);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
-$template->assign('prew', $prew);
-$template->assign('sort', $sort);
+$template->assign('paginatorConf', $paginatorConf);
 
 
-if ($sort == 'date') {
-    $mode = '`priority` DESC, `timeupload` DESC';
-} else if ($sort == 'size') {
-    $mode = '`priority` DESC, `size` ASC';
-} else if ($sort == 'load') {
-    $mode = '`priority` DESC, `loads` DESC';
-} else if ($sort == 'eval' && $setup['eval_change']) {
-    $mode = '`priority` DESC, `yes` DESC , `no` ASC';
-} else {
-    $mode = '`priority` DESC, `name` ASC';
-}
-
-
-$query = mysql_query('
+$query = $mysqldb->prepare('
     SELECT `id`,
     `hidden`,
     `dir`,
@@ -124,13 +84,16 @@ $query = mysql_query('
     0 AS `count`
     FROM `files`
     WHERE `dir` = "0"
-    AND `timeupload` >= ' . $new . '
+    AND `timeupload` >= ?
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-    ORDER BY ' . $mode . '
-    LIMIT ' . $start . ', ' . $onpage,
-    $mysql
-);
+    ORDER BY ' . getSortMode() . '
+    LIMIT ?, ?
+');
+$query->bindValue(1, $new, PDO::PARAM_INT);
+$query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
+$query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
 
+$query->execute();
 
 require 'core/inc/_files.php';
 

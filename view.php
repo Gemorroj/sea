@@ -37,9 +37,9 @@
 require 'core/header.php';
 
 // Получаем инфу о файле
-$v = getFileInfo($id);
+$file = getFileInfo($id);
 
-if (!is_file($v['path'])) {
+if (!is_file($file['path'])) {
     error('File not found');
 }
 
@@ -48,145 +48,56 @@ $template->setTemplate('view.tpl');
 
 
 // Система голосований
-if (isset($_GET['eval']) && $setup['eval_change']) {
-    if (strpos($v['ips'], $_SERVER['REMOTE_ADDR']) === false) {
-        $vote = 'success';
-        if (!$v['ips']) {
-            $ipp = $_SERVER['REMOTE_ADDR'];
-        } else {
-            $ipp = $v['ips'] . "\n" . $_SERVER['REMOTE_ADDR'];
-        }
+$vote = null;
+require 'core/inc/view/_vote.php';
 
-        if ($_GET['eval'] < 1) {
-            $v['no'] += 1;
-            mysql_unbuffered_query(
-                'UPDATE `files` SET `no`=`no` + 1,`ips` = "' . $ipp . '" WHERE `id` = ' . $v['id'],
-                $mysql
-            );
-        } else {
-            $v['yes'] += 1;
-            mysql_unbuffered_query(
-                'UPDATE `files` SET `yes`=`yes` + 1,`ips` = "' . $ipp . '" WHERE `id` = ' . $v['id'],
-                $mysql
-            );
-        }
-    } else {
-        $vote = 'fail';
-    }
-} else {
-    $vote = null;
-}
 // рейтинг
-$rate = $v['yes'] + $v['no'];
-$rate = $rate ? round($v['yes'] / $rate * 100, 0) : 50;
+$rate = $file['yes'] + $file['no'];
+$rate = $rate ? round($file['yes'] / $rate * 100, 0) : 50;
 
 
 #######Получаем имя файла и обратный каталог#####
-$filename = pathinfo($v['path']);
+$filename = pathinfo($file['path']);
 $ext = strtolower($filename['extension']);
 $dir = $filename['dirname'] . '/';
 $basename = $filename['basename'];
-$seo = unserialize($v['seo']);
-$v['ext'] = $ext;
+$seo = unserialize($file['seo']);
+$file['ext'] = $ext;
 
 
 // данные по файлам
-require 'core/inc/_file.php';
+require 'core/inc/view/_file.php';
 
 
-$sql_dir = mysql_real_escape_string($dir, $mysql);
 // Директория
-$directory = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
+$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q->execute(array($file['infolder']));
+$directory = $q->fetch();
+
 // Всего комментариев
-$commentsCount = mysql_result(mysql_query('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ' . $id, $mysql), 0);
+$q = Mysqldb::getInstance()->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
+$q->bindValue(1, $id, PDO::PARAM_INT);
+$q->execute();
+$commentsCount = $q->fetchColumn();
+
 // Последние комментарии
 $comments = array();
-if ($setup['comments_view'] && $commentsCount) {
-    $q = mysql_query(
-        'SELECT `name`, `text`, `time` FROM `comments` WHERE `file_id` = ' . $id . ' ORDER BY `id` DESC LIMIT '
-            . intval($setup['comments_view']),
-        $mysql
-    );
-    if ($q && mysql_num_rows($q)) {
-        while ($row = mysql_fetch_assoc($q)) {
-            $comments[] = $row;
-        }
-    }
-}
+require 'core/inc/view/_comments.php';
 
 // предыдущий/следующий файл
 $prevNext = array('prev' => array(), 'next' => array());
-if ($setup['prev_next']) {
-    $count = mysql_result(
-        mysql_query(
-            '
-        SELECT COUNT(1)
-        FROM `files`
-        WHERE `infolder` = "' . $sql_dir . '"
-        AND `dir` = "0"
-        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-    ',
-            $mysql
-        ),
-        0
-    );
-    $prevNext['count'] = $count;
-
-    if ($count > 1) {
-        $next = mysql_fetch_row(
-            mysql_query(
-                '
-            SELECT MIN(`id`), COUNT(`id`)
-            FROM `files`
-            WHERE `infolder` = "' . $sql_dir . '"
-            AND `dir` = "0"
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-            AND `id` > ' . $id
-                ,
-                $mysql
-            )
-        );
-
-        $prev = mysql_fetch_row(
-            mysql_query(
-                '
-            SELECT MAX(`id`), COUNT(`id`)
-            FROM `files`
-            WHERE `infolder` = "' . $sql_dir . '"
-            AND `dir` = "0"
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-            AND `id` < ' . $id
-                ,
-                $mysql
-            )
-        );
-
-
-        if ($prev[0]) {
-            $prevNext['prev'] = array(
-                'index' => $prev[1],
-                'id' => $prev[0],
-            );
-        }
-        if ($next[0]) {
-            $prevNext['next'] = array(
-                'index' => $next[1],
-                'id' => $next[0],
-            );
-        }
-    }
-}
+require 'core/inc/view/_prevnext.php';
 
 
 $template->assign('dirs', (IS_ADMIN === true ? getAllDirs() : array()));
 $template->assign('prevNext', $prevNext);
-$template->assign('file', $v);
+$template->assign('file', $file);
 $template->assign('directory', $directory);
 $template->assign('vote', $vote);
 $template->assign('rate', $rate);
 $template->assign('commentsCount', $commentsCount);
 $template->assign('comments', $comments);
 
-$template->assign('breadcrumbs', getBreadcrumbs($v, false));
+$template->assign('breadcrumbs', getBreadcrumbs($file, false));
 
 $template->send();

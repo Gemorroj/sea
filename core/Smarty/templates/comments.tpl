@@ -3,7 +3,7 @@
 
 {* комментарии *}
 {block content}
-    {if $allItemsInDir < 1}
+    {if $paginatorConf.items < 1}
         <strong>[{$language.empty}]</strong>
     {else}
         {foreach $comments as $comment}
@@ -20,7 +20,7 @@
     {/if}
 
     {* пагинация *}
-    {paginationExtended page=$page pages=$pages url="{$smarty.const.DIRECTORY}{$comments_module}/{$id}"}
+    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}{$comments_module}/{$id}"}
 
     <form action="{$smarty.const.DIRECTORY}{$comments_module}/{$id}" method="post">
         <div class="row">

@@ -48,19 +48,17 @@ if (!is_file($v['path'])) {
     error('File not found');
 }
 
-// страница
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-if ($page < 1) {
-    $page = 1;
-}
+$paginatorConf = getPaginatorConf(PHP_INT_MAX);
 
 
 $template->setTemplate('read.tpl');
 
 
-$sql_dir = mysql_real_escape_string($v['infolder'], $mysql);
 // Директория
-$directory = mysql_fetch_assoc(mysql_query('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = "' . $sql_dir . '" LIMIT 1', $mysql));
+$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q->execute(array($v['infolder']));
+$directory = $q->fetch();
+
 $template->assign('directory', $directory);
 
 $breadcrumbs = getBreadcrumbs($v, false);
@@ -72,7 +70,7 @@ $seo = unserialize($v['seo']);
 if (!$seo['title']) {
     $seo['title'] = $v['name'];
 }
-$seo['title'] .= ' - ' . $language['read'] . ' / ' . $page;
+$seo['title'] .= ' - ' . $language['read'] . ' / ' . $paginatorConf['page'];
 
 
 
@@ -83,13 +81,13 @@ if (isset($_SESSION['lib'])) {
 
 // UTF-8
 $fp = fopen($v['path'], 'rb');
-if ($page > 1) {
-    fseek($fp, $page * $setup['lib'] - $setup['lib']);
+if ($paginatorConf['page'] > 1) {
+    fseek($fp, $paginatorConf['page'] * $setup['lib'] - $setup['lib']);
 }
 $content = fread($fp, $setup['lib']) . fgets($fp, 1024);
 fclose($fp);
 
-if ($page > 1) {
+if ($paginatorConf['page'] > 1) {
     $i = 0;
     foreach (str_split($content, 1) as $f) {
         if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
@@ -101,14 +99,13 @@ if ($page > 1) {
 }
 
 $content = str_to_utf8($content);
-$pages = ceil(filesize($v['path']) / $setup['lib']);
-if ($page > $pages) {
-    $page = 1;
+$paginatorConf['pages'] = ceil(filesize($v['path']) / $setup['lib']);
+if ($paginatorConf['page'] > $paginatorConf['pages']) {
+    $paginatorConf['page'] = 1;
 }
 
 
 $template->assign('content', $content);
 $template->assign('file', $v);
-$template->assign('page', $page);
-$template->assign('pages', $pages);
+$template->assign('paginatorConf', $paginatorConf);
 $template->send();

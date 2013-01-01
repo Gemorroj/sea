@@ -1,10 +1,13 @@
 <?php
+$mysqldb = MysqlDb::getInstance();
 
-mysql_query("REPLACE INTO `online` (`ip`, `time`) VALUES ('" . $_SERVER['REMOTE_ADDR'] . "', NOW());", $mysql);
-mysql_query('DELETE FROM `online` WHERE `time` < (NOW() - INTERVAL ' . $setup['online_time'] . ' SECOND)', $mysql);
+$mysqldb->prepare('REPLACE INTO `online` (`ip`, `time`) VALUES (?, NOW())')->execute(array($_SERVER['REMOTE_ADDR']));
+$mysqldb->exec('DELETE FROM `online` WHERE `time` < (NOW() - INTERVAL ' . intval($setup['online_time']) . ' SECOND)');
 
-$online = mysql_result(mysql_query('SELECT COUNT(1) FROM online', $mysql), 0);
+$online = $mysqldb->query('SELECT COUNT(1) FROM online')->fetchColumn();
+
 if ($online > $setup['online_max']) {
-    mysql_query('REPLACE INTO `setting`(`name`, `value`) VALUES("online_max", "' . $online . '");', $mysql);
-    mysql_query('REPLACE INTO `setting`(`name`, `value`) VALUES("online_max_time", NOW());', $mysql);
+    $q = $mysqldb->prepare('REPLACE INTO `setting` (`name`, `value`) VALUES (?, ?)');
+    $q->execute(array('online_max', $online));
+    $q->execute(array('online_max_time', $_SERVER['REQUEST_TIME']));
 }

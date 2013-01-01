@@ -39,7 +39,7 @@ require '../core/config.php';
 
 $HeadTime = microtime(true);
 
-$info = mysql_fetch_array(mysql_query('SELECT * FROM `loginlog` WHERE `id` = 1', $mysql));
+$info = $mysqldb->query('SELECT * FROM loginlog WHERE id = 1')->fetch();
 $timeban = $_SERVER['REQUEST_TIME'] - $info['time'];
 //-------------------------------
 if ($timeban < $setup['timeban']) {
@@ -47,10 +47,7 @@ if ($timeban < $setup['timeban']) {
 }
 //-------------------------------
 if ($info['access_num'] > $setup['countban']) {
-    $query = mysql_query(
-        'UPDATE `loginlog` SET `time` = ' . $_SERVER['REQUEST_TIME'] . ', `access_num` = 0 WHERE `id` = 1',
-        $mysql
-    );
+    $mysqldb->prepare('UPDATE loginlog SET time = ?, access_num = 0')->execute(array($_SERVER['REQUEST_TIME']));
     error(
         'Вы ' . $setup['countban'] . ' раза ввели неверный пароль. Вы заблокированы на ' . $setup['timeban'] . ' секунд'
     );
@@ -86,13 +83,15 @@ if ($setup['autologin']
 ) {
     $_SESSION['ipu'] = $_SERVER['REMOTE_ADDR'];
     $_SESSION['authorise'] = $setup['password'];
-    mysql_query(
-        "INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('" . mysql_real_escape_string(
-            $_SERVER['HTTP_USER_AGENT'],
-            $mysql
-        ) . "', '" . $_SERVER['REMOTE_ADDR'] . "', " . $_SERVER['REQUEST_TIME'] . ");",
-        $mysql
+
+    $mysqldb->prepare('INSERT INTO loginlog SET time = ?, ua = ?, ip = ?')->execute(
+        array(
+             $_SERVER['REQUEST_TIME'],
+             $_SERVER['HTTP_USER_AGENT'],
+             $_SERVER['REMOTE_ADDR']
+        )
     );
+
     header(
         'Location: http://' . $_SERVER['HTTP_HOST'] . str_replace(
             array('\\', '//'),
@@ -101,6 +100,6 @@ if ($setup['autologin']
         ) . 'apanel.php'
     );
 } else {
-    mysql_query('UPDATE `loginlog` SET `access_num` = `access_num` + 1 WHERE `id` = 1', $mysql);
+    $mysqldb->exec('UPDATE loginlog SET access_num = access_num + 1 WHERE id = 1');
     error('Пароль введен неверно. Осталось попыток до блокировки: ' . ($setup['countban'] - $info['access_num']));
 }
