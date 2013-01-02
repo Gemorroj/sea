@@ -127,7 +127,7 @@ switch ($action) {
             $content = str_to_utf8($content[0]['content']);
 
             $paginatorConf = getPaginatorConf(PHP_INT_MAX);
-            $paginatorConf['pages'] = floor(mb_strlen($content) / $setup['lib']);
+            $paginatorConf['pages'] = ceil(mb_strlen($content) / $setup['lib']);
 
             $content = mb_substr($content, $paginatorConf['page'] * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
 

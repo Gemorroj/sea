@@ -239,7 +239,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                  $_POST['new']['english'],
                  $_POST['new']['russian'],
                  $_POST['new']['azerbaijan'],
-                 $_POST['new']['turkey']
+                 $_POST['new']['turkey'],
+                 $id
             ));
 
             if (!$result) {
@@ -426,16 +427,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $seo = unserialize($file['seo']);
 
         if ($_POST) {
-            $seo = serialize(
-                array(
-                     'title' => $_POST['title'],
-                     'keywords' => $_POST['keywords'],
-                     'description' => $_POST['description']
-                )
+            $seo = array(
+                 'title' => $_POST['title'],
+                 'keywords' => $_POST['keywords'],
+                 'description' => $_POST['description']
             );
 
             $q = $mysqldb->prepare('UPDATE `files` SET `seo` = ? WHERE `id` = ?');
-            if ($q->execute(array($seo, $id))) {
+            if ($q->execute(array(serialize($seo), $id))) {
                 $template->assign('message', 'Данные изменены');
             } else {
                 $template->assign('error', implode("\n", $q->errorInfo()));
@@ -754,34 +753,25 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3_file':
         $template->setTemplate('apanel/id3_file.tpl');
 
-        include CORE_DIRECTORY . '/PEAR/MP3/Id.php';
-        include CORE_DIRECTORY . '/classes/mp3.class.php';
+        include_once CORE_DIRECTORY . '/PEAR/MP3/Id.php';
+        include_once CORE_DIRECTORY . '/classes/mp3.class.php';
+
+        $file = getFileInfo($id);
+        $idv2 = getMusicInfo($id, $file['path']);
+
         $id3 = new MP3_Id();
+        $id3->read($file['path']);
 
         $genres = $id3->genres();
         $template->assign('genres', $genres);
 
-
-        $file = getFileInfo($id);
-
-        $id3->read($file['path']);
-
-        $name = str_to_utf8($id3->name);
-        $artists = str_to_utf8($id3->artists);
-        $album = str_to_utf8($id3->album);
-        $year = str_to_utf8($id3->year);
-        $track = str_to_utf8($id3->track);
-        $genre = str_to_utf8($id3->genre);
-        $comment = str_to_utf8($id3->comment);
-
-        $template->assign('name', $name);
-        $template->assign('artists', $artists);
-        $template->assign('album', $album);
-        $template->assign('year', $year);
-        $template->assign('track', $track);
-        $template->assign('genre', $genre);
-        $template->assign('comment', $comment);
-
+        $template->assign('name', $idv2['tag']['title']);
+        $template->assign('artists', $idv2['tag']['artist']);
+        $template->assign('album', $idv2['tag']['album']);
+        $template->assign('year', $idv2['tag']['date']);
+        $template->assign('track', str_to_utf8($id3->track));
+        $template->assign('genre', $idv2['tag']['genre']);
+        $template->assign('comment', $idv2['tag']['comment']);
 
         if ($_POST) {
             @unlink(CORE_DIRECTORY . '/cache/' . $id . '.dat');
@@ -814,7 +804,6 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             );
             $mp3->save($file['path']);
 
-
             // записываем Idv1 теги
             $id3->name = $name;
             $id3->artists = $artist;
@@ -841,6 +830,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $id3 = new MP3_Id();
 
         $genres = $id3->genres();
+        array_unshift($genres, '');
+
         $template->assign('genres', $genres);
 
         if ($_POST) {
@@ -1199,7 +1190,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->assign('users', $users);
 
         if ($_POST) {
-            switch ($_GET['mode']) {
+            switch (@$_GET['mode']) {
                 case 'del':
                     $q1 = $mysqldb->prepare('DELETE FROM `users_profiles` WHERE `id` = ?');
                     $q2 = $mysqldb->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?');

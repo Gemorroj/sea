@@ -5,7 +5,7 @@
     {foreach $directories as $dir}
         <div class="{cycle values="row,row2"}">
 
-            <img src="{$dir.ico}" alt=""/>
+            <img src="{$dir.ico|rawurlencode|replace:'%2F':'/'}" alt=""/>
                                                                                                             {* новые файлы в папке *}
             <strong><a href="{$smarty.const.DIRECTORY}{$dir.id}">{$dir.name}</a></strong> ({$dir.dir_count}{if ($setup.day_new && $dir.count)}<span class="yes"> +{$dir.count}</span>{/if})
 
@@ -17,6 +17,7 @@
 
             {* администрирование *}
             {if $smarty.const.IS_ADMIN}
+                <br/>
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=scan" title="Сканировать директорию">F</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=seo" title="SEO">K</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=rename" title="Переименовать директорию">R</a>]
@@ -46,16 +47,16 @@
             {* превью *}
             {if $prew && $f.pre}
                 {if $f.ext == 'swf'}
-                    <object style="width: 128px; height: 128px;"><param name="movie" value="{$f.pre}"><embed src="{$f.pre}" style="width: 128px; height: 128px;"></embed></param></object>
+                    <object style="width: 128px; height: 128px;"><param name="movie" value="{$f.pre}"><embed src="{$f.pre|rawurlencode|replace:'%2F':'/'}" style="width: 128px; height: 128px;"></embed></param></object>
                 {else}
                     {* gif,png,jpg *}
-                    <img style="margin: 1px;" src="{$f.pre}" alt=""/>
+                    <img style="margin: 1px;" src="{$f.pre|rawurlencode|replace:'%2F':'/'}" alt=""/>
                 {/if}
             {/if}
 
             {* скриншот *}
             {if $setup.screen_change && $f.screen}
-                <img style="margin: 1px;" src="{$f.screen}" alt=""/>
+                <img style="margin: 1px;" src="{$f.screen|rawurlencode|replace:'%2F':'/'}" alt=""/>
             {/if}
 
 
@@ -65,7 +66,7 @@
             {/if}
 
 
-            <img src="{$f.ico}" alt=""/>
+            <img src="{$f.ico|rawurlencode|replace:'%2F':'/'}" alt=""/>
             <strong><a href="{$smarty.const.DIRECTORY}view/{$f.id}">{$f.name}</a></strong>
 
             {* расширение *}
@@ -99,9 +100,13 @@
 
             {* администрирование *}
             {if $smarty.const.IS_ADMIN}
+                <br/>
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=seo" title="SEO">K</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=rename" title="Переименовать файл">R</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=about" title="Описание">O</a>]
+                {if $f.ext == 'mp3'}
+                    [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?action=id3_file&amp;id={$f.id}" title="Idv1/Idv2 теги">M</a>]
+                {/if}
                 {if $f.screen}
                     [<a class="no" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=del_screen" title="Удалить скриншот">S</a>]
                 {else}
@@ -123,5 +128,5 @@
 
 {* администрирование *}
 {if $smarty.const.IS_ADMIN}
-    <div class="iblock"><code>[F] - сканировать директорию, [K] - SEO, [R] - переименование, [O] - описание, [D] - удаление, [S] - скриншот, [H] - видимость, [Up/Down] - приоритет</code></div>
+    <div class="iblock"><code>[F] - сканировать директорию, [K] - SEO, [R] - переименование, [O] - описание, [M] - Idv1/Idv2 теги, [D] - удаление, [S] - скриншот, [H] - видимость, [Up/Down] - приоритет</code></div>
 {/if}

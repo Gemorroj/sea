@@ -412,7 +412,7 @@ function getSortMode()
         $mode = '`priority` DESC, `name` ASC';
     }
 
-    return $mode;
+    return '`dir` DESC, ' . $mode;
 }
 
 
@@ -1587,13 +1587,14 @@ function getMusicInfo($id, $path)
     if (file_exists(dirname(__FILE__) . '/../cache/' . $id . '.dat')) {
         return unserialize(file_get_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat'));
     }
+    $path = CORE_DIRECTORY . '/../' . $path;
 
     $tmpa = array();
     $filename = pathinfo($path);
     $ext = strtolower($filename['extension']);
 
     if ($ext == 'mp3' || $ext == 'wav') {
-        include dirname(__FILE__) . '/classAudioFile.php';
+        include_once dirname(__FILE__) . '/classAudioFile.php';
 
         $audio = new AudioFile;
         $audio->loadFile($path);
@@ -1601,7 +1602,7 @@ function getMusicInfo($id, $path)
         if ($audio->wave_length > 0) {
             $length = $audio->wave_length;
         } else {
-            include dirname(__FILE__) . '/mp3.class.php';
+            include_once dirname(__FILE__) . '/mp3.class.php';
             $mp3 = new mp3($path);
             $mp3->setFileInfoExact();
             $length = $mp3->time;
@@ -1660,7 +1661,7 @@ function getMusicInfo($id, $path)
             )
         );
     } elseif ($ext == 'ogg') {
-        include dirname(__FILE__) . '/../PEAR/File/Ogg.php';
+        include_once dirname(__FILE__) . '/../PEAR/File/Ogg.php';
         try {
             $ogg = new File_Ogg($path);
             $obj = & current($ogg->_streams);

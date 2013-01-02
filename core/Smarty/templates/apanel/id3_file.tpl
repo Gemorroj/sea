@@ -4,7 +4,7 @@
 {block content}
 <h3>Модуль задаст MP3 файлу Idv1/Idv2 теги. Если поле пустое, то тег изменяться не будет</h3>
 
-<form action="apanel.php?action=id3" method="post">
+<form action="apanel.php?action=id3_file&amp;id={$id}" method="post">
     <div data-role="fieldcontain">
         <label for="name">Название:</label>
         <input name="name" id="name" type="text" value="{$name}" />

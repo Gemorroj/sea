@@ -109,7 +109,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             // Такой URL уже есть
             error($language['duplicate_url']);
         } else {
-            $mysqldb->prepare('
+            $result = $mysqldb->prepare('
                 INSERT INTO `users_profiles` (
                     `name`, `url`, `pass`, `mail`, `style`
                 ) VALUES (
@@ -131,7 +131,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 $_SESSION['style'] = $_POST['style'];
 
                 mail(
-                    $mail,
+                    $_POST['mail'],
                     '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
                     'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'],
                     'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
@@ -188,6 +188,12 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     $q->execute();
 
                     $head = $q->fetchAll();
+                    $l = sizeof($head);
+                    if ($l < $setup['service_head']) {
+                        for ($i = $l; $i < $setup['service_head']; ++$i) {
+                            $head[] = array('name' => '', 'value' => '');
+                        }
+                    }
                 }
                 if ($setup['service_foot']) {
                     $q->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
@@ -196,6 +202,12 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     $q->execute();
 
                     $foot = $q->fetchAll();
+                    $l = sizeof($foot);
+                    if ($l < $setup['service_foot']) {
+                        for ($i = $l; $i < $setup['service_foot']; ++$i) {
+                            $foot[] = array('name' => '', 'value' => '');
+                        }
+                    }
                 }
 
                 $template->assign('head', $head);

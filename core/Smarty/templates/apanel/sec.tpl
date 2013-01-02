@@ -7,7 +7,7 @@
 <form action="apanel.php?action=sec" method="post">
     <div data-role="fieldcontain">
         <label for="password">Пароль (если не хотите менять оставляем пустым):</label>
-        <input required="required" id="password" name="password" type="password" value=""/>
+        <input id="password" name="password" type="password" value=""/>
     </div>
 
     <div data-role="fieldcontain">

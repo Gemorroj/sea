@@ -17,7 +17,7 @@
     {if $cut}
         <div class="row">
             {$language.the_file_has_been_successfully_cut}<br/>
-            <a href="{$cut.link}">{$language.download}</a> ({$cut.size|sizeFormatExtended})<br/>
+            <a href="{$cut.link|rawurlencode|replace:'%2F':'/'}">{$language.download}</a> ({$cut.size|sizeFormatExtended})<br/>
         </div>
     {/if}
 

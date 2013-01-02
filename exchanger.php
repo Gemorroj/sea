@@ -57,6 +57,8 @@ if ($_POST) {
     }
 
     $pathinfo = pathinfo($_FILES['file']['name']);
+    $path = $setup['path'] . $_POST['topath'];
+    $pathname = $path . $_FILES['file']['name'];
 
     $ext = explode(',', strtolower($setup['exchanger_extensions']));
     if (!in_array(strtolower($pathinfo['extension']), $ext)) {
@@ -67,20 +69,19 @@ if ($_POST) {
         error($language['not_a_valid_file_name']);
     }
 
+
     $q = $mysqldb->prepare('
-        SELECT `path`
+        SELECT 1
         FROM `files`
-        WHERE `id` = ?
+        WHERE `path` = ?
         AND `dir` = "1"
         ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
-    $q->execute(array($setup['path'] . $_POST['topath']));
-    $path = $q->fetchColumn();
+    $q->execute(array($path));
 
-    if (!$path) {
+    if (!$q || $q->rowCount() < 1) {
         error($language['you_have_specified_the_correct_path_to_load']);
     }
-    $pathname = $path . $_FILES['file']['name'];
 
 
     $q = $mysqldb->prepare('SELECT 1 FROM `files` WHERE `path` = ?');

@@ -35,12 +35,12 @@
             {if isset($error)}
                 <div class="ui-bar ui-bar-e">
                     <h3>Warning!</h3>
-                    <p>{$error|nl2br}</p>
+                    <p>{$error|escape|nl2br nofilter}</p>
                 </div><br/>
             {elseif isset($message)}
                 <div class="ui-bar ui-bar-b">
                     <h3>Success!</h3>
-                    <p>{$message|nl2br}</p>
+                    <p>{$message|escape|nl2br nofilter}</p>
                 </div><br/>
             {/if}
 

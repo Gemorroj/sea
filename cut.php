@@ -100,7 +100,8 @@ if ($_POST) {
                 $p = $raz;
             }
         } else {
-            //todo:avgBitrate может быть плавающим
+            //time
+            //Todo:avgBitrate может быть плавающим
             $byterate = ($v['info']['avgBitrate'] ? $v['info']['avgBitrate'] : 128000) / 8;
             $secbit = $raz / 1024 / $byterate;
             if ($s > $secbit || $s < 0) {

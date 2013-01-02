@@ -10,12 +10,12 @@
 <div class="row2">
     {if $setup.screen_file_change}
         {if $file.screen_file}
-            <img src="{$file.screen_file}" alt=""/><br/>
+            <img src="{$file.screen_file|rawurlencode|replace:'%2F':'/'}" alt=""/><br/>
         {/if}
         {if $file.flash_file}
             <object style="width:128px; height:128px;">
-                <param name="movie" value="{$file.flash_file}">
-                    <embed src="{$file.flash_file}" style="width:128px; height:128px;"></embed>
+                <param name="movie" value="{$file.flash_file|rawurlencode|replace:'%2F':'/'}">
+                    <embed src="{$file.flash_file|rawurlencode|replace:'%2F':'/'}" style="width:128px; height:128px;"></embed>
                 </param>
             </object><br/>
         {/if}
@@ -100,7 +100,7 @@
 
     {if $file.screen}
         <strong>{$language.screenshot}:</strong><br/>
-        <img style="margin: 1px;" src="{$file.screen}" alt=""/><br/>
+        <img style="margin: 1px;" src="{$file.screen|rawurlencode|replace:'%2F':'/'}" alt=""/><br/>
     {/if}
 
     {if $file.description}
