@@ -120,12 +120,11 @@ if (!$setup['version']) {
             ADD `tur_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_news`
     ");
 
-    $setup['version'] = 2;
+    $setup['version'] = '2';
 }
 
 
 if ($setup['version'] < 3) {
-    $mysqldb->exec("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '3')");
     $mysqldb->exec("RENAME TABLE `komments` TO `comments`");
     $mysqldb->exec("RENAME TABLE `news_komments` TO `news_comments`");
     $mysqldb->exec("DELETE FROM `setting` WHERE `name` = 'klimit'");
@@ -134,9 +133,24 @@ if ($setup['version'] < 3) {
     $mysqldb->exec("UPDATE `setting` SET `name` = 'comments_captcha' WHERE `name` = 'komments_captcha'");
     $mysqldb->exec("UPDATE `setting` SET `value` = UNIX_TIMESTAMP() WHERE `name` = 'online_max_time'");
 
-    $setup['version'] = 3;
+    $setup['version'] = '3';
 }
 
-$mysqldb->prepare("INSERT INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $setup['version']));
-
-header('Location: http://' . $_SERVER['HTTP_HOST'] . str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) . '/');
+$mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $setup['version']));
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+    <head>
+        <title>Обновление</title>
+    </head>
+    <body>
+        <div>
+            <fieldset>
+                <legend>Обновление закончено</legend>
+                Не забудьте удалить файл install.php и update.php<br/>
+                <strong><a href="./apanel/">В админку</a><br/>
+                <strong><a href="./">К загрузкам</a><br/>
+            </fieldset>
+        </div>
+    </body>
+</html>

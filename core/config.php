@@ -48,7 +48,7 @@ MysqlDb::setOptions(array(
     'host' => '127.0.0.1',
     'username' => 'mysql',
     'password' => 'mysql',
-    'dbname' => 'sea',
+    'dbname' => 'sea3',
 ));
 $mysqldb = MysqlDb::getInstance();
 

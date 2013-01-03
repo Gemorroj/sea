@@ -329,8 +329,9 @@ if (!@$_GET['level']) {
     echo '
     <fieldset>
         <legend>Установка закончена</legend>
-        Не забудьте удалить файл install.php<br/>
-        <strong><a href="./">К загрузкам</a>
+        Не забудьте удалить файл install.php и update.php<br/>
+        <strong><a href="./apanel/">В админку</a><br/>
+        <strong><a href="./">К загрузкам</a><br/>
     </fieldset>
     ';
 }

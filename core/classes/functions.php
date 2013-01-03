@@ -823,7 +823,7 @@ function scannerCount()
     $q2 = $mysqldb->prepare('UPDATE `files` SET `dir_count` = ? WHERE `path` = ?');
 
     foreach ($mysqldb->query('SELECT `path` FROM `files` WHERE `dir` = "1" GROUP BY `path`') as $dir) {
-        $q1->execute(array($mysqldb->escapeLike($dir['path'])));
+        $q1->execute(array($mysqldb->escapeLike($dir['path']) . '%'));
         $count = $q1->fetchColumn();
 
         $q2->execute(array($count, $dir['path']));

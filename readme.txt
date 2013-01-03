@@ -74,7 +74,7 @@ echo $db->query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0" AND `hidden` = "
 
 
 Требуется:
-PHP 5.2.3 или выше, собранный как модуль Apache
+PHP 5.2.1 или выше, собранный как модуль Apache
 PHP модули: mbstring, SimpleXML, GD2, FFMPEG (работает и без него, но не будет скринов видео)
 MySQL 5.0.7 или выше
 
