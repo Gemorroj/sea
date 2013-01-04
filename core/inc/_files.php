@@ -24,7 +24,7 @@ foreach ($query as $v) {
         if (file_exists($v['v'] . 'folder.png')) {
             $v['ico'] = DIRECTORY . $v['v'] . 'folder.png';
         } else {
-            $v['ico'] = DIRECTORY . '/style/ext/dir.png';
+            $v['ico'] = DIRECTORY . 'style/ext/dir.png';
         }
 
         $directories[] = $v;
