@@ -11,7 +11,7 @@
 
                 {if $smarty.const.IS_ADMIN}
                     <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=del_news" title="Удалить" class="no" onclick="return window.confirm('Удалить новость?');">[X]</a>
-                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=edit_news" title="Изменить">[E]</a>
+                    <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?news={$v.id}&amp;action=edit_news" title="Изменить" class="yes">[E]</a>
                 {/if}
 
                 {$v.time|dateFormatExtended}<br/>

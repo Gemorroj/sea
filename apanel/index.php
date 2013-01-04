@@ -77,10 +77,8 @@ if (!isset($_POST['p']) && !isset($_GET['p'])) {
     exit;
 }
 
-if ($setup['autologin']
-    && ((@$_POST['p'] && md5($_POST['p']) == $setup['password'])
-        || (@$_GET['p'] && md5($_GET['p']) == $setup['password']))
-) {
+if ((isset($_POST['p']) && md5($_POST['p']) == $setup['password']) ||
+    $setup['autologin'] && (isset($_GET['p']) && md5($_GET['p']) == $setup['password'])) {
     $_SESSION['ipu'] = $_SERVER['REMOTE_ADDR'];
     $_SESSION['authorise'] = $setup['password'];
 
