@@ -41,7 +41,9 @@
         <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
         <li><a href="{$smarty.const.DIRECTORY}stat/{$id}">{$language.statistics}</a></li>
         <li><a href="{$smarty.const.DIRECTORY}table/{$id}">{$language.orders}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}exchanger/{$id}">{$language.add_file}</a></li>
+        {if $setup.exchanger_change}
+            <li><a href="{$smarty.const.DIRECTORY}exchanger/{$id}">{$language.add_file}</a></li>
+        {/if}
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>
 {/block}
