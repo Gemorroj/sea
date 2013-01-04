@@ -45,7 +45,7 @@ if ($id) {
         SELECT `t1`.`path`,
         `t1`.`seo`,
         ' . Language::getInstance()->buildFilesQuery('t1') . ',
-        COUNT(1) AS `all`
+        `t1`.`dir_count` AS `all`
         FROM `files` AS `t1`
         LEFT JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path` ' . (IS_ADMIN !== true ? 'AND `t2`.`hidden` = "0"' : '') . '
         WHERE `t1`.`id` = ' . $id . '
@@ -72,6 +72,7 @@ if (!is_dir($d['path'])) {
 }
 
 $paginatorConf = getPaginatorConf($d['all']);
+
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
