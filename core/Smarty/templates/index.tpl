@@ -39,7 +39,9 @@
     {* нижнее меню *}
     <ul class="iblock">
         <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}stat/{$id}">{$language.statistics}</a></li>
+        {if $setup.stat_change}
+            <li><a href="{$smarty.const.DIRECTORY}stat/{$id}">{$language.statistics}</a></li>
+        {/if}
         <li><a href="{$smarty.const.DIRECTORY}table/{$id}">{$language.orders}</a></li>
         {if $setup.exchanger_change}
             <li><a href="{$smarty.const.DIRECTORY}exchanger/{$id}">{$language.add_file}</a></li>
