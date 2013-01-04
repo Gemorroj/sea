@@ -285,7 +285,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         $q = $mysqldb->prepare('DELETE FROM `files` WHERE `infolder` = ?');
-        if ($q->execute(array($file['path']))) {
+        $result = $q->execute(array($file['path']));
+        if (!$result) {
             $template->assign('error', implode("\n", $q->errorInfo()));
             $template->send();
         }
