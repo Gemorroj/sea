@@ -34,6 +34,8 @@
  */
 
 
+define('IS_INDEX', true);
+
 require 'core/header.php';
 
 $mysqldb = MysqlDb::getInstance();

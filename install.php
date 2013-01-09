@@ -268,6 +268,7 @@ if (!@$_GET['level']) {
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_name', '[a-zA-Z0-9_]')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_extensions', 'jpg,gif,png,3gp,mp4,flv,avi,mp3,thm,nth,zip,txt')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'send_email', '1')");
+    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_breadcrumbs', '0')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_max', '0')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_max_time', 0)");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_change_advanced', '1')");

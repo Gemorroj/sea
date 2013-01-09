@@ -1,10 +1,14 @@
-<div class="iblock">
-    <img src="{$smarty.const.DIRECTORY}style/img/load.png" alt=""/><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a> &#187;
-    {foreach $breadcrumbs as $k => $v}
-        {if $v@last}
-            {$v}
-        {else}
-            <a href="{$smarty.const.DIRECTORY}{$k}">{$v}</a> &#187;
-        {/if}
-    {/foreach}
-</div>
+{if $setup.ignore_index_breadcrumbs && $smarty.const.IS_INDEX === true && !$id}
+    {* игнорируем бредкрамбсы на главной *}
+{else}
+    <div class="iblock">
+        <img src="{$smarty.const.DIRECTORY}style/img/load.png" alt=""/><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a> &#187;
+        {foreach $breadcrumbs as $k => $v}
+            {if $v@last}
+                {$v}
+            {else}
+                <a href="{$smarty.const.DIRECTORY}{$k}">{$v}</a> &#187;
+            {/if}
+        {/foreach}
+    </div>
+{/if}

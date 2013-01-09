@@ -41,6 +41,7 @@
         {html_checkboxes name="abuse_change" selected=$setup.abuse_change options=[1=>'Жалобы']}
         {html_checkboxes name="exchanger_change" selected=$setup.exchanger_change options=[1=>'Обменник']}
         {html_checkboxes name="send_email" selected=$setup.send_email options=[1=>'Отправка ссылки на Email']}
+        {html_checkboxes name="ignore_index_breadcrumbs" selected=$setup.ignore_index_breadcrumbs options=[1=>'Не отображать бредкрамбсы на главной']}
     </fieldset>
 
     <input type="submit" value="Сохранить"/>

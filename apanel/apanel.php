@@ -1357,6 +1357,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $_POST['abuse_change'] = $_POST['abuse_change'] ? 1 : 0;
             $_POST['exchanger_change'] = $_POST['exchanger_change'] ? 1 : 0;
             $_POST['send_email'] = $_POST['send_email'] ? 1 : 0;
+            $_POST['ignore_index_breadcrumbs'] = $_POST['ignore_index_breadcrumbs'] ? 1 : 0;
 
             $q = $mysqldb->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
             foreach ($_POST as $key => $value) {
