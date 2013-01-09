@@ -50,6 +50,13 @@ if ($_POST) {
     if (empty($_POST['back']) || empty($_POST['text'])) {
         error($language['do_not_fill_in_the_required_fields']);
     }
+    if ($setup['comments_captcha']) {
+        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
+            unset($_SESSION['captcha_keystring']);
+            error($language['not_a_valid_code']);
+        }
+        unset($_SESSION['captcha_keystring']);
+    }
 
     $sended = mail(
         $setup['zakaz_email'],

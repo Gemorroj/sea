@@ -22,6 +22,14 @@
                     {$language.how_do_you_contact}<br/>
                     <input class="enter" type="email" name="back" maxlength="500" required="required" placeholder="mail@example.com"/><br/>
                 </label>
+
+                {if $setup.comments_captcha}
+                    <label>
+                        <img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.DIRECTORY}core/kcaptcha/index.php?{session_name()}={session_id()}" /><br/>
+                        {$language.code}: <input class="enter" type="number" min="0" max="9999" required="required" name="keystring" size="5" maxlength="4"/><br/>
+                    </label>
+                {/if}
+
                 <input class="buttom" type="submit" name="send" value="{$language.go}"/>
             </div>
         </form>
