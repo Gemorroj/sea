@@ -653,13 +653,14 @@ function addAttach($file, $id, $attachFile, $attachedArray = array())
 
     if (!$error) {
         $key = sizeof($attachedArray);
-        $to = $setup['apath'] . strstr($file, '/');
+        $to = $setup['apath'] . strstr(dirname($file), '/');
+
         list(, $name) = explode('_', basename($attachFile), 2);
 
-        if (copy($attachFile, $to . $id . '_' . $key . '_' . $name) === true) {
+        if (copy($attachFile, $to . '/' . $id . '_' . $key . '_' . $name) === true) {
             $attachedArray[$key] = $name;
             $q = MysqlDb::getInstance()->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
-            $result = $q->execute(array($id, serialize($attachedArray)));
+            $result = $q->execute(array(serialize($attachedArray), $id));
             if ($result === true) {
                 $message[] = 'Вложение добавлено';
             } else {
