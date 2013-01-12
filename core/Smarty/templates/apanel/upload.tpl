@@ -30,8 +30,8 @@
         </div>
 
         <div data-role="fieldcontain">
-            <label for="files">Импортируемый файл#с каким именем сохранить (<em>можно указывать несколько файлов, каждый с новой строки</em>):</label>
-            <textarea required="required" cols="70" rows="10" name="files" id="files" placeholder="http://example.com/file.gif#myfile.gif"></textarea>
+            <label for="files">Импортируемый файл # с каким именем сохранить (<em>можно указывать несколько файлов, каждый с новой строки</em>):</label>
+            <textarea required="required" cols="70" rows="10" name="files" id="files" placeholder="http://example.com/file.gif # myfile.gif"></textarea>
         </div>
 
         <input type="submit" value="Сохранить"/>

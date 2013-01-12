@@ -562,7 +562,7 @@ function uploadUrls($newpath)
     $message = array();
     $error = array();
 
-    $text = explode("\n", $_POST['files']);
+    ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
     $q = $mysqldb->prepare('
         INSERT INTO `files` (
             `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
@@ -571,24 +571,26 @@ function uploadUrls($newpath)
         )
     ');
 
-    for ($i = 0, $l = sizeof($text); $i < $l; ++$i) {
-        $parameter = explode('#', trim($text[$i]));
-        if (!isset($parameter[1])) {
-            $parameter[1] = basename(trim($parameter[0]));
+    foreach (explode("\n", trim($_POST['files'])) as $text) {
+        $parameter = explode('#', trim($text));
+        $parameter[0] = trim($parameter[0]);
+        if (isset($parameter[1]) === false) {
+            $parameter[1] = basename($parameter[0]);
+        } else {
+            $parameter[1] = trim($parameter[1]);
         }
-        $to = $newpath . trim($parameter[1]);
+        $to = $newpath . $parameter[1];
 
-        if (!checkExt(pathinfo(trim($parameter[0]), PATHINFO_EXTENSION))) {
-            $error[] = 'Закачка файла ' . $parameter[0] . ' окончилась неудачно: недоступное расширение';
+        if (checkExt(pathinfo($parameter[0], PATHINFO_EXTENSION)) === false) {
+            $error[] = 'Загрузка файла ' . $parameter[0] . ' окончилась неудачно: недоступное расширение';
             continue;
         }
-        if (file_exists($to)) {
-            $error[] = 'Файл ' . $to . ' уже существует';
+        if (file_exists($to) === true) {
+            $error[] = 'Загрузка файла ' . $parameter[0] . ' окончилась неудачно: файл ' . $to . ' уже существует';
             continue;
         }
 
-        ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
-        if (copy(trim($parameter[0]), $to)) {
+        if (copy($parameter[0], $to) === true) {
             $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
 
             $infolder = dirname($to) . '/';
@@ -605,10 +607,10 @@ function uploadUrls($newpath)
             ));
             dir_count($infolder, true);
             chmod($to, 0644);
-            $message[] = 'Импорт файла ' . $parameter[1] . ' удался';
+            $message[] = 'Загрузка файла ' . $parameter[0] . ' прошла успешно';
         } else {
             $err = error_get_last();
-            $error[] = 'Импорт файла ' . $parameter[1] . ' не удался: ' . $err['message'];
+            $error[] = 'Загрузка файла ' . $parameter[0] . ' окончилась неудачно: ' . $err['message'];
         }
     }
 
@@ -635,25 +637,26 @@ function uploadFiles($newpath)
         )
     ');
 
+    $infolder = rtrim($newpath, '/') . '/';
+
     for ($i = 0, $l = sizeof($_FILES['userfile']['name']); $i < $l; ++$i) {
-        if (empty($_FILES['userfile']['name'][$i])) {
+        if (empty($_FILES['userfile']['name'][$i]) === true) {
             continue;
         }
         $name = $_FILES['userfile']['name'][$i];
         $to = $newpath . $name;
 
-        if (!checkExt(pathinfo($name, PATHINFO_EXTENSION))) {
-            $error[] = 'Закачка файла ' . $name . ' окончилась неудачно: недоступное расширение';
+        if (checkExt(pathinfo($name, PATHINFO_EXTENSION)) === false) {
+            $error[] = 'Загрузка файла ' . $name . ' окончилась неудачно: недоступное расширение';
             continue;
         }
-        if (file_exists($to)) {
-            $error[] = 'Файл ' . $to . ' уже существует';
+        if (file_exists($to) === true) {
+            $error[] = 'Загрузка файла ' . $name . ' окончилась неудачно: файл ' . $to . ' уже существует';
             continue;
         }
 
-        if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to)) {
+        if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to) === true) {
             $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
-            $infolder = dirname($to) . '/';
 
             $q->execute(array(
                  $to,
@@ -666,13 +669,14 @@ function uploadFiles($newpath)
                  filectime($to)
             ));
 
-            dir_count($infolder, true);
             chmod($to, 0644);
-            $message[] = 'Закачка файла ' . $name . ' прошла успешно';
+            $message[] = 'Загрузка файла ' . $name . ' прошла успешно';
         } else {
-            $error[] = 'Закачка файла ' . $name . ' окончилась неудачно';
+            $err = error_get_last();
+            $error[] = 'Загрузка файла ' . $name . ' окончилась неудачно: ' . $err['message'];
         }
     }
+    dir_count($newpath, true);
 
     return array('message' => $message, 'error' => $error);
 }
