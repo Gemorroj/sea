@@ -75,30 +75,22 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->assign('error', 'Ошибка при загрузке файла. Код ошибки: ' . $_FILES['attach']['error']);
             $template->send();
         }
-        if (!checkExt(pathinfo($_FILES['attach']['name'], PATHINFO_EXTENSION))) {
-            $template->assign('error', 'Недоступное расширение для загрузки');
+
+        $tmp = CORE_DIRECTORY . '/cache/attach_' . $_FILES['attach']['name'];
+        if (move_uploaded_file($_FILES['attach']['tmp_name'], $tmp) === false) {
+            $err = error_get_last();
+            $template->assign('error', $err['message']);
             $template->send();
         }
 
-        if ($file['attach']) {
-            $attach = unserialize($file['attach']);
-            $key = sizeof($attach);
-        } else {
-            $attach = array();
-            $key = 0;
-        }
+        $result = addAttach($file['path'], $id, $tmp, ($file['attach'] ? unserialize($file['attach']) : array()));
+        unlink($tmp);
 
-        if (add_attach($file['infolder'], $id, array($key => $_FILES['attach']))) {
-            $attach[$key] = $_FILES['attach']['name'];
-            $q = $mysqldb->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
-            if ($q->execute(array(serialize($attach), $id))) {
-                $template->assign('message', 'Вложение добавлено');
-            } else {
-                $template->assign('error', implode("\n", $q->errorInfo()));
-            }
-        } else {
-            $err = error_get_last();
-            $template->assign('error', $err['message']);
+        if ($result['message']) {
+            $template->assign('message', implode("\n", $result['message']));
+        }
+        if ($result['error']) {
+            $template->assign('error', implode("\n", $result['error']));
         }
         break;
 
@@ -390,29 +382,18 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $about = $setup['opath'] . mb_substr($file['path'], mb_strlen($setup['path'])) . '.txt';
-
         if ($_POST) {
-            chmods($about);
+            $result = addAbout($file['path'], $_POST['about']);
 
-            if ($_POST['about'] == '') {
-                if (unlink($about)) {
-                    $template->assign('message', 'Описание удалено');
-                } else {
-                    $err = error_get_last();
-                    $template->assign('error', $err['message']);
-                }
-            } else {
-                if (file_put_contents($about, trim($_POST['about']))) {
-                    $template->assign('message', 'Описание изменено');
-                } else {
-                    $err = error_get_last();
-                    $template->assign('error', $err['message']);
-                }
+            if ($result['message']) {
+                $template->assign('message', implode("\n", $result['message']));
+            }
+            if ($result['error']) {
+                $template->assign('error', implode("\n", $result['error']));
             }
         }
 
-        $template->assign('about', file_get_contents($about));
+        $template->assign('about', file_get_contents($setup['opath'] . strtr($file['path'], '/') . '.txt'));
         break;
 
 
@@ -453,40 +434,25 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         if ($_FILES) {
             $file = getFileInfo($id);
             if (!$file) {
-                $template->assign('error', 'Не найдена директория');
+                $template->assign('error', 'Не найден файл');
                 $template->send();
             }
 
-            $file['path'] = strstr($file['path'], '/'); // убираем папку с загрузками
-            $to = $setup['spath'] . $file['path'] . '.gif'; // имя конечного файла
-            $thumb = $setup['spath'] . $file['path'] . '.thumb.gif'; // имя конечного файла
-
-            $ex = pathinfo($_FILES['screen']['name']);
-            $ext = strtolower($ex['extension']);
-
-            if ($ext != 'gif' && $ext != 'jpg' && $ext != 'jpe' && $ext != 'jpeg' && $ext != 'png') {
-                $template->assign('error', 'Поддерживаются скриншоты только gif, jpeg и png форматов');
-                $template->send();
-            }
-
-            chmods($to);
-
-            if (move_uploaded_file($_FILES['screen']['tmp_name'], $to)) {
-                if ($ext == 'jpg' || $ext == 'jpe' || $ext == 'jpeg') {
-                    $im = imagecreatefromjpeg($to);
-                    imagegif($im, $to);
-                    imagedestroy($im);
-                } elseif ($ext == 'png') {
-                    $im = imagecreatefrompng($to);
-                    imagegif($im, $to);
-                    imagedestroy($im);
-                }
-                img_resize($to, $thumb, 0, 0, $setup['marker']);
-
-                $template->assign('message', 'Скриншот добавлен');
-            } else {
+            $tmp = CORE_DIRECTORY . '/cache/screen_' . $_FILES['screen']['name'];
+            if (move_uploaded_file($_FILES['screen']['tmp_name'], $tmp) === false) {
                 $err = error_get_last();
                 $template->assign('error', $err['message']);
+                $template->send();
+            }
+
+            $result = addScreen($file['path'], $tmp);
+            unlink($tmp);
+
+            if ($result['message']) {
+                $template->assign('message', implode("\n", $result['message']));
+            }
+            if ($result['error']) {
+                $template->assign('error', implode("\n", $result['error']));
             }
         }
         break;
@@ -569,80 +535,20 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->assign('langpacks', $langpacks);
 
         if ($_POST) {
-            if (!preg_match('/^[A-Z0-9_\-]+$/i', $_POST['realname'])) {
-                $template->assign('error', 'Не указано имя папки или оно содержит недопустимые символы. Разрешены [A-Za-z0-9_-]');
-                $template->send();
-            }
-            foreach ($_POST['dir'] as $k => $v) {
-                if ($v == '') {
-                    $template->assign('error', $k . ': укажите название директории.');
-                    $template->send();
-                }
-            }
-            if ($_POST['topath'] == '') {
-                $template->assign('error', $k . ': укажите название директории.');
-                $template->send();
-            }
-
-
-            $newpath = $setup['path'] . trim($_POST['topath']);
-            if ($newpath == '') {
-                $template->assign('error', 'Нет конечного пути!');
-                $template->send();
-            }
-            if (!is_writable($newpath)) {
-                $template->assign('error', 'Директория ' . $newpath . ' недоступна для записи');
-                $template->send();
-            }
-
-            $directory = $newpath . $_POST['realname'] . '/';
-
-            $temp = mb_substr($directory, mb_strlen($setup['path']), mb_strlen($directory));
-
-            //скриншоты
-            $screen = $setup['spath'] . '/' . $temp;
-            // описания
-            $desc = $setup['opath'] . '/' . $temp;
-            // вложения
-            $attach = $setup['apath'] . '/' . $temp;
-
-            mkdir($directory, 0777);
-            chmod($directory, 0777); // fix
-
-            // скриншоты
-            mkdir($screen, 0777);
-            chmod($screen, 0777); // fix
-
-            // описания
-            mkdir($desc, 0777);
-            chmod($desc, 0777); // fix
-
-            // вложения
-            mkdir($attach, 0777);
-            chmod($attach, 0777); // fix
-
-
-            // заносим в бд
-            $q = $mysqldb->prepare('
-                INSERT INTO `files` (
-                    `dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`
-                ) VALUES (?, ? , ?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP())
-            ');
-            $result = $q->execute(array(
-                '1',
-                '0',
-                $directory,
+            $result = addDir(
+                $_POST['realname'],
+                $setup['path'] . trim($_POST['topath']),
                 $_POST['dir']['english'],
                 $_POST['dir']['russian'],
                 $_POST['dir']['azerbaijan'],
-                $_POST['dir']['turkey'],
-                $newpath
-            ));
-            if ($result) {
-                dir_count($newpath, true);
-                $template->assign('message', 'Новый каталог создан');
-            } else {
-                $template->assign('error', implode("\n", $q->errorInfo()));
+                $_POST['dir']['turkey']
+            );
+
+            if ($result['message']) {
+                $template->assign('message', implode("\n", $result['message']));
+            }
+            if ($result['error']) {
+                $template->assign('error', implode("\n", $result['error']));
             }
         }
 
@@ -1030,7 +936,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/import.tpl');
 
         if ($_POST) {
-            exit('In progress');
+            $result = importFiles($setup['importpath'], $setup['path'], $setup['opath'], $setup['spath'], $setup['apath']);
+
+            if ($result['message']) {
+                $template->assign('message', implode("\n", $result['message']));
+            }
+            if ($result['error']) {
+                $template->assign('error', implode("\n", $result['error']));
+            }
         }
         break;
 
@@ -1042,19 +955,16 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
         if ($_POST) {
-            $message = array();
-            $error = array();
-
             $newpath = $setup['path'] . trim($_POST['topath']);
             if ($newpath == '') {
                 $template->assign('error', 'Нет конечного пути');
                 $template->send();
             }
-            if (!is_writable($newpath)) {
+            if (is_writable($newpath) === false) {
                 $template->assign('error', 'Директория ' . $newpath . ' недоступна для записи');
                 $template->send();
             }
-            chmod($newpath, 0777);
+            @chmod($newpath, 0777);
 
             if ($_GET['type'] == 'url') {
                 $result = uploadUrls($newpath);

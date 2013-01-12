@@ -546,8 +546,347 @@ function marker($image, $watermark)
         }
     }
 
-
     return $new;
+}
+
+
+/**
+ * @param string $file
+ * @param string $screen
+ *
+ * @return array
+ */
+function addScreen($file, $screen)
+{
+    global $setup;
+    $error = array();
+    $message = array();
+
+    $file = strstr($file, '/'); // убираем папку с загрузками
+    $to = $setup['spath'] . $file . '.gif'; // имя конечного файла
+    $thumb = $setup['spath'] . $file . '.thumb.gif'; // имя конечного файла
+
+    $ext = strtolower(pathinfo($screen, PATHINFO_EXTENSION));
+
+    if ($ext !== 'gif' && $ext !== 'jpg' && $ext !== 'jpe' && $ext !== 'jpeg' && $ext !== 'png') {
+        $error[] = 'Поддерживаются скриншоты только gif, jpeg и png форматов';
+    }
+
+    chmods($to);
+
+    if (copy($screen, $to) === true) {
+        if ($ext == 'jpg' || $ext == 'jpe' || $ext == 'jpeg') {
+            $im = imagecreatefromjpeg($to);
+            imagegif($im, $to);
+            imagedestroy($im);
+        } elseif ($ext == 'png') {
+            $im = imagecreatefrompng($to);
+            imagegif($im, $to);
+            imagedestroy($im);
+        }
+        img_resize($to, $thumb, 0, 0, $setup['marker']);
+
+        $message[] = 'Скриншот добавлен';
+    } else {
+        $err = error_get_last();
+        $error[] = $err['message'];
+    }
+
+    return array('message' => $message, 'error' => $error);
+}
+
+
+/**
+ * @param string $file
+ * @param string $aboutStr
+ *
+ * @return array
+ */
+function addAbout($file, $aboutStr)
+{
+    global $setup;
+    $error = array();
+    $message = array();
+
+    $aboutStr = trim($aboutStr);
+    $to = $setup['opath'] . strstr($file, '/') . '.txt'; // имя конечного файла
+
+    chmods($to);
+
+    if ($aboutStr == '') {
+        if (@unlink($to) === true) {
+            $message[] = 'Описание удалено';
+        } else {
+            $err = error_get_last();
+            $error[] = $err['message'];
+        }
+    } else {
+        if (file_put_contents($to, $aboutStr) > 0) {
+            $message[] = 'Описание изменено';
+        } else {
+            $err = error_get_last();
+            $error[] = $err['message'];
+        }
+    }
+
+    return array('message' => $message, 'error' => $error);
+}
+
+
+/**
+ * @param string $file
+ * @param int    $id
+ * @param string $attachFile
+ * @param array  $attachedArray
+ *
+ * @return array
+ */
+function addAttach($file, $id, $attachFile, $attachedArray = array())
+{
+    global $setup;
+    $error = array();
+    $message = array();
+
+    if (checkExt(pathinfo($attachFile, PATHINFO_EXTENSION)) === false) {
+        $error[] = 'Недоступное расширение вложения';
+    }
+
+    if (!$error) {
+        $key = sizeof($attachedArray);
+        $to = $setup['apath'] . strstr($file, '/');
+        list(, $name) = explode('_', basename($attachFile), 2);
+
+        if (copy($attachFile, $to . $id . '_' . $key . '_' . $name) === true) {
+            $attachedArray[$key] = $name;
+            $q = MysqlDb::getInstance()->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
+            $result = $q->execute(array($id, serialize($attachedArray)));
+            if ($result === true) {
+                $message[] = 'Вложение добавлено';
+            } else {
+                $error[] = implode("\n", $q->errorInfo());
+            }
+        } else {
+            $err = error_get_last();
+            $error[] = $err['message'];
+        }
+    }
+
+    return array('message' => $message, 'error' => $error);
+}
+
+
+/**
+ * @param string $realname
+ * @param string $topath
+ * @param string $name
+ * @param string $rus_name
+ * @param string $aze_name
+ * @param string $tur_name
+ *
+ * @return array
+ */
+function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
+{
+    global $setup;
+
+    $message = array();
+    $error = array();
+
+    if (!preg_match('/^[A-Z0-9_\-]+$/i', $realname)) {
+        $error[] = 'Не указано имя директории или оно содержит недопустимые символы. Разрешены [A-Za-z0-9_-]';
+    }
+    if ($name == '') {
+        $error[] = 'english: Укажите название директории';
+    }
+    if ($rus_name == '') {
+        $error[] = 'russian: Укажите название директории';
+    }
+    if ($aze_name == '') {
+        $error[] = 'azerbaijan: Укажите название директории';
+    }
+    if ($tur_name == '') {
+        $error[] = 'turkey: Укажите название директории';
+    }
+    if ($topath == '') {
+        $error[] = 'Укажите родительскую директорию';
+    }
+    if (is_writable($topath) === false) {
+        $error[] = 'Директория ' . $topath . ' недоступна для записи';
+    }
+
+    if (!$error) {
+        $directory = $topath . $realname . '/';
+
+        $temp = mb_substr($directory, mb_strlen($setup['path']), mb_strlen($directory));
+
+        //скриншоты
+        $screen = $setup['spath'] . '/' . $temp;
+        // описания
+        $desc = $setup['opath'] . '/' . $temp;
+        // вложения
+        $attach = $setup['apath'] . '/' . $temp;
+
+        mkdir($directory, 0777);
+        chmod($directory, 0777); // fix
+
+        // скриншоты
+        mkdir($screen, 0777);
+        chmod($screen, 0777); // fix
+
+        // описания
+        mkdir($desc, 0777);
+        chmod($desc, 0777); // fix
+
+        // вложения
+        mkdir($attach, 0777);
+        chmod($attach, 0777); // fix
+
+
+        // заносим в бд
+        $q = MysqlDb::getInstance()->prepare('
+            INSERT INTO `files` (
+                `dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`
+            ) VALUES (?, ? , ?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP())
+        ');
+        $result = $q->execute(array(
+            '1',
+            '0',
+            $directory,
+            $_POST['dir']['english'],
+            $_POST['dir']['russian'],
+            $_POST['dir']['azerbaijan'],
+            $_POST['dir']['turkey'],
+            $topath
+        ));
+        if ($result) {
+            dir_count($topath, true);
+            $message[] = 'Директория ' . $directory . ' создана';
+        } else {
+            $error[] = implode("\n", $q->errorInfo());
+        }
+    }
+
+    return array('message' => $message, 'error' => $error);
+}
+
+
+/**
+ * @param string $importFolder
+ * @param string $filesFolder
+ * @param string $aboutFolder
+ * @param string $screenFolder
+ * @param string $attachFolder
+ *
+ * @return array
+ */
+function importFiles($importFolder, $filesFolder, $aboutFolder, $screenFolder, $attachFolder)
+{
+    $message = array();
+    $error = array();
+
+    $importFolderFiles = $importFolder . '/files';
+    $importFolderAbout = $importFolder . '/about';
+    $importFolderScreen = $importFolder . '/screen';
+    $importFolderAttach = $importFolder . '/attach';
+
+    $importQuery = MysqlDb::getInstance()->prepare('
+        INSERT INTO `files` (
+            `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
+        ) VALUES (
+            "0", ?, ?, ?, ?, ?, ?, ?, ?
+        )
+    ');
+    $directoryExistsQuery = MysqlDb::getInstance()->prepare('SELECT 1 FROM `files` WHERE `path` = ? AND `dir` = "1" LIMIT 1');
+
+    function _importFileData($id, $file)
+    {
+        global $importFolderFiles, $importFolderAbout, $importFolderScreen, $importFolderAttach, $aboutFolder, $screenFolder, $attachFolder;
+
+        $fileAbout = $importFolderAbout . ltrim($file, $importFolderFiles) . '.txt';
+        $fileScreen = $importFolderScreen . ltrim($file, $importFolderFiles) . '.gif';//todo
+        $fileAttach = $importFolderAttach . ltrim($file, $importFolderFiles) . '_';//todo
+    }
+    function _importFile($file)
+    {
+        /**
+         * @var PDOStatement $importQuery
+         */
+        global $message, $error, $importQuery, $filesFolder, $importFolderFiles;
+
+        $toFile = $filesFolder . ltrim($file, $importFolderFiles);
+
+        if (checkExt(pathinfo($file, PATHINFO_EXTENSION)) === false) {
+            $error[] = 'Импорт файла ' . $file . ' окончилась неудачно: недоступное расширение';
+            return;
+        }
+        if (file_exists($toFile) === true) {
+            $error[] = 'Загрузка файла ' . $file . ' окончилась неудачно: файл ' . $toFile . ' уже существует';
+            return;
+        }
+
+        if (copy($file, $toFile) === true) {
+            $aze_name = $tur_name = $rus_name = $name = basename($toFile, '.' . pathinfo($toFile, PATHINFO_EXTENSION));
+
+            $infolder = dirname($toFile) . '/';
+
+            $importQuery->execute(array(
+                 $toFile,
+                 $name,
+                 $rus_name,
+                 $aze_name,
+                 $tur_name,
+                 $infolder,
+                 filesize($toFile),
+                 filectime($toFile)
+            ));
+            $id = MysqlDb::getInstance()->lastInsertId();
+
+            dir_count($infolder, true);
+            chmod($toFile, 0644);
+
+            _importFileData($id, $toFile);
+
+            $message[] = 'Импорт файла ' . $file . ' прошел успешно';
+        } else {
+            $err = error_get_last();
+            $error[] = 'Импорт файла ' . $file . ' окончился неудачно: ' . $err['message'];
+        }
+    }
+    function _importFilesRecursive($filesFolder)
+    {
+        /**
+         * @var PDOStatement $directoryExistsQuery
+         */
+        global $message, $error, $directoryExistsQuery;
+
+        foreach ((array)array_diff(scandir($filesFolder, 0), array('.', '..')) as $file) {
+            if ($file[0] === '.') {
+                continue;
+            }
+            if (is_dir($filesFolder . '/' . $file) === true) {
+                $q = $directoryExistsQuery->execute(array($filesFolder . '/' . $file . '/'));
+                if (!$q) {
+                    $error[] = implode("\n", $directoryExistsQuery->errorInfo());
+                }
+                if ($directoryExistsQuery->rowCount() < 1) {
+                    $result = addDir($file, $filesFolder . '/', $file, $file, $file, $file);
+                    $error += $result['error'];
+                    $message += $result['message'];
+                }
+
+                _importFilesRecursive($filesFolder . '/' . $file);
+                continue;
+            }
+            if (is_file($filesFolder . '/' . $file) === true) {
+                _importFile($filesFolder . '/' . $file);
+            }
+        }
+    }
+
+    _importFilesRecursive($importFolderFiles);
+
+
+    return array('message' => $message, 'error' => $error);
 }
 
 
@@ -682,27 +1021,6 @@ function uploadFiles($newpath)
 }
 
 
-
-/**
- * Добавление вложений
- *
- * @param string $folder
- * @param int    $id
- * @param array  $files
- *
- * @return bool
- */
-function add_attach($folder, $id, $files)
-{
-    $attach = $GLOBALS['setup']['apath'] . mb_substr($folder . '/', mb_strlen($GLOBALS['setup']['path']));
-    foreach ($files as $k => $v) {
-        move_uploaded_file($v['tmp_name'], $attach . $id . '_' . $k . '_' . $v['name']);
-    }
-
-    return true;
-}
-
-
 /**
  * Удаление вложений
  *
@@ -714,7 +1032,7 @@ function add_attach($folder, $id, $files)
  */
 function del_attach($folder, $id, $files)
 {
-    $attach = $GLOBALS['setup']['apath'] . mb_substr($folder . '/', mb_strlen($GLOBALS['setup']['path']));
+    $attach = $GLOBALS['setup']['apath'] . strtr($folder, '/') . '/';
     foreach ($files as $k => $v) {
         unlink($attach . $id . '_' . $k . '_' . $v);
     }
