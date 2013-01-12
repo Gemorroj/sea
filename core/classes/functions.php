@@ -552,6 +552,134 @@ function marker($image, $watermark)
 
 
 /**
+ * @param string $newpath
+ *
+ * @return array
+ */
+function uploadUrls($newpath)
+{
+    $mysqldb = MysqlDb::getInstance();
+    $message = array();
+    $error = array();
+
+    $text = explode("\n", $_POST['files']);
+    $q = $mysqldb->prepare('
+        INSERT INTO `files` (
+            `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
+        ) VALUES (
+            "0", ?, ?, ?, ?, ?, ?, ?, ?
+        )
+    ');
+
+    for ($i = 0, $l = sizeof($text); $i < $l; ++$i) {
+        $parameter = explode('#', trim($text[$i]));
+        if (!isset($parameter[1])) {
+            $parameter[1] = basename(trim($parameter[0]));
+        }
+        $to = $newpath . trim($parameter[1]);
+
+        if (!checkExt(pathinfo(trim($parameter[0]), PATHINFO_EXTENSION))) {
+            $error[] = 'Закачка файла ' . $parameter[0] . ' окончилась неудачно: недоступное расширение';
+            continue;
+        }
+        if (file_exists($to)) {
+            $error[] = 'Файл ' . $to . ' уже существует';
+            continue;
+        }
+
+        ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
+        if (copy(trim($parameter[0]), $to)) {
+            $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
+
+            $infolder = dirname($to) . '/';
+
+            $q->execute(array(
+                 $to,
+                 $name,
+                 $rus_name,
+                 $aze_name,
+                 $tur_name,
+                 $infolder,
+                 filesize($to),
+                 filectime($to)
+            ));
+            dir_count($infolder, true);
+            chmod($to, 0644);
+            $message[] = 'Импорт файла ' . $parameter[1] . ' удался';
+        } else {
+            $err = error_get_last();
+            $error[] = 'Импорт файла ' . $parameter[1] . ' не удался: ' . $err['message'];
+        }
+    }
+
+    return array('message' => $message, 'error' => $error);
+}
+
+
+/**
+ * @param string $newpath
+ *
+ * @return array
+ */
+function uploadFiles($newpath)
+{
+    $mysqldb = MysqlDb::getInstance();
+    $message = array();
+    $error = array();
+
+    $q = $mysqldb->prepare('
+        INSERT INTO `files` (
+            `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
+        ) VALUES (
+            "0", ?, ?, ?, ?, ?, ?, ?, ?
+        )
+    ');
+
+    for ($i = 0, $l = sizeof($_FILES['userfile']['name']); $i < $l; ++$i) {
+        if (empty($_FILES['userfile']['name'][$i])) {
+            continue;
+        }
+        $name = $_FILES['userfile']['name'][$i];
+        $to = $newpath . $name;
+
+        if (!checkExt(pathinfo($name, PATHINFO_EXTENSION))) {
+            $error[] = 'Закачка файла ' . $name . ' окончилась неудачно: недоступное расширение';
+            continue;
+        }
+        if (file_exists($to)) {
+            $error[] = 'Файл ' . $to . ' уже существует';
+            continue;
+        }
+
+        if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to)) {
+            $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
+            $infolder = dirname($to) . '/';
+
+            $q->execute(array(
+                 $to,
+                 $name,
+                 $rus_name,
+                 $aze_name,
+                 $tur_name,
+                 $infolder,
+                 filesize($to),
+                 filectime($to)
+            ));
+
+            dir_count($infolder, true);
+            chmod($to, 0644);
+            $message[] = 'Закачка файла ' . $name . ' прошла успешно';
+        } else {
+            $error[] = 'Закачка файла ' . $name . ' окончилась неудачно';
+        }
+    }
+
+    return array('message' => $message, 'error' => $error);
+}
+
+
+
+/**
  * Добавление вложений
  *
  * @param string $folder

@@ -136,6 +136,14 @@ if ($setup['version'] < 3) {
     $setup['version'] = '3';
 }
 
+
+if ($setup['version'] < 3.1) {
+    $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
+
+    $setup['version'] = '3.1';
+}
+
+
 $mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $setup['version']));
 ?>
 <!DOCTYPE html>

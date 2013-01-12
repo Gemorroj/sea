@@ -11,6 +11,11 @@
     </div>
 
     <div data-role="fieldcontain">
+        <label for="importpath">Директория для импорта:</label>
+        <input required="required" type="text" id="importpath" name="importpath" value="{$setup.importpath}" />
+    </div>
+
+    <div data-role="fieldcontain">
         <label for="opath">Директория с описаниями:</label>
         <input required="required" id="opath" name="opath" type="text" value="{$setup.opath}"/>
     </div>

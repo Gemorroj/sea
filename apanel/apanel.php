@@ -1029,80 +1029,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'import':
         $template->setTemplate('apanel/import.tpl');
 
-        $template->assign('dirs', getAllDirs());
-
-
         if ($_POST) {
-            $message = array();
-            $error = array();
-
-            $newpath = $setup['path'] . trim($_POST['topath']);
-            if ($newpath == '') {
-                $template->assign('error', 'Нет конечного пути!');
-                $template->send();
-            }
-            if (!is_writable($newpath)) {
-                $template->assign('error', 'Директория ' . $newpath . ' недоступна для записи');
-                $template->send();
-            }
-
-            $text = explode("\n", $_POST['files']);
-            $q = $mysqldb->prepare('
-                INSERT INTO `files` (
-                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
-                ) VALUES (
-                    "0", ?, ?, ?, ?, ?, ?, ?, ?
-                )
-            ');
-
-            for ($i = 0, $l = sizeof($text); $i < $l; ++$i) {
-                $parametr = explode('#', trim($text[$i]));
-                if (!isset($parametr[1])) {
-                    $parametr[1] = basename(trim($parametr[0]));
-                }
-                $to = $newpath . trim($parametr[1]);
-
-                if (!checkExt(pathinfo(trim($parametr[0]), PATHINFO_EXTENSION))) {
-                    $error[] = 'Закачка файла ' . $parametr[0] . ' окончилась неудачно: недоступное расширение';
-                    continue;
-                }
-                if (file_exists($to)) {
-                    $error[] = 'Файл ' . $to . ' уже существует';
-                    continue;
-                }
-
-                ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
-                if (copy(trim($parametr[0]), $to)) {
-                    $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
-
-                    $infolder = dirname($to) . '/';
-
-                    $q->execute(array(
-                        $to,
-                        $name,
-                        $rus_name,
-                        $aze_name,
-                        $tur_name,
-                        $infolder,
-                        filesize($to),
-                        filectime($to)
-                    ));
-                    dir_count($infolder, true);
-                    chmod($to, 0644);
-                    $message[] = 'Импорт файла ' . $parametr[1] . ' удался';
-                } else {
-                    $err = error_get_last();
-                    $error[] = 'Импорт файла ' . $parametr[1] . ' не удался: ' . $err['message'];
-                }
-            }
-            chmod($newpath, 0777);
-
-            if ($message) {
-                $template->assign('message', implode("\n", $message));
-            }
-            if ($error) {
-                $template->assign('error', implode("\n", $error));
-            }
+            exit('In progress');
         }
         break;
 
@@ -1126,59 +1054,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $template->assign('error', 'Директория ' . $newpath . ' недоступна для записи');
                 $template->send();
             }
-
-            $q = $mysqldb->prepare('
-                INSERT INTO `files` (
-                    `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
-                ) VALUES (
-                    "0", ?, ?, ?, ?, ?, ?, ?, ?
-                )
-            ');
-            for ($i = 0, $l = sizeof($_FILES['userfile']['name']); $i < $l; ++$i) {
-                if (empty($_FILES['userfile']['name'][$i])) {
-                    continue;
-                }
-                $name = $_FILES['userfile']['name'][$i];
-                $to = $newpath . $name;
-
-                if (!checkExt(pathinfo($name, PATHINFO_EXTENSION))) {
-                    $error[] = 'Закачка файла ' . $name . ' окончилась неудачно: недоступное расширение';
-                    continue;
-                }
-                if (file_exists($to)) {
-                    $error[] = 'Файл ' . $to . ' уже существует';
-                    continue;
-                }
-
-                if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to)) {
-                    $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
-                    $infolder = dirname($to) . '/';
-
-                    $q->execute(array(
-                         $to,
-                         $name,
-                         $rus_name,
-                         $aze_name,
-                         $tur_name,
-                         $infolder,
-                         filesize($to),
-                         filectime($to)
-                    ));
-
-                    dir_count($infolder, true);
-                    chmod($to, 0644);
-                    $message[] = 'Закачка файла ' . $name . ' прошла успешно';
-                } else {
-                    $error[] = 'Закачка файла ' . $name . ' окончилась неудачно';
-                }
-            }
             chmod($newpath, 0777);
 
-            if ($message) {
-                $template->assign('message', implode("\n", $message));
+            if ($_GET['type'] == 'url') {
+                $result = uploadUrls($newpath);
+            } else {
+                $result = uploadFiles($newpath);
             }
-            if ($error) {
-                $template->assign('error', implode("\n", $error));
+
+            if ($result['message']) {
+                $template->assign('message', implode("\n", $result['message']));
+            }
+            if ($result['error']) {
+                $template->assign('error', implode("\n", $result['error']));
             }
         }
         break;
@@ -1401,28 +1289,6 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         break;
 
 
-    case 'checkdb':
-        $template->setTemplate('apanel/checkdb.tpl');
-
-        $d = 0;
-
-        $q1 = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
-        $q2 = $mysqldb->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
-        foreach ($mysqldb->query('SELECT `id`, `path` FROM `files`') as $row) {
-            if (!file_exists($row['path'])) {
-                $q1->execute(array($row['id']));
-                $q2->execute(array($row['id']));
-
-                dir_count($row['path'], false);
-
-                $d++;
-            }
-        }
-
-        $template->assign('count', $d);
-        break;
-
-
     case 'del_news':
         $q = $mysqldb->prepare('DELETE FROM `news` WHERE `id` = ?');
 
@@ -1488,6 +1354,31 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'clean':
+        $template->setTemplate('apanel/clean.tpl');
+        break;
+
+
+    case 'cleantrash':
+        $d = 0;
+
+        $q1 = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
+        $q2 = $mysqldb->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
+        foreach ($mysqldb->query('SELECT `id`, `path` FROM `files`') as $row) {
+            if (!file_exists($row['path'])) {
+                $q1->execute(array($row['id']));
+                $q2->execute(array($row['id']));
+
+                dir_count($row['path'], false);
+
+                $d++;
+            }
+        }
+
+        $template->assign('message', 'Удалено неверных записей: ' . $d);
+        break;
+
+
+    case 'cleandb':
         if ($mysqldb->exec('TRUNCATE TABLE `files`') !== false && $mysqldb->exec('TRUNCATE TABLE `comments`') !== false) {
             $template->assign('message', 'Таблицы очищены');
         } else {

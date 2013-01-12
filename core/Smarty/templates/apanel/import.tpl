@@ -2,19 +2,16 @@
 
 
 {block content}
-<h3>Импорт</h3>
+<h3>Импорт файлов из директории {$setup.importpath}</h3>
+<em>
+    В директорию {$setup.importpath}/files добавляется файл, например, {$setup.importpath}/files/MyVideo/video.mp4<br/>
+    В директорию {$setup.importpath}/about добавляется описание к файлу, например, {$setup.importpath}/about/MyVideo/video.mp4.txt<br/>
+    В директорию {$setup.importpath}/screen добавляется скриншот к файлу, например, {$setup.importpath}/screen/MyVideo/video.mp4.gif<br/>
+    В директорию {$setup.importpath}/attach добавляются вложения к файлу, например, {$setup.importpath}/attach/MyVideo/video.mp4_video.3gp<br/>
+    <br/>
+    Названия файлов-вложений должны начинаться так же как и название главного файла (включая расширение) + подчеркивание + название вложения<br/>
+    Названия файлов-скриншотов и файлов-описаний должны начинаться так же как и название главного файла (включая расширение) + расширение (txt - для описаний, gif, png или jpg для скриншотов)
+</em>
 
-<form action="apanel.php?action=import" method="post">
-    <div data-role="fieldcontain">
-        <label for="topath">Сохранить в:</label>
-        {html_options id='topath' name='topath' options=$dirs}
-    </div>
-
-    <div data-role="fieldcontain">
-        <label for="files">Импортируемый файл # с каким именем сохранить:</label>
-        <textarea required="required" cols="70" rows="10" name="files" id="files"></textarea>
-    </div>
-
-    <input type="submit" value="Сохранить"/>
-</form>
+<a href="apanel.php?action=import" data-role="button" data-icon="refresh">Импортировать</a>
 {/block}

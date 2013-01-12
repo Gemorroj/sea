@@ -313,10 +313,11 @@ if (!@$_GET['level']) {
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_change', '1')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email', 'admin@" . $_SERVER['HTTP_HOST'] . "')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'langpack', 'russian')");
+    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
 
     $mysqldb->exec("INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('', '', '')");
 
-    $mysqldb->exec("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '3')");
+    $mysqldb->exec("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '3.1')");
 
     if ($errors) {
         echo '
