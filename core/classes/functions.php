@@ -801,11 +801,43 @@ function importFiles($importFolder, $filesFolder, $aboutFolder, $screenFolder, $
 
     function _importFileData($id, $file)
     {
-        global $importFolderFiles, $importFolderAbout, $importFolderScreen, $importFolderAttach, $aboutFolder, $screenFolder, $attachFolder;
+        global $message, $error, $importFolderFiles, $importFolderAbout, $importFolderScreen, $importFolderAttach, $aboutFolder, $screenFolder, $attachFolder;
+        $result = array('message' => array(), 'error' => array());
 
-        $fileAbout = $importFolderAbout . ltrim($file, $importFolderFiles) . '.txt';
-        $fileScreen = $importFolderScreen . ltrim($file, $importFolderFiles) . '.gif';//todo
-        $fileAttach = $importFolderAttach . ltrim($file, $importFolderFiles) . '_';//todo
+        $preFileAbout = $importFolderAbout . ltrim($file, $importFolderFiles);
+        $preFileScreen = $importFolderScreen . ltrim($file, $importFolderFiles);
+        $preFileAttach = $importFolderAttach . ltrim($file, $importFolderFiles) . '_';
+
+        if (file_exists($preFileAbout . '.txt') === true) {
+            $result += addAbout($file, file_get_contents($preFileAbout . '.txt'));
+        }
+
+        if (file_exists($preFileScreen . '.gif') === true) {
+            $result += addScreen($file, $preFileScreen . '.gif');
+        } elseif (file_exists($preFileScreen . '.jpg') === true) {
+            $result += addScreen($file, $preFileScreen . '.jpg');
+        } elseif (file_exists($preFileScreen . '.png') === true) {
+            $result += addScreen($file, $preFileScreen . '.png');
+        }
+
+        $attach = glob($preFileAttach . '*');
+        if ($attach) {
+            $array = array();
+            foreach ($attach as $v) {
+                $result += addAttach($file, $id, $v, $array);
+
+                // fix
+                list(, $name) = explode('_', basename($v), 2);
+                $array[] = $name;
+            }
+        }
+
+        if ($result['message']) {
+            $message[] = implode("\n", $result['message']);
+        }
+        if ($result['error']) {
+            $error[] = implode("\n", $result['error']);
+        }
     }
     function _importFile($file)
     {
