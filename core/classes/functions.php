@@ -1032,7 +1032,7 @@ function uploadFiles($newpath)
  */
 function del_attach($folder, $id, $files)
 {
-    $attach = $GLOBALS['setup']['apath'] . strtr($folder, '/') . '/';
+    $attach = $GLOBALS['setup']['apath'] . strstr($folder, '/') . '/';
     foreach ($files as $k => $v) {
         unlink($attach . $id . '_' . $k . '_' . $v);
     }

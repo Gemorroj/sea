@@ -139,6 +139,7 @@ if ($setup['version'] < 3) {
 
 if ($setup['version'] < 3.1) {
     $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
+    $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_breadcrumbs', '0')");
 
     $setup['version'] = '3.1';
 }
@@ -147,7 +148,7 @@ if ($setup['version'] < 3.1) {
 $mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $setup['version']));
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" xml:lang="ru" lang="ru">
     <head>
         <title>Обновление</title>
     </head>
@@ -155,9 +156,12 @@ $mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->ex
         <div>
             <fieldset>
                 <legend>Обновление закончено</legend>
-                Не забудьте удалить файл install.php и update.php<br/>
-                <strong><a href="./apanel/">В админку</a><br/>
-                <strong><a href="./">К загрузкам</a><br/>
+                <p>
+                    Текущая версия: <strong><?php echo $setup['version']; ?></strong><br/><br/>
+                    Не забудьте удалить файл install.php и update.php<br/><br/>
+                    <strong><a href="./apanel/">В админку</a><br/>
+                    <strong><a href="./">К загрузкам</a><br/>
+                </p>
             </fieldset>
         </div>
     </body>

@@ -393,7 +393,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
         }
 
-        $template->assign('about', file_get_contents($setup['opath'] . strtr($file['path'], '/') . '.txt'));
+        $template->assign('about', file_get_contents($setup['opath'] . strstr($file['path'], '/') . '.txt'));
         break;
 
 
@@ -465,11 +465,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $file['path'] = strstr($file['path'], '/'); // убираем папку с загрузками
-        $to = $setup['spath'] . $file['path'] . '.gif'; // имя конечного файла
-        $to2 = $setup['spath'] . $file['path'] . '.jpg'; // имя конечного файла
+        $path = strstr($file['path'], '/'); // убираем папку с загрузками
 
-        if (unlink($to) || unlink($to2)) {
+        $a = @unlink($setup['spath'] . $path . '.gif');
+        $b = @unlink($setup['spath'] . $path . '.thumb.gif');
+        $c = @unlink($setup['spath'] . $path . '.jpg');
+        $d = @unlink($setup['spath'] . $path . '.png');
+
+        if ($a || $b || $c || $d) {
             $template->assign('message', 'Скриншот удален');
         } else {
             $err = error_get_last();

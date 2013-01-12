@@ -19,6 +19,8 @@ if (file_exists($setup['spath'] . $screen . '.gif')) {
     $file['screen'] = DIRECTORY . $setup['spath'] . $screen . '.gif';
 } elseif (file_exists($setup['spath'] . $screen . '.jpg')) {
     $file['screen'] = DIRECTORY . $setup['spath'] . $screen . '.jpg';
+} elseif (file_exists($setup['spath'] . $screen . '.png')) {
+    $file['screen'] = DIRECTORY . $setup['spath'] . $screen . '.png';
 }
 
 // Описание
@@ -35,7 +37,10 @@ if ($file['attach']) {
     $attach = unserialize($file['attach']);
     if ($attach) {
         foreach ($attach as $k => $val) {
-            $file['attachments'][$k] = array('name' => $val, 'link' => DIRECTORY . $setup['apath'] . dirname($screen) . '/' . $id . '_' . $k . '_' . $val);
+            $file['attachments'][$k] = array(
+                'name' => $val,
+                'link' => DIRECTORY . $setup['apath'] . dirname($screen) . '/' . $id . '_' . $k . '_' . $val
+            );
         }
     }
 }

@@ -102,36 +102,38 @@ foreach ($query as $v) {
         }
 
 
+        // скриншот
         if ($setup['screen_change']) {
             $th_gif = file_exists($setup['spath'] . $screen . '.thumb.gif');
-            $th_jpg = file_exists($setup['spath'] . $screen . '.thumb.jpg');
 
-            if (file_exists($setup['spath'] . $screen . '.gif') && !$th_gif) {
-                img_resize(
+            if (!$th_gif && file_exists($setup['spath'] . $screen . '.gif')) {
+                $th_gif = img_resize(
                     $setup['spath'] . $screen . '.gif',
                     $setup['spath'] . $screen . '.thumb.gif',
                     0,
                     0,
                     $setup['marker']
                 );
-            } else {
-                if (file_exists($setup['spath'] . $screen . '.jpg') && !$th_gif) {
-                    img_resize(
-                        $setup['spath'] . $screen . '.jpg',
-                        $setup['spath'] . $screen . '.thumb.gif',
-                        0,
-                        0,
-                        $setup['marker']
-                    );
-                }
+            } elseif (!$th_gif && file_exists($setup['spath'] . $screen . '.jpg')) {
+                $th_gif = img_resize(
+                    $setup['spath'] . $screen . '.jpg',
+                    $setup['spath'] . $screen . '.thumb.gif',
+                    0,
+                    0,
+                    $setup['marker']
+                );
+            } elseif (!$th_gif && file_exists($setup['spath'] . $screen . '.png')) {
+                $th_gif = img_resize(
+                    $setup['spath'] . $screen . '.png',
+                    $setup['spath'] . $screen . '.thumb.gif',
+                    0,
+                    0,
+                    $setup['marker']
+                );
             }
 
             if ($th_gif) {
                 $v['screen'] = DIRECTORY . $setup['spath'] . $screen . '.thumb.gif';
-            } else {
-                if ($th_jpg) {
-                    $v['screen'] = DIRECTORY . $setup['spath'] . $screen . '.thumb.jpg';
-                }
             }
         }
 
