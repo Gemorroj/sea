@@ -55,7 +55,6 @@ ini_set('session.session.cookie_path', DIRECTORY);
 session_name('sea');
 session_start() or die('Can not start session');
 
-define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == $setup['password']));
 
 set_include_path(
     get_include_path() . PATH_SEPARATOR .
@@ -84,6 +83,7 @@ foreach ($mysqldb->query('SELECT name, value FROM setting') as $set) {
     $setup[$set['name']] = $set['value'];
 }
 
+define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == $setup['password']));
 
 // Подключаем модуль партнерки
 //require CORE_CORE_DIRECTORY '/../partner/inc.php';
