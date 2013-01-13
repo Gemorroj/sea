@@ -12,7 +12,7 @@
 Установка:
 1.Создаем новую базу данных в панели управления сайтом
 2.Вписываем данные в core/config.php
-3.Ставим CHMOD 777 на директории files/ (и всем поддиректориям), cache/ (и всем поддиректориям) и core/cache/, core/Smarty/templates_c/, core/Smarty/cache/
+3.Ставим CHMOD 777 на директории files/ (и всем поддиректориям), cache/ (и всем поддиректориям) и core/cache/, core/tmp/, core/Smarty/templates_c/, core/Smarty/cache/
 4.Запускаем файл install.php и вводим пароль для доступа в админку
 5.Если установка прошла успешно,то удаляем файл install.php и update.php
 6.Заходим в браузере в админку - apanel/ и настраиваем

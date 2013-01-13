@@ -38,11 +38,11 @@ require 'core/config.php';
 
 $id = intval($_GET['id']);
 
-if (!is_file('./core/cache/' . $id . '.dat')) {
+if (!is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
     error('Not found');
 }
 
-$data = unserialize(file_get_contents('./core/cache/' . $id . '.dat'));
+$data = unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
 if ($data && $data['tag']['APIC']) {
     $im = @imagecreatefromstring(substr($data['tag']['APIC'], 12));
 

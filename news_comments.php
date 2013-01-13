@@ -116,7 +116,7 @@ if ($_POST) {
     }
 
     //Если нет ошибок пишем в базу
-    setcookie('sea_name', $_POST['name'], time() + 86400000);
+    setcookie('sea_name', $_POST['name'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
 
     $q = $mysqldb->prepare('
         INSERT INTO `news_comments` (

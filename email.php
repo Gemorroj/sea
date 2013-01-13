@@ -62,7 +62,7 @@ if (isset($_POST['email'])) {
         error($language['email_incorrect']);
     }
 
-    setcookie('sea_email', $_POST['email'], time() + 86400000);
+    setcookie('sea_email', $_POST['email'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
     if (mail(
         $_POST['email'],
         '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], $language['link_to_file'])) . '?=',

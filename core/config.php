@@ -36,12 +36,39 @@
 
 //error_reporting(0);
 
-require_once 'Smarty/libs/Smarty.class.php';
-require_once 'classes/Template.php';
-require_once 'classes/MysqlDb.php';
+define('CORE_DIRECTORY', dirname(__FILE__));
+if (defined('APANEL') === true) {
+    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname(dirname($_SERVER['PHP_SELF'])) . '/'));
+} else {
+    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
+}
 
-require_once 'classes/functions.php';
-require_once 'classes/Language.php';
+mb_internal_encoding('UTF-8');
+
+ini_set('session.use_trans_sid', '0');
+ini_set('session.use_cookies', '1');
+ini_set('session.use_only_cookies', '1');
+ini_set('session.cookie_httponly', '1');
+ini_set('session.save_path', CORE_DIRECTORY . '/tmp');
+ini_set('session.session.cookie_path', DIRECTORY);
+
+session_name('sea');
+session_start() or die('Can not start session');
+
+define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == $setup['password']));
+
+set_include_path(
+    get_include_path() . PATH_SEPARATOR .
+        CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
+);
+
+require_once CORE_DIRECTORY . '/Smarty/libs/Smarty.class.php';
+require_once CORE_DIRECTORY . '/classes/Template.php';
+require_once CORE_DIRECTORY . '/classes/MysqlDb.php';
+
+require_once CORE_DIRECTORY . '/classes/functions.php';
+require_once CORE_DIRECTORY . '/classes/Language.php';
+
 
 // данные для соединения с БД
 MysqlDb::setOptions(array(
@@ -52,29 +79,10 @@ MysqlDb::setOptions(array(
 ));
 $mysqldb = MysqlDb::getInstance();
 
-session_name('sea');
-session_start() or die('Can not start session');
-
 $setup = array();
 foreach ($mysqldb->query('SELECT name, value FROM setting') as $set) {
     $setup[$set['name']] = $set['value'];
 }
-
-define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == $setup['password']));
-
-
-define('CORE_DIRECTORY', dirname(__FILE__));
-if (defined('APANEL') === true) {
-    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname(dirname($_SERVER['PHP_SELF'])) . '/'));
-} else {
-    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
-}
-
-
-set_include_path(
-    get_include_path() . PATH_SEPARATOR .
-        CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
-);
 
 
 // Подключаем модуль партнерки

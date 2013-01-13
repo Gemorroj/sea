@@ -76,7 +76,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $tmp = CORE_DIRECTORY . '/cache/attach_' . $_FILES['attach']['name'];
+        $tmp = CORE_DIRECTORY . '/tmp/attach_' . $_FILES['attach']['name'];
         if (move_uploaded_file($_FILES['attach']['tmp_name'], $tmp) === false) {
             $err = error_get_last();
             $template->assign('error', $err['message']);
@@ -438,7 +438,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $template->send();
             }
 
-            $tmp = CORE_DIRECTORY . '/cache/screen_' . $_FILES['screen']['name'];
+            $tmp = CORE_DIRECTORY . '/tmp/screen_' . $_FILES['screen']['name'];
             if (move_uploaded_file($_FILES['screen']['tmp_name'], $tmp) === false) {
                 $err = error_get_last();
                 $template->assign('error', $err['message']);

@@ -64,6 +64,8 @@ if (!@$_GET['level']) {
     $errors = array();
 
     chmod('files/', 0777);
+    chmod('core/cache/', 0777);
+    chmod('core/tmp/', 0777);
     chmod('cache/about/', 0777);
     chmod('cache/attach/', 0777);
     chmod('cache/screen/', 0777);

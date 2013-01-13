@@ -1444,8 +1444,8 @@ function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
  */
 function getThmInfo($id, $path = '')
 {
-    if (file_exists(dirname(__FILE__) . '/../cache/' . $id . '.dat')) {
-        return unserialize(file_get_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat'));
+    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+        return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
     }
 
     $ver_thm = array(
@@ -1527,7 +1527,7 @@ function getThmInfo($id, $path = '')
         }
     }
 
-    file_put_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat', serialize($out));
+    file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($out));
     return $out;
 }
 
@@ -1598,17 +1598,14 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
         $h = intval($w / $sxy);
     }
 
-
-    $dir = dirname(__FILE__);
-
     switch ($type) {
         case 1:
             if ($GLOBALS['setup']['anim_change']) {
                 ini_set('memory_limit', '256M');
 
                 // GIF Поддержка анимации    
-                include_once $dir . '/GIFDecoder.class.php';
-                include_once $dir . '/GIFEncoder.class.php';
+                include_once CORE_DIRECTORY . '/classes/GIFDecoder.class.php';
+                include_once CORE_DIRECTORY . '/classes/GIFEncoder.class.php';
 
                 $gif = new GIFDecoder(file_get_contents($in));
 
@@ -1618,8 +1615,8 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
 
                 $a = sizeof($arr);
                 for ($i = 0; $i < $a; ++$i) {
-                    $tmp1 = $dir . '/../cache/' . uniqid() . '.gif';
-                    $tmp2 = $dir . '/../cache/' . uniqid() . '.gif';
+                    $tmp1 = CORE_DIRECTORY . '/tmp/' . uniqid('img_') . '.gif';
+                    $tmp2 = CORE_DIRECTORY . '/tmp/' . uniqid('img_') . '.gif';
 
                     file_put_contents($tmp1, $arr[$i]);
                     $resize = imagecreatefromgif($tmp1);
@@ -1688,8 +1685,8 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
 
         case 6:
             // BMP
-            include_once $dir . '/Bmp.php';
-            $old = Bmp::imagecreatefrombmp($in, $dir . '/../cache/');
+            include_once CORE_DIRECTORY . '/classes/Bmp.php';
+            $old = Bmp::imagecreatefrombmp($in, CORE_DIRECTORY . '/tmp');
             break;
 
 
@@ -1703,7 +1700,7 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
     imagecopyresampled($new, $old, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
     if ($marker) {
-        $new = marker($new, imagecreatefrompng($dir . '/../resources/marker.png'));
+        $new = marker($new, imagecreatefrompng(CORE_DIRECTORY . '/resources/marker.png'));
     }
 
 
@@ -2067,8 +2064,8 @@ function ext_to_mime($ext = '')
  */
 function getMusicInfo($id, $path)
 {
-    if (file_exists(dirname(__FILE__) . '/../cache/' . $id . '.dat')) {
-        return unserialize(file_get_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat'));
+    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+        return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
     }
     $path = CORE_DIRECTORY . '/../' . $path;
 
@@ -2199,7 +2196,7 @@ function getMusicInfo($id, $path)
         } catch (Exception $e) {}
     }
 
-    file_put_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat', serialize($tmpa));
+    file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmpa));
     return $tmpa;
 }
 
@@ -2214,8 +2211,8 @@ function getMusicInfo($id, $path)
  */
 function getVideoInfo($id, $path)
 {
-    if (file_exists(dirname(__FILE__) . '/../cache/' . $id . '.dat')) {
-        return unserialize(file_get_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat'));
+    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+        return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
     }
 
     $tmpa = array();
@@ -2228,7 +2225,7 @@ function getVideoInfo($id, $path)
             'getDuration' => $mov->getDuration(),
             'getBitRate' => $mov->getBitRate()
         );
-        file_put_contents(dirname(__FILE__) . '/../cache/' . $id . '.dat', serialize($tmpa));
+        file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmpa));
     }
 
     return $tmpa;

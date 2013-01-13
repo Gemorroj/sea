@@ -127,7 +127,7 @@ class Bmp
      */
     public static function imagecreatefrombmp($filename, $tmp = '/tmp')
     {
-        $tmp_name = tempnam($tmp, 'GD');
+        $tmp_name = tempnam($tmp, 'bmp_');
         if (self::convertBMP2GD($filename, $tmp_name)) {
             $img = imagecreatefromgd($tmp_name);
             unlink($tmp_name);

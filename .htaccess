@@ -1,9 +1,9 @@
 #CharsetDisable on
 
-
+AddDefaultCharset UTF-8
 RewriteEngine On
-Options +FollowSymlinks
-#Options +FollowSymlinks -MultiViews
+Options -Indexes +FollowSymlinks
+#Options -Indexes +FollowSymlinks -MultiViews
 #RewriteBase /
 
 RewriteRule ^([0-9]+)/*$ ./index.php?id=$1 [QSA,NC]
@@ -190,6 +190,16 @@ AddType video/webm .webm
 AddType x-world/x-vrml .wrl
 
 
+# Кодировка
+php_value default_charset UTF-8
+
+# максимальный размер файлов для аплоада
+php_value upload_max_filesize 999M
+php_value post_max_size 999M
+
+# временная зона
+php_value date.timezone "Europe/Moscow"
+
 # MIME тип по умолчанию
 php_value default_mimetype text/html
 
@@ -210,22 +220,6 @@ php_flag display_errors Off
 php_value error_reporting -1
 php_flag log_errors On
 php_value error_log /error_log
-
-
-# Сессии
-php_value session.use_trans_sid 0
-php_value session.use_cookies 1
-php_value session.use_only_cookies 1
-php_value session.cookie_httponly 1
-php_value session.gc_probability 1
-php_value session.gc_maxlifetime 86400
-php_value session.cookie_lifetime 86400
-php_value session.auto_start 0
-php_value session.name "sea"
-
-# желательно заменить, для улучшения быстродействия
-#php_value session.save_path "/user/home/sea/core/cache"
-
 
 
 # Компрессия
@@ -250,24 +244,6 @@ php_value session.name "sea"
     ExpiresByType application/javascript "access plus 2 months"
     ExpiresByType image/vnd.microsoft.icon "access plus 2 months"
 </IfModule>
-
-
-
-Options -Indexes
-AddDefaultCharset UTF-8
-php_value default_charset UTF-8
-
-# максимальный размер файлов для аплоада
-php_value upload_max_filesize 999M
-php_value post_max_size 999M
-
-# временная зона
-php_value date.timezone "Europe/Moscow"
-
-
-# mbstring
-php_value mbstring.func_overload 0
-php_value mbstring.internal_encoding UTF-8
 
 
 #ErrorDocument 304 /?
