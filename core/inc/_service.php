@@ -2,7 +2,7 @@
 
 if ($setup['service_change']) {
     if (isset($_GET['url'])) {
-        $_SESSION['site_url'] = $setup['site_url'] = ltrim($_GET['url'], 'http://');
+        $_SESSION['site_url'] = $setup['site_url'] = preg_replace('/^(?:.*:\/\/)/', '', $_GET['url']);
     } else {
         if (isset($_SESSION['site_url'])) {
             $setup['site_url'] = $_SESSION['site_url'];

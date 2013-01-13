@@ -586,7 +586,7 @@ function addScreen($file, $screen)
         }
         img_resize($to, $thumb, 0, 0, $setup['marker']);
 
-        $message[] = 'Скриншот добавлен';
+        $message[] = 'Скриншот ' . $to . ' добавлен';
     } else {
         $err = error_get_last();
         $error[] = $err['message'];
@@ -615,14 +615,14 @@ function addAbout($file, $aboutStr)
 
     if ($aboutStr == '') {
         if (@unlink($to) === true) {
-            $message[] = 'Описание удалено';
+            $message[] = 'Описание ' . $to . ' удалено';
         } else {
             $err = error_get_last();
             $error[] = $err['message'];
         }
     } else {
         if (file_put_contents($to, $aboutStr) > 0) {
-            $message[] = 'Описание изменено';
+            $message[] = 'Описание ' . $to . ' изменено';
         } else {
             $err = error_get_last();
             $error[] = $err['message'];
@@ -653,7 +653,7 @@ function addAttach($file, $id, $attachFile, $attachedArray = array())
 
     if (!$error) {
         $key = sizeof($attachedArray);
-        $to = $setup['apath'] . strstr(dirname($file), '/');
+        $to = $setup['apath'] . dirname(strstr($file, '/'));
 
         list(, $name) = explode('_', basename($attachFile), 2);
 
@@ -662,7 +662,7 @@ function addAttach($file, $id, $attachFile, $attachedArray = array())
             $q = MysqlDb::getInstance()->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
             $result = $q->execute(array(serialize($attachedArray), $id));
             if ($result === true) {
-                $message[] = 'Вложение добавлено';
+                $message[] = 'Вложение ' . $to . '/' . $id . '_' . $key . '_' . $name . ' добавлено';
             } else {
                 $error[] = implode("\n", $q->errorInfo());
             }
@@ -718,14 +718,14 @@ function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
     if (!$error) {
         $directory = $topath . $realname . '/';
 
-        $temp = mb_substr($directory, mb_strlen($setup['path']), mb_strlen($directory));
+        $temp = strstr($directory, '/');
 
         //скриншоты
-        $screen = $setup['spath'] . '/' . $temp;
+        $screen = $setup['spath'] . $temp;
         // описания
-        $desc = $setup['opath'] . '/' . $temp;
+        $desc = $setup['opath'] . $temp;
         // вложения
-        $attach = $setup['apath'] . '/' . $temp;
+        $attach = $setup['apath'] . $temp;
 
         mkdir($directory, 0777);
         chmod($directory, 0777); // fix
@@ -753,10 +753,10 @@ function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
             '1',
             '0',
             $directory,
-            $_POST['dir']['english'],
-            $_POST['dir']['russian'],
-            $_POST['dir']['azerbaijan'],
-            $_POST['dir']['turkey'],
+            $name,
+            $rus_name,
+            $aze_name,
+            $tur_name,
             $topath
         ));
         if ($result) {
@@ -766,158 +766,6 @@ function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
             $error[] = implode("\n", $q->errorInfo());
         }
     }
-
-    return array('message' => $message, 'error' => $error);
-}
-
-
-/**
- * @param string $importFolder
- * @param string $filesFolder
- * @param string $aboutFolder
- * @param string $screenFolder
- * @param string $attachFolder
- *
- * @return array
- */
-function importFiles($importFolder, $filesFolder, $aboutFolder, $screenFolder, $attachFolder)
-{
-    $message = array();
-    $error = array();
-
-    $importFolderFiles = $importFolder . '/files';
-    $importFolderAbout = $importFolder . '/about';
-    $importFolderScreen = $importFolder . '/screen';
-    $importFolderAttach = $importFolder . '/attach';
-
-    $importQuery = MysqlDb::getInstance()->prepare('
-        INSERT INTO `files` (
-            `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
-        ) VALUES (
-            "0", ?, ?, ?, ?, ?, ?, ?, ?
-        )
-    ');
-    $directoryExistsQuery = MysqlDb::getInstance()->prepare('SELECT 1 FROM `files` WHERE `path` = ? AND `dir` = "1" LIMIT 1');
-
-    function _importFileData($id, $file)
-    {
-        global $message, $error, $importFolderFiles, $importFolderAbout, $importFolderScreen, $importFolderAttach, $aboutFolder, $screenFolder, $attachFolder;
-        $result = array('message' => array(), 'error' => array());
-
-        $preFileAbout = $importFolderAbout . ltrim($file, $importFolderFiles);
-        $preFileScreen = $importFolderScreen . ltrim($file, $importFolderFiles);
-        $preFileAttach = $importFolderAttach . ltrim($file, $importFolderFiles) . '_';
-
-        if (file_exists($preFileAbout . '.txt') === true) {
-            $result += addAbout($file, file_get_contents($preFileAbout . '.txt'));
-        }
-
-        if (file_exists($preFileScreen . '.gif') === true) {
-            $result += addScreen($file, $preFileScreen . '.gif');
-        } elseif (file_exists($preFileScreen . '.jpg') === true) {
-            $result += addScreen($file, $preFileScreen . '.jpg');
-        } elseif (file_exists($preFileScreen . '.png') === true) {
-            $result += addScreen($file, $preFileScreen . '.png');
-        }
-
-        $attach = glob($preFileAttach . '*');
-        if ($attach) {
-            $array = array();
-            foreach ($attach as $v) {
-                $result += addAttach($file, $id, $v, $array);
-
-                // fix
-                list(, $name) = explode('_', basename($v), 2);
-                $array[] = $name;
-            }
-        }
-
-        if ($result['message']) {
-            $message[] = implode("\n", $result['message']);
-        }
-        if ($result['error']) {
-            $error[] = implode("\n", $result['error']);
-        }
-    }
-    function _importFile($file)
-    {
-        /**
-         * @var PDOStatement $importQuery
-         */
-        global $message, $error, $importQuery, $filesFolder, $importFolderFiles;
-
-        $toFile = $filesFolder . ltrim($file, $importFolderFiles);
-
-        if (checkExt(pathinfo($file, PATHINFO_EXTENSION)) === false) {
-            $error[] = 'Импорт файла ' . $file . ' окончилась неудачно: недоступное расширение';
-            return;
-        }
-        if (file_exists($toFile) === true) {
-            $error[] = 'Загрузка файла ' . $file . ' окончилась неудачно: файл ' . $toFile . ' уже существует';
-            return;
-        }
-
-        if (copy($file, $toFile) === true) {
-            $aze_name = $tur_name = $rus_name = $name = basename($toFile, '.' . pathinfo($toFile, PATHINFO_EXTENSION));
-
-            $infolder = dirname($toFile) . '/';
-
-            $importQuery->execute(array(
-                 $toFile,
-                 $name,
-                 $rus_name,
-                 $aze_name,
-                 $tur_name,
-                 $infolder,
-                 filesize($toFile),
-                 filectime($toFile)
-            ));
-            $id = MysqlDb::getInstance()->lastInsertId();
-
-            dir_count($infolder, true);
-            chmod($toFile, 0644);
-
-            _importFileData($id, $toFile);
-
-            $message[] = 'Импорт файла ' . $file . ' прошел успешно';
-        } else {
-            $err = error_get_last();
-            $error[] = 'Импорт файла ' . $file . ' окончился неудачно: ' . $err['message'];
-        }
-    }
-    function _importFilesRecursive($filesFolder)
-    {
-        /**
-         * @var PDOStatement $directoryExistsQuery
-         */
-        global $message, $error, $directoryExistsQuery;
-
-        foreach ((array)array_diff(scandir($filesFolder, 0), array('.', '..')) as $file) {
-            if ($file[0] === '.') {
-                continue;
-            }
-            if (is_dir($filesFolder . '/' . $file) === true) {
-                $q = $directoryExistsQuery->execute(array($filesFolder . '/' . $file . '/'));
-                if (!$q) {
-                    $error[] = implode("\n", $directoryExistsQuery->errorInfo());
-                }
-                if ($directoryExistsQuery->rowCount() < 1) {
-                    $result = addDir($file, $filesFolder . '/', $file, $file, $file, $file);
-                    $error += $result['error'];
-                    $message += $result['message'];
-                }
-
-                _importFilesRecursive($filesFolder . '/' . $file);
-                continue;
-            }
-            if (is_file($filesFolder . '/' . $file) === true) {
-                _importFile($filesFolder . '/' . $file);
-            }
-        }
-    }
-
-    _importFilesRecursive($importFolderFiles);
-
 
     return array('message' => $message, 'error' => $error);
 }
@@ -1626,7 +1474,7 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
 
 
                     if ($marker) {
-                        $image_p = marker($image_p, imagecreatefrompng($dir . '/../resources/marker.png'));
+                        $image_p = marker($image_p, imagecreatefrompng(CORE_DIRECTORY . '/resources/marker.png'));
                     }
 
                     imagegif($image_p, $tmp2);

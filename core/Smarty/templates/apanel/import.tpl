@@ -13,5 +13,7 @@
     Названия файлов-скриншотов и файлов-описаний должны начинаться так же как и название главного файла (включая расширение) + расширение (txt - для описаний, gif, png или jpg для скриншотов)
 </em>
 
-<a href="apanel.php?action=import" data-role="button" data-icon="refresh">Импортировать</a>
+<form action="apanel.php?action=import" method="post">
+    <input data-icon="refresh" type="submit" name="send" value="Импортировать"/>
+</form>
 {/block}

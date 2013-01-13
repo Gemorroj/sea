@@ -939,7 +939,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/import.tpl');
 
         if ($_POST) {
-            $result = importFiles($setup['importpath'], $setup['path'], $setup['opath'], $setup['spath'], $setup['apath']);
+            include_once CORE_DIRECTORY . '/classes/Import.php';
+            $import = new Import($setup);
+            $result = $import->importFiles();
 
             if ($result['message']) {
                 $template->assign('message', implode("\n", $result['message']));

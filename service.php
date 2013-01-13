@@ -72,8 +72,8 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
     }
 } elseif (isset($_GET['act']) && $_GET['act'] == 'registration') {
     if ($_POST) {
-        $_POST['style'] = ltrim($_POST['style'], 'http://');
-        $_POST['url'] = ltrim($_POST['url'], 'http://');
+        $_POST['style'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['style']);
+        $_POST['url'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['url']);
 
         $error = array();
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
@@ -216,8 +216,8 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
 
             case 'save':
-                $_POST['style'] = ltrim($_POST['style'], 'http://');
-                $_POST['url'] = ltrim($_POST['url'], 'http://');
+                $_POST['style'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['style']);
+                $_POST['url'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['url']);
 
                 $_SESSION['url'] = $_POST['url'];
                 $_SESSION['name'] = $_POST['name'];
@@ -253,7 +253,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
                 for ($i = 0; $i < $all; ++$i) {
                     $name = $_POST['head']['name'][$i];
-                    $value = ltrim($_POST['head']['value'][$i], 'http://');
+                    $value = preg_replace('/^(?:.*:\/\/)/', '', $_POST['head']['value'][$i]);
                     if ($name && $value) {
                         $q->execute(array(
                             $_SESSION['id'],
@@ -268,7 +268,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
                 for ($i = 0; $i < $all; ++$i) {
                     $name = $_POST['foot']['name'][$i];
-                    $value = ltrim($_POST['foot']['value'][$i], 'http://');
+                    $value = preg_replace('/^(?:.*:\/\/)/', '', $_POST['foot']['value'][$i]);
                     if ($name && $value) {
                         $q->execute(array(
                              $_SESSION['id'],
