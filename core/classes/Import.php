@@ -135,19 +135,19 @@ class Import
      */
     private function _importFilesRecursive($folder)
     {
+        $toFolder = $this->_filesFolder . strstr(ltrim(strstr($folder, '/'), '/'), '/') . '/';
+
         foreach ((array)array_diff(scandir($folder, 0), array('.', '..')) as $file) {
             if ($file[0] === '.') {
                 continue;
             }
             if (is_dir($folder . '/' . $file) === true) {
-                $q = $this->_directoryExistsQuery->execute(array($folder . '/' . $file . '/'));
+                $q = $this->_directoryExistsQuery->execute(array($toFolder . $file . '/'));
                 if (!$q) {
                     $this->_error[] = implode("\n", $this->_directoryExistsQuery->errorInfo());
                 }
                 if ($this->_directoryExistsQuery->rowCount() < 1) {
-                    $toFolder = $this->_filesFolder . strstr(ltrim(strstr($folder, '/'), '/'), '/');
-
-                    $result = addDir($file, $toFolder . '/', $file, $file, $file, $file);
+                    $result = addDir($file, $toFolder, $file, $file, $file, $file);
                     $this->_error = array_merge($this->_error, $result['error']);
                     $this->_message = array_merge($this->_message, $result['message']);
                 }

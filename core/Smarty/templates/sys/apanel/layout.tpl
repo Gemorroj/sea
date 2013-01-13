@@ -32,12 +32,13 @@
 
     <div data-role="content">
         <div class="content-primary">
-            {if isset($error)}
+            {if isset($error) && $error}
                 <div class="ui-bar ui-bar-e">
                     <h3>Warning!</h3>
                     <p>{$error|escape|nl2br nofilter}</p>
                 </div><br/>
-            {elseif isset($message)}
+            {/if}
+            {if isset($message) && $message}
                 <div class="ui-bar ui-bar-b">
                     <h3>Success!</h3>
                     <p>{$message|escape|nl2br nofilter}</p>
