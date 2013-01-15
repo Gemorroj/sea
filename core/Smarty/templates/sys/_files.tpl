@@ -5,7 +5,7 @@
     {foreach $directories as $dir}
         <div class="{cycle values="row,row2"}">
 
-            <img src="{$dir.ico|rawurlencode|replace:'%2F':'/'}" alt=""/>
+            <img src="{$dir.ico}" alt=""/>
                                                                                                             {* новые файлы в папке *}
             <strong><a href="{$smarty.const.DIRECTORY}{$dir.id}">{$dir.name}</a></strong> ({$dir.dir_count}{if ($setup.day_new && $dir.count)}<span class="yes"> +{$dir.count}</span>{/if})
 
@@ -47,16 +47,16 @@
             {* превью *}
             {if $prew && $f.pre}
                 {if $f.ext == 'swf'}
-                    <object style="width: 128px; height: 128px;"><param name="movie" value="{$f.pre}"><embed src="{$f.pre|rawurlencode|replace:'%2F':'/'}" style="width: 128px; height: 128px;"></embed></param></object>
+                    <object style="width: 128px; height: 128px;"><param name="movie" value="{$f.pre}"><embed src="{$f.pre}" style="width: 128px; height: 128px;"></embed></param></object>
                 {else}
                     {* gif,png,jpg *}
-                    <img style="margin: 1px;" src="{$f.pre|rawurlencode|replace:'%2F':'/'}" alt=""/>
+                    <img style="margin: 1px;" src="{$f.pre}" alt=""/>
                 {/if}
             {/if}
 
             {* скриншот *}
             {if $setup.screen_change && $f.screen}
-                <img style="margin: 1px;" src="{$f.screen|rawurlencode|replace:'%2F':'/'}" alt=""/>
+                <img style="margin: 1px;" src="{$f.screen}" alt=""/>
             {/if}
 
 
@@ -66,7 +66,7 @@
             {/if}
 
 
-            <img src="{$f.ico|rawurlencode|replace:'%2F':'/'}" alt=""/>
+            <img src="{$f.ico}" alt=""/>
             <strong><a href="{$smarty.const.DIRECTORY}view/{$f.id}">{$f.name}</a></strong>
 
             {* расширение *}

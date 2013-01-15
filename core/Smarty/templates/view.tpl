@@ -17,7 +17,7 @@
         <script type="text/javascript">
             window.onload = function () {
                 jwplayer("audio_player").setup({
-                    'file': "{$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}",
+                    'file': "{$smarty.const.DIRECTORY}{$file.path}",
                     'title': "{$file.name}",
                     'height': 40,
                     'width': 320
@@ -30,7 +30,7 @@
             window.onload = function () {
                 jwplayer("video_player").setup({
                     {if extension_loaded('ffmpeg')}'image': "{$smarty.const.DIRECTORY}ffmpeg/{$id}",{/if}
-                    'file': "{$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}",
+                    'file': "{$smarty.const.DIRECTORY}{$file.path}",
                     'title': "{$file.name}",
                     'height': 180,
                     'width': 320
@@ -124,7 +124,7 @@
             <strong><a href="{$smarty.const.DIRECTORY}jad/{$id}">{$language.download} [JAD]</a></strong><br/>
         {/if}
 
-        <input class="enter" size="50" type="url" value="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}{$file.path|rawurlencode|replace:'%2F':'/'}"/><br/>
+        <input class="enter" size="50" type="url" value="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}{$file.path}"/><br/>
         {if $setup.send_email}
             <a href="{$smarty.const.DIRECTORY}email/{$id}">{$language.send_a_link_to_email}</a><br/>
         {/if}
