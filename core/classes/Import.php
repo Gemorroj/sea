@@ -180,6 +180,11 @@ class Import
 
         if (copy($file, $toFile) === true) {
             $aze_name = $tur_name = $rus_name = $name = basename($toFile, '.' . pathinfo($toFile, PATHINFO_EXTENSION));
+            // транслит
+            if ($name[0] === '!') {
+                $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
+                $rus_name = trans($rus_name);
+            }
 
             $infolder = dirname($toFile) . '/';
 

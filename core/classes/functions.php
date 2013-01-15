@@ -877,6 +877,11 @@ function uploadFiles($newpath)
 
         if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to) === true) {
             $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
+            // транслит
+            if ($name[0] === '!') {
+                $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
+                $rus_name = trans($rus_name);
+            }
 
             $q->execute(array(
                  $to,
