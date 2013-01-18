@@ -219,8 +219,6 @@ class Import
      */
     private function _importFileData($id, $file)
     {
-        $result = array('message' => array(), 'error' => array());
-
         $preFileAbout = $this->_importFolderAbout . strstr($file, '/');
         $preFileScreen = $this->_importFolderScreen . strstr($file, '/');
         $preFileAttach = $this->_importFolderAttach . strstr($file, '/') . '_';
