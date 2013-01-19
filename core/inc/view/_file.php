@@ -36,10 +36,12 @@ if (file_exists($setup['opath'] . '/' . $screen . '.txt')) {
 if ($file['attach']) {
     $attach = unserialize($file['attach']);
     if ($attach) {
+        $dir = $setup['apath'] . dirname($screen) . '/';
         foreach ($attach as $k => $val) {
             $file['attachments'][$k] = array(
                 'name' => $val,
-                'link' => DIRECTORY . $setup['apath'] . dirname($screen) . '/' . $id . '_' . $k . '_' . $val
+                'link' => DIRECTORY . $dir . $id . '_' . $k . '_' . $val,
+                'size' => filesize($dir . $id . '_' . $k . '_' . $val)
             );
         }
     }
