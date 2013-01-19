@@ -134,7 +134,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $folder = $_POST['topath'];
+        $folder = $setup['path'] . trim($_POST['topath']);
         $filename = basename($file['path']);
 
         if (!is_dir($folder)) {
