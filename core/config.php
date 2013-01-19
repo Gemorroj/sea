@@ -48,10 +48,9 @@ mb_internal_encoding('UTF-8');
 ini_set('session.use_trans_sid', '0');
 ini_set('session.use_cookies', '1');
 ini_set('session.use_only_cookies', '1');
-ini_set('session.cookie_httponly', '1');
-ini_set('session.save_path', CORE_DIRECTORY . '/tmp');
-ini_set('session.session.cookie_path', DIRECTORY);
 
+session_set_cookie_params(864000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
+session_save_path(CORE_DIRECTORY . '/tmp');
 session_name('sea');
 session_start() or die('Can not start session');
 
