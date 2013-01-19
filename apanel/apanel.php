@@ -158,10 +158,10 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $q = $mysqldb->prepare('UPDATE `files` SET `path` = ?, `infolder` = ? WHERE `id` = ?');
         if ($q->execute(array($folder . $filename, $folder, $id))) {
             dir_count($folder, false);
-            dir_count($folder['path'], true);
+            dir_count($file['path'], true);
 
             $path1 = strstr($file['path'], '/'); // убираем папку с загрузками
-            $path2 = strstr($folder['path'], '/'); // убираем папку с загрузками
+            $path2 = strstr($folder, '/'); // убираем папку с загрузками
 
             // перемещаем скриншоты и описания
             if (is_file($setup['spath'] . $path1 . '.gif')) {
@@ -170,8 +170,22 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             if (is_file($setup['spath'] . $path1 . '.jpg')) {
                 rename($setup['spath'] . $path1 . '.jpg', $setup['spath'] . $path2 . $filename . '.jpg');
             }
+            if (is_file($setup['spath'] . $path1 . '.png')) {
+                rename($setup['spath'] . $path1 . '.png', $setup['spath'] . $path2 . $filename . '.png');
+            }
             if (is_file($setup['opath'] . $path1 . '.txt')) {
                 rename($setup['opath'] . $path1 . '.txt', $setup['opath'] . $path2 . $filename . '.txt');
+            }
+            if (is_file($setup['spath'] . $path1 . '.thumb.gif')) {
+                rename($setup['spath'] . $path1 . '.thumb.gif', $setup['spath'] . $path2 . $filename . '.thumb.gif');
+            }
+
+            // перемещаем вложения
+            $globDir1 = $setup['apath'] . dirname($path1) . '/';
+            $globDir2 = $setup['apath'] . $path2;
+            foreach (glob($globDir1 . $id . '_*') as $v) {
+                $v = basename($v);
+                rename($globDir1 . $v, $globDir2 . $v);
             }
 
             $template->assign('message', 'Файл перемещен');

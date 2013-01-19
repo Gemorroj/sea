@@ -132,7 +132,7 @@
     <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$id}&amp;action=add_attach" method="post" enctype="multipart/form-data">
         <div>
             <label for="attach">Вложение:</label>
-            <input id="attach" name="attach" type="file" class="buttom"/><br/>
+            <input id="attach" name="attach" type="file" class="buttom" required="required" /><br/>
             <input class="buttom" type="submit" value="Добавить"/>
         </div>
     </form>
