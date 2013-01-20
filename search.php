@@ -34,6 +34,8 @@
  */
 
 
+define('IS_P_NAME', true);
+
 require 'core/header.php';
 ###############Если поиск выключен###############
 if (!$setup['search_change']) {
@@ -74,29 +76,32 @@ if ($word != '') {
 
 
     $query = $mysqldb->prepare('
-        SELECT `id`,
-        `hidden`,
-        `dir`,
-        `dir_count`,
-        `path` AS `v`,
-        `infolder`,
-        ' . Language::getInstance()->buildFilesQuery() . ',
-        `size`,
-        `loads`,
-        `timeupload`,
-        `yes`,
-        `no`,
+        SELECT `f`.`id`,
+        `f`.`hidden`,
+        `f`.`dir`,
+        `f`.`dir_count`,
+        `f`.`path` AS `v`,
+        `f`.`infolder`,
+        ' . Language::getInstance()->buildFilesQuery('f') . ',
+        `f`.`size`,
+        `f`.`loads`,
+        `f`.`timeupload`,
+        `f`.`yes`,
+        `f`.`no`,
         (
             SELECT COUNT(1)
             FROM `files`
             WHERE `infolder` = `v`
             AND `timeupload` > ?
             ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-        ) AS `count`
-        FROM `files`
-        WHERE `name` LIKE ?
-        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-        ORDER BY ' . getSortMode() . '
+        ) AS `count`,
+        `p_files`.`id` AS `p_id`,
+        ' . Language::getInstance()->buildFilesQuery('p_files', 'p_name') . '
+        FROM `files` AS `f`
+        LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
+        WHERE `f`.`name` LIKE ?
+        ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
+        ORDER BY ' . getSortMode('f') . '
         LIMIT ?, ?
     ');
     $query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new']), PDO::PARAM_INT);

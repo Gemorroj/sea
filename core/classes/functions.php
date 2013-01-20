@@ -377,6 +377,10 @@ function retrans($t)
 
 /**
  * $_GET -> $_SESSION
+ *
+ * @param string $name
+ *
+ * @return string
  */
 function get2ses($name)
 {
@@ -393,26 +397,30 @@ function get2ses($name)
 
 
 /**
+ * Часть SQL запроса для сортировки ORDER BY
+ *
+ * @param string $prefix
  * @return string
  */
-function getSortMode()
+function getSortMode($prefix = null)
 {
     global $setup;
     $sort = get2ses('sort');
+    $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
     if ($sort === 'date') {
-        $mode = '`priority` DESC, `timeupload` DESC';
+        $mode = $prefix . '`priority` DESC, ' . $prefix . '`timeupload` DESC';
     } elseif ($sort === 'size') {
-        $mode = '`priority` DESC, `size` ASC';
+        $mode = $prefix . '`priority` DESC, ' . $prefix . '`size` ASC';
     } elseif ($sort === 'load') {
-        $mode = '`priority` DESC, `loads` DESC';
+        $mode = $prefix . '`priority` DESC, ' . $prefix . '`loads` DESC';
     } elseif ($sort === 'eval' && $setup['eval_change']) {
-        $mode = '`priority` DESC, `yes` DESC , `no` ASC';
+        $mode = $prefix . '`priority` DESC, ' . $prefix . '`yes` DESC , ' . $prefix . '`no` ASC';
     } else {
-        $mode = '`priority` DESC, `name` ASC';
+        $mode = $prefix . '`priority` DESC, ' . $prefix . '`name` ASC';
     }
 
-    return '`dir` DESC, ' . $mode;
+    return $prefix . '`dir` DESC, ' . $mode;
 }
 
 

@@ -92,6 +92,12 @@
             {/if}
 
 
+            {* в категорию *}
+            {if $smarty.const.IS_P_NAME === true && $f.p_id}
+                <br/>{$language.go_to_the_category}: <strong><a href="{$smarty.const.DIRECTORY}{$f.p_id}">{$f.p_name}</a></strong>
+            {/if}
+
+
             {* описание *}
             {if ($setup.desc && $f.description)}
                 <br/>{$f.description|truncate:$setup.desc}

@@ -34,6 +34,8 @@
  */
 
 
+define('IS_P_NAME', true);
+
 require 'core/header.php';
 ###############Если топ выключен###############
 if (!$setup['new_change'] || !$setup['day_new']) {
@@ -69,29 +71,34 @@ $template->assign('paginatorConf', $paginatorConf);
 
 
 $query = $mysqldb->prepare('
-    SELECT `id`,
-    `hidden`,
-    `dir`,
-    `dir_count`,
-    `path` AS `v`,
-    `infolder`,
-    ' . Language::getInstance()->buildFilesQuery() . ',
-    `size`,
-    `loads`,
-    `timeupload`,
-    `yes`,
-    `no`,
-    0 AS `count`
-    FROM `files`
-    WHERE `dir` = "0"
-    AND `timeupload` >= ?
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-    ORDER BY ' . getSortMode() . '
+    SELECT `f`.`id`,
+    `f`.`hidden`,
+    `f`.`dir`,
+    `f`.`dir_count`,
+    `f`.`path` AS `v`,
+    `f`.`infolder`,
+    ' . Language::getInstance()->buildFilesQuery('f') . ',
+    `f`.`size`,
+    `f`.`loads`,
+    `f`.`timeupload`,
+    `f`.`yes`,
+    `f`.`no`,
+    0 AS `count`,
+    `p_files`.`id` AS `p_id`,
+    ' . Language::getInstance()->buildFilesQuery('p_files', 'p_name') . '
+    FROM `files` AS `f`
+    LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
+    WHERE `f`.`dir` = "0"
+    AND `f`.`timeupload` >= ?
+    ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
+    ORDER BY ' . getSortMode('f') . '
     LIMIT ?, ?
 ');
+
 $query->bindValue(1, $new, PDO::PARAM_INT);
 $query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
 $query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
+
 
 $query->execute();
 

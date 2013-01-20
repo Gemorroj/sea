@@ -129,19 +129,20 @@ class Language
      * Строка запроса для файлов
      *
      * @param string $prefix
+     * @param string $name
      *
      * @return string
      */
-    public function buildFilesQuery($prefix = null)
+    public function buildFilesQuery($prefix = null, $name = 'name')
     {
         $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
         $key = array_search($this->getLangpack(), $this->_dbFilesCorrelation);
         if ($key !== false) {
-            return $prefix . '`' . $key . '` AS `name`';
+            return $prefix . '`' . $key . '` AS `' . $name . '`';
         }
 
-        return $prefix . '`name`';
+        return $prefix . '`' . $name .'`';
     }
 
 
@@ -149,19 +150,20 @@ class Language
      * Строка запроса для новостей
      *
      * @param string $prefix
+     * @param string $name
      *
      * @return string
      */
-    public function buildNewsQuery($prefix = null)
+    public function buildNewsQuery($prefix = null, $name = 'news')
     {
         $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
         $key = array_search($this->getLangpack(), $this->_dbNewsCorrelation);
         if ($key !== false) {
-            return $prefix . '`' . $key . '` AS `news`';
+            return $prefix . '`' . $key . '` AS `' . $name .'`';
         }
 
-        return $prefix . '`news`';
+        return $prefix . '`' . $name .'`';
     }
 
 
