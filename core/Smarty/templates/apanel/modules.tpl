@@ -42,6 +42,7 @@
         {html_checkboxes name="exchanger_change" selected=$setup.exchanger_change options=[1=>'Обменник']}
         {html_checkboxes name="send_email" selected=$setup.send_email options=[1=>'Отправка ссылки на Email']}
         {html_checkboxes name="ignore_index_breadcrumbs" selected=$setup.ignore_index_breadcrumbs options=[1=>'Не отображать бредкрамбсы на главной']}
+        {html_checkboxes name="ignore_index_pages" selected=$setup.ignore_index_pages options=[1=>'Отображать все директории/файлы на главной']}
     </fieldset>
 
     <input type="submit" value="Сохранить"/>

@@ -433,11 +433,21 @@ function getSortMode($prefix = null)
  */
 function getPaginatorConf($items)
 {
-    global $setup;
+    global $setup, $id;
     $onpage = get2ses('onpage');
-
     $items = intval($items);
     $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
+
+    if (!$id && $setup['ignore_index_pages']) {
+        // переопределяем пагинацию, если это главная
+        return array(
+            'start' => 0,
+            'page' => 1,
+            'pages' => 1,
+            'onpage' => $items,
+            'items' => $items,
+        );
+    }
 
     $onpage = $onpage > $items ? $items : $onpage;
     if ($onpage < 3) {

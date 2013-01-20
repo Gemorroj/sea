@@ -140,6 +140,7 @@ if ($setup['version'] < 3) {
 if ($setup['version'] < 3.1) {
     $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
     $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_breadcrumbs', '0')");
+    $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_pages', '0')");
 
     $setup['version'] = '3.1';
 }
