@@ -527,7 +527,7 @@ function marker($image, $watermark)
         for ($i = 0; $i < $imageWidth; ++$i) {
             $rgb = imagecolorsforindex($image, imagecolorat($image, $i, $j));
 
-            if ($GLOBALS['setup']['marker_where'] == 'top' && $j < $watermarkHeight && $i < $watermarkWidth) {
+            if ($GLOBALS['setup']['marker_where'] === 'top' && $j < $watermarkHeight && $i < $watermarkWidth) {
                 $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j));
                 if ($rgb2['alpha'] != 127) {
                     $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
@@ -535,7 +535,7 @@ function marker($image, $watermark)
                     $rgb['blue'] = intval(($rgb['blue'] + $rgb2['blue']) / 2);
                 }
             } else {
-                if ($GLOBALS['setup']['marker_where'] == 'foot' && $j >= $footH && $i < $watermarkWidth) {
+                if ($GLOBALS['setup']['marker_where'] === 'foot' && $j >= $footH && $i < $watermarkWidth) {
                     $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j - $footH));
                     if ($rgb2['alpha'] != 127) {
                         $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
@@ -585,11 +585,11 @@ function addScreen($file, $screen)
     chmods($to);
 
     if (copy($screen, $to) === true) {
-        if ($ext == 'jpg' || $ext == 'jpe' || $ext == 'jpeg') {
+        if ($ext === 'jpg' || $ext === 'jpe' || $ext === 'jpeg') {
             $im = imagecreatefromjpeg($to);
             imagegif($im, $to);
             imagedestroy($im);
-        } elseif ($ext == 'png') {
+        } elseif ($ext === 'png') {
             $im = imagecreatefrompng($to);
             imagegif($im, $to);
             imagedestroy($im);
@@ -1307,7 +1307,7 @@ function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
  */
 function getThmInfo($id, $path = '')
 {
-    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
         return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
     }
 
@@ -1360,7 +1360,7 @@ function getThmInfo($id, $path = '')
         $list = $thm->listContent();
         $all = sizeof($list);
         for ($i = 0; $i < $all; ++$i) {
-            if (pathinfo($list[$i]['filename'], PATHINFO_EXTENSION) == 'xml') {
+            if (pathinfo($list[$i]['filename'], PATHINFO_EXTENSION) === 'xml') {
                 $file = $thm->extractInString($list[$i]['filename']);
                 break;
             }
@@ -1595,7 +1595,7 @@ function jar_ico($jar, $f)
             if (@$arr[1]) {
                 foreach (explode(',', $arr[1]) as $v) {
                     $v = trim(trim($v), '/');
-                    if (strtolower(pathinfo($v, PATHINFO_EXTENSION)) == 'png') {
+                    if (strtolower(pathinfo($v, PATHINFO_EXTENSION)) === 'png') {
                         $icon = $archive->extract(PCLZIP_OPT_BY_NAME, $v, PCLZIP_OPT_EXTRACT_AS_STRING);
                         break;
                     }
@@ -1609,7 +1609,7 @@ function jar_ico($jar, $f)
             if (@$arr[1]) {
                 foreach (explode(',', $arr[1]) as $v) {
                     $v = trim(trim($v), '/');
-                    if (strtolower(pathinfo($v, PATHINFO_EXTENSION)) == 'png') {
+                    if (strtolower(pathinfo($v, PATHINFO_EXTENSION)) === 'png') {
                         $icon = $archive->extract(PCLZIP_OPT_BY_NAME, $v, PCLZIP_OPT_EXTRACT_AS_STRING);
                         break;
                     }
@@ -1940,7 +1940,7 @@ function ext_to_mime($ext = '')
  */
 function getMusicInfo($id, $path)
 {
-    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
         return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
     }
     $path = CORE_DIRECTORY . '/../' . $path;
@@ -1949,7 +1949,7 @@ function getMusicInfo($id, $path)
     $filename = pathinfo($path);
     $ext = strtolower($filename['extension']);
 
-    if ($ext == 'mp3' || $ext == 'wav') {
+    if ($ext === 'mp3' || $ext === 'wav') {
         include_once dirname(__FILE__) . '/classAudioFile.php';
 
         $audio = new AudioFile;
@@ -1966,7 +1966,50 @@ function getMusicInfo($id, $path)
         $comments = array();
 
         if (isset($audio->id3v2->APIC) && $audio->id3v2->APIC) {
-            $comments['APIC'] = $audio->id3v2->APIC;
+            $apic = $audio->id3v2->APIC;
+            $pos = strpos($apic,  "\0") + 1;
+            $apic = substr($apic, $pos);
+            $pos = strpos($apic,  "\0") + 1;
+            $apic = substr($apic, $pos);
+
+
+            function apicFix($apic)
+            {
+                // fix 1
+                $pos = strpos($apic,  "\0") + 1;
+                $apic = substr($apic, $pos);
+
+                $apic = str_replace("\xFF\x00\x00", "\xFF\x00", $apic);
+                // end fix 1
+                return $apic;
+            }
+
+            function apicCheckFix($apic)
+            {
+                // fix 2
+                $tmp = @imagecreatefromstring($apic);
+                if ($tmp) {
+                    ob_start();
+                    imagejpeg($tmp);
+                    $apic = ob_get_contents();
+                    ob_end_clean();
+                    imagedestroy($tmp);
+                } else {
+                    $apic = false;
+                }
+                // end fix 2
+               return $apic;
+            }
+
+            $fixApic = apicCheckFix($apic);
+            if (!$fixApic) {
+                $fixApic = apicFix($apic);
+                if ($fixApic) {
+                    $fixApic = apicCheckFix($fixApic);
+                }
+            }
+
+            $comments['APIC'] = $fixApic;
         } else {
             $comments['APIC'] = false;
         }
@@ -2016,7 +2059,7 @@ function getMusicInfo($id, $path)
                 'apic' => $comments['APIC']
             )
         );
-    } elseif ($ext == 'ogg') {
+    } elseif ($ext === 'ogg') {
         include_once dirname(__FILE__) . '/../PEAR/File/Ogg.php';
         try {
             $ogg = new File_Ogg($path);
@@ -2087,7 +2130,7 @@ function getMusicInfo($id, $path)
  */
 function getVideoInfo($id, $path)
 {
-    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+    if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
         return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
     }
 

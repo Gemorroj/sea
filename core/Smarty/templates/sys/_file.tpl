@@ -65,7 +65,7 @@
             {$language.comments}: {$file.info.tag.comment}<br/>
         {/if}
         {if $file.info.tag.apic}
-            <img src="{$smarty.const.DIRECTORY}apic/{$id}" alt=""/><br/>
+            <a href="{$smarty.const.DIRECTORY}apic/{$id}?full"><img src="{$smarty.const.DIRECTORY}apic/{$id}" alt=""/></a><br/>
         {/if}
     {/if}
 

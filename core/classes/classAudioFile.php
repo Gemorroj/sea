@@ -925,10 +925,7 @@ class AudioFile
             }
 
             $framesize = $this->get32bitSynchsafe($fp);
-            if ($framesize == 3303) {
-                // некорректное определение размера картинки
-                break;
-            }
+
 
             $frameflags0 = ord(fread($fp, 1));
             $frameflags1 = ord(fread($fp, 1));

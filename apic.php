@@ -43,15 +43,18 @@ if (!is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
 }
 
 $data = unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
-if ($data && $data['tag']['APIC']) {
-    $im = @imagecreatefromstring(substr($data['tag']['APIC'], 12));
+if ($data && $data['tag']['apic']) {
+    // обычно, в оригинале jpeg
+    header('Content-Type: image/jpeg');
+    header('Pragma: public');
+    header('Cache-Control: public, max-age=8640000');
+    header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 
-    if ($im) {
-        header('Content-Type: image/png');
-        header('Cache: public');
-        header('Cache-control: max-age=2592000');
-        header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 2592000));
-        imagepng(simple_resize($im));
+    if (isset($_GET['full']) === true) {
+        echo $data['tag']['apic'];
+    } else {
+        $im = imagecreatefromstring($data['tag']['apic']);
+        imagejpeg(simple_resize($im));
         imagedestroy($im);
     }
 }
