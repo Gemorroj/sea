@@ -59,7 +59,7 @@ if (file_exists($name)) {
 
 
 if ($ext == 'nth') {
-    require_once 'core/PEAR/pclzip.lib.php';
+    include_once 'core/classes/pclzip.lib.php';
 
     $nth = new PclZip($v['path']);
 
@@ -90,7 +90,7 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'thm') {
-    require_once 'core/PEAR/Archive/Tar.php';
+    include_once 'core/PEAR/Archive/Tar.php';
 
     $thm = new Archive_Tar($v['path']);
 
@@ -139,7 +139,7 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'sdt') {
-    require_once 'core/PEAR/pclzip.lib.php';
+    include_once 'core/classes/pclzip.lib.php';
 
     $sdt = new PclZip($v['path']);
     $format = $teg = $image = $skin = '';
@@ -245,7 +245,7 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'scs') {
-    require_once 'core/PEAR/pclzip.lib.php';
+    include_once 'core/classes/pclzip.lib.php';
 
     $scs = new PclZip($v['path']);
 
@@ -276,7 +276,7 @@ if ($ext == 'nth') {
     file_put_contents($name, $content[0]['content']);
     img_resize($name, $name, 0, 0, $setup['marker']);
 } elseif ($ext == 'utz') {
-    require_once 'core/PEAR/pclzip.lib.php';
+    include_once 'core/classes/pclzip.lib.php';
 
     $utz = new PclZip($v['path']);
 
@@ -307,7 +307,7 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'apk') {
-    require_once 'core/PEAR/pclzip.lib.php';
+    include_once 'core/classes/pclzip.lib.php';
 
     $apk = new PclZip($v['path']);
 

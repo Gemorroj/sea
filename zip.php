@@ -35,7 +35,7 @@
 
 
 require 'core/header.php';
-require 'core/PEAR/pclzip.lib.php';
+require_once 'core/classes/pclzip.lib.php';
 
 
 // если просмотр zip

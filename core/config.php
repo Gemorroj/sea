@@ -42,6 +42,8 @@ if (defined('APANEL') === true) {
 } else {
     define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
 }
+define('PCLZIP_TEMPORARY_DIR', CORE_DIRECTORY . '/tmp/');
+
 
 mb_internal_encoding('UTF-8');
 

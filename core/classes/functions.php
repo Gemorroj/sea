@@ -425,6 +425,8 @@ function getSortMode($prefix = null)
 
 
 /**
+ * Получаем настройки пагинатора
+ *
  * @param int $items
  *
  * @return array
@@ -1157,7 +1159,7 @@ function scanner($path = '', $cont = 'folder.png')
 
 
 /**
- * Обновление кол-ва файлов в директориях
+ * Обновление количества файлов в директориях
  */
 function scannerCount()
 {
@@ -1578,7 +1580,7 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
  */
 function jar_ico($jar, $f)
 {
-    include_once dirname(__FILE__) . '/../PEAR/pclzip.lib.php';
+    include_once dirname(__FILE__) . '/pclzip.lib.php';
 
     $icon = array();
     $archive = new PclZip($jar);
@@ -1838,6 +1840,8 @@ function ext_to_mime($ext = '')
         case 'xml':
         case 'sql':
         case 'tpl':
+        case 'ini':
+        case 'log':
             return 'text/plain';
             break;
 
@@ -1892,8 +1896,19 @@ function ext_to_mime($ext = '')
             break;
 
         case 'doc':
-        case 'docx':
             return 'application/msword';
+            break;
+
+        case 'docx':
+            return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            break;
+
+        case 'xls':
+            return 'application/vnd.ms-excel';
+            break;
+
+        case 'xlsx':
+            return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
             break;
 
         case 'swf':

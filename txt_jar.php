@@ -78,10 +78,11 @@ MIDlet-Vendor: Gemor Reader
 MIDlet-1: ' . $nm . ', /icon.png, br.BookReader
 MIDlet-Version: 1.6
 MIDlet-Info-URL: http://' . $_SERVER['HTTP_HOST'] . '
-MIDlet-Delete-Confirm: GoodBye =)'
-        , FILE_APPEND);
+MIDlet-Delete-Confirm: GoodBye =)',
+            FILE_APPEND
+        );
 
-        include 'core/PEAR/pclzip.lib.php';
+        include_once 'core/classes/pclzip.lib.php';
         $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
         //echo 'ERROR : '.$zip->errorInfo(true);
 
