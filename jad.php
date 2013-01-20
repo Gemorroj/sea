@@ -34,6 +34,10 @@
  */
 
 
+header('Pragma: public');
+header('Cache-Control: public, max-age=8640000');
+header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
+
 require 'core/config.php';
 
 ###############Если jad выключен##########
