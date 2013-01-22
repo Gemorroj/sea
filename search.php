@@ -91,7 +91,7 @@ if ($word != '') {
         (
             SELECT COUNT(1)
             FROM `files`
-            WHERE `infolder` = `v`
+            WHERE `infolder` LIKE CONCAT(`v`, "%")
             AND `timeupload` > ?
             ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
         ) AS `count`,
