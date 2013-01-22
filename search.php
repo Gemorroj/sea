@@ -99,15 +99,18 @@ if ($word != '') {
         ' . Language::getInstance()->buildFilesQuery('p_files', 'p_name') . '
         FROM `files` AS `f`
         LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
-        WHERE `f`.`name` LIKE ?
+        WHERE `f`.`name` LIKE ? OR `f`.`rus_name` LIKE ? OR `f`.`aze_name` LIKE ? OR `f`.`tur_name` LIKE ?
         ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
         ORDER BY ' . getSortMode('f') . '
         LIMIT ?, ?
     ');
     $query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new']), PDO::PARAM_INT);
     $query->bindValue(2, $sqlLikeWord);
-    $query->bindValue(3, $paginatorConf['start'], PDO::PARAM_INT);
-    $query->bindValue(4, $paginatorConf['onpage'], PDO::PARAM_INT);
+    $query->bindValue(3, $sqlLikeWord);
+    $query->bindValue(4, $sqlLikeWord);
+    $query->bindValue(5, $sqlLikeWord);
+    $query->bindValue(6, $paginatorConf['start'], PDO::PARAM_INT);
+    $query->bindValue(7, $paginatorConf['onpage'], PDO::PARAM_INT);
 
     $query->execute();
 
