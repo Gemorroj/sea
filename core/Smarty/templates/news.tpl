@@ -15,7 +15,7 @@
                 {/if}
 
                 {$v.time|dateFormatExtended}<br/>
-                <span style="font-size:9px;">{$v.news|bbcode nofilter}</span><br/>
+                <span class="comment">{$v.news|bbcode nofilter}</span><br/>
                 <a href="{$smarty.const.DIRECTORY}news_comments/{$v.id}">{$language.comments}</a> [{$v.count}]
             </div>
         {/foreach}
@@ -27,9 +27,9 @@
 
 
 {block footer}
-<ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
-</ul>
+    <ul class="iblock">
+        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
 {/block}

@@ -3,7 +3,6 @@
 
 {* просмотр zip архива *}
 {block content}
-
     {if $action == 'preview'}
         <strong>{$language.file}: <a href="{$smarty.const.DIRECTORY}zip/down/{$id}/{$zipFileName|rawurlencode|replace:'%2F':'/'}">{$zipFileName}</a></strong><br/>
 
@@ -42,11 +41,11 @@
 
 
 {block footer}
-<ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}view/{$id}">{$file.name}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}{$directory.id}">{$language.go_to_the_category}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
-</ul>
+    <ul class="iblock">
+        <li><a href="{$smarty.const.DIRECTORY}view/{$id}">{$file.name}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}{$directory.id}">{$language.go_to_the_category}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
 {/block}

@@ -1,3 +1,5 @@
+{* регистрация в сервисе *}
+
 <form action="{$smarty.const.DIRECTORY}service?act=registration" method="post">
     <div class="row">
         <table>

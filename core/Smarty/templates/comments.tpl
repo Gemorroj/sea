@@ -14,7 +14,7 @@
                 {/if}
 
                 <strong>{$comment.name}</strong> ({$comment.time|dateFormatExtended})<br/>
-                <span style="font-size:9px;">{$comment.text|bbcode nofilter}</span><br/>
+                <span class="comment">{$comment.text|bbcode nofilter}</span><br/>
             </div>
         {/foreach}
     {/if}
@@ -47,10 +47,10 @@
 
 
 {block footer}
-<ul class="iblock">
-    <li><a href="{$comments_module_backlink}">{$comments_module_backname}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
-</ul>
+    <ul class="iblock">
+        <li><a href="{$comments_module_backlink}">{$comments_module_backname}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
 {/block}

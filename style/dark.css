@@ -34,6 +34,10 @@ pre {
     color: #bbbbbb;
 }
 
+pre.desc {
+    margin: 0;
+}
+
 .iblock {
     padding: 2px 2px 2px 2px;
     margin-bottom: 1px;
@@ -115,4 +119,8 @@ textarea {
 
 table, td, th {
     border: 1px solid #000033;
+}
+
+span.comment {
+    font-size: 9px;
 }

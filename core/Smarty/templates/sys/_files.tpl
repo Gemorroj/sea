@@ -1,6 +1,8 @@
+{* просмотр списка файлов и директорий *}
+
 {if $paginatorConf.items < 1}
     <strong>[{$language.empty}]</strong>
-    {else}
+{else}
     {* папки *}
     {foreach $directories as $dir}
         <div class="{cycle values="row,row2"}">
@@ -11,13 +13,16 @@
 
             {* описание *}
             {if ($setup.desc && $dir.description)}
-                <br/>{$dir.description|truncate:$setup.desc}
+                <pre class="desc">{$dir.description|truncate:$setup.desc}</pre>
             {/if}
 
 
             {* администрирование *}
             {if $smarty.const.IS_ADMIN}
-                <br/>
+                {if (!$setup.desc || !$dir.description)}
+                    <br/>
+                {/if}
+
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=scan" title="Сканировать директорию">F</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=seo" title="SEO">K</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$dir.id}&amp;action=rename" title="Переименовать директорию">R</a>]
@@ -43,7 +48,6 @@
     {* файлы *}
     {foreach $files as $f}
         <div class="{cycle values="row,row2"}">
-
             {* превью *}
             {if $prew && $f.pre}
                 {if $f.ext == 'swf'}
@@ -59,12 +63,10 @@
                 <img style="margin: 1px;" src="{$f.screen}" alt=""/>
             {/if}
 
-
             {* перенос строки, если был скриншот или превью *}
             {if ($prew && $f.pre) || ($setup.screen_change && $f.screen)}
                 <br/>
             {/if}
-
 
             <img src="{$f.ico}" alt=""/>
             <strong><a href="{$smarty.const.DIRECTORY}view/{$f.id}">{$f.name}</a></strong>
@@ -73,40 +75,42 @@
             {if $setup.ext}
                 ({$f.ext})
             {/if}
+
+            {* размер *}
             {$f.size|sizeFormatExtended}
 
             {if $sort == 'load'}
                 (<span class="yes">{$f.loads}</span>)
-                {elseif $sort == 'data'}
+            {elseif $sort == 'data'}
                 ({$f.timeupload|dateFormatExtended});
-                {elseif $setup.eval_change && $sort == 'eval'}
+            {elseif $setup.eval_change && $sort == 'eval'}
                 (<span class="yes">{$f.yes}</span>/<span class="no">{$f.no}</span>)
             {/if}
 
             [<a class="yes" href="{$smarty.const.DIRECTORY}load/{$f.id}">L</a>]
-
 
             {* новизна файла *}
             {if ($setup.day_new && ((86400 * $setup.day_new) + $f.timeupload) >= $smarty.server.REQUEST_TIME)}
                 <span class="yes">{$language.new}</span>
             {/if}
 
-
             {* в категорию *}
             {if $smarty.const.IS_P_NAME === true && $f.p_id}
                 <br/>{$language.go_to_the_category}: <strong><a href="{$smarty.const.DIRECTORY}{$f.p_id}">{$f.p_name}</a></strong>
             {/if}
 
-
             {* описание *}
             {if ($setup.desc && $f.description)}
-                <br/>{$f.description|truncate:$setup.desc}
+                <pre class="desc">{$f.description|truncate:$setup.desc}</pre>
             {/if}
 
 
             {* администрирование *}
             {if $smarty.const.IS_ADMIN}
-                <br/>
+                {if (!$setup.desc || !$f.description)}
+                    <br/>
+                {/if}
+
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=seo" title="SEO">K</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=rename" title="Переименовать файл">R</a>]
                 [<a class="yes" href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$f.id}&amp;action=about" title="Описание">O</a>]

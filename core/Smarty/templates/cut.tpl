@@ -2,9 +2,9 @@
 
 
 {block header}
-<div class="iblock">
-    {$language.splitting} "<strong>{$file.name}</strong>"
-</div>
+    <div class="iblock">
+        {$language.splitting} "<strong>{$file.name}</strong>"
+    </div>
 {/block}
 
 {* нарезка *}
@@ -44,10 +44,10 @@
 
 
 {block footer}
-<ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}view/{$id}">{$file.name}</li>
-    <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
-</ul>
+    <ul class="iblock">
+        <li><a href="{$smarty.const.DIRECTORY}view/{$id}">{$file.name}</li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
 {/block}

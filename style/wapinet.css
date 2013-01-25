@@ -98,3 +98,13 @@ pre {
 pre:hover {
     box-shadow: -6px 6px 6px #ddd;
 }
+
+pre.desc {
+    background-color: #007090;
+    box-shadow: none;
+    margin: 0;
+}
+
+span.comment {
+    font-size: 9px;
+}

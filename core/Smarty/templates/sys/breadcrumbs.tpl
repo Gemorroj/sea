@@ -1,3 +1,5 @@
+{* бредкрамбсы *}
+
 {if $setup.ignore_index_breadcrumbs && $smarty.const.IS_INDEX === true && !$id}
     {* игнорируем бредкрамбсы на главной *}
 {else}

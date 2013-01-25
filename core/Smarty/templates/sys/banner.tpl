@@ -1,3 +1,5 @@
+{* баннеры *}
+
 {if $setup.buy_change && $banner}
     <div class="iblock">
         {foreach $banner as $v}

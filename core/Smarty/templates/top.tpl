@@ -1,5 +1,6 @@
 {extends file='sys/layout.tpl'}
 
+{* ТОП *}
 {block content}
     {* загрузки *}
     {include file='sys/_files.tpl'}

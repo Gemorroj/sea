@@ -1,3 +1,5 @@
+{* сервис *}
+
 <form action="{$smarty.const.DIRECTORY}service" method="get">
     <div class="row">
         <input type="hidden" name="act" value="enter"/>

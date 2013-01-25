@@ -1,3 +1,5 @@
+{* реклама *}
+
 {if $setup.buy_change && $buy}
     <div class="iblock">
         {foreach $buy as $v}

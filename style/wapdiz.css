@@ -36,6 +36,11 @@ pre {
     color: #00254a;
 }
 
+pre.desc {
+    background-color: #74ccec;
+    margin: 0;
+}
+
 .iblock {
     padding: 2px;
     margin-bottom: 1px;
@@ -71,7 +76,7 @@ img {
     border-width: 1px;
 }
 
-.row {
+.row2 {
     background-color: #55b0cc;
     color: #fdffff;
     padding: 1px 2px 3px;
@@ -127,4 +132,8 @@ textarea {
 
 table, td, th {
     border: 1px solid #000033;
+}
+
+span.comment {
+    font-size: 9px;
 }

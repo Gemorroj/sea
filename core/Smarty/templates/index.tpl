@@ -7,7 +7,7 @@
         <div class="iblock">
             {if $news}
                 <a href="{$smarty.const.DIRECTORY}news">{$language.news}</a> ({$news.time|dateFormatExtended})<br/>
-                <span style="font-size:9px;">{$news.news|bbcode nofilter}</span><br/>
+                <span class="comment">{$news.news|bbcode nofilter}</span><br/>
             {/if}
 
             {if $setup.search_change}

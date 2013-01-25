@@ -14,7 +14,6 @@
     {else}
         {include file='service/settings.tpl'}
     {/if}
-
 {/block}
 
 

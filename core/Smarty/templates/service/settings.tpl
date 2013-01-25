@@ -1,3 +1,5 @@
+{* настройки сервиса *}
+
 <form action="{$smarty.const.DIRECTORY}service?act=save" method="post">
     <div class="row">
         <table>

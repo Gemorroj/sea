@@ -43,9 +43,6 @@
 
 {* просмотр файла *}
 {block content}
-    {assign var="audio_player" value=($setup.audio_player_change && ($file.ext == 'mp3' || $file.ext == 'ogg' || $file.ext == 'aac'))}
-    {assign var="video_player" value=($setup.video_player_change && ($file.ext == 'flv' || $file.ext == 'mp4' || $file.ext == 'webm'))}
-
     {include file='sys/_file.tpl'}
 
     {if $setup.prev_next && ($prevNext.prev || $prevNext.next)}
@@ -86,20 +83,15 @@
     {if $setup.comments_view && $comments}
         <div class="iblock">
             {foreach $comments as $comment}
-            <div class="{cycle values="row,row2"}">
-                <strong>{$comment.name}</strong> ({$comment.time|dateFormatExtended})<br/>
-                {$comment.text|bbcode nofilter}
-            </div>
+                <div class="{cycle values="row,row2"}">
+                    <strong>{$comment.name}</strong> ({$comment.time|dateFormatExtended})<br/>
+                    <span class="comment">{$comment.text|bbcode nofilter}</span>
+                </div>
             {/foreach}
         </div>
     {/if}
     <div class="iblock">
-        {if $audio_player}
-            <div id="audio_player"></div>
-        {elseif $video_player}
-            <div id="video_player"></div>
-        {/if}
-
+        <div id="audio_player"></div><div id="video_player"></div>
 
         {if ($setup.cut_change && $file.ext == 'mp3')}
             <strong><a href="{$smarty.const.DIRECTORY}cut/{$id}">{$language.splitting}</a></strong><br/>
@@ -148,10 +140,10 @@
 
 
 {block footer}
-<ul class="iblock">
-    <li><a href="{$smarty.const.DIRECTORY}{$directory.id}">{$language.go_to_the_category}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
-    <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
-    <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
-</ul>
+    <ul class="iblock">
+        <li><a href="{$smarty.const.DIRECTORY}{$directory.id}">{$language.go_to_the_category}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
+    </ul>
 {/block}

@@ -33,6 +33,11 @@ pre {
     color: #00254A;
 }
 
+pre.desc {
+    background-color: #ebebeb;
+    margin: 0;
+}
+
 .iblock {
     list-style: disc inside;
     padding: 2px;
@@ -111,4 +116,8 @@ textarea {
 
 table, td, th {
     border: 1px solid #000033;
+}
+
+span.comment {
+    font-size: 9px;
 }

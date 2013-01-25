@@ -1,3 +1,5 @@
+{* просмотр файла *}
+
 <div class="row">
     <strong>{$language.size}:</strong> {$file.size|sizeFormatExtended}<br/>
     <strong>{$language.downloaded}:</strong> {$file.loads} {$language.times}<br/>
@@ -104,8 +106,8 @@
     {/if}
 
     {if $file.description}
-        <strong>{$language.description}:</strong><br/>
-        {$file.description|bbcode nofilter}<br/>
+        <strong>{$language.description}:</strong>
+        <pre class="desc">{$file.description|bbcode nofilter}</pre>
     {/if}
 
     {if $file.attachments}
