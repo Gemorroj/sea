@@ -150,7 +150,7 @@
 
     <div data-role="fieldcontain">
         <label for="sort">Сортировка по умолчанию:</label>
-        {html_options id='sort' name='sort' options=['name'=>'Имя','size'=>'Размер','data'=>'Дата','load'=>'Популярность','eval'=>'Рейтинг'] selected=$setup.sort}
+        {html_options id='sort' name='sort' options=['name'=>'Имя','size'=>'Размер','date'=>'Дата','load'=>'Популярность','eval'=>'Рейтинг'] selected=$setup.sort}
     </div>
 
     <div data-role="fieldcontain">

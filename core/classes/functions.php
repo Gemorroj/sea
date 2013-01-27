@@ -1638,7 +1638,7 @@ function jar_ico($jar, $f)
  */
 function error($str = '')
 {
-    global $template, $setup, $mysql;
+    global $template, $setup, $mysql; // for included files
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';
@@ -1660,7 +1660,7 @@ function error($str = '')
  */
 function message($str = '')
 {
-    global $template, $setup, $mysql;
+    global $template, $setup, $mysql; // for included files
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';
