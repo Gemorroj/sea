@@ -65,8 +65,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         $_SESSION['mail'] = $assoc['mail'];
         $_SESSION['style'] = $assoc['style'];
 
-        header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
-        exit;
+        redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
     } else {
         error($language['user_not_found']);
     }
@@ -137,8 +136,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
                 );
 
-                header('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
-                exit;
+                redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
             } else {
                 error($language['error']);
             }

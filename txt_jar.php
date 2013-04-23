@@ -121,11 +121,7 @@ MIDlet-Delete-Confirm: GoodBye =)',
         chmod($tmp, 0644);
     }
 
-    header(
-        'Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)),
-        true,
-        301
-    );
+    redirect('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
 } else {
     error($language['error']);
 }

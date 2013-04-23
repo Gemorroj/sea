@@ -50,11 +50,9 @@ $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $name;
 
 
 if (file_exists($name)) {
-    header('Location: ' . $location, true, 301);
-    exit;
+    redirect($location, 301);
 } elseif (file_exists($name . '.swf')) {
-    header('Location: ' . $location . '.swf', true, 301);
-    exit;
+    redirect($location . '.swf', 301);
 }
 
 
@@ -415,5 +413,4 @@ if ($ext == 'nth') {
     img_resize($name, $name, 0, 0, $setup['marker']);
 }
 
-
-header('Location: ' . $location, true, 301);
+redirect($location, 301);

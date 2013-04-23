@@ -90,13 +90,11 @@ if ((isset($_POST['p']) && md5($_POST['p']) == $setup['password']) ||
         )
     );
 
-    header(
-        'Location: http://' . $_SERVER['HTTP_HOST'] . str_replace(
-            array('\\', '//'),
-            '/',
-            dirname($_SERVER['PHP_SELF']) . '/'
-        ) . 'apanel.php'
-    );
+    redirect('http://' . $_SERVER['HTTP_HOST'] . str_replace(
+        array('\\', '//'),
+        '/',
+        dirname($_SERVER['PHP_SELF']) . '/'
+    ) . 'apanel.php');
 } else {
     $mysqldb->exec('UPDATE loginlog SET access_num = access_num + 1 WHERE id = 1');
     error('Пароль введен неверно. Осталось попыток до блокировки: ' . ($setup['countban'] - $info['access_num']));

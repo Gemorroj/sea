@@ -1679,6 +1679,30 @@ function message($str = '')
 
 
 /**
+ * Редирект
+ */
+function redirect($url, $httpCode = 302)
+{
+    header('Content-type: text/html; charset=utf-8');
+    header('Location: ' . $url, true, $httpCode);
+
+    exit('<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Переход</title>
+        <meta http-equiv="refresh" content="0; url=' . htmlspecialchars($url) . '" />
+    </head>
+    <body>
+        <div>
+            <a href="' . htmlspecialchars($url) . '">Перейти</a>
+        </div>
+    </body>
+</html>');
+}
+
+
+/**
  * Возвращает случайный пароль
  *
  * @param int $min
