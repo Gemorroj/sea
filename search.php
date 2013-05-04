@@ -61,10 +61,10 @@ if ($word != '') {
     $q = $mysqldb->prepare('
         SELECT COUNT(1)
         FROM `files`
-        WHERE `name` LIKE ?
+        WHERE `name` LIKE ? OR `rus_name` LIKE ? OR `aze_name` LIKE ? OR `tur_name` LIKE ?
         ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
-    $q->execute(array($sqlLikeWord));
+    $q->execute(array($sqlLikeWord, $sqlLikeWord, $sqlLikeWord, $sqlLikeWord));
     $all = $q->fetchColumn();
 
     $all = $all > $setup['top_num'] ? $setup['top_num'] : $all;
