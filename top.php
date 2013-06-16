@@ -60,8 +60,6 @@ $paginatorConf = getPaginatorConf($all);
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
 
-$topSort = ((!$setup['top_sort'] || $setup['top_sort'] === 'auto') ? null : $setup['top_sort']);
-
 $query = $mysqldb->prepare('
     SELECT `f`.`id`,
     `f`.`hidden`,
@@ -82,7 +80,7 @@ $query = $mysqldb->prepare('
     LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
     WHERE `f`.`dir` = "0"
     ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
-    ORDER BY ' . getSortMode('f', $topSort) . '
+    ORDER BY `f`.`loads` DESC, ' . getSortMode('f') . '
     LIMIT ?, ?
 ');
 $query->bindValue(1, $paginatorConf['start'], PDO::PARAM_INT);

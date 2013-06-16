@@ -400,14 +400,13 @@ function get2ses($name)
  * Часть SQL запроса для сортировки ORDER BY
  *
  * @param string $prefix
- * @param string $sort
  *
  * @return string
  */
-function getSortMode($prefix = null, $sort = null)
+function getSortMode($prefix = null)
 {
     global $setup;
-    $sort = ($sort === null ? get2ses('sort') : $sort);
+    $sort = get2ses('sort');
     $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
     if ($sort === 'date') {

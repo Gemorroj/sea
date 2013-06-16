@@ -149,11 +149,6 @@
     </div>
 
     <div data-role="fieldcontain">
-        <label for="top_sort">Сортировка в топе:</label>
-        {html_options id='top_sort' name='top_sort' options=['auto'=>'Авто','name'=>'Имя','size'=>'Размер','date'=>'Дата','load'=>'Популярность','eval'=>'Рейтинг'] selected=$setup.top_sort}
-    </div>
-
-    <div data-role="fieldcontain">
         <label for="sort">Сортировка по умолчанию:</label>
         {html_options id='sort' name='sort' options=['name'=>'Имя','size'=>'Размер','date'=>'Дата','load'=>'Популярность','eval'=>'Рейтинг'] selected=$setup.sort}
     </div>
