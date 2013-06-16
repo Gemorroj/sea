@@ -42,6 +42,7 @@ ignore_user_abort(true);
 echo '<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
     <head>
+        <meta name="viewport" content="width=device-width"/>
         <title>Установка</title>
     </head>
     <body>

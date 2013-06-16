@@ -151,6 +151,7 @@ $mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->ex
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" xml:lang="ru" lang="ru">
     <head>
+        <meta name="viewport" content="width=device-width"/>
         <title>Обновление</title>
     </head>
     <body>

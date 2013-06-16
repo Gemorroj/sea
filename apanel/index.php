@@ -57,6 +57,7 @@ if (!isset($_POST['p']) && !isset($_GET['p'])) {
     echo '<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
     <head>
+        <meta name="viewport" content="width=device-width"/>
         <title>Админка - вход</title>
     </head>
     <body>
@@ -72,8 +73,7 @@ if (!isset($_POST['p']) && !isset($_GET['p'])) {
             </fieldset>
         </div>
     </body>
-</html>
-';
+</html>';
     exit;
 }
 
