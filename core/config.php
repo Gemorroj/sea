@@ -72,7 +72,7 @@ require_once CORE_DIRECTORY . '/classes/Language.php';
 
 // данные для соединения с БД
 MysqlDb::setOptions(array(
-    'host' => '127.0.0.1',
+    'host' => 'localhost',
     'username' => 'mysql',
     'password' => 'mysql',
     'dbname' => 'sea3',

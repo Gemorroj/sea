@@ -64,7 +64,7 @@ if (file_exists($v['path'])) {
         chmod($tmp, 0644);
     }
 
-    redirect('Location: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
+    redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
 } else {
     error($language['error']);
 }
