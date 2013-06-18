@@ -20,7 +20,11 @@
                     'file': "{$smarty.const.DIRECTORY}{$file.path}",
                     'title': "{$file.name}",
                     'height': 40,
-                    'width': 320
+                    'width': 320,
+                    analytics: {
+                        enabled: false,
+                        cookies: false
+                    }
                 });
             };
         </script>
@@ -33,7 +37,11 @@
                     'file': "{$smarty.const.DIRECTORY}{$file.path}",
                     'title': "{$file.name}",
                     'height': 180,
-                    'width': 320
+                    'width': 320,
+                    analytics: {
+                        enabled: false,
+                        cookies: false
+                    }
                 });
             };
         </script>
