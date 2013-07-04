@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" type="text/css" href="{$smarty.const.DIRECTORY}apanel/jquery/jquery.mobile-1.3.1.min.css"/>
-    <script src="{$smarty.const.DIRECTORY}apanel/jquery/jquery-1.10.1.min.js"></script>
+    <script src="{$smarty.const.DIRECTORY}apanel/jquery/jquery-1.10.2.min.js"></script>
     <script src="{$smarty.const.DIRECTORY}apanel/jquery/jquery.mobile-1.3.1.min.js"></script>
     <title>Admin panel</title>
     <style type="text/css">
