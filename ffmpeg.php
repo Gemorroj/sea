@@ -52,8 +52,7 @@ $v = getFileInfo($id);
 
 $pic = $v['path'];
 $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame
-    . '.gif';
+$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif';
 
 if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
     $mov = new ffmpeg_movie($pic, false);
