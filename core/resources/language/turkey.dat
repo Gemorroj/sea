@@ -31,7 +31,7 @@ return array(
     'time_additions' => 'Eklenme tarihi',
     'custom_size' => 'Size',
     'codec' => 'Kodları',
-    'ekran' => '',
+    'screen_resolution' => 'Ekran',
     'time' => 'Tarih',
     'bitrate' => 'Parça derecesi',
     'screenshot' => 'Ekran görüntüyü',
