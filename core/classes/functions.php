@@ -439,7 +439,7 @@ function getPaginatorConf($items)
     $items = intval($items);
     $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
 
-    if (!$id && $setup['ignore_index_pages']) {
+    if ($setup['ignore_index_pages'] && !$id && defined('IS_INDEX') && IS_INDEX === true) {
         // переопределяем пагинацию, если это главная
         return array(
             'start' => 0,
