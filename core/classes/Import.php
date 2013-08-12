@@ -167,6 +167,7 @@ class Import
      */
     private function _importFile($file)
     {
+        require_once './Translit.php';
         $toFile = $this->_filesFolder . strstr(ltrim(strstr($file, '/'), '/'), '/');
 
         if (checkExt(pathinfo($file, PATHINFO_EXTENSION)) === false) {
@@ -183,7 +184,7 @@ class Import
             // транслит
             if ($name[0] === '!') {
                 $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
-                $rus_name = trans($rus_name);
+                $rus_name = Translit::trans($rus_name);
             }
 
             $infolder = dirname($toFile) . '/';

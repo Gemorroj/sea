@@ -58,8 +58,7 @@ session_start() or die('Can not start session');
 
 
 set_include_path(
-    get_include_path() . PATH_SEPARATOR .
-        CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
+    get_include_path() . PATH_SEPARATOR . CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
 );
 
 require_once CORE_DIRECTORY . '/Smarty/libs/Smarty.class.php';

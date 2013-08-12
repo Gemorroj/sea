@@ -33,348 +33,6 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-
-/**
- * Транслит с латиницы на русский
- *
- * @param string $t
- *
- * @return string
- */
-function trans($t)
-{
-    $a = array(
-        '_',
-        'YA',
-        'Ya',
-        'ya',
-        'yee',
-        'YO',
-        'yo',
-        'Yo',
-        'ZH',
-        'zh',
-        'Zh',
-        'Z',
-        'z',
-        'CH',
-        'ch',
-        'Ch',
-        'SH',
-        'sh',
-        'Sh',
-        'YE',
-        'ye',
-        'Ye',
-        'YU',
-        'yu',
-        'Yu',
-        'JA',
-        'ja',
-        'Ja',
-        'A',
-        'a',
-        'B',
-        'b',
-        'V',
-        'v',
-        'G',
-        'g',
-        'D',
-        'd',
-        'E',
-        'e',
-        'I',
-        'i',
-        'J',
-        'j',
-        'K',
-        'k',
-        'L',
-        'l',
-        'M',
-        'm',
-        'N',
-        'n',
-        'O',
-        'o',
-        'P',
-        'p',
-        'R',
-        'r',
-        'S',
-        's',
-        'T',
-        't',
-        'U',
-        'u',
-        'F',
-        'f',
-        'H',
-        'h',
-        'W',
-        'w',
-        'x',
-        'q',
-        'Y',
-        'y',
-        'C',
-        'c'
-    );
-    $b = array(
-        ' ',
-        'Я',
-        'Я',
-        'я',
-        'ые',
-        'Ё',
-        'ё',
-        'Ё',
-        'Ж',
-        'ж',
-        'Ж',
-        'З',
-        'з',
-        'Ч',
-        'ч',
-        'Ch',
-        'Ш',
-        'ш',
-        'Ш',
-        'Э',
-        'э',
-        'Э',
-        'Ю',
-        'ю',
-        'Ю',
-        'Я',
-        'я',
-        'Я',
-        'А',
-        'а',
-        'Б',
-        'б',
-        'В',
-        'в',
-        'Г',
-        'г',
-        'Д',
-        'д',
-        'Е',
-        'е',
-        'И',
-        'и',
-        'Й',
-        'й',
-        'К',
-        'к',
-        'Л',
-        'л',
-        'М',
-        'м',
-        'Н',
-        'н',
-        'О',
-        'о',
-        'П',
-        'п',
-        'Р',
-        'р',
-        'С',
-        'с',
-        'Т',
-        'т',
-        'У',
-        'у',
-        'Ф',
-        'ф',
-        'Х',
-        'х',
-        'Щ',
-        'щ',
-        'ъ',
-        'ь',
-        'Ы',
-        'ы',
-        'Ц',
-        'ц',
-        ''
-    );
-
-    return str_replace($a, $b, $t);
-}
-
-
-/**
- * Транслит с русского на латиницу
- *
- * @param string $t
- *
- * @return string
- */
-function retrans($t)
-{
-    $a = array(
-        '_',
-        'YA',
-        'Ya',
-        'ya',
-        'yee',
-        'YO',
-        'yo',
-        'Yo',
-        'ZH',
-        'zh',
-        'Zh',
-        'Z',
-        'z',
-        'CH',
-        'ch',
-        'Ch',
-        'SH',
-        'sh',
-        'Sh',
-        'YE',
-        'ye',
-        'Ye',
-        'YU',
-        'yu',
-        'Yu',
-        'JA',
-        'ja',
-        'Ja',
-        'A',
-        'a',
-        'B',
-        'b',
-        'V',
-        'v',
-        'G',
-        'g',
-        'D',
-        'd',
-        'E',
-        'e',
-        'I',
-        'i',
-        'J',
-        'j',
-        'K',
-        'k',
-        'L',
-        'l',
-        'M',
-        'm',
-        'N',
-        'n',
-        'O',
-        'o',
-        'P',
-        'p',
-        'R',
-        'r',
-        'S',
-        's',
-        'T',
-        't',
-        'U',
-        'u',
-        'F',
-        'f',
-        'H',
-        'h',
-        'W',
-        'w',
-        'x',
-        'q',
-        'Y',
-        'y',
-        'C',
-        'c'
-    );
-    $b = array(
-        ' ',
-        'Я',
-        'Я',
-        'я',
-        'ые',
-        'Ё',
-        'ё',
-        'Ё',
-        'Ж',
-        'ж',
-        'Ж',
-        'З',
-        'з',
-        'Ч',
-        'ч',
-        'Ch',
-        'Ш',
-        'ш',
-        'Ш',
-        'Э',
-        'э',
-        'Э',
-        'Ю',
-        'ю',
-        'Ю',
-        'Я',
-        'я',
-        'Я',
-        'А',
-        'а',
-        'Б',
-        'б',
-        'В',
-        'в',
-        'Г',
-        'г',
-        'Д',
-        'д',
-        'Е',
-        'е',
-        'И',
-        'и',
-        'Й',
-        'й',
-        'К',
-        'к',
-        'Л',
-        'л',
-        'М',
-        'м',
-        'Н',
-        'н',
-        'О',
-        'о',
-        'П',
-        'п',
-        'Р',
-        'р',
-        'С',
-        'с',
-        'Т',
-        'т',
-        'У',
-        'у',
-        'Ф',
-        'ф',
-        'Х',
-        'х',
-        'Щ',
-        'щ',
-        'ъ',
-        'ь',
-        'Ы',
-        'ы',
-        'Ц',
-        'ц'
-    );
-
-    return str_replace($b, $a, $t);
-}
-
-
 /**
  * $_GET -> $_SESSION
  *
@@ -866,6 +524,7 @@ function uploadUrls($newpath)
  */
 function uploadFiles($newpath)
 {
+    require_once './Translit.php';
     $mysqldb = MysqlDb::getInstance();
     $message = array();
     $error = array();
@@ -901,7 +560,7 @@ function uploadFiles($newpath)
             // транслит
             if ($name[0] === '!') {
                 $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
-                $rus_name = trans($rus_name);
+                $rus_name = Translit::trans($rus_name);
             }
 
             $q->execute(array(
@@ -1061,6 +720,7 @@ function _scannerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, 
  */
 function scanner($path = '', $cont = 'folder.png')
 {
+    require_once './Translit.php';
     static $folders = 0;
     static $files = 0;
     static $errors = array();
@@ -1124,7 +784,7 @@ function scanner($path = '', $cont = 'folder.png')
         // транслит
         if ($name[0] === '!') {
             $aze_name = $tur_name = $rus_name = $name = substr($name, 1);
-            $rus_name = trans($rus_name);
+            $rus_name = Translit::trans($rus_name);
         }
 
         if ($is_dir === true) {
