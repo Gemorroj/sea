@@ -37,7 +37,7 @@
 require 'core/header.php';
 
 // Если жалобы выключены
-if (!$setup['abuse_change']) {
+if (!Config::get('abuse_change')) {
     error('Not found');
 }
 
@@ -56,7 +56,7 @@ $template->assign('breadcrumbs', $breadcrumbs);
 
 
 if (mail(
-    $setup['zakaz_email'],
+    Config::get('zakaz_email'),
     '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
     'Получена жалоба на файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id . "\r\n" .
         'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .

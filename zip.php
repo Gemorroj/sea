@@ -38,7 +38,7 @@ require 'core/header.php';
 
 
 // если просмотр zip
-if (!$setup['zip_change']) {
+if (!Config::get('zip_change')) {
     error('Not found');
 }
 
@@ -109,7 +109,7 @@ switch ($action) {
         $mime = ext_to_mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
 
         if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/jpeg' || $mime == 'image/bmp') {
-            $f = $setup['zppath'] . '/' . str_replace(
+            $f = Config::get('zppath') . '/' . str_replace(
                 '/',
                 '--',
                 mb_substr(strstr($v['path'], '/'), 1) . '_' . strtolower($zipFileName)
@@ -126,9 +126,9 @@ switch ($action) {
             $content = str_to_utf8($content[0]['content']);
 
             $paginatorConf = getPaginatorConf(PHP_INT_MAX);
-            $paginatorConf['pages'] = ceil(mb_strlen($content) / $setup['lib']);
+            $paginatorConf['pages'] = ceil(mb_strlen($content) / Config::get('lib'));
 
-            $content = mb_substr($content, $paginatorConf['page'] * $setup['lib'] - $setup['lib'], $setup['lib'] + 64);
+            $content = mb_substr($content, $paginatorConf['page'] * Config::get('lib') - Config::get('lib'), Config::get('lib') + 64);
 
             if ($paginatorConf['page'] > 1) {
                 $i = 0;

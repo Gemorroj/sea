@@ -33,21 +33,10 @@
  * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-class Autoloader
+class Config
 {
-    private static $loader;
-    private static $coreDirectory;
-
-    /**
-     * Инициализация
-     */
-    public static function init()
-    {
-        if (null === self::$loader) {
-            self::$coreDirectory = realpath(dirname(__FILE__) . '/../');
-            self::$loader = new self();
-        }
-    }
+    private static $_config;
+    private static $_setup = array();
 
 
     /**
@@ -55,50 +44,49 @@ class Autoloader
      */
     public function __construct()
     {
-        set_include_path(
-            get_include_path() . PATH_SEPARATOR . self::$coreDirectory . DIRECTORY_SEPARATOR . 'PEAR'
-        );
-
-        spl_autoload_register(array($this, '_classes'));
-        spl_autoload_register(array($this, '_smarty'));
-        spl_autoload_register(array($this, '_pear'));
-    }
-
-
-    /**
-     * @param string $class
-     */
-    protected function _classes($class)
-    {
-        $this->_include(self::$coreDirectory . '/classes/' . $class . '.php');
-    }
-
-
-    /**
-     * @param string $class
-     */
-    protected function _smarty($class)
-    {
-        $this->_include(self::$coreDirectory . '/Smarty/libs/' . $class . '.class.php');
-    }
-
-
-    /**
-     * @param string $class
-     */
-    protected function _pear($class)
-    {
-        $this->_include(self::$coreDirectory . '/PEAR/' . str_replace('_', '/', $class) . '.php');
-    }
-
-
-    /**
-     * @param string $file
-     */
-    protected function _include($file)
-    {
-        if (true === file_exists($file)) {
-            include $file;
+        foreach (MysqlDb::getInstance()->query('SELECT name, value FROM setting') as $v) {
+            self::$_setup[$v['name']] = $v['value'];
         }
+    }
+
+
+    /**
+     * Инициализация
+     */
+    public static function init()
+    {
+        if (null === self::$_config) {
+            self::$_config = new self();
+        }
+    }
+
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    public static function get($key)
+    {
+        return self::$_setup[$key];
+    }
+
+
+    /**
+     * @param string $key
+     * @param string $value
+     */
+    public static function set($key, $value)
+    {
+        self::$_setup[$key] = $value;
+    }
+
+
+    /**
+     * @return array
+     */
+    public static function getAll()
+    {
+        return self::$_setup;
     }
 }

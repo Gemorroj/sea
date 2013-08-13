@@ -54,7 +54,7 @@ if (!$_SESSION) {
 if (!isset($_SESSION['authorise']) || !isset($_SESSION['ipu'])) {
     exit('В сессии недостаточно данных для авторизации');
 }
-if ($_SESSION['authorise'] != $setup['password'] || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
+if ($_SESSION['authorise'] != Config::get('password') || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
     exit('Авторизация не пройдена');
 }
 
@@ -134,7 +134,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $folder = $setup['path'] . trim($_POST['topath']);
+        $folder = Config::get('path') . trim($_POST['topath']);
         $filename = basename($file['path']);
 
         if (!is_dir($folder)) {
@@ -164,25 +164,25 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $path2 = strstr($folder, '/'); // убираем папку с загрузками
 
             // перемещаем скриншоты и описания
-            if (is_file($setup['spath'] . $path1 . '.gif')) {
-                rename($setup['spath'] . $path1 . '.gif', $setup['spath'] . $path2 . $filename . '.gif');
+            if (is_file(Config::get('spath') . $path1 . '.gif')) {
+                rename(Config::get('spath') . $path1 . '.gif', Config::get('spath') . $path2 . $filename . '.gif');
             }
-            if (is_file($setup['spath'] . $path1 . '.jpg')) {
-                rename($setup['spath'] . $path1 . '.jpg', $setup['spath'] . $path2 . $filename . '.jpg');
+            if (is_file(Config::get('spath') . $path1 . '.jpg')) {
+                rename(Config::get('spath') . $path1 . '.jpg', Config::get('spath') . $path2 . $filename . '.jpg');
             }
-            if (is_file($setup['spath'] . $path1 . '.png')) {
-                rename($setup['spath'] . $path1 . '.png', $setup['spath'] . $path2 . $filename . '.png');
+            if (is_file(Config::get('spath') . $path1 . '.png')) {
+                rename(Config::get('spath') . $path1 . '.png', Config::get('spath') . $path2 . $filename . '.png');
             }
-            if (is_file($setup['opath'] . $path1 . '.txt')) {
-                rename($setup['opath'] . $path1 . '.txt', $setup['opath'] . $path2 . $filename . '.txt');
+            if (is_file(Config::get('opath') . $path1 . '.txt')) {
+                rename(Config::get('opath') . $path1 . '.txt', Config::get('opath') . $path2 . $filename . '.txt');
             }
-            if (is_file($setup['spath'] . $path1 . '.thumb.gif')) {
-                rename($setup['spath'] . $path1 . '.thumb.gif', $setup['spath'] . $path2 . $filename . '.thumb.gif');
+            if (is_file(Config::get('spath') . $path1 . '.thumb.gif')) {
+                rename(Config::get('spath') . $path1 . '.thumb.gif', Config::get('spath') . $path2 . $filename . '.thumb.gif');
             }
 
             // перемещаем вложения
-            $globDir1 = $setup['apath'] . dirname($path1) . '/';
-            $globDir2 = $setup['apath'] . $path2;
+            $globDir1 = Config::get('apath') . dirname($path1) . '/';
+            $globDir2 = Config::get('apath') . $path2;
             foreach (glob($globDir1 . $id . '_*') as $v) {
                 $v = basename($v);
                 rename($globDir1 . $v, $globDir2 . $v);
@@ -259,7 +259,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_dir':
-        if (!$setup['delete_dir']) {
+        if (!Config::get('delete_dir')) {
             $template->assign('error', 'Error');
             $template->send();
         }
@@ -323,7 +323,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_file':
-        if (!$setup['delete_dir']) {
+        if (!Config::get('delete_dir')) {
             $template->assign('error', 'Error');
             $template->send();
         }
@@ -407,7 +407,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
         }
 
-        $template->assign('about', file_get_contents($setup['opath'] . strstr($file['path'], '/') . '.txt'));
+        $template->assign('about', file_get_contents(Config::get('opath') . strstr($file['path'], '/') . '.txt'));
         break;
 
 
@@ -481,10 +481,10 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         $path = strstr($file['path'], '/'); // убираем папку с загрузками
 
-        $a = @unlink($setup['spath'] . $path . '.gif');
-        $b = @unlink($setup['spath'] . $path . '.thumb.gif');
-        $c = @unlink($setup['spath'] . $path . '.jpg');
-        $d = @unlink($setup['spath'] . $path . '.png');
+        $a = @unlink(Config::get('spath') . $path . '.gif');
+        $b = @unlink(Config::get('spath') . $path . '.thumb.gif');
+        $c = @unlink(Config::get('spath') . $path . '.jpg');
+        $d = @unlink(Config::get('spath') . $path . '.png');
 
         if ($a || $b || $c || $d) {
             $template->assign('message', 'Скриншот удален');
@@ -554,7 +554,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         if ($_POST) {
             $result = addDir(
                 $_POST['realname'],
-                $setup['path'] . trim($_POST['topath']),
+                Config::get('path') . trim($_POST['topath']),
                 $_POST['dir']['english'],
                 $_POST['dir']['russian'],
                 $_POST['dir']['azerbaijan'],
@@ -643,7 +643,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'scan':
         $template->setTemplate('apanel/scan.tpl');
 
-        $scan = $setup['path'];
+        $scan = Config::get('path');
 
         if (isset($_GET['id'])) {
             $file = getFileInfo($id);
@@ -948,7 +948,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/import.tpl');
 
         if ($_POST) {
-            $import = new Import($setup);
+            $import = new Import(Config::getAll());
             $result = $import->importFiles();
 
             if ($result['message']) {
@@ -968,7 +968,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
         if ($_POST) {
-            $newpath = $setup['path'] . trim($_POST['topath']);
+            $newpath = Config::get('path') . trim($_POST['topath']);
             if ($newpath == '') {
                 $template->assign('error', 'Нет конечного пути');
                 $template->send();
@@ -1094,7 +1094,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/sec.tpl');
 
         if ($_POST) {
-            if (!$_POST['pwd'] || md5($_POST['pwd']) != $setup['password']) {
+            if (!$_POST['pwd'] || md5($_POST['pwd']) != Config::get('password')) {
                 $template->assign('error', 'Неверный пароль');
                 $template->send();
             }

@@ -38,7 +38,7 @@ define('IS_P_NAME', true);
 
 require 'core/header.php';
 ###############Если топ выключен###############
-if (!$setup['new_change'] || !$setup['day_new']) {
+if (!Config::get('new_change') || !Config::get('day_new')) {
     error('Not found');
 }
 
@@ -48,7 +48,7 @@ $template->assign('breadcrumbs', array('new' => $language['new_files']));
 
 
 // новизна файла
-$new = ($_SERVER['REQUEST_TIME'] - ($setup['day_new'] * 86400));
+$new = ($_SERVER['REQUEST_TIME'] - (Config::get('day_new') * 86400));
 
 $mysqldb = MysqlDb::getInstance();
 

@@ -2,7 +2,7 @@
 // Система голосований
 
 // $vote = null;
-if ($setup['eval_change'] && isset($_GET['eval'])) {
+if (Config::get('eval_change') && isset($_GET['eval'])) {
     if (strpos($file['ips'], $_SERVER['REMOTE_ADDR']) === false) {
         $vote = true;
         if (!$file['ips']) {

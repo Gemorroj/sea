@@ -37,7 +37,7 @@
 require 'core/header.php';
 
 // Если email выключен
-if (!$setup['send_email']) {
+if (!Config::get('send_email')) {
     error('Not found');
 }
 
@@ -68,7 +68,7 @@ if (isset($_POST['email'])) {
         '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], $language['link_to_file'])) . '?=',
         str_replace(
             array('%file%', '%url%', '%link%'),
-            array($v['name'], $setup['site_url'], 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id),
+            array($v['name'], Config::get('site_url'), 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id),
             $language['email_message']
         ),
         "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"

@@ -44,7 +44,7 @@ require 'core/config.php';
 
 $id = intval($_REQUEST['id']);
 $resize = true;
-$marker = $setup['marker'];
+$marker = Config::get('marker');
 
 
 $w = isset($_GET['w']) ? abs($_GET['w']) : 0;
@@ -53,7 +53,7 @@ $h = isset($_GET['h']) ? abs($_GET['h']) : 0;
 
 if (!$w || !$h) {
     $resize = false;
-    list($w, $h) = explode('*', $setup['prev_size']);
+    list($w, $h) = explode('*', Config::get('prev_size'));
 } else {
     if ($marker) {
         $marker = ($marker == 2 ? 0 : 1);
@@ -69,11 +69,11 @@ if ($resize) {
     updFileLoad($id);
 }
 
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['picpath'] . '/' . $prev_pic . '.gif';
+$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
 
 
-if (!file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
-    if (!Image::resize($pic, $setup['picpath'] . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
+if (!file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
+    if (!Image::resize($pic, Config::get('picpath') . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
         error('Error');
     }
 }

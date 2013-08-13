@@ -36,7 +36,7 @@
 require 'core/header.php';
 
 // Если комментарии выключены
-if (!$setup['comments_change']) {
+if (!Config::get('comments_change')) {
     error('Not found');
 }
 
@@ -49,7 +49,7 @@ if (!$news || !$news['news']) {
     error('Not found');
 }
 
-$desc = mb_substr($news['news'], 0, $setup['desc']);
+$desc = mb_substr($news['news'], 0, Config::get('desc'));
 
 
 $template->setTemplate('comments.tpl');
@@ -100,7 +100,7 @@ if ($_POST) {
         error($language['you_have_not_written_a_comment_or_he_is_too_short']);
     }
 
-    if ($setup['comments_captcha']) {
+    if (Config::get('comments_captcha')) {
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
             unset($_SESSION['captcha_keystring']);
             error($language['not_a_valid_code']);

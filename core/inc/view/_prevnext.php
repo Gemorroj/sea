@@ -2,7 +2,7 @@
 // предыдущий/следующий файл
 
 //$prevNext = array('prev' => array(), 'next' => array());
-if ($setup['prev_next']) {
+if (Config::get('prev_next')) {
     $mysqldb = MysqlDb::getInstance();
 
     $q = $mysqldb->prepare('

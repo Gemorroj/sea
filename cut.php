@@ -37,7 +37,7 @@
 require 'core/header.php';
 
 // если нарезка отключена
-if (!$setup['cut_change']) {
+if (!Config::get('cut_change')) {
     error('Not found!');
 }
 
@@ -70,20 +70,20 @@ if ($_POST) {
     }
 
     $allsize = 0;
-    foreach (glob($setup['mp3path'] . '/*') as $string) {
+    foreach (glob(Config::get('mp3path') . '/*') as $string) {
         $allsize += round(filesize($string) / 1024 / 1024, 1);
-        if ($allsize > $setup['limit']) {
-            $dir = opendir($setup['mp3path'] . '/');
+        if ($allsize > Config::get('limit')) {
+            $dir = opendir(Config::get('mp3path') . '/');
             while (($file = readdir($dir)) !== false) {
                 if ($file != '.' && $file != '..') {
-                    unlink($setup['mp3path'] . '/' . $file);
+                    unlink(Config::get('mp3path') . '/' . $file);
                 }
             }
             break;
         }
     }
 
-    $randintval = $setup['mp3path'] . '/' . uniqid() . '_' . pathinfo($v['path'], PATHINFO_BASENAME);
+    $randintval = Config::get('mp3path') . '/' . uniqid() . '_' . pathinfo($v['path'], PATHINFO_BASENAME);
 
     if (copy($v['path'], $randintval)) {
         $fp = fopen($randintval, 'rb');

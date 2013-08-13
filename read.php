@@ -37,7 +37,7 @@
 require 'core/header.php';
 
 // если библиотека отключена
-if (!$setup['lib_change']) {
+if (!Config::get('lib_change')) {
     error('Not found');
 }
 
@@ -73,18 +73,15 @@ if (!$seo['title']) {
 $seo['title'] .= ' - ' . $language['read'] . ' / ' . $paginatorConf['page'];
 
 
-
-if (isset($_SESSION['lib'])) {
-    $setup['lib'] = $_SESSION['lib'];
-}
+$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');
 
 
 // UTF-8
 $fp = fopen($v['path'], 'rb');
 if ($paginatorConf['page'] > 1) {
-    fseek($fp, $paginatorConf['page'] * $setup['lib'] - $setup['lib']);
+    fseek($fp, $paginatorConf['page'] * $lib - $lib);
 }
-$content = fread($fp, $setup['lib']) . fgets($fp, 1024);
+$content = fread($fp, $lib) . fgets($fp, 1024);
 fclose($fp);
 
 if ($paginatorConf['page'] > 1) {
@@ -99,7 +96,7 @@ if ($paginatorConf['page'] > 1) {
 }
 
 $content = str_to_utf8($content);
-$paginatorConf['pages'] = ceil(filesize($v['path']) / $setup['lib']);
+$paginatorConf['pages'] = ceil(filesize($v['path']) / $lib);
 if ($paginatorConf['page'] > $paginatorConf['pages']) {
     $paginatorConf['page'] = 1;
 }

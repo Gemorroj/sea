@@ -102,11 +102,9 @@ class Language
      */
     private function _load()
     {
-        global $setup;
-
         if (!isset($_SESSION['langpack']) || !in_array($_SESSION['langpack'], $this->getLangpacks())) {
             // язык по умолчанию
-            $this->_langpack = $setup['langpack'];
+            $this->_langpack = Config::get('langpack');
         } else {
             $this->_langpack = $_SESSION['langpack'];
         }

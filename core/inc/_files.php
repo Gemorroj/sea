@@ -4,7 +4,7 @@ $directories = $files = array();
 $sort = get2ses('sort');
 $prew = get2ses('prew');
 if ($prew != '0' && $prew != '1') {
-    $prew = $setup['preview'];
+    $prew = Config::get('preview');
 }
 
 $template->assign('prew', $prew);
@@ -14,8 +14,8 @@ $template->assign('sort', $sort);
 foreach ($query as $v) {
     $screen = strstr($v['v'], '/'); // убираем папку с загрузками
 
-    if ($setup['desc'] && file_exists($setup['opath'] . $screen . '.txt')) {
-        $v['description'] = file_get_contents($setup['opath'] . $screen . '.txt');
+    if (Config::get('desc') && file_exists(Config::get('opath') . $screen . '.txt')) {
+        $v['description'] = file_get_contents(Config::get('opath') . $screen . '.txt');
     } else {
         $v['description'] = '';
     }
@@ -37,55 +37,55 @@ foreach ($query as $v) {
 
         //Предпросмотр
         if ($prew) {
-            if ($setup['screen_change']
+            if (Config::get('screen_change')
                 && ($ext == 'gif' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'bmp')
             ) {
-                if (file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
-                    $v['pre'] = DIRECTORY . $setup['picpath'] . '/' . $prev_pic . '.gif';
+                if (file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
+                    $v['pre'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
                 } else {
                     $v['pre'] = DIRECTORY . 'im/' . $v['id'];
                 }
             } else {
-                if ($setup['screen_change'] && ($ext == 'avi' || $ext == '3gp' || $ext == 'mp4' || $ext == 'flv')
+                if (Config::get('screen_change') && ($ext == 'avi' || $ext == '3gp' || $ext == 'mp4' || $ext == 'flv')
                     && extension_loaded('ffmpeg')
                 ) {
                     if (file_exists(
-                        $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $setup['ffmpeg_frame'] . '.gif'
+                        Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.gif'
                     )
                     ) {
                         $v['pre']
-                            = DIRECTORY . $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $setup['ffmpeg_frame']
+                            = DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame')
                             . '.gif';
                     } else {
                         $v['pre'] = DIRECTORY . 'ffmpeg/' . $v['id'];
                     }
                 } else {
-                    if ($setup['screen_change']
+                    if (Config::get('screen_change')
                         && ($ext == 'thm' || $ext == 'nth' || $ext == 'utz' || $ext == 'sdt' || $ext == 'scs'
                             || $ext == 'apk')
                     ) {
-                        if (file_exists($setup['tpath'] . '/' . $prev_pic . '.gif')) {
-                            $v['pre'] = DIRECTORY . $setup['tpath'] . '/' . $prev_pic . '.gif';
+                        if (file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif')) {
+                            $v['pre'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.gif';
                         } else {
-                            if ($setup['swf_change'] && file_exists($setup['tpath'] . '/' . $prev_pic . '.gif.swf')) {
-                                $v['pre'] = DIRECTORY . $setup['tpath'] . '/' . $prev_pic . '.gif.swf';
+                            if (Config::get('swf_change') && file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif.swf')) {
+                                $v['pre'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.gif.swf';
                             } else {
-                                if (!file_exists($setup['tpath'] . '/' . $prev_pic . '.gif.swf')) {
+                                if (!file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif.swf')) {
                                     $v['pre'] = DIRECTORY . 'theme/' . $v['id'];
                                 }
                             }
                         }
                     } else {
-                        if ($setup['jar_change'] && $ext == 'jar') {
-                            if (file_exists($setup['ipath'] . '/' . $prev_pic . '.png')) {
-                                $v['pre'] = DIRECTORY . $setup['ipath'] . '/' . $prev_pic . '.png';
+                        if (Config::get('jar_change') && $ext == 'jar') {
+                            if (file_exists(Config::get('ipath') . '/' . $prev_pic . '.png')) {
+                                $v['pre'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
                             } else {
-                                if (jar_ico($v['v'], $setup['ipath'] . '/' . $prev_pic . '.png')) {
-                                    $v['pre'] = DIRECTORY . $setup['ipath'] . '/' . $prev_pic . '.png';
+                                if (jar_ico($v['v'], Config::get('ipath') . '/' . $prev_pic . '.png')) {
+                                    $v['pre'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
                                 }
                             }
                         } else {
-                            if ($setup['swf_change'] && $ext == 'swf') {
+                            if (Config::get('swf_change') && $ext == 'swf') {
                                 $v['pre'] = DIRECTORY . $v['v'];
                             }
                         }
@@ -103,37 +103,37 @@ foreach ($query as $v) {
 
 
         // скриншот
-        if ($setup['screen_change']) {
-            $th_gif = file_exists($setup['spath'] . $screen . '.thumb.gif');
+        if (Config::get('screen_change')) {
+            $th_gif = file_exists(Config::get('spath') . $screen . '.thumb.gif');
 
-            if (!$th_gif && file_exists($setup['spath'] . $screen . '.gif')) {
+            if (!$th_gif && file_exists(Config::get('spath') . $screen . '.gif')) {
                 $th_gif = Image::resize(
-                    $setup['spath'] . $screen . '.gif',
-                    $setup['spath'] . $screen . '.thumb.gif',
+                    Config::get('spath') . $screen . '.gif',
+                    Config::get('spath') . $screen . '.thumb.gif',
                     0,
                     0,
-                    $setup['marker']
+                    Config::get('marker')
                 );
-            } elseif (!$th_gif && file_exists($setup['spath'] . $screen . '.jpg')) {
+            } elseif (!$th_gif && file_exists(Config::get('spath') . $screen . '.jpg')) {
                 $th_gif = Image::resize(
-                    $setup['spath'] . $screen . '.jpg',
-                    $setup['spath'] . $screen . '.thumb.gif',
+                    Config::get('spath') . $screen . '.jpg',
+                    Config::get('spath') . $screen . '.thumb.gif',
                     0,
                     0,
-                    $setup['marker']
+                    Config::get('marker')
                 );
-            } elseif (!$th_gif && file_exists($setup['spath'] . $screen . '.png')) {
+            } elseif (!$th_gif && file_exists(Config::get('spath') . $screen . '.png')) {
                 $th_gif = Image::resize(
-                    $setup['spath'] . $screen . '.png',
-                    $setup['spath'] . $screen . '.thumb.gif',
+                    Config::get('spath') . $screen . '.png',
+                    Config::get('spath') . $screen . '.thumb.gif',
                     0,
                     0,
-                    $setup['marker']
+                    Config::get('marker')
                 );
             }
 
             if ($th_gif) {
-                $v['screen'] = DIRECTORY . $setup['spath'] . $screen . '.thumb.gif';
+                $v['screen'] = DIRECTORY . Config::get('spath') . $screen . '.thumb.gif';
             }
         }
 

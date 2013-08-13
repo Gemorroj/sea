@@ -26,43 +26,80 @@
  *
  * @author Sea, Gemorroj
  */
+
 /**
  * Sea Downloads
  *
  * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
+class Autoload
+{
+    private static $_autoload;
+    private static $_coreDirectory;
 
 
-require 'core/config.php';
+    /**
+     * Конструктор
+     */
+    public function __construct()
+    {
+        set_include_path(
+            get_include_path() . PATH_SEPARATOR . self::$_coreDirectory . DIRECTORY_SEPARATOR . 'PEAR'
+        );
 
-
-// Проверка переменных
-$id = intval($_GET['id']);
-// Получаем инфу о файле
-$v = getFileInfo($id);
-
-
-if (file_exists($v['path'])) {
-    updFileLoad($id);
-
-    $tmp = Config::get('zpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.zip';
-
-    if (!file_exists($tmp)) {
-        $zip = new PclZip($tmp);
-
-        function cb($p_event, &$p_header)
-        {
-            $p_header['stored_filename'] = basename($p_header['filename']);
-
-            return 1;
-        }
-
-        $zip->create($v['path'], PCLZIP_CB_PRE_ADD, 'cb');
-        chmod($tmp, 0644);
+        spl_autoload_register(array($this, '_classes'));
+        spl_autoload_register(array($this, '_smarty'));
+        spl_autoload_register(array($this, '_pear'));
     }
 
-    redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
-} else {
-    error($language['error']);
+
+    /**
+     * Инициализация
+     */
+    public static function init()
+    {
+        if (null === self::$_autoload) {
+            self::$_coreDirectory = realpath(dirname(__FILE__) . '/../');
+            self::$_autoload = new self();
+        }
+    }
+
+
+    /**
+     * @param string $class
+     */
+    protected function _classes($class)
+    {
+        $this->_include(self::$_coreDirectory . '/classes/' . $class . '.php');
+    }
+
+
+    /**
+     * @param string $class
+     */
+    protected function _smarty($class)
+    {
+        $this->_include(self::$_coreDirectory . '/Smarty/libs/' . $class . '.class.php');
+    }
+
+
+    /**
+     * @param string $class
+     */
+    protected function _pear($class)
+    {
+        $this->_include(self::$_coreDirectory . '/PEAR/' . str_replace('_', '/', $class) . '.php');
+    }
+
+
+    /**
+     * @param string $file
+     */
+    protected function _include($file)
+    {
+        if (true === file_exists($file)) {
+            include $file;
+        }
+    }
 }

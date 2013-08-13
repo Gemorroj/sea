@@ -45,7 +45,7 @@ $prev_path = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
 $ext = strtolower(pathinfo($v['path'], PATHINFO_EXTENSION));
 
 
-$name = $setup['tpath'] . '/' . $prev_path . '.gif';
+$name = Config::get('tpath') . '/' . $prev_path . '.gif';
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $name;
 
 
@@ -80,10 +80,10 @@ if ($ext == 'nth') {
     $info = getimagesize($name);
 
     if ($info[2] == 4 || $info[2] == 13) {
-        Image::resize($name, $name . '.swf', 0, 0, $setup['marker']);
+        Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
         $location .= '.swf';
     } else {
-        Image::resize($name, $name, 0, 0, $setup['marker']);
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
     }
 } elseif ($ext == 'thm') {
     $thm = new Archive_Tar($v['path']);
@@ -127,10 +127,10 @@ if ($ext == 'nth') {
     $info = getimagesize($name);
 
     if ($info[2] == 4 || $info[2] == 13) {
-        Image::resize($name, $name . '.swf', 0, 0, $setup['marker']);
+        Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
         $location .= '.swf';
     } else {
-        Image::resize($name, $name, 0, 0, $setup['marker']);
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
     }
 } elseif ($ext == 'sdt') {
     $sdt = new PclZip($v['path']);
@@ -231,10 +231,10 @@ if ($ext == 'nth') {
     $info = getimagesize($name);
 
     if ($info[2] == 4 || $info[2] == 13) {
-        Image::resize($name, $name . '.swf', 0, 0, $setup['marker']);
+        Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
         $location .= '.swf';
     } else {
-        Image::resize($name, $name, 0, 0, $setup['marker']);
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
     }
 } elseif ($ext == 'scs') {
     $scs = new PclZip($v['path']);
@@ -264,7 +264,7 @@ if ($ext == 'nth') {
 
 
     file_put_contents($name, $content[0]['content']);
-    Image::resize($name, $name, 0, 0, $setup['marker']);
+    Image::resize($name, $name, 0, 0, Config::get('marker'));
 } elseif ($ext == 'utz') {
     $utz = new PclZip($v['path']);
 
@@ -289,10 +289,10 @@ if ($ext == 'nth') {
     $info = getimagesize($name);
 
     if ($info[2] == 4 || $info[2] == 13) {
-        Image::resize($name, $name . '.swf', 0, 0, $setup['marker']);
+        Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
         $location .= '.swf';
     } else {
-        Image::resize($name, $name, 0, 0, $setup['marker']);
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
     }
 } elseif ($ext == 'apk') {
     $apk = new PclZip($v['path']);
@@ -398,7 +398,7 @@ if ($ext == 'nth') {
 
 
     file_put_contents($name, $content[0]['content']);
-    Image::resize($name, $name, 0, 0, $setup['marker']);
+    Image::resize($name, $name, 0, 0, Config::get('marker'));
 }
 
 redirect($location, 301);

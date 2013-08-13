@@ -46,15 +46,15 @@ header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 require 'core/config.php';
 
 $id = intval($_GET['id']);
-$frame = $i = $_GET['frame'] ? abs($_GET['frame']) : $setup['ffmpeg_frame'] + 1;
+$frame = $i = $_GET['frame'] ? abs($_GET['frame']) : Config::get('ffmpeg_frame') + 1;
 
 $v = getFileInfo($id);
 
 $pic = $v['path'];
 $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif';
+$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif';
 
-if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
+if (substr($pic, 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
     $mov = new ffmpeg_movie($pic, false);
     if (!$mov) {
         exit('Error');
@@ -69,7 +69,7 @@ if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic
 
     $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.gif';
     imagegif($fr->toGDImage(), $tmp);
-    Image::resize($tmp, $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif', 0, 0, $setup['marker']);
+    Image::resize($tmp, Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif', 0, 0, Config::get('marker'));
     unlink($tmp);
 }
 

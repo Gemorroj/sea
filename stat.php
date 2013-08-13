@@ -36,7 +36,7 @@
 
 require 'core/header.php';
 ###############Если статистика выключена###############
-if (!$setup['stat_change']) {
+if (!Config::get('stat_change')) {
     error('Not found');
 }
 
@@ -58,7 +58,7 @@ $stat = $mysqldb->query('
 $stat['total_new_files'] = $mysqldb->query('
     SELECT COUNT(1)
     FROM `files`
-    WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new'])) . '
+    WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new'))) . '
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
 )->fetchColumn();
 

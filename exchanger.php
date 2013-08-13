@@ -37,7 +37,7 @@
 require 'core/header.php';
 
 
-if (!$setup['exchanger_change']) {
+if (!Config::get('exchanger_change')) {
     error('Not found');
 }
 
@@ -57,15 +57,15 @@ if ($_POST) {
     }
 
     $pathinfo = pathinfo($_FILES['file']['name']);
-    $path = $setup['path'] . $_POST['topath'];
+    $path = Config::get('path') . $_POST['topath'];
     $pathname = $path . $_FILES['file']['name'];
 
-    $ext = explode(',', strtolower($setup['exchanger_extensions']));
+    $ext = explode(',', strtolower(Config::get('exchanger_extensions')));
     if (!in_array(strtolower($pathinfo['extension']), $ext)) {
         error($language['invalid_file_extension']);
     }
 
-    if (!preg_match('/^' . $setup['exchanger_name'] . '+$/i', $pathinfo['filename'])) {
+    if (!preg_match('/^' . Config::get('exchanger_name') . '+$/i', $pathinfo['filename'])) {
         error($language['not_a_valid_file_name']);
     }
 
@@ -109,7 +109,7 @@ if ($_POST) {
         $path,
         filesize($pathname),
         filectime($pathname),
-        ($setup['exchanger_hidden'] ? 1 : 0)
+        (Config::get('exchanger_hidden') ? 1 : 0)
     ));
 
     if (!$result) {
@@ -117,17 +117,17 @@ if ($_POST) {
         error($language['error_writing_to_database']);
     }
     $insertId = $mysqldb->lastInsertId();
-    if (!$setup['exchanger_hidden']) {
+    if (!Config::get('exchanger_hidden')) {
         dir_count($path, true);
     }
 
 
     if (!$_FILES['screen']['error']) {
-        $screen = $setup['spath'] . substr($pathname, strlen($setup['path'])) . '.gif';
+        $screen = Config::get('spath') . substr($pathname, strlen(Config::get('path'))) . '.gif';
         $image = getimagesize($_FILES['screen']['tmp_name']);
         switch ($image[2]) {
             case 1: // GIF
-                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
+                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, Config::get('marker'));
                 break;
 
 
@@ -135,7 +135,7 @@ if ($_POST) {
                 $im = imagecreatefromjpeg($_FILES['screen']['tmp_name']);
                 imagegif($im, $screen);
                 imagedestroy($im);
-                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
+                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, Config::get('marker'));
                 break;
 
 
@@ -143,19 +143,19 @@ if ($_POST) {
                 $im = imagecreatefrompng($_FILES['screen']['tmp_name']);
                 imagegif($im, $screen);
                 imagedestroy($im);
-                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
+                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, Config::get('marker'));
                 break;
         }
     }
 
     if ($_POST['about']) {
-        $about = $setup['opath'] . substr($pathname, strlen($setup['path'])) . '.txt';
+        $about = Config::get('opath') . substr($pathname, strlen(Config::get('path'))) . '.txt';
         file_put_contents($about, trim($_POST['about']));
     }
 
-    if ($setup['exchanger_notice']) {
+    if (Config::get('exchanger_notice')) {
         mail(
-            $setup['zakaz_email'],
+            Config::get('zakaz_email'),
             '=?utf-8?B?' . base64_encode('Новый файл') . '?=',
             'Загружен новый файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'apanel/apanel_view.php?id=' . $insertId
                 . "\r\n" .

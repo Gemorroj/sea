@@ -42,14 +42,14 @@ $HeadTime = microtime(true);
 $info = $mysqldb->query('SELECT * FROM loginlog WHERE id = 1')->fetch();
 $timeban = $_SERVER['REQUEST_TIME'] - $info['time'];
 //-------------------------------
-if ($timeban < $setup['timeban']) {
-    error('Следующая авторизация возможна через ' . ($setup['timeban'] - $timeban) . ' секунд!');
+if ($timeban < Config::get('timeban')) {
+    error('Следующая авторизация возможна через ' . (Config::get('timeban') - $timeban) . ' секунд!');
 }
 //-------------------------------
-if ($info['access_num'] > $setup['countban']) {
+if ($info['access_num'] > Config::get('countban')) {
     $mysqldb->prepare('UPDATE loginlog SET time = ?, access_num = 0')->execute(array($_SERVER['REQUEST_TIME']));
     error(
-        'Вы ' . $setup['countban'] . ' раза ввели неверный пароль. Вы заблокированы на ' . $setup['timeban'] . ' секунд'
+        'Вы ' . Config::get('countban') . ' раза ввели неверный пароль. Вы заблокированы на ' . Config::get('timeban') . ' секунд'
     );
 }
 //-------------------------------
@@ -77,10 +77,10 @@ if (!isset($_POST['p']) && !isset($_GET['p'])) {
     exit;
 }
 
-if ((isset($_POST['p']) && md5($_POST['p']) == $setup['password']) ||
-    $setup['autologin'] && (isset($_GET['p']) && md5($_GET['p']) == $setup['password'])) {
+if ((isset($_POST['p']) && md5($_POST['p']) == Config::get('password')) ||
+    Config::get('autologin') && (isset($_GET['p']) && md5($_GET['p']) == Config::get('password'))) {
     $_SESSION['ipu'] = $_SERVER['REMOTE_ADDR'];
-    $_SESSION['authorise'] = $setup['password'];
+    $_SESSION['authorise'] = Config::get('password');
 
     $mysqldb->prepare('INSERT INTO loginlog SET time = ?, ua = ?, ip = ?')->execute(
         array(
@@ -97,5 +97,5 @@ if ((isset($_POST['p']) && md5($_POST['p']) == $setup['password']) ||
     ) . 'apanel.php');
 } else {
     $mysqldb->exec('UPDATE loginlog SET access_num = access_num + 1 WHERE id = 1');
-    error('Пароль введен неверно. Осталось попыток до блокировки: ' . ($setup['countban'] - $info['access_num']));
+    error('Пароль введен неверно. Осталось попыток до блокировки: ' . (Config::get('countban') - $info['access_num']));
 }

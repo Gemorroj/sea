@@ -41,8 +41,9 @@ set_time_limit(999);
 ignore_user_abort(true);
 
 $mysqldb = MysqlDb::getInstance();
+$version = Config::get('version');
 
-if (!$setup['version']) {
+if (!$version) {
     $mysqldb->exec("
         CREATE TABLE `users_profiles` (
             `id` int(10) unsigned NOT NULL auto_increment,
@@ -120,11 +121,11 @@ if (!$setup['version']) {
             ADD `tur_news` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `aze_news`
     ");
 
-    $setup['version'] = '2';
+    $version = '2';
 }
 
 
-if ($setup['version'] < 3) {
+if ($version < 3) {
     $mysqldb->exec("RENAME TABLE `komments` TO `comments`");
     $mysqldb->exec("RENAME TABLE `news_komments` TO `news_comments`");
     $mysqldb->exec("DELETE FROM `setting` WHERE `name` = 'klimit'");
@@ -133,20 +134,20 @@ if ($setup['version'] < 3) {
     $mysqldb->exec("UPDATE `setting` SET `name` = 'comments_captcha' WHERE `name` = 'komments_captcha'");
     $mysqldb->exec("UPDATE `setting` SET `value` = UNIX_TIMESTAMP() WHERE `name` = 'online_max_time'");
 
-    $setup['version'] = '3';
+    $version = '3';
 }
 
 
-if ($setup['version'] < 3.1) {
+if ($version < 3.1) {
     $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
     $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_breadcrumbs', '0')");
     $mysqldb->exec("REPLACE INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_pages', '0')");
 
-    $setup['version'] = '3.1';
+    $version = '3.1';
 }
 
 
-$mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $setup['version']));
+$mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $version));
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" xml:lang="ru" lang="ru">
@@ -159,7 +160,7 @@ $mysqldb->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->ex
             <fieldset>
                 <legend>Обновление закончено</legend>
                 <p>
-                    Текущая версия: <strong><?php echo $setup['version']; ?></strong><br/><br/>
+                    Текущая версия: <strong><?php echo $version; ?></strong><br/><br/>
                     Не забудьте удалить файл install.php и update.php<br/><br/>
                     <strong><a href="./apanel/">В админку</a><br/>
                     <strong><a href="./">К загрузкам</a><br/>

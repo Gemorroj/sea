@@ -41,7 +41,7 @@ header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 require 'core/config.php';
 
 ###############Если jad выключен##########
-if (!$setup['jad_change']) {
+if (!Config::get('jad_change')) {
     error('Not found');
 }
 ###############Проверка переменных###############

@@ -36,7 +36,7 @@
 
 require 'core/header.php';
 ###############Если стол выключен###############
-if (!$setup['zakaz_change']) {
+if (!Config::get('zakaz_change')) {
     error('Not found');
 }
 
@@ -50,7 +50,7 @@ if ($_POST) {
     if (empty($_POST['back']) || empty($_POST['text'])) {
         error($language['do_not_fill_in_the_required_fields']);
     }
-    if ($setup['comments_captcha']) {
+    if (Config::get('comments_captcha')) {
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
             unset($_SESSION['captcha_keystring']);
             error($language['not_a_valid_code']);
@@ -59,7 +59,7 @@ if ($_POST) {
     }
 
     $sended = mail(
-        $setup['zakaz_email'],
+        Config::get('zakaz_email'),
         '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=',
         'СООБЩЕНИЕ: ' . $_POST['text'] . "\n\n" . ' ОБРАТНЫЙ АДРЕС: ' . $_POST['back'],
         'Content-Type: text/plain; charset=utf-8' . "\r\n" . 'From: support@' . $_SERVER['HTTP_HOST']

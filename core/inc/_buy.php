@@ -1,32 +1,32 @@
 <?php
 $banner = $buy = array();
 
-if ($setup['buy_change']) {
-    if ($setup['buy']) {
-        if ($setup['randbuy']) {
-            $list = explode("\n", $setup['buy']);
+if (Config::get('buy_change')) {
+    if (Config::get('buy')) {
+        if (Config::get('randbuy')) {
+            $list = explode("\n", Config::get('buy'));
             shuffle($list);
-            for ($i = 0; $i < $setup['countbuy']; ++$i) {
+            for ($i = 0; $i < Config::get('countbuy'); ++$i) {
                 $buy[] = $list[$i];
             }
         } else {
-            $list = explode("\n", $setup['buy']);
-            for ($i = 0; $i < $setup['countbuy']; ++$i) {
+            $list = explode("\n", Config::get('buy'));
+            for ($i = 0; $i < Config::get('countbuy'); ++$i) {
                 $buy[] = $list[$i];
             }
         }
     }
 
-    if ($setup['banner']) {
-        if ($setup['randbanner']) {
-            $list = explode("\n", $setup['banner']);
+    if (Config::get('banner')) {
+        if (Config::get('randbanner')) {
+            $list = explode("\n", Config::get('banner'));
             shuffle($list);
-            for ($i = 0; $i < $setup['countbanner']; ++$i) {
+            for ($i = 0; $i < Config::get('countbanner'); ++$i) {
                 $banner[] = $list[$i];
             }
         } else {
-            $list = explode("\n", $setup['banner']);
-            for ($i = 0; $i < $setup['countbanner']; ++$i) {
+            $list = explode("\n", Config::get('banner'));
+            for ($i = 0; $i < Config::get('countbanner'); ++$i) {
                 $banner[] = $list[$i];
             }
         }
@@ -36,7 +36,7 @@ if ($setup['buy_change']) {
 
 // модуль расширенного сервиса
 $serviceBanner = $serviceBuy = array();
-if ($setup['service_change_advanced'] && ($setup['service_head'] || $setup['service_foot'])) {
+if (Config::get('service_change_advanced') && (Config::get('service_head') || Config::get('service_foot'))) {
     $user = isset($_GET['user']) ? $_GET['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
 
     if ($user) {
@@ -48,10 +48,10 @@ if ($setup['service_change_advanced'] && ($setup['service_head'] || $setup['serv
             LIMIT ?
         ');
 
-        if ($setup['service_head']) {
+        if (Config::get('service_head')) {
             $q->bindValue(1, $user);
             $q->bindValue(2, '0');
-            $q->bindValue(3, intval($setup['service_head']), PDO::PARAM_INT);
+            $q->bindValue(3, intval(Config::get('service_head')), PDO::PARAM_INT);
             $q->execute();
 
             foreach ($q as $head) {
@@ -59,10 +59,10 @@ if ($setup['service_change_advanced'] && ($setup['service_head'] || $setup['serv
             }
         }
 
-        if ($setup['service_foot']) {
+        if (Config::get('service_foot')) {
             $q->bindValue(1, $user);
             $q->bindValue(2, '1');
-            $q->bindValue(3, intval($setup['service_foot']), PDO::PARAM_INT);
+            $q->bindValue(3, intval(Config::get('service_foot')), PDO::PARAM_INT);
             $q->execute();
 
             foreach ($q as $foot) {

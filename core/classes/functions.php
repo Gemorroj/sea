@@ -63,7 +63,6 @@ function get2ses($name)
  */
 function getSortMode($prefix = null)
 {
-    global $setup;
     $sort = get2ses('sort');
     $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
@@ -73,7 +72,7 @@ function getSortMode($prefix = null)
         $mode = $prefix . '`priority` DESC, ' . $prefix . '`size` ASC';
     } elseif ($sort === 'load') {
         $mode = $prefix . '`priority` DESC, ' . $prefix . '`loads` DESC';
-    } elseif ($sort === 'eval' && $setup['eval_change']) {
+    } elseif ($sort === 'eval' && Config::get('eval_change')) {
         $mode = $prefix . '`priority` DESC, ' . $prefix . '`yes` DESC , ' . $prefix . '`no` ASC';
     } else {
         $mode = $prefix . '`priority` DESC, ' . $prefix . '`name` ASC';
@@ -92,12 +91,12 @@ function getSortMode($prefix = null)
  */
 function getPaginatorConf($items)
 {
-    global $setup, $id;
+    global $id;
     $onpage = get2ses('onpage');
     $items = intval($items);
     $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
 
-    if ($setup['ignore_index_pages'] && !$id && defined('IS_INDEX') && IS_INDEX === true) {
+    if (Config::get('ignore_index_pages') && !$id && defined('IS_INDEX') && IS_INDEX === true) {
         // переопределяем пагинацию, если это главная
         return array(
             'start' => 0,
@@ -110,7 +109,7 @@ function getPaginatorConf($items)
 
     $onpage = $onpage > $items ? $items : $onpage;
     if ($onpage < 3) {
-        $onpage = $setup['onpage'];
+        $onpage = Config::get('onpage');
     }
 
     $pages = ceil($items / $onpage);
@@ -145,13 +144,12 @@ function getPaginatorConf($items)
  */
 function addScreen($file, $screen)
 {
-    global $setup;
     $error = array();
     $message = array();
 
     $file = strstr($file, '/'); // убираем папку с загрузками
-    $to = $setup['spath'] . $file . '.gif'; // имя конечного файла
-    $thumb = $setup['spath'] . $file . '.thumb.gif'; // имя конечного файла
+    $to = Config::get('spath') . $file . '.gif'; // имя конечного файла
+    $thumb = Config::get('spath') . $file . '.thumb.gif'; // имя конечного файла
 
     $ext = strtolower(pathinfo($screen, PATHINFO_EXTENSION));
 
@@ -171,7 +169,7 @@ function addScreen($file, $screen)
             imagegif($im, $to);
             imagedestroy($im);
         }
-        Image::resize($to, $thumb, 0, 0, $setup['marker']);
+        Image::resize($to, $thumb, 0, 0, Config::get('marker'));
 
         $message[] = 'Скриншот ' . $to . ' добавлен';
     } else {
@@ -191,12 +189,11 @@ function addScreen($file, $screen)
  */
 function addAbout($file, $aboutStr)
 {
-    global $setup;
     $error = array();
     $message = array();
 
     $aboutStr = trim($aboutStr);
-    $to = $setup['opath'] . strstr($file, '/') . '.txt'; // имя конечного файла
+    $to = Config::get('opath') . strstr($file, '/') . '.txt'; // имя конечного файла
 
     chmods($to);
 
@@ -230,7 +227,6 @@ function addAbout($file, $aboutStr)
  */
 function addAttach($file, $id, $attachFile, $attachedArray = array())
 {
-    global $setup;
     $error = array();
     $message = array();
 
@@ -240,7 +236,7 @@ function addAttach($file, $id, $attachFile, $attachedArray = array())
 
     if (!$error) {
         $key = sizeof($attachedArray);
-        $to = $setup['apath'] . dirname(strstr($file, '/'));
+        $to = Config::get('apath') . dirname(strstr($file, '/'));
 
         list(, $name) = explode('_', basename($attachFile), 2);
 
@@ -275,8 +271,6 @@ function addAttach($file, $id, $attachFile, $attachedArray = array())
  */
 function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
 {
-    global $setup;
-
     $message = array();
     $error = array();
 
@@ -308,11 +302,11 @@ function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
         $temp = strstr($directory, '/');
 
         //скриншоты
-        $screen = $setup['spath'] . $temp;
+        $screen = Config::get('spath') . $temp;
         // описания
-        $desc = $setup['opath'] . $temp;
+        $desc = Config::get('opath') . $temp;
         // вложения
-        $attach = $setup['apath'] . $temp;
+        $attach = Config::get('apath') . $temp;
 
         mkdir($directory, 0777);
         chmod($directory, 0777); // fix
@@ -761,10 +755,9 @@ function scannerCount()
  */
 function getAllDirs()
 {
-    global $setup;
     $dirs = array('/' => '/');
 
-    foreach (Mysqldb::getInstance()->query('SELECT SUBSTR(`path`, ' . (strlen($setup['path']) + 1) . ') AS `path` FROM `files` WHERE `dir` = "1"') as $item) {
+    foreach (Mysqldb::getInstance()->query('SELECT SUBSTR(`path`, ' . (strlen(Config::get('path')) + 1) . ') AS `path` FROM `files` WHERE `dir` = "1"') as $item) {
         $dirs[$item['path']] = $item['path'];
     }
 
@@ -1021,7 +1014,7 @@ function jar_ico($jar, $f)
  */
 function error($str = '')
 {
-    global $template, $setup, $mysql; // for included files
+    global $template, $mysql; // for included files
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';
@@ -1043,7 +1036,7 @@ function error($str = '')
  */
 function message($str = '')
 {
-    global $template, $setup, $mysql; // for included files
+    global $template, $mysql; // for included files
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';

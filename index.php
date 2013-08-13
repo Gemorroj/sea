@@ -57,7 +57,7 @@ if ($id) {
     ')->fetch();
     $seo = unserialize($d['seo']);
 } else {
-    $d['path'] = $setup['path'] . '/';
+    $d['path'] = Config::get('path') . '/';
     $q = $mysqldb->prepare('
         SELECT COUNT(1)
         FROM `files`
@@ -120,7 +120,7 @@ $query = $mysqldb->prepare('
     ORDER BY ' . getSortMode() . '
     LIMIT ?, ?
 ');
-$query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new']), PDO::PARAM_INT);
+$query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new')), PDO::PARAM_INT);
 $query->bindValue(2, $d['path']);
 $query->bindValue(3, $paginatorConf['start'], PDO::PARAM_INT);
 $query->bindValue(4, $paginatorConf['onpage'], PDO::PARAM_INT);

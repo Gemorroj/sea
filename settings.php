@@ -48,7 +48,7 @@ $seo['title'] = $language['settings'];
 $sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
 $onpage = isset($_SESSION['onpage']) ? $_SESSION['onpage'] : '';
 $prew = isset($_SESSION['prew']) ? $_SESSION['prew'] : '';
-$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : $setup['lib'];
+$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] :Config::get('lib');
 
 $template->assign('sort', $sort);
 $template->assign('onpage', $onpage);

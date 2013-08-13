@@ -57,11 +57,9 @@ session_name('sea');
 session_start() or die('Can not start session');
 
 
-require_once CORE_DIRECTORY . '/classes/Autoloader.php';
-Autoloader::init();
-
-require_once CORE_DIRECTORY . '/classes/functions.php';
-
+// автозагрузчик классов
+require_once CORE_DIRECTORY . '/classes/Autoload.php';
+Autoload::init();
 
 // данные для соединения с БД
 MysqlDb::setOptions(array(
@@ -70,14 +68,16 @@ MysqlDb::setOptions(array(
     'password' => 'mysql',
     'dbname' => 'sea3',
 ));
+
+// Инициализируем конфигурацию
+Config::init();
+
+require_once CORE_DIRECTORY . '/classes/functions.php';
+
 $mysqldb = MysqlDb::getInstance();
 
-$setup = array();
-foreach ($mysqldb->query('SELECT name, value FROM setting') as $set) {
-    $setup[$set['name']] = $set['value'];
-}
 
-define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == $setup['password']));
+define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));
 
 // Подключаем модуль партнерки
 //require CORE_CORE_DIRECTORY '/../partner/inc.php';

@@ -44,6 +44,7 @@ header('Content-type: text/html; charset=utf-8');
 isset($_POST['langpack']) && Language::getInstance()->setLangpack($_POST['langpack']);
 isset($_GET['langpack']) && Language::getInstance()->setLangpack($_GET['langpack']);
 $language = Language::getInstance()->getLanguage();
+$setup = Config::getAll();
 
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;

@@ -38,7 +38,7 @@ define('IS_P_NAME', true);
 
 require 'core/header.php';
 ###############Если поиск выключен###############
-if (!$setup['search_change']) {
+if (!Config::get('search_change')) {
     error('Not found');
 }
 
@@ -67,7 +67,7 @@ if ($word != '') {
     $q->execute(array($sqlLikeWord, $sqlLikeWord, $sqlLikeWord, $sqlLikeWord));
     $all = $q->fetchColumn();
 
-    $all = $all > $setup['top_num'] ? $setup['top_num'] : $all;
+    $all = $all > Config::get('top_num') ? Config::get('top_num') : $all;
 
     $paginatorConf = getPaginatorConf($all);
 
@@ -104,7 +104,7 @@ if ($word != '') {
         ORDER BY ' . getSortMode('f') . '
         LIMIT ?, ?
     ');
-    $query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * $setup['day_new']), PDO::PARAM_INT);
+    $query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new')), PDO::PARAM_INT);
     $query->bindValue(2, $sqlLikeWord);
     $query->bindValue(3, $sqlLikeWord);
     $query->bindValue(4, $sqlLikeWord);

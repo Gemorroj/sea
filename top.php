@@ -38,12 +38,12 @@ define('IS_P_NAME', true);
 
 require 'core/header.php';
 ###############Если топ выключен###############
-if (!$setup['top_change']) {
+if (!Config::get('top_change')) {
     error('Not found');
 }
 
 $template->setTemplate('top.tpl');
-$seo['title'] = str_replace('%files%', $setup['top_num'], $language['top20']);
+$seo['title'] = str_replace('%files%', Config::get('top_num'), $language['top20']);
 $template->assign('breadcrumbs', array('top' => $seo['title']));
 
 
@@ -53,7 +53,7 @@ $all = $mysqldb->query('
     WHERE `dir` = "0"
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
 )->fetchColumn();
-$all = $all > $setup['top_num'] ? $setup['top_num'] : $all;
+$all = $all > Config::get('top_num') ? Config::get('top_num') : $all;
 
 $paginatorConf = getPaginatorConf($all);
 

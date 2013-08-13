@@ -37,7 +37,7 @@
 require 'core/header.php';
 
 
-if (!$setup['service_change_advanced']) {
+if (!Config::get('service_change_advanced')) {
     error('Not found');
 }
 
@@ -179,30 +179,30 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     LIMIT ?
                 ');
 
-                if ($setup['service_head']) {
+                if (Config::get('service_head')) {
                     $q->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
                     $q->bindValue(2, '0');
-                    $q->bindValue(3, intval($setup['service_head']), PDO::PARAM_INT);
+                    $q->bindValue(3, intval(Config::get('service_head')), PDO::PARAM_INT);
                     $q->execute();
 
                     $head = $q->fetchAll();
                     $l = sizeof($head);
-                    if ($l < $setup['service_head']) {
-                        for ($i = $l; $i < $setup['service_head']; ++$i) {
+                    if ($l < Config::get('service_head')) {
+                        for ($i = $l; $i < Config::get('service_head'); ++$i) {
                             $head[] = array('name' => '', 'value' => '');
                         }
                     }
                 }
-                if ($setup['service_foot']) {
+                if (Config::get('service_foot')) {
                     $q->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
                     $q->bindValue(2, '1');
-                    $q->bindValue(3, intval($setup['service_foot']), PDO::PARAM_INT);
+                    $q->bindValue(3, intval(Config::get('service_foot')), PDO::PARAM_INT);
                     $q->execute();
 
                     $foot = $q->fetchAll();
                     $l = sizeof($foot);
-                    if ($l < $setup['service_foot']) {
-                        for ($i = $l; $i < $setup['service_foot']; ++$i) {
+                    if ($l < Config::get('service_foot')) {
+                        for ($i = $l; $i < Config::get('service_foot'); ++$i) {
                             $foot[] = array('name' => '', 'value' => '');
                         }
                     }
@@ -248,7 +248,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 ');
 
                 $all = sizeof($_POST['head']['name']);
-                $all = $all < $setup['service_head'] ? $all : $setup['service_head'];
+                $all = $all < Config::get('service_head') ? $all : Config::get('service_head');
                 for ($i = 0; $i < $all; ++$i) {
                     $name = $_POST['head']['name'][$i];
                     $value = preg_replace('/^(?:.*:\/\/)/', '', $_POST['head']['value'][$i]);
@@ -263,7 +263,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 }
 
                 $all = sizeof($_POST['foot']['name']);
-                $all = $all < $setup['service_foot'] ? $all : $setup['service_foot'];
+                $all = $all < Config::get('service_foot') ? $all : Config::get('service_foot');
                 for ($i = 0; $i < $all; ++$i) {
                     $name = $_POST['foot']['name'][$i];
                     $value = preg_replace('/^(?:.*:\/\/)/', '', $_POST['foot']['value'][$i]);
