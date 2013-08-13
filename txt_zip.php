@@ -49,8 +49,6 @@ if (file_exists($v['path'])) {
     $tmp = $setup['zpath'] . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.zip';
 
     if (!file_exists($tmp)) {
-        include_once 'core/classes/pclzip.lib.php';
-
         $zip = new PclZip($tmp);
 
         function cb($p_event, &$p_header)

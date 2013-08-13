@@ -167,7 +167,6 @@ class Import
      */
     private function _importFile($file)
     {
-        require_once './Translit.php';
         $toFile = $this->_filesFolder . strstr(ltrim(strstr($file, '/'), '/'), '/');
 
         if (checkExt(pathinfo($file, PATHINFO_EXTENSION)) === false) {

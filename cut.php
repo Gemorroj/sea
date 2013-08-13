@@ -35,7 +35,6 @@
 
 
 require 'core/header.php';
-require 'core/PEAR/MP3/Id.php';
 
 // если нарезка отключена
 if (!$setup['cut_change']) {

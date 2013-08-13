@@ -57,16 +57,10 @@ session_name('sea');
 session_start() or die('Can not start session');
 
 
-set_include_path(
-    get_include_path() . PATH_SEPARATOR . CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
-);
-
-require_once CORE_DIRECTORY . '/Smarty/libs/Smarty.class.php';
-require_once CORE_DIRECTORY . '/classes/Template.php';
-require_once CORE_DIRECTORY . '/classes/MysqlDb.php';
+require_once CORE_DIRECTORY . '/classes/Autoloader.php';
+Autoloader::init();
 
 require_once CORE_DIRECTORY . '/classes/functions.php';
-require_once CORE_DIRECTORY . '/classes/Language.php';
 
 
 // данные для соединения с БД

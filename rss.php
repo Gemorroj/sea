@@ -35,7 +35,6 @@
 
 
 require 'core/config.php';
-require 'core/classes/Rss.php';
 $language = Language::getInstance()->getLanguage();
 
 $link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';

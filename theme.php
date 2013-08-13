@@ -57,8 +57,6 @@ if (file_exists($name)) {
 
 
 if ($ext == 'nth') {
-    include_once 'core/classes/pclzip.lib.php';
-
     $nth = new PclZip($v['path']);
 
     $content = $nth->extract(PCLZIP_OPT_BY_NAME, 'theme_descriptor.xml', PCLZIP_OPT_EXTRACT_AS_STRING);
@@ -88,8 +86,6 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'thm') {
-    include_once 'core/PEAR/Archive/Tar.php';
-
     $thm = new Archive_Tar($v['path']);
 
     $content = $thm->extractInString('Theme.xml');
@@ -137,8 +133,6 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'sdt') {
-    include_once 'core/classes/pclzip.lib.php';
-
     $sdt = new PclZip($v['path']);
     $format = $teg = $image = $skin = '';
 
@@ -243,8 +237,6 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'scs') {
-    include_once 'core/classes/pclzip.lib.php';
-
     $scs = new PclZip($v['path']);
 
     $content = $scs->extract(PCLZIP_OPT_BY_NAME, 'SkinApplicationImage.jpg', PCLZIP_OPT_EXTRACT_AS_STRING);
@@ -274,8 +266,6 @@ if ($ext == 'nth') {
     file_put_contents($name, $content[0]['content']);
     img_resize($name, $name, 0, 0, $setup['marker']);
 } elseif ($ext == 'utz') {
-    include_once 'core/classes/pclzip.lib.php';
-
     $utz = new PclZip($v['path']);
 
 
@@ -305,8 +295,6 @@ if ($ext == 'nth') {
         img_resize($name, $name, 0, 0, $setup['marker']);
     }
 } elseif ($ext == 'apk') {
-    include_once 'core/classes/pclzip.lib.php';
-
     $apk = new PclZip($v['path']);
 
     $content = $apk->extract(PCLZIP_OPT_BY_NAME, 'res/drawable/icon.png', PCLZIP_OPT_EXTRACT_AS_STRING);

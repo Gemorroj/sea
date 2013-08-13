@@ -677,9 +677,6 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3_file':
         $template->setTemplate('apanel/id3_file.tpl');
 
-        include_once CORE_DIRECTORY . '/PEAR/MP3/Id.php';
-        include_once CORE_DIRECTORY . '/classes/mp3.class.php';
-
         $file = getFileInfo($id);
         $idv2 = getMusicInfo($id, $file['path']);
 
@@ -749,8 +746,6 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3':
         $template->setTemplate('apanel/id3.tpl');
 
-        include CORE_DIRECTORY . '/PEAR/MP3/Id.php';
-        include CORE_DIRECTORY . '/classes/mp3.class.php';
         $id3 = new MP3_Id();
 
         $genres = $id3->genres();
@@ -953,7 +948,6 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/import.tpl');
 
         if ($_POST) {
-            include_once CORE_DIRECTORY . '/classes/Import.php';
             $import = new Import($setup);
             $result = $import->importFiles();
 

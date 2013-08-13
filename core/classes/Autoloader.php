@@ -26,41 +26,68 @@
  *
  * @author Sea, Gemorroj
  */
+
 /**
  * Sea Downloads
  *
  * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
+class Autoloader
+{
+    private static $loader;
+    private static $coreDirectory;
+
+    /**
+     * Инициализация
+     */
+    public static function init()
+    {
+        if (self::$loader === null) {
+            self::$coreDirectory = realpath(dirname(__FILE__) . '/../');
+            self::$loader = new self();
+        }
+    }
 
 
-header('Pragma: public');
-header('Cache-Control: public, max-age=8640000');
-header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
+    /**
+     * Конструктор
+     */
+    public function __construct()
+    {
+        set_include_path(
+            get_include_path() . PATH_SEPARATOR . self::$coreDirectory . DIRECTORY_SEPARATOR . 'PEAR'
+        );
 
-require 'core/config.php';
+        spl_autoload_register(array($this, '_classes'));
+        spl_autoload_register(array($this, '_smarty'));
+        spl_autoload_register(array($this, '_pear'));
+    }
 
-###############Если jad выключен##########
-if (!$setup['jad_change']) {
-    error('Not found');
-}
-###############Проверка переменных###############
-$id = intval($_GET['id']);
-###############Получаем инфу о файле###########
-$v = getFileInfo($id);
 
-if (is_file($v['path'])) {
-    updFileLoad($id);
+    /**
+     * @param string $class
+     */
+    protected function _classes($class)
+    {
+        include self::$coreDirectory . '/classes/' . $class . '.php';
+    }
 
-    $zip = new PclZip($v['path']);
-    $content = $zip->extract(PCLZIP_OPT_BY_NAME, 'META-INF/MANIFEST.MF', PCLZIP_OPT_EXTRACT_AS_STRING);
 
-    header('Content-type: text/vnd.sun.j2me.app-descriptor');
-    header('Content-Disposition: attachment; filename="' . rawurlencode(basename($v['path'])) . '.jad";');
+    /**
+     * @param string $class
+     */
+    protected function _smarty($class)
+    {
+        include self::$coreDirectory . '/Smarty/libs/' . $class . '.class.php';
+    }
 
-    echo trim($content[0]['content']) . "\n" .
-        'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" .
-        'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'];
-} else {
-    error($language['error']);
+
+    /**
+     * @param string $class
+     */
+    protected function _pear($class)
+    {
+        include self::$coreDirectory . '/PEAR/' . str_replace('_', '/', $class) . '.php';
+    }
 }

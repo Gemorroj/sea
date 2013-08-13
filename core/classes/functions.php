@@ -524,7 +524,6 @@ function uploadUrls($newpath)
  */
 function uploadFiles($newpath)
 {
-    require_once './Translit.php';
     $mysqldb = MysqlDb::getInstance();
     $message = array();
     $error = array();
@@ -720,7 +719,6 @@ function _scannerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, 
  */
 function scanner($path = '', $cont = 'folder.png')
 {
-    require_once './Translit.php';
     static $folders = 0;
     static $files = 0;
     static $errors = array();
@@ -1018,8 +1016,6 @@ function getThmInfo($id, $path = '')
         'UIQ3' => 'M600, P1, W950, W960, P990',
     );
 
-    include_once dirname(__FILE__) . '/../PEAR/Archive/Tar.php';
-
     $thm = new Archive_Tar($path);
 
 
@@ -1137,10 +1133,7 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
             if ($GLOBALS['setup']['anim_change']) {
                 ini_set('memory_limit', '256M');
 
-                // GIF Поддержка анимации    
-                include_once CORE_DIRECTORY . '/classes/GIFDecoder.class.php';
-                include_once CORE_DIRECTORY . '/classes/GIFEncoder.class.php';
-
+                // GIF Поддержка анимации
                 $gif = new GIFDecoder(file_get_contents($in));
 
                 $arr = $gif->GIFGetFrames();
@@ -1219,7 +1212,6 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
 
         case 6:
             // BMP
-            include_once CORE_DIRECTORY . '/classes/Bmp.php';
             $old = Bmp::imagecreatefrombmp($in, CORE_DIRECTORY . '/tmp');
             break;
 
@@ -1251,8 +1243,6 @@ function img_resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
  */
 function jar_ico($jar, $f)
 {
-    include_once dirname(__FILE__) . '/pclzip.lib.php';
-
     $icon = array();
     $archive = new PclZip($jar);
 
@@ -1645,15 +1635,12 @@ function getMusicInfo($id, $path)
     $ext = strtolower($filename['extension']);
 
     if ($ext === 'mp3' || $ext === 'wav') {
-        include_once dirname(__FILE__) . '/classAudioFile.php';
-
         $audio = new AudioFile;
         $audio->loadFile($path);
 
         if ($audio->wave_length > 0) {
             $length = $audio->wave_length;
         } else {
-            include_once dirname(__FILE__) . '/mp3.class.php';
             $mp3 = new mp3($path);
             $mp3->setFileInfoExact();
             $length = $mp3->time;
@@ -1755,7 +1742,6 @@ function getMusicInfo($id, $path)
             )
         );
     } elseif ($ext === 'ogg') {
-        include_once dirname(__FILE__) . '/../PEAR/File/Ogg.php';
         try {
             $ogg = new File_Ogg($path);
             $obj = & current($ogg->_streams);

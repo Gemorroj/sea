@@ -82,7 +82,6 @@ MIDlet-Delete-Confirm: GoodBye =)',
             FILE_APPEND
         );
 
-        include_once 'core/classes/pclzip.lib.php';
         $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
         //echo 'ERROR : '.$zip->errorInfo(true);
 
