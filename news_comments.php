@@ -40,6 +40,8 @@ if (!Config::get('comments_change')) {
     error('Not found');
 }
 
+$mysqldb = MysqlDb::getInstance();
+
 // Получаем инфу о новости
 $q = $mysqldb->prepare('SELECT *, ' . Language::buildNewsQuery() . ' FROM `news` WHERE `id` = ?');
 $q->execute(array($id));

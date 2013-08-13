@@ -59,11 +59,12 @@ RewriteRule ^read/([0-9]+)/*([0-9]*)/*$ ./read.php?id=$1&page=$2 [QSA,NC]
     Allow from all
 </Limit>
 
+
 DirectoryIndex index.php
 
-# PHP
-#AddHandler application/x-httpd-php .php .phtml
 
+# MIME типы
+#AddHandler application/x-httpd-php .php .phtml
 AddType text/vnd.wap.wml .wml
 AddType text/vnd.wap.wmlscript .wmls
 AddType text/vnd.wap.si .si
@@ -215,7 +216,7 @@ php_flag register_argc_argv Off
 php_flag register_globals Off
 
 
-#Отладка
+# Отладка
 php_flag display_errors Off
 php_value error_reporting -1
 php_flag log_errors On
@@ -223,9 +224,6 @@ php_value error_log /error_log
 
 
 # Компрессия
-#php_value zlib.output_compression 4096
-#php_value zlib.output_compression_level 6
-
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/css application/javascript text/html application/xhtml+xml application/xml text/xml application/rss+xml text/vnd.wap.wml text/plain
     <IfModule mod_setenvif.c>
@@ -235,6 +233,7 @@ php_value error_log /error_log
     </IfModule>
 </IfModule>
 
+# HTTP Кэширование
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType image/gif "access plus 2 months"

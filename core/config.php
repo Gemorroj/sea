@@ -74,10 +74,8 @@ Config::init();
 // Инициализируем переводы
 Language::init();
 
+//TODO: перенести все в классы
 require_once CORE_DIRECTORY . '/classes/functions.php';
-
-$mysqldb = MysqlDb::getInstance();
-
 
 define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));
 

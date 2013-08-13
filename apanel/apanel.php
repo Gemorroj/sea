@@ -43,7 +43,7 @@ chdir('../');
 require 'core/header.php';
 
 $template->setTemplate('apanel/index.tpl');
-
+$mysqldb = MysqlDb::getInstance();
 
 
 $mysqldb->exec('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1');

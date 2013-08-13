@@ -21,7 +21,8 @@ if (Config::get('service_change_advanced')) {
             Config::set('site_url', $fetch['url']);
 
             if ($fetch['style'] && $fetch['style'] != @$_SESSION['style']) {
-                $_SESSION['style'] = $style = $fetch['style'];
+                $_SESSION['style'] = $fetch['style'];
+                $style = $fetch['style'];
             }
         }
     }

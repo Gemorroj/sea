@@ -38,6 +38,7 @@ define('APANEL', true);
 require '../core/config.php';
 
 $HeadTime = microtime(true);
+$mysqldb = MysqlDb::getInstance();
 
 $info = $mysqldb->query('SELECT * FROM loginlog WHERE id = 1')->fetch();
 $timeban = $_SERVER['REQUEST_TIME'] - $info['time'];

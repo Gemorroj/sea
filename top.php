@@ -42,6 +42,7 @@ if (!Config::get('top_change')) {
     error('Not found');
 }
 
+$mysqldb = MysqlDb::getInstance();
 $template->setTemplate('top.tpl');
 $seo['title'] = str_replace('%files%', Config::get('top_num'), Language::get('top20'));
 $template->assign('breadcrumbs', array('top' => $seo['title']));
