@@ -2,12 +2,12 @@
 $directories = $files = array();
 
 $sort = get2ses('sort');
-$prew = get2ses('prew');
-if ($prew != '0' && $prew != '1') {
-    $prew = Config::get('preview');
+$prev = get2ses('prev');
+if ($prev != '0' && $prev != '1') {
+    $prev = Config::get('prev');
 }
 
-$template->assign('prew', $prew);
+$template->assign('prev', $prev);
 $template->assign('sort', $sort);
 
 
@@ -36,7 +36,7 @@ foreach ($query as $v) {
         $v['ext'] = $ext;
 
         //Предпросмотр
-        if ($prew) {
+        if ($prev) {
             if (Config::get('screen_change')
                 && ($ext == 'gif' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'bmp')
             ) {

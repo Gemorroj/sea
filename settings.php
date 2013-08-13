@@ -47,12 +47,12 @@ $seo['title'] = $language['settings'];
 
 $sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
 $onpage = isset($_SESSION['onpage']) ? $_SESSION['onpage'] : '';
-$prew = isset($_SESSION['prew']) ? $_SESSION['prew'] : '';
+$prev = isset($_SESSION['prev']) ? $_SESSION['prev'] : '';
 $lib = isset($_SESSION['lib']) ? $_SESSION['lib'] :Config::get('lib');
 
 $template->assign('sort', $sort);
 $template->assign('onpage', $onpage);
-$template->assign('prew', $prew);
+$template->assign('prev', $prev);
 $template->assign('lib', $lib);
 $template->assign('langpack', Language::getInstance()->getLangpack());
 $template->assign('langpacks', Language::getInstance()->getLangpacks());

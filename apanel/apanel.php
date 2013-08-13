@@ -1158,7 +1158,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $_POST['jar_file_change'] = $_POST['jar_file_change'] ? 1 : 0;
 
             $_POST['anim_change'] = $_POST['anim_change'] ? 1 : 0;
-            $_POST['prew'] = $_POST['prew'] ? 1 : 0;
+            $_POST['prev'] = $_POST['prev'] ? 1 : 0;
             $_POST['lib_desc'] = $_POST['lib_desc'] ? 1 : 0;
             $_POST['ext'] = $_POST['ext'] ? 1 : 0;
             $_POST['prev_next'] = $_POST['prev_next'] ? 1 : 0;

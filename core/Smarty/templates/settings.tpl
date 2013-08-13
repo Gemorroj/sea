@@ -50,10 +50,10 @@
     {* превью *}
     {if $setup.preview_change}
         <div class="iblock">{$language.preview}:
-        {if $prew}
-            <strong>[On]</strong>[<a href="{$smarty.const.DIRECTORY}{$id}?prew=0">Off</a>]
+        {if $prev}
+            <strong>[On]</strong>[<a href="{$smarty.const.DIRECTORY}{$id}?prev=0">Off</a>]
         {else}
-            [<a href="{$smarty.const.DIRECTORY}{$id}?prew=1">On</a>]<strong>[Off]</strong>
+            [<a href="{$smarty.const.DIRECTORY}{$id}?prev=1">On</a>]<strong>[Off]</strong>
         {/if}
         </div>
     {/if}

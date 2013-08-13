@@ -240,7 +240,7 @@ if (!@$_GET['level']) {
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'picpath', 'cache/data/pic')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'limit', '10')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'onpage', '10')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prew', '1')");
+    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prev', '1')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'sort', 'name')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand', '10')");
     $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'view_size', '128*128,120*160,132*176,240*320')");

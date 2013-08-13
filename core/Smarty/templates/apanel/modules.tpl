@@ -31,7 +31,7 @@
         {html_checkboxes name="jar_change" selected=$setup.jar_change options=[1=>'Иконки Jar файлов в общем просмотре']}
         {html_checkboxes name="jar_file_change" selected=$setup.jar_file_change options=[1=>'Иконки Jar файлов в просмотре файла']}
         {html_checkboxes name="anim_change" selected=$setup.anim_change options=[1=>'Поддержка анимации']}
-        {html_checkboxes name="prew" selected=$setup.prew options=[1=>'Предпросмотр по умолчанию']}
+        {html_checkboxes name="prev" selected=$setup.prev options=[1=>'Предпросмотр по умолчанию']}
         {html_checkboxes name="lib_desc" selected=$setup.lib_desc options=[1=>'Брать первую строку из txt файла как описание']}
         {html_checkboxes name="ext" selected=$setup.ext options=[1=>'Показ расширения']}
         {html_checkboxes name="prev_next" selected=$setup.prev_next options=[1=>'Предыдущий/следующий файлы']}

@@ -49,7 +49,7 @@
     {foreach $files as $f}
         <div class="{cycle values="row,row2"}">
             {* превью *}
-            {if $prew && $f.pre}
+            {if $prev && $f.pre}
                 {if $f.ext == 'swf'}
                     <object style="width: 128px; height: 128px;"><param name="movie" value="{$f.pre}"><embed src="{$f.pre}" style="width: 128px; height: 128px;"></embed></param></object>
                 {else}
@@ -64,7 +64,7 @@
             {/if}
 
             {* перенос строки, если был скриншот или превью *}
-            {if ($prew && $f.pre) || ($setup.screen_change && $f.screen)}
+            {if ($prev && $f.pre) || ($setup.screen_change && $f.screen)}
                 <br/>
             {/if}
 
