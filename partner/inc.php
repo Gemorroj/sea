@@ -1917,22 +1917,18 @@ function partner_input($buff)
 
 function partner_yes($buff)
 {
-    $language = Language::getInstance()->getLanguage();
-
     return str_replace(
         '<body>',
-        '<body><div class="iblock"><div class="yes">' . $language['partner_yes_auth'] . '<br/></div></div>',
+        '<body><div class="iblock"><div class="yes">' . Language::get('partner_yes_auth') . '<br/></div></div>',
         $buff
     );
 }
 
 function partner_no($buff)
 {
-    $language = Language::getInstance()->getLanguage();
-
     return str_replace(
         '<body>',
-        '<body><div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div></div>',
+        '<body><div class="iblock"><div class="no">' . Language::get('partner_no_auth') . '<br/></div></div>',
         $buff
     );
 }
@@ -1960,7 +1956,6 @@ if (isset($_GET['password']) && is_numeric($_GET['password'])
 }
 
 $basename = basename($_SERVER['PHP_SELF']);
-$language = Language::getInstance()->getLanguage();
 
 if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_zip.php' || $basename == 'cut.php'
     || $basename == 'jad.php'
@@ -1978,7 +1973,7 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
     $country = isset($_GET['country']) ? $_GET['country'] : geoip_country_name_by_addr($gi, $_SERVER['REMOTE_ADDR']);
     geoip_close($gi);
 
-    $title = $language['partner_auth'] . ' - ' . htmlspecialchars($country, ENT_NOQUOTES);
+    $title = Language::get('partner_auth') . ' - ' . htmlspecialchars($country, ENT_NOQUOTES);
 
 
     $pay = '<div class="mblock">';
@@ -1991,7 +1986,7 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
                 $pay .= $p[0] . ' (' . $p[2] . ', ' . $p[4] . ', ' . str_replace(
                     '%day%',
                     ((strtotime($p[1]) - $_SERVER['REQUEST_TIME']) / 86400),
-                    $language['partner_time']
+                        Language::get('partner_time')
                 ) . ') <a href="smsto:' . $p[0] . '?body=' . PREFIX . '">SMS1</a> / <a href="sms:' . $p[0] . '?body='
                     . PREFIX . '">SMS2</a><br/>';
             }
@@ -2006,15 +2001,15 @@ if (($basename == 'load.php' || $basename == 'txt_jar.php' || $basename == 'txt_
     $pay .= '</div>';
 
 
-    echo'<div class="iblock"><div class="no">' . $language['partner_no_auth'] . '<br/></div>' . str_replace(
+    echo'<div class="iblock"><div class="no">' . Language::get('partner_no_auth') . '<br/></div>' . str_replace(
         '%prefix%',
         '<strong>' . PREFIX . '</strong>',
-        $language['partner_prefix']
+        Language::get('partner_prefix')
     ) . '<br/></div><div class="iblock">' . implode('<br/>', $count) . '</div>' . $pay
-        . '<div class="mblock"><form action="' . DIRECTORY . '" method="get"><div>' . $language['partner_enter']
+        . '<div class="mblock"><form action="' . DIRECTORY . '" method="get"><div>' . Language::get('partner_enter')
         . '<br/><input class="enter" type="password" name="password"/> <input class="buttom" type="submit" value="'
-        . $language['go'] . '"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . 'view/' . $id . '">'
-        . $language['go to the description of the file'] . '</a><br/><a href="' . DIRECTORY . '">' . $language['home']
+        . Language::get('go') . '"/></div></form></div><div class="iblock"><a href="' . DIRECTORY . 'view/' . $id . '">'
+        . Language::get('go to the description of the file') . '</a><br/><a href="' . DIRECTORY . '">' . Language::get('home')
         . '</a><br/></div>';
     exit;
 } else {

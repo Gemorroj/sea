@@ -94,13 +94,11 @@ class Template extends Smarty
      */
     public function dateFormatExtended($str)
     {
-        $language = Language::getInstance()->getLanguage();
-
         if (date('Y.m.d', $str) === date('Y.m.d', $_SERVER['REQUEST_TIME'])) {
-            return $language['today'] . ' ' . date('H:i', $str);
+            return Language::get('today') . ' ' . date('H:i', $str);
         } else {
             if (date('Y.m.d', $str) === date('Y.m.d', $_SERVER['REQUEST_TIME'] - 86400)) {
-                return $language['yesterday'] . ' ' . date('H:i', $str);
+                return Language::get('yesterday') . ' ' . date('H:i', $str);
             } else {
                 return date('Y.m.d H:i', $str);
             }
@@ -145,8 +143,6 @@ class Template extends Smarty
      */
     public function paginationExtended($params, $template)
     {
-        $language = Language::getInstance()->getLanguage();
-
         $params['page'] = intval($params['page']);
         $params['pages'] = intval($params['pages']);
         $params['url'] = htmlspecialchars($params['url']);
@@ -191,7 +187,7 @@ class Template extends Smarty
             $page = str_replace(
                 array('%page%', '%pages%'),
                 array($params['page'], $params['pages']),
-                $language['page']
+                Language::get('page')
             );
             $hiddens = '';
             if (isset($params['query'])) {
@@ -211,7 +207,7 @@ class Template extends Smarty
                     <label>' . $page . ':<br/>
                         <input class="enter" name="page" type="number" maxlength="8" size="8" required="required" min="1" max="65536"/>
                     </label>
-                    <input class="buttom" type="submit" value="' . $language['go'] . '"/>
+                    <input class="buttom" type="submit" value="' . Language::get('go') . '"/>
                 </div>
             </form>';
         }

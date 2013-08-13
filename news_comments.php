@@ -41,7 +41,7 @@ if (!Config::get('comments_change')) {
 }
 
 // Получаем инфу о новости
-$q = $mysqldb->prepare('SELECT *, ' . Language::getInstance()->buildNewsQuery() . ' FROM `news` WHERE `id` = ?');
+$q = $mysqldb->prepare('SELECT *, ' . Language::buildNewsQuery() . ' FROM `news` WHERE `id` = ?');
 $q->execute(array($id));
 $news = $q->fetch();
 
@@ -53,15 +53,15 @@ $desc = mb_substr($news['news'], 0, Config::get('desc'));
 
 
 $template->setTemplate('comments.tpl');
-$seo['title'] = $desc . ' - ' . $language['comments'];
+$seo['title'] = $desc . ' - ' . Language::get('comments');
 $template->assign('breadcrumbs', array(
-    'news' => $language['news'] . ' - ' . $desc,
-    'news_comments/' . $id => $language['comments']
+    'news' => Language::get('news') . ' - ' . $desc,
+    'news_comments/' . $id => Language::get('comments')
 ));
 
 $template->assign('comments_module', 'news_comments');
 $template->assign('comments_module_backlink', DIRECTORY . 'news');
-$template->assign('comments_module_backname', $language['news']);
+$template->assign('comments_module_backname', Language::get('news'));
 
 
 // всего комментариев
@@ -94,16 +94,16 @@ $comments = $query->fetchAll();
 if ($_POST) {
     //Проверка на ошибки
     if (!$_POST['msg'] || !$_POST['name']) {
-        error($language['not_filled_one_of_the_fields']);
+        error(Language::get('not_filled_one_of_the_fields'));
     }
     if (mb_strlen($_POST['msg']) < 4) {
-        error($language['you_have_not_written_a_comment_or_he_is_too_short']);
+        error(Language::get('you_have_not_written_a_comment_or_he_is_too_short'));
     }
 
     if (Config::get('comments_captcha')) {
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
             unset($_SESSION['captcha_keystring']);
-            error($language['not_a_valid_code']);
+            error(Language::get('not_a_valid_code'));
         }
         unset($_SESSION['captcha_keystring']);
     }
@@ -112,7 +112,7 @@ if ($_POST) {
     $q->execute(array($id, $_POST['msg']));
 
     if ($q->rowCount() > 0) {
-        error($language['why_repeat_myself']);
+        error(Language::get('why_repeat_myself'));
     }
 
     //Если нет ошибок пишем в базу
@@ -128,10 +128,10 @@ if ($_POST) {
     $result = $q->execute(array($id, $_POST['name'], $_POST['msg']));
 
     if (!$result) {
-        error($language['error']);
+        error(Language::get('error'));
     }
 
-    message($language['your_comment_has_been_successfully_added']);
+    message(Language::get('your_comment_has_been_successfully_added'));
 }
 
 $template->assign('comments', $comments);

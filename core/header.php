@@ -41,9 +41,9 @@ header('Content-type: text/html; charset=utf-8');
 
 
 // заменяем языковой пакет
-isset($_POST['langpack']) && Language::getInstance()->setLangpack($_POST['langpack']);
-isset($_GET['langpack']) && Language::getInstance()->setLangpack($_GET['langpack']);
-$language = Language::getInstance()->getLanguage();
+isset($_POST['langpack']) && Language::setLangpack($_POST['langpack']);
+isset($_GET['langpack']) && Language::setLangpack($_GET['langpack']);
+$language = Language::getLanguage();
 $setup = Config::getAll();
 
 

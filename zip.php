@@ -53,7 +53,7 @@ if (!is_file($v['path'])) {
 $template->setTemplate('zip.tpl');
 
 // Директория
-$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
 $q->execute(array($v['infolder']));
 $directory = $q->fetch();
 
@@ -61,7 +61,7 @@ $template->assign('directory', $directory);
 
 
 $breadcrumbs = getBreadcrumbs($v, false);
-$breadcrumbs['zip/' . $id] = $language['view_archive'];
+$breadcrumbs['zip/' . $id] = Language::get('view_archive');
 $template->assign('breadcrumbs', $breadcrumbs);
 
 
@@ -69,7 +69,7 @@ $seo = unserialize($v['seo']);
 if (!$seo['title']) {
     $seo['title'] = $v['name'];
 }
-$seo['title'] .= ' - ' . $language['view_archive'];
+$seo['title'] .= ' - ' . Language::get('view_archive');
 
 
 $paginatorConf = array();
@@ -104,7 +104,7 @@ switch ($action) {
 
     case 'preview':
         $zipFileName = rtrim($_GET['name'], '/');
-        $seo['title'] .= ' - ' . $language['view_archive'] . ' / ' . $zipFileName;
+        $seo['title'] .= ' - ' . Language::get('view_archive') . ' / ' . $zipFileName;
 
         $mime = ext_to_mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
 
@@ -144,7 +144,7 @@ switch ($action) {
             $zipFileType = 'text';
             $zipFileData = $content;
         } else {
-            message($language['file_unavailable_for_viewing']);
+            message(Language::get('file_unavailable_for_viewing'));
         }
         break;
 

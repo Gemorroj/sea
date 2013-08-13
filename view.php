@@ -70,7 +70,7 @@ require 'core/inc/view/_file.php';
 
 
 // Директория
-$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
 $q->execute(array($file['infolder']));
 $directory = $q->fetch();
 

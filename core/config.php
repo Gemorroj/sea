@@ -71,6 +71,8 @@ MysqlDb::setOptions(array(
 
 // Инициализируем конфигурацию
 Config::init();
+// Инициализируем переводы
+Language::init();
 
 require_once CORE_DIRECTORY . '/classes/functions.php';
 

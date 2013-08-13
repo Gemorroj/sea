@@ -48,35 +48,35 @@ if (!is_file($v['path'])) {
     error('File not found');
 }
 
-$seo['title'] = $language['send_a_link_to_email'] . ' - ' . $v['name'];
+$seo['title'] = Language::get('send_a_link_to_email') . ' - ' . $v['name'];
 $template->setTemplate('email.tpl');
 $template->assign('file', $v);
 
 $breadcrumbs = getBreadcrumbs($v, false);
-$breadcrumbs['email/' . $id] = $language['send_a_link_to_email'];
+$breadcrumbs['email/' . $id] = Language::get('send_a_link_to_email');
 $template->assign('breadcrumbs', $breadcrumbs);
 
 
 if (isset($_POST['email'])) {
     if (!isValidEmail($_POST['email'])) {
-        error($language['email_incorrect']);
+        error(Language::get('email_incorrect'));
     }
 
     setcookie('sea_email', $_POST['email'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
     if (mail(
         $_POST['email'],
-        '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], $language['link_to_file'])) . '?=',
+        '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], Language::get('link_to_file'))) . '?=',
         str_replace(
             array('%file%', '%url%', '%link%'),
             array($v['name'], Config::get('site_url'), 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id),
-            $language['email_message']
+            Language::get('email_message')
         ),
         "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
     )
     ) {
-        message($language['email_sent_successfully']);
+        message(Language::get('email_sent_successfully'));
     } else {
-        error($language['sending_email_error_occurred']);
+        error(Language::get('sending_email_error_occurred'));
     }
 }
 

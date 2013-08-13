@@ -55,14 +55,14 @@ $template->setTemplate('read.tpl');
 
 
 // Директория
-$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
 $q->execute(array($v['infolder']));
 $directory = $q->fetch();
 
 $template->assign('directory', $directory);
 
 $breadcrumbs = getBreadcrumbs($v, false);
-$breadcrumbs['read/' . $id] = $language['read'];
+$breadcrumbs['read/' . $id] = Language::get('read');
 $template->assign('breadcrumbs', $breadcrumbs);
 
 
@@ -70,7 +70,7 @@ $seo = unserialize($v['seo']);
 if (!$seo['title']) {
     $seo['title'] = $v['name'];
 }
-$seo['title'] .= ' - ' . $language['read'] . ' / ' . $paginatorConf['page'];
+$seo['title'] .= ' - ' . Language::get('read') . ' / ' . $paginatorConf['page'];
 
 
 $lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');

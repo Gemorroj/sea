@@ -43,7 +43,7 @@ if (!Config::get('top_change')) {
 }
 
 $template->setTemplate('top.tpl');
-$seo['title'] = str_replace('%files%', Config::get('top_num'), $language['top20']);
+$seo['title'] = str_replace('%files%', Config::get('top_num'), Language::get('top20'));
 $template->assign('breadcrumbs', array('top' => $seo['title']));
 
 
@@ -67,7 +67,7 @@ $query = $mysqldb->prepare('
     `f`.`dir_count`,
     `f`.`path` AS `v`,
     `f`.`infolder`,
-    ' . Language::getInstance()->buildFilesQuery('f') . ',
+    ' . Language::buildFilesQuery('f') . ',
     `f`.`size`,
     `f`.`loads`,
     `f`.`timeupload`,
@@ -75,7 +75,7 @@ $query = $mysqldb->prepare('
     `f`.`no`,
     0 AS `count`,
     `p_files`.`id` AS `p_id`,
-    ' . Language::getInstance()->buildFilesQuery('p_files', 'p_name') . '
+    ' . Language::buildFilesQuery('p_files', 'p_name') . '
     FROM `files` AS `f`
     LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
     WHERE `f`.`dir` = "0"

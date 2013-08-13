@@ -42,7 +42,7 @@ if (isset($_POST['lib'])) {
     $_SESSION['lib'] = intval($_POST['lib']);
 }
 
-$seo['title'] = $language['settings'];
+$seo['title'] = Language::get('settings');
 
 
 $sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
@@ -54,9 +54,9 @@ $template->assign('sort', $sort);
 $template->assign('onpage', $onpage);
 $template->assign('prev', $prev);
 $template->assign('lib', $lib);
-$template->assign('langpack', Language::getInstance()->getLangpack());
-$template->assign('langpacks', Language::getInstance()->getLangpacks());
+$template->assign('langpack', Language::getLangpack());
+$template->assign('langpacks', Language::getLangpacks());
 $template->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
 
-$template->assign('breadcrumbs', array('settings' => $language['settings']));
+$template->assign('breadcrumbs', array('settings' => Language::get('settings')));
 $template->send();

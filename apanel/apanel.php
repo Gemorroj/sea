@@ -229,7 +229,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         $template->assign('info', $file);
 
-        $langpacks = Language::getInstance()->getLangpacks();
+        $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
         if ($_POST) {
@@ -548,7 +548,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'add_dir':
         $template->setTemplate('apanel/files/add_dir.tpl');
 
-        $langpacks = Language::getInstance()->getLangpacks();
+        $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
         if ($_POST) {
@@ -576,7 +576,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'edit_news':
         $template->setTemplate('apanel/news/edit.tpl');
 
-        $langpacks = Language::getInstance()->getLangpacks();
+        $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
         if ($_POST) {
@@ -610,7 +610,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'add_news':
         $template->setTemplate('apanel/news/add.tpl');
 
-        $langpacks = Language::getInstance()->getLangpacks();
+        $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
         if ($_POST) {
@@ -1206,7 +1206,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $styles[] = pathinfo($v, PATHINFO_FILENAME);
         }
 
-        $langpacks = Language::getInstance()->getLangpacks();
+        $langpacks = Language::getLangpacks();
 
         $template->assign('styles', $styles);
         $template->assign('langpacks', $langpacks);

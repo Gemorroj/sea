@@ -48,10 +48,10 @@ if (!is_file($v['path'])) {
     error('File not found');
 }
 
-$seo['title'] = $language['complain_about_a_file'] . ' - ' . $v['name'];
+$seo['title'] = Language::get('complain_about_a_file') . ' - ' . $v['name'];
 
 $breadcrumbs = getBreadcrumbs($v, false);
-$breadcrumbs['abuse/' . $id] = $language['complain_about_a_file'];
+$breadcrumbs['abuse/' . $id] = Language::get('complain_about_a_file');
 $template->assign('breadcrumbs', $breadcrumbs);
 
 
@@ -63,7 +63,7 @@ if (mail(
         'IP: ' . $_SERVER['REMOTE_ADDR'],
     "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
 )) {
-    message($language['complaint_sent_to_the_administration']);
+    message(Language::get('complaint_sent_to_the_administration'));
 } else {
-    error($language['sending_email_error_occurred']);
+    error(Language::get('sending_email_error_occurred'));
 }

@@ -42,18 +42,18 @@ if (!Config::get('zakaz_change')) {
 
 $template->setTemplate('table.tpl');
 
-$seo['title'] = $language['orders'];
+$seo['title'] = Language::get('orders');
 
 
 $sended = false;
 if ($_POST) {
     if (empty($_POST['back']) || empty($_POST['text'])) {
-        error($language['do_not_fill_in_the_required_fields']);
+        error(Language::get('do_not_fill_in_the_required_fields'));
     }
     if (Config::get('comments_captcha')) {
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
             unset($_SESSION['captcha_keystring']);
-            error($language['not_a_valid_code']);
+            error(Language::get('not_a_valid_code'));
         }
         unset($_SESSION['captcha_keystring']);
     }
@@ -67,5 +67,5 @@ if ($_POST) {
 }
 
 $template->assign('sended', $sended);
-$template->assign('breadcrumbs', array('table' => $language['orders']));
+$template->assign('breadcrumbs', array('table' => Language::get('orders')));
 $template->send();

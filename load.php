@@ -51,5 +51,5 @@ if (file_exists($v['path'])) {
     $dir = ($dir == DIRECTORY_SEPARATOR ? '' : $dir);
     redirect('http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
 } else {
-    error($language['error']);
+    error(Language::get('error'));
 }

@@ -46,9 +46,9 @@ if (!Config::get('search_change')) {
 $word = isset($_GET['word']) ? $_GET['word'] : '';
 
 $template->setTemplate('search.tpl');
-$seo['title'] = $language['search'];
+$seo['title'] = Language::get('search');
 $template->assign('word', $word);
-$template->assign('breadcrumbs', array('search' => $language['search']));
+$template->assign('breadcrumbs', array('search' => Language::get('search')));
 
 
 $paginatorConf = array();
@@ -82,7 +82,7 @@ if ($word != '') {
         `f`.`dir_count`,
         `f`.`path` AS `v`,
         `f`.`infolder`,
-        ' . Language::getInstance()->buildFilesQuery('f') . ',
+        ' . Language::buildFilesQuery('f') . ',
         `f`.`size`,
         `f`.`loads`,
         `f`.`timeupload`,
@@ -96,7 +96,7 @@ if ($word != '') {
             ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
         ) AS `count`,
         `p_files`.`id` AS `p_id`,
-        ' . Language::getInstance()->buildFilesQuery('p_files', 'p_name') . '
+        ' . Language::buildFilesQuery('p_files', 'p_name') . '
         FROM `files` AS `f`
         LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
         WHERE `f`.`name` LIKE ? OR `f`.`rus_name` LIKE ? OR `f`.`aze_name` LIKE ? OR `f`.`tur_name` LIKE ?

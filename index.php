@@ -46,7 +46,7 @@ if ($id) {
     $d = $mysqldb->query('
         SELECT `t1`.`path`,
         `t1`.`seo`,
-        ' . Language::getInstance()->buildFilesQuery('t1') . ',
+        ' . Language::buildFilesQuery('t1') . ',
         IF (`t1`.`dir_count` > 0, COUNT(1), 0) AS `all`
         FROM `files` AS `t1`
         LEFT JOIN `files` AS `t2` ON `t2`.`infolder` = `t1`.`path` ' . (IS_ADMIN !== true ? 'AND `t2`.`hidden` = "0"' : '') . '
@@ -85,7 +85,7 @@ $template->assign('breadcrumbs', getBreadcrumbs($d, true));
 
 /// новости
 $news = $mysqldb->query('
-    SELECT *, ' . Language::getInstance()->buildNewsQuery() . '
+    SELECT *, ' . Language::buildNewsQuery() . '
     FROM `news`
     ORDER BY `id` DESC
     LIMIT 1
@@ -100,7 +100,7 @@ $query = $mysqldb->prepare('
     `dir`,
     `dir_count`,
     `path` as `v`,
-    ' . Language::getInstance()->buildFilesQuery() . ',
+    ' . Language::buildFilesQuery() . ',
     `size`,
     `loads`,
     `timeupload`,

@@ -44,7 +44,7 @@ if (!Config::get('service_change_advanced')) {
 
 $template->setTemplate('service.tpl');
 
-$seo['title'] = $language['advanced_service'];
+$seo['title'] = Language::get('advanced_service');
 
 $mysqldb = MysqlDb::getInstance();
 
@@ -67,7 +67,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
         redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
     } else {
-        error($language['user_not_found']);
+        error(Language::get('user_not_found'));
     }
 } elseif (isset($_GET['act']) && $_GET['act'] == 'registration') {
     if ($_POST) {
@@ -76,24 +76,24 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
         $error = array();
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
-            $error[] = $language['not_a_valid_code'];
+            $error[] = Language::get('not_a_valid_code');
         }
         unset($_SESSION['captcha_keystring']);
 
         if (strlen($_POST['pass']) < 4) {
-            $error[] = $language['short_password'];
+            $error[] = Language::get('short_password');
         }
 
         if (strlen($_POST['url']) < 4 || !strpos($_POST['url'], '.')) {
-            $error[] = $language['not_a_valid_url'];
+            $error[] = Language::get('not_a_valid_url');
         }
 
         if (strlen($_POST['style']) < 4 || !strpos($_POST['style'], '.')) {
-            $error[] = $language['not_a_valid_style'];
+            $error[] = Language::get('not_a_valid_style');
         }
 
         if (strlen($_POST['mail']) < 4 || !strpos($_POST['mail'], '@')) {
-            $error[] = $language['not_a_valid_mail'];
+            $error[] = Language::get('not_a_valid_mail');
         }
 
         if ($error) {
@@ -106,7 +106,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
         if ($q->rowCount() > 0) {
             // Такой URL уже есть
-            error($language['duplicate_url']);
+            error(Language::get('duplicate_url'));
         } else {
             $result = $mysqldb->prepare('
                 INSERT INTO `users_profiles` (
@@ -138,7 +138,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
                 redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
             } else {
-                error($language['error']);
+                error(Language::get('error'));
             }
         }
     }
@@ -158,9 +158,9 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
         );
 
-        message($language['email_sent_successfully']);
+        message(Language::get('email_sent_successfully'));
     } else {
-        error($language['email_not_found']);
+        error(Language::get('email_not_found'));
     }
 } else {
     if (isset($_SESSION['id'])) {
@@ -280,18 +280,18 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 //$mysqldb->exec('OPTIMIZE TABLE `users_profiles`, `users_settings`');
                 //$mysqldb->exec('ANALYZE TABLE `users_profiles`, `users_settings`');
 
-                message($language['settings_saved']);
+                message(Language::get('settings_saved'));
                 break;
 
 
             case 'exit':
                 session_destroy();
-                error($language['signed_out']);
+                error(Language::get('signed_out'));
                 break;
         }
     }
 }
 
 
-$template->assign('breadcrumbs', array('service' => $language['advanced_service']));
+$template->assign('breadcrumbs', array('service' => Language::get('advanced_service')));
 $template->send();

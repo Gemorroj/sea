@@ -38,8 +38,8 @@ require 'core/header.php';
 
 
 $template->setTemplate('news.tpl');
-$seo['title'] = $language['news'];
-$template->assign('breadcrumbs', array('news' => $language['news']));
+$seo['title'] = Language::get('news');
+$template->assign('breadcrumbs', array('news' => Language::get('news')));
 
 $mysqldb = MysqlDb::getInstance();
 
@@ -54,7 +54,7 @@ $template->assign('paginatorConf', $paginatorConf);
 
 $q = $mysqldb->prepare('
     SELECT `news`.`id`,
-    ' . Language::getInstance()->buildNewsQuery() . ',
+    ' . Language::buildNewsQuery() . ',
     `news`.`time`,
     COUNT(k.id) AS `count`
     FROM `news`

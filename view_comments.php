@@ -50,7 +50,7 @@ if (!is_file($v['path'])) {
 $mysqldb = Mysqldb::getInstance();
 
 // Директория
-$q = $mysqldb->prepare('SELECT *, ' . Language::getInstance()->buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q = $mysqldb->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
 $q->execute(array($v['infolder']));
 $directory = $q->fetch();
 
@@ -59,13 +59,13 @@ $seo = unserialize($v['seo']);
 if (!$seo['title']) {
     $seo['title'] = $v['name'];
 }
-$seo['title'] .= ' - ' . $language['comments'];
+$seo['title'] .= ' - ' . Language::get('comments');
 
 
 $template->setTemplate('comments.tpl');
 
 $breadcrumbs = getBreadcrumbs($v, false);
-$breadcrumbs['view_comments/' . $id] = $language['comments'];
+$breadcrumbs['view_comments/' . $id] = Language::get('comments');
 $template->assign('breadcrumbs', $breadcrumbs);
 
 $template->assign('comments_module', 'view_comments');
@@ -103,16 +103,16 @@ $comments = $query->fetchAll();
 if ($_POST) {
     //Проверка на ошибки
     if (!$_POST['msg'] || !$_POST['name']) {
-        error($language['not_filled_one_of_the_fields']);
+        error(Language::get('not_filled_one_of_the_fields'));
     }
     if (mb_strlen($_POST['msg']) < 4) {
-        error($language['you_have_not_written_a_comment_or_he_is_too_short']);
+        error(Language::get('you_have_not_written_a_comment_or_he_is_too_short'));
     }
 
     if (Config::get('comments_captcha')) {
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
             unset($_SESSION['captcha_keystring']);
-            error($language['not_a_valid_code']);
+            error(Language::get('not_a_valid_code'));
         }
         unset($_SESSION['captcha_keystring']);
     }
@@ -121,7 +121,7 @@ if ($_POST) {
     $q->execute(array($id, $_POST['msg']));
 
     if ($q->rowCount() > 0) {
-        error($language['why_repeat_myself']);
+        error(Language::get('why_repeat_myself'));
     }
 
     //Если нет ошибок пишем в базу
@@ -137,10 +137,10 @@ if ($_POST) {
     $result = $q->execute(array($id, $_POST['name'], $_POST['msg']));
 
     if (!$result) {
-        error($language['error']);
+        error(Language::get('error'));
     }
 
-    message($language['your_comment_has_been_successfully_added']);
+    message(Language::get('your_comment_has_been_successfully_added'));
 }
 
 

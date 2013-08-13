@@ -34,17 +34,17 @@
  */
 class Language
 {
-    private $_langpack;
-    private $_language;
-    private $_langpacks = array();
-    private $_dbFilesCorrelation
+    private static $_langpack;
+    private static $_language;
+    private static $_langpacks = array();
+    private static $_dbFilesCorrelation
         = array(
             'name' => 'english',
             'rus_name' => 'russian',
             'aze_name' => 'azerbaijan',
             'tur_name' => 'turkey',
         );
-    private $_dbNewsCorrelation
+    private static $_dbNewsCorrelation
         = array(
             'news' => 'english',
             'rus_news' => 'russian',
@@ -55,7 +55,7 @@ class Language
     static private $_instance;
 
 
-    final private function __construct()
+    private function __construct()
     {
         $this->_loadLangpacks();
         $this->_load();
@@ -63,17 +63,13 @@ class Language
 
 
     /**
-     * Получение экземпляра класса
-     *
-     * @return Language
+     * Инициализация
      */
-    static public function getInstance()
+    public static function init()
     {
         if (self::$_instance === null) {
             self::$_instance = new self();
         }
-
-        return self::$_instance;
     }
 
 
@@ -84,11 +80,11 @@ class Language
      *
      * @return bool
      */
-    public function setLangpack($langpack)
+    public static function setLangpack($langpack)
     {
-        if ($langpack && in_array($langpack, $this->getLangpacks())) {
-            $this->_langpack = $_SESSION['langpack'] = $langpack;
-            $this->_language = include CORE_DIRECTORY . '/resources/language/' . $this->_langpack . '.dat';
+        if ($langpack && in_array($langpack, self::getLangpacks())) {
+            self::$_langpack = $_SESSION['langpack'] = $langpack;
+            self::$_language = include CORE_DIRECTORY . '/resources/language/' . self::$_langpack . '.dat';
 
             return true;
         }
@@ -102,13 +98,13 @@ class Language
      */
     private function _load()
     {
-        if (!isset($_SESSION['langpack']) || !in_array($_SESSION['langpack'], $this->getLangpacks())) {
+        if (!isset($_SESSION['langpack']) || !in_array($_SESSION['langpack'], self::getLangpacks())) {
             // язык по умолчанию
-            $this->_langpack = Config::get('langpack');
+            self::$_langpack = Config::get('langpack');
         } else {
-            $this->_langpack = $_SESSION['langpack'];
+            self::$_langpack = $_SESSION['langpack'];
         }
-        $this->_language = include CORE_DIRECTORY . '/resources/language/' . $this->_langpack . '.dat';
+        self::$_language = include CORE_DIRECTORY . '/resources/language/' . self::$_langpack . '.dat';
     }
 
 
@@ -118,7 +114,7 @@ class Language
     private function _loadLangpacks()
     {
         foreach (glob(CORE_DIRECTORY . '/resources/language/*.dat') as $v) {
-            $this->_langpacks[] = pathinfo($v, PATHINFO_FILENAME);
+            self::$_langpacks[] = pathinfo($v, PATHINFO_FILENAME);
         }
     }
 
@@ -131,11 +127,11 @@ class Language
      *
      * @return string
      */
-    public function buildFilesQuery($prefix = null, $name = 'name')
+    public static function buildFilesQuery($prefix = null, $name = 'name')
     {
         $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
-        $key = array_search($this->getLangpack(), $this->_dbFilesCorrelation);
+        $key = array_search(self::getLangpack(), self::$_dbFilesCorrelation);
         if ($key !== false) {
             return $prefix . '`' . $key . '` AS `' . $name . '`';
         }
@@ -152,11 +148,11 @@ class Language
      *
      * @return string
      */
-    public function buildNewsQuery($prefix = null, $name = 'news')
+    public static function buildNewsQuery($prefix = null, $name = 'news')
     {
         $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
-        $key = array_search($this->getLangpack(), $this->_dbNewsCorrelation);
+        $key = array_search(self::getLangpack(), self::$_dbNewsCorrelation);
         if ($key !== false) {
             return $prefix . '`' . $key . '` AS `' . $name .'`';
         }
@@ -170,9 +166,9 @@ class Language
      *
      * @return array
      */
-    public function getLangpacks()
+    public static function getLangpacks()
     {
-        return $this->_langpacks;
+        return self::$_langpacks;
     }
 
 
@@ -181,9 +177,9 @@ class Language
      *
      * @return string
      */
-    public function getLangpack()
+    public static function getLangpack()
     {
-        return $this->_langpack;
+        return self::$_langpack;
     }
 
 
@@ -192,8 +188,21 @@ class Language
      *
      * @return array
      */
-    public function getLanguage()
+    public static function getLanguage()
     {
-        return $this->_language;
+        return self::$_language;
+    }
+
+
+    /**
+     * Перевод
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public static function get($key)
+    {
+        return self::$_language[$key];
     }
 }

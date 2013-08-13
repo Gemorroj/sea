@@ -35,16 +35,15 @@
 
 
 require 'core/config.php';
-$language = Language::getInstance()->getLanguage();
 
 $link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
 
 
-$rss = new Rss($language['news'], $link, $language['news']);
+$rss = new Rss(Language::get('news'), $link, Language::get('news'));
 
 
 $q = MysqlDb::getInstance()->query('
-    SELECT ' . Language::getInstance()->buildNewsQuery() . ', `time`
+    SELECT ' . Language::buildNewsQuery() . ', `time`
     FROM `news`
     ORDER BY `id` DESC
     LIMIT 0, 10
@@ -54,7 +53,7 @@ foreach ($q as $arr) {
     $date = new DateTime('@' . $arr['time']);
 
     $rss->addItem(
-        $language['news'] . ' - ' . $date->format('Y.m.d H:i'),
+        Language::get('news') . ' - ' . $date->format('Y.m.d H:i'),
         $link,
         '<div>' . $arr['news'] . '</div>',
         $date

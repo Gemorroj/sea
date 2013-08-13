@@ -43,8 +43,8 @@ if (!Config::get('new_change') || !Config::get('day_new')) {
 }
 
 $template->setTemplate('new.tpl');
-$seo['title'] = $language['new_files'];
-$template->assign('breadcrumbs', array('new' => $language['new_files']));
+$seo['title'] = Language::get('new_files');
+$template->assign('breadcrumbs', array('new' => Language::get('new_files')));
 
 
 // новизна файла
@@ -77,7 +77,7 @@ $query = $mysqldb->prepare('
     `f`.`dir_count`,
     `f`.`path` AS `v`,
     `f`.`infolder`,
-    ' . Language::getInstance()->buildFilesQuery('f') . ',
+    ' . Language::buildFilesQuery('f') . ',
     `f`.`size`,
     `f`.`loads`,
     `f`.`timeupload`,
@@ -85,7 +85,7 @@ $query = $mysqldb->prepare('
     `f`.`no`,
     0 AS `count`,
     `p_files`.`id` AS `p_id`,
-    ' . Language::getInstance()->buildFilesQuery('p_files', 'p_name') . '
+    ' . Language::buildFilesQuery('p_files', 'p_name') . '
     FROM `files` AS `f`
     LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
     WHERE `f`.`dir` = "0"

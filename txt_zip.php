@@ -64,5 +64,5 @@ if (file_exists($v['path'])) {
 
     redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
 } else {
-    error($language['error']);
+    error(Language::get('error'));
 }

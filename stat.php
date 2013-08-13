@@ -42,7 +42,7 @@ if (!Config::get('stat_change')) {
 
 $template->setTemplate('stat.tpl');
 
-$seo['title'] = $language['statistics'];
+$seo['title'] = Language::get('statistics');
 
 
 $mysqldb = MysqlDb::getInstance();
@@ -64,5 +64,5 @@ $stat['total_new_files'] = $mysqldb->query('
 
 
 $template->assign('stat', $stat);
-$template->assign('breadcrumbs', array('stat' => $language['statistics']));
+$template->assign('breadcrumbs', array('stat' => Language::get('statistics')));
 $template->send();

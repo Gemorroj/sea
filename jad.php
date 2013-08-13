@@ -62,5 +62,5 @@ if (is_file($v['path'])) {
         'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" .
         'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'];
 } else {
-    error($language['error']);
+    error(Language::get('error'));
 }

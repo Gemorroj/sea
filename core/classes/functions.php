@@ -795,7 +795,7 @@ function getBreadcrumbs($info, $is_dir = false)
         }
 
         $q = Mysqldb::getInstance()->prepare('
-            SELECT `id`, ' . Language::getInstance()->buildFilesQuery() . '
+            SELECT `id`, ' . Language::buildFilesQuery() . '
             FROM `files`
             WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')
         ');
@@ -1578,7 +1578,7 @@ function isValidEmail ($email)
 function getFileInfo ($id)
 {
     $q = MysqlDb::getInstance()->prepare('
-        SELECT *, ' . Language::getInstance()->buildFilesQuery() . '
+        SELECT *, ' . Language::buildFilesQuery() . '
         FROM `files`
         WHERE `id` = ?
         ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
@@ -1598,7 +1598,7 @@ function getFileInfo ($id)
 function getNewsInfo ($id)
 {
     $q = MysqlDb::getInstance()->prepare('
-        SELECT *, ' . Language::getInstance()->buildNewsQuery() . '
+        SELECT *, ' . Language::buildNewsQuery() . '
         FROM `news`
         WHERE `id` = ?
     ');

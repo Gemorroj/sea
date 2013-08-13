@@ -42,7 +42,7 @@ class Autoload
     /**
      * Конструктор
      */
-    public function __construct()
+    private function __construct()
     {
         set_include_path(
             get_include_path() . PATH_SEPARATOR . self::$_coreDirectory . DIRECTORY_SEPARATOR . 'PEAR'

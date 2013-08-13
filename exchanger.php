@@ -44,7 +44,7 @@ if (!Config::get('exchanger_change')) {
 
 $template->setTemplate('exchanger.tpl');
 
-$seo['title'] = $language['upload_file'];
+$seo['title'] = Language::get('upload_file');
 
 $dirs = array();
 $insertId = null;
@@ -53,7 +53,7 @@ $mysqldb = MysqlDb::getInstance();
 
 if ($_POST) {
     if (!$_FILES['file'] || $_FILES['file']['error']) {
-        error($language['when_downloading_a_file_error_occurred']);
+        error(Language::get('when_downloading_a_file_error_occurred'));
     }
 
     $pathinfo = pathinfo($_FILES['file']['name']);
@@ -62,11 +62,11 @@ if ($_POST) {
 
     $ext = explode(',', strtolower(Config::get('exchanger_extensions')));
     if (!in_array(strtolower($pathinfo['extension']), $ext)) {
-        error($language['invalid_file_extension']);
+        error(Language::get('invalid_file_extension'));
     }
 
     if (!preg_match('/^' . Config::get('exchanger_name') . '+$/i', $pathinfo['filename'])) {
-        error($language['not_a_valid_file_name']);
+        error(Language::get('not_a_valid_file_name'));
     }
 
 
@@ -80,7 +80,7 @@ if ($_POST) {
     $q->execute(array($path));
 
     if (!$q || $q->rowCount() < 1) {
-        error($language['you_have_specified_the_correct_path_to_load']);
+        error(Language::get('you_have_specified_the_correct_path_to_load'));
     }
 
 
@@ -88,11 +88,11 @@ if ($_POST) {
     $q->execute(array($pathname));
 
     if ($q->rowCount() > 0) {
-        error($language['file_with_this_name_already_exists']);
+        error(Language::get('file_with_this_name_already_exists'));
     }
 
     if (!move_uploaded_file($_FILES['file']['tmp_name'], $pathname)) {
-        error($language['an_error_occurred_while_copying_files']);
+        error(Language::get('an_error_occurred_while_copying_files'));
     }
 
     $q = $mysqldb->prepare('
@@ -114,7 +114,7 @@ if ($_POST) {
 
     if (!$result) {
         unlink($pathname);
-        error($language['error_writing_to_database']);
+        error(Language::get('error_writing_to_database'));
     }
     $insertId = $mysqldb->lastInsertId();
     if (!Config::get('exchanger_hidden')) {
@@ -171,5 +171,5 @@ if ($_POST) {
 $template->assign('insertId', $insertId);
 $template->assign('upload_max_filesize', ini_get('upload_max_filesize'));
 $template->assign('dirs', $dirs);
-$template->assign('breadcrumbs', array('exchanger' => $language['upload_file']));
+$template->assign('breadcrumbs', array('exchanger' => Language::get('upload_file')));
 $template->send();

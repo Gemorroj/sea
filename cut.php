@@ -51,13 +51,13 @@ if (!is_file($v['path'])) {
 $v['info'] = getMusicInfo($id, $v['path']);
 $cut = array();
 
-$seo['title'] = $language['splitting'] . ' - ' . $v['name'];
+$seo['title'] = Language::get('splitting') . ' - ' . $v['name'];
 $template->setTemplate('cut.tpl');
 $template->assign('file', $v);
 $template->assignByRef('cut', $cut);
 
 $breadcrumbs = getBreadcrumbs($v, false);
-$breadcrumbs['cut/' . $id] = $language['splitting'];
+$breadcrumbs['cut/' . $id] = Language::get('splitting');
 $template->assign('breadcrumbs', $breadcrumbs);
 
 
@@ -66,7 +66,7 @@ if ($_POST) {
     $p = isset($_POST['p']) ? intval($_POST['p']) : 0;
 
     if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') {
-        error($language['error']);
+        error(Language::get('error'));
     }
 
     $allsize = 0;
@@ -132,10 +132,10 @@ if ($_POST) {
                 'size' => $ras,
             );
         } else {
-            error($language['error']);
+            error(Language::get('error'));
         }
     } else {
-        error($language['error']);
+        error(Language::get('error'));
     }
 }
 
