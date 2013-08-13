@@ -69,7 +69,7 @@ if (substr($pic, 0, 1) != '.' && !is_file($setup['ffmpegpath'] . '/' . $prev_pic
 
     $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.gif';
     imagegif($fr->toGDImage(), $tmp);
-    img_resize($tmp, $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif', 0, 0, $setup['marker']);
+    Image::resize($tmp, $setup['ffmpegpath'] . '/' . $prev_pic . '_frame_' . $frame . '.gif', 0, 0, $setup['marker']);
     unlink($tmp);
 }
 

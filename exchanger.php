@@ -127,7 +127,7 @@ if ($_POST) {
         $image = getimagesize($_FILES['screen']['tmp_name']);
         switch ($image[2]) {
             case 1: // GIF
-                img_resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
+                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
                 break;
 
 
@@ -135,7 +135,7 @@ if ($_POST) {
                 $im = imagecreatefromjpeg($_FILES['screen']['tmp_name']);
                 imagegif($im, $screen);
                 imagedestroy($im);
-                img_resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
+                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
                 break;
 
 
@@ -143,7 +143,7 @@ if ($_POST) {
                 $im = imagecreatefrompng($_FILES['screen']['tmp_name']);
                 imagegif($im, $screen);
                 imagedestroy($im);
-                img_resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
+                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, $setup['marker']);
                 break;
         }
     }

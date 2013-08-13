@@ -107,7 +107,7 @@ foreach ($query as $v) {
             $th_gif = file_exists($setup['spath'] . $screen . '.thumb.gif');
 
             if (!$th_gif && file_exists($setup['spath'] . $screen . '.gif')) {
-                $th_gif = img_resize(
+                $th_gif = Image::resize(
                     $setup['spath'] . $screen . '.gif',
                     $setup['spath'] . $screen . '.thumb.gif',
                     0,
@@ -115,7 +115,7 @@ foreach ($query as $v) {
                     $setup['marker']
                 );
             } elseif (!$th_gif && file_exists($setup['spath'] . $screen . '.jpg')) {
-                $th_gif = img_resize(
+                $th_gif = Image::resize(
                     $setup['spath'] . $screen . '.jpg',
                     $setup['spath'] . $screen . '.thumb.gif',
                     0,
@@ -123,7 +123,7 @@ foreach ($query as $v) {
                     $setup['marker']
                 );
             } elseif (!$th_gif && file_exists($setup['spath'] . $screen . '.png')) {
-                $th_gif = img_resize(
+                $th_gif = Image::resize(
                     $setup['spath'] . $screen . '.png',
                     $setup['spath'] . $screen . '.thumb.gif',
                     0,

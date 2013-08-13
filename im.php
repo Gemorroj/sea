@@ -73,7 +73,7 @@ $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $setup['picpath'] . 
 
 
 if (!file_exists($setup['picpath'] . '/' . $prev_pic . '.gif')) {
-    if (!img_resize($pic, $setup['picpath'] . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
+    if (!Image::resize($pic, $setup['picpath'] . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
         error('Error');
     }
 }

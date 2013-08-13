@@ -54,7 +54,7 @@ if ($data && $data['tag']['apic']) {
         echo $data['tag']['apic'];
     } else {
         $im = imagecreatefromstring($data['tag']['apic']);
-        imagejpeg(simple_resize($im));
+        imagejpeg(Image::resizeSimple($im));
         imagedestroy($im);
     }
 }
