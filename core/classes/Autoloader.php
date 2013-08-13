@@ -43,7 +43,7 @@ class Autoloader
      */
     public static function init()
     {
-        if (self::$loader === null) {
+        if (null === self::$loader) {
             self::$coreDirectory = realpath(dirname(__FILE__) . '/../');
             self::$loader = new self();
         }
@@ -70,7 +70,7 @@ class Autoloader
      */
     protected function _classes($class)
     {
-        include self::$coreDirectory . '/classes/' . $class . '.php';
+        $this->_include(self::$coreDirectory . '/classes/' . $class . '.php');
     }
 
 
@@ -79,7 +79,7 @@ class Autoloader
      */
     protected function _smarty($class)
     {
-        include self::$coreDirectory . '/Smarty/libs/' . $class . '.class.php';
+        $this->_include(self::$coreDirectory . '/Smarty/libs/' . $class . '.class.php');
     }
 
 
@@ -88,6 +88,17 @@ class Autoloader
      */
     protected function _pear($class)
     {
-        include self::$coreDirectory . '/PEAR/' . str_replace('_', '/', $class) . '.php';
+        $this->_include(self::$coreDirectory . '/PEAR/' . str_replace('_', '/', $class) . '.php');
+    }
+
+
+    /**
+     * @param string $file
+     */
+    protected function _include($file)
+    {
+        if (true === file_exists($file)) {
+            include $file;
+        }
     }
 }
