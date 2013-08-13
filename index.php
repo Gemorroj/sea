@@ -33,10 +33,9 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-
-define('IS_INDEX', true);
-
 require 'core/header.php';
+
+define('IS_INDEX', !$id);
 
 $mysqldb = MysqlDb::getInstance();
 
@@ -73,14 +72,14 @@ if (!is_dir($d['path'])) {
     error('Folder not found.');
 }
 
-$paginatorConf = getPaginatorConf($d['all']);
+$paginatorConf = Helper::getPaginatorConf($d['all']);
 
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
 
 ###############Готовим заголовок###################
-$template->assign('breadcrumbs', getBreadcrumbs($d, true));
+$template->assign('breadcrumbs', Helper::getBreadcrumbs($d, true));
 
 
 /// новости
@@ -117,7 +116,7 @@ $query = $mysqldb->prepare('
     FROM `files`
     WHERE `infolder` = ?
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-    ORDER BY ' . getSortMode() . '
+    ORDER BY ' . Helper::getSortMode() . '
     LIMIT ?, ?
 ');
 $query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new')), PDO::PARAM_INT);

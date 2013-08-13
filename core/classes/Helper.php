@@ -36,6 +36,161 @@
 class Helper
 {
     /**
+     * Получаем настройки постраничной навигации
+     *
+     * @param int $items
+     *
+     * @return array
+     */
+    public static function getPaginatorConf($items)
+    {
+        $onpage = Helper::get2ses('onpage');
+        $items = intval($items);
+        $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
+
+        if (Config::get('ignore_index_pages') && defined('IS_INDEX') && IS_INDEX === true) {
+            // переопределяем пагинацию, если это главная
+            return array(
+                'start' => 0,
+                'page' => 1,
+                'pages' => 1,
+                'onpage' => $items,
+                'items' => $items,
+            );
+        }
+
+        $onpage = $onpage > $items ? $items : $onpage;
+        if ($onpage < 3) {
+            $onpage = Config::get('onpage');
+        }
+
+        $pages = ceil($items / $onpage);
+
+        if ($pages < 1) {
+            $pages = 1;
+        }
+        if ($page > $pages || $page < 1) {
+            $page = 1;
+        }
+
+        $start = ($page - 1) * $onpage;
+        if ($start > $items || $start < 0) {
+            $start = 0;
+        }
+
+        return array(
+            'start' => (int)$start,
+            'page' => (int)$page,
+            'pages' => (int)$pages,
+            'onpage' => (int)$onpage,
+            'items' => (int)$items,
+        );
+    }
+
+
+    /**
+     * Часть SQL запроса для сортировки ORDER BY
+     *
+     * @param string $prefix
+     *
+     * @return string
+     */
+    public static function getSortMode($prefix = null)
+    {
+        $sort = Helper::get2ses('sort');
+        $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
+
+        if ($sort === 'date') {
+            $mode = $prefix . '`priority` DESC, ' . $prefix . '`timeupload` DESC';
+        } elseif ($sort === 'size') {
+            $mode = $prefix . '`priority` DESC, ' . $prefix . '`size` ASC';
+        } elseif ($sort === 'load') {
+            $mode = $prefix . '`priority` DESC, ' . $prefix . '`loads` DESC';
+        } elseif ($sort === 'eval' && Config::get('eval_change')) {
+            $mode = $prefix . '`priority` DESC, ' . $prefix . '`yes` DESC , ' . $prefix . '`no` ASC';
+        } else {
+            $mode = $prefix . '`priority` DESC, ' . $prefix . '`name` ASC';
+        }
+
+        return $prefix . '`dir` DESC, ' . $mode;
+    }
+
+
+    /**
+     * Бредкрамбсы для директорий или файлов
+     *
+     * @param array $info
+     * @param bool $isDir
+     *
+     * @return array
+     */
+    public static function getBreadcrumbs($info, $isDir = false)
+    {
+        global $seo;
+
+        $ex = explode('/', rtrim($info['path'], '/'));
+        $all = sizeof($ex);
+
+        $breadcrumbs = array();
+        if ($all > 1) {
+            $path = array();
+            $prefix = '';
+
+            for ($i = 0; $i < $all; ++$i) {
+                if (!$isDir && ($i + 1) === $all) {
+                    $path[] = $prefix . $ex[$i];
+                } else {
+                    $path[] = $prefix . $ex[$i] . '/';
+                    $prefix .= $ex[$i] . '/';
+                }
+            }
+
+            $q = Mysqldb::getInstance()->prepare('
+            SELECT `id`, ' . Language::buildFilesQuery() . '
+            FROM `files`
+            WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')
+        ');
+            $q->execute($path);
+
+            foreach ($q as $s) {
+                $breadcrumbs[$s['id']] = $s['name'];
+            }
+            if (!$isDir) {
+                end($breadcrumbs);
+                $key = key($breadcrumbs);
+                $val = array_pop($breadcrumbs);
+                $breadcrumbs['view/' . $key] = $val;
+            }
+        }
+
+        if (isset($seo['title']) === false || $seo['title'] == '') {
+            $seo['title'] = implode(' / ', $breadcrumbs);
+        }
+
+        return $breadcrumbs;
+    }
+
+
+    /**
+     * Создает файл
+     * Последний элемент в path считается файлом. Директория согласно функции pathinfo
+     *
+     * @param string $path
+     * @param int    $chmodDir
+     * @param int    $chmodFile
+     *
+     * @return bool
+     */
+    public static function touch($path = '', $chmodDir = 0777, $chmodFile = 0666)
+    {
+        @mkdir(pathinfo($path, PATHINFO_DIRNAME), $chmodDir, true);
+        file_put_contents($path, '');
+
+        return chmod($path, $chmodFile);
+    }
+
+
+    /**
      * @param string $hex
      *
      * @return array

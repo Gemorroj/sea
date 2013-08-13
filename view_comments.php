@@ -64,7 +64,7 @@ $seo['title'] .= ' - ' . Language::get('comments');
 
 $template->setTemplate('comments.tpl');
 
-$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['view_comments/' . $id] = Language::get('comments');
 $template->assign('breadcrumbs', $breadcrumbs);
 
@@ -78,7 +78,7 @@ $q = $mysqldb->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
 $q->execute(array($id));
 $all = $q->fetchColumn();
 
-$paginatorConf = getPaginatorConf($all);
+$paginatorConf = Helper::getPaginatorConf($all);
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);

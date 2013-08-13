@@ -34,85 +34,73 @@
  */
 
 
-/**
- * Часть SQL запроса для сортировки ORDER BY
- *
- * @param string $prefix
- *
- * @return string
- */
-function getSortMode($prefix = null)
-{
-    $sort = Helper::get2ses('sort');
-    $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
-    if ($sort === 'date') {
-        $mode = $prefix . '`priority` DESC, ' . $prefix . '`timeupload` DESC';
-    } elseif ($sort === 'size') {
-        $mode = $prefix . '`priority` DESC, ' . $prefix . '`size` ASC';
-    } elseif ($sort === 'load') {
-        $mode = $prefix . '`priority` DESC, ' . $prefix . '`loads` DESC';
-    } elseif ($sort === 'eval' && Config::get('eval_change')) {
-        $mode = $prefix . '`priority` DESC, ' . $prefix . '`yes` DESC , ' . $prefix . '`no` ASC';
-    } else {
-        $mode = $prefix . '`priority` DESC, ' . $prefix . '`name` ASC';
+/**
+ * Отображение ошибок
+ */
+function error($str = '')
+{
+    global $template; // for included files
+    $dir = dirname(__FILE__);
+
+    require_once $dir . '/../header.php';
+
+    $template->setTemplate('message.tpl');
+    $template->assign('isError', true);
+    $template->assign('message', is_array($str) ? $str : array($str));
+
+    if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
+        $template->assign('breadcrumbs', array());
     }
 
-    return $prefix . '`dir` DESC, ' . $mode;
+    $template->send();
+    exit;
+}
+
+/**
+ * Отображение сообщений
+ */
+function message($str = '')
+{
+    global $template; // for included files
+    $dir = dirname(__FILE__);
+
+    require_once $dir . '/../header.php';
+
+    $template->setTemplate('message.tpl');
+    $template->assign('isError', false);
+    $template->assign('message', is_array($str) ? $str : array($str));
+
+    if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
+        $template->assign('breadcrumbs', array());
+    }
+
+    $template->send();
+    exit;
 }
 
 
 /**
- * Получаем настройки пагинатора
- *
- * @param int $items
- *
- * @return array
+ * Редирект
  */
-function getPaginatorConf($items)
+function redirect($url, $httpCode = 302)
 {
-    global $id;
-    $onpage = Helper::get2ses('onpage');
-    $items = intval($items);
-    $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
+    header('Content-type: text/html; charset=utf-8');
+    header('Location: ' . $url, true, $httpCode);
 
-    if (Config::get('ignore_index_pages') && !$id && defined('IS_INDEX') && IS_INDEX === true) {
-        // переопределяем пагинацию, если это главная
-        return array(
-            'start' => 0,
-            'page' => 1,
-            'pages' => 1,
-            'onpage' => $items,
-            'items' => $items,
-        );
-    }
-
-    $onpage = $onpage > $items ? $items : $onpage;
-    if ($onpage < 3) {
-        $onpage = Config::get('onpage');
-    }
-
-    $pages = ceil($items / $onpage);
-
-    if ($pages < 1) {
-        $pages = 1;
-    }
-    if ($page > $pages || $page < 1) {
-        $page = 1;
-    }
-
-    $start = ($page - 1) * $onpage;
-    if ($start > $items || $start < 0) {
-        $start = 0;
-    }
-
-    return array(
-        'start' => (int)$start,
-        'page' => (int)$page,
-        'pages' => (int)$pages,
-        'onpage' => (int)$onpage,
-        'items' => (int)$items,
-    );
+    exit('<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Переход</title>
+        <meta http-equiv="refresh" content="0; url=' . htmlspecialchars($url) . '" />
+    </head>
+    <body>
+        <div>
+            <a href="' . htmlspecialchars($url) . '">Перейти</a>
+        </div>
+    </body>
+</html>');
 }
 
 
@@ -137,7 +125,7 @@ function addScreen($file, $screen)
         $error[] = 'Поддерживаются скриншоты только gif, jpeg и png форматов';
     }
 
-    chmods($to);
+    Helper::touch($to);
 
     if (copy($screen, $to) === true) {
         if ($ext === 'jpg' || $ext === 'jpe' || $ext === 'jpeg') {
@@ -175,7 +163,7 @@ function addAbout($file, $aboutStr)
     $aboutStr = trim($aboutStr);
     $to = Config::get('opath') . strstr($file, '/') . '.txt'; // имя конечного файла
 
-    chmods($to);
+    Helper::touch($to);
 
     if ($aboutStr == '') {
         if (@unlink($to) === true) {
@@ -710,61 +698,6 @@ function getAllDirs()
 
 
 /**
- * Бредкрамбсы для директорий или файлов
- *
- * @param array $info
- * @param bool $is_dir
- *
- * @return array
- */
-function getBreadcrumbs($info, $is_dir = false)
-{
-    global $seo;
-
-    $ex = explode('/', rtrim($info['path'], '/'));
-    $all = sizeof($ex);
-
-    $breadcrumbs = array();
-    if ($all > 1) {
-        $path = array();
-        $prefix = '';
-
-        for ($i = 0; $i < $all; ++$i) {
-            if (!$is_dir && ($i + 1) === $all) {
-                $path[] = $prefix . $ex[$i];
-            } else {
-                $path[] = $prefix . $ex[$i] . '/';
-                $prefix .= $ex[$i] . '/';
-            }
-        }
-
-        $q = Mysqldb::getInstance()->prepare('
-            SELECT `id`, ' . Language::buildFilesQuery() . '
-            FROM `files`
-            WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')
-        ');
-        $q->execute($path);
-
-        foreach ($q as $s) {
-            $breadcrumbs[$s['id']] = $s['name'];
-        }
-        if (!$is_dir) {
-            end($breadcrumbs);
-            $key = key($breadcrumbs);
-            $val = array_pop($breadcrumbs);
-            $breadcrumbs['view/' . $key] = $val;
-        }
-    }
-
-    if (isset($seo['title']) === false || $seo['title'] == '') {
-        $seo['title'] = implode(' / ', $breadcrumbs);
-    }
-
-    return $breadcrumbs;
-}
-
-
-/**
  * Изменение количества файлов в директориях
  *
  * @param string $path      директория
@@ -790,25 +723,6 @@ function dir_count($path = '', $increment = true)
         SET `dir_count` = `dir_count` ' . ($increment ? '+' : '-') . ' 1
         WHERE `path` IN (' . rtrim(str_repeat('?,', $all), ',') . ')
     ')->execute($in);
-}
-
-
-/**
- * Создает файл
- * Последний элемент в path считается файлом. Директория согласно функции pathinfo
- *
- * @param string $path
- * @param int    $chmod_dir
- * @param int    $chmod_file
- *
- * @return bool
- */
-function chmods($path = '', $chmod_dir = 0777, $chmod_file = 0666)
-{
-    @mkdir(pathinfo($path, PATHINFO_DIRNAME), $chmod_dir, true);
-    file_put_contents($path, '');
-
-    return chmod($path, $chmod_file);
 }
 
 
@@ -952,125 +866,6 @@ function jar_ico($jar, $f)
     return (@$icon[0]['content'] && file_put_contents($f, $icon[0]['content']));
 }
 
-
-/**
- * Отображение ошибок
- */
-function error($str = '')
-{
-    global $template, $mysql; // for included files
-    $dir = dirname(__FILE__);
-
-    require_once $dir . '/../header.php';
-
-    $template->setTemplate('message.tpl');
-    $template->assign('isError', true);
-    $template->assign('message', is_array($str) ? $str : array($str));
-
-    if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
-        $template->assign('breadcrumbs', array());
-    }
-
-    $template->send();
-    exit;
-}
-
-/**
- * Отображение сообщений
- */
-function message($str = '')
-{
-    global $template, $mysql; // for included files
-    $dir = dirname(__FILE__);
-
-    require_once $dir . '/../header.php';
-
-    $template->setTemplate('message.tpl');
-    $template->assign('isError', false);
-    $template->assign('message', is_array($str) ? $str : array($str));
-
-    if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
-        $template->assign('breadcrumbs', array());
-    }
-
-    $template->send();
-    exit;
-}
-
-
-/**
- * Редирект
- */
-function redirect($url, $httpCode = 302)
-{
-    header('Content-type: text/html; charset=utf-8');
-    header('Location: ' . $url, true, $httpCode);
-
-    exit('<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Переход</title>
-        <meta http-equiv="refresh" content="0; url=' . htmlspecialchars($url) . '" />
-    </head>
-    <body>
-        <div>
-            <a href="' . htmlspecialchars($url) . '">Перейти</a>
-        </div>
-    </body>
-</html>');
-}
-
-
-/**
- * Постраничная навигация
- *
- * @param int     $pg  текущая страница
- * @param int     $all всего страниц
- * @param string  $str url страницы, к нему прибавится /номер
- *
- * @return string      html с навигацией
- */
-function go($pg = 0, $all = 0, $str)
-{
-    $go = '';
-
-    $page1 = $pg - 2;
-    $page2 = $pg - 1;
-    $page3 = $pg + 1;
-    $page4 = $pg + 2;
-
-    if ($page1 > 0) {
-        $go .= '<a href="' . $str . '/' . $page1 . '">' . $page1 . '</a> ';
-    }
-
-    if ($page2 > 0) {
-        $go .= '<a href="' . $str . '/' . $page2 . '">' . $page2 . '</a> ';
-    }
-
-    $go .= $pg . ' ';
-
-    if ($page3 <= $all) {
-        $go .= '<a href="' . $str . '/' . $page3 . '">' . $page3 . '</a> ';
-    }
-    if ($page4 <= $all) {
-        $go .= '<a href="' . $str . '/' . $page4 . '">' . $page4 . '</a> ';
-    }
-
-    if ($all > 3 && $all > $page4) {
-        $go .= '... <a href="' . $str . '/' . $all . '">' . $all . '</a>';
-    }
-
-    if ($page1 > 1) {
-        $go = '<a href="' . $str . '/1">1</a> ... ' . $go;
-    }
-
-    if ($go === $pg . ' ') {
-        return '';
-    } else {
-        return '<div class="row">&#160;' . $go . '</div>';
-    }
-}
 
 
 /**

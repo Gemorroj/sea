@@ -71,7 +71,7 @@ $q = $mysqldb->prepare('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ?
 $q->execute(array($id));
 $all = $q->fetchColumn();
 
-$paginatorConf = getPaginatorConf($all);
+$paginatorConf = Helper::getPaginatorConf($all);
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);

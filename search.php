@@ -69,7 +69,7 @@ if ($word != '') {
 
     $all = $all > Config::get('top_num') ? Config::get('top_num') : $all;
 
-    $paginatorConf = getPaginatorConf($all);
+    $paginatorConf = Helper::getPaginatorConf($all);
 
     ###############Постраничная навигация###############
     $template->assign('paginatorConf', $paginatorConf);
@@ -101,7 +101,7 @@ if ($word != '') {
         LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
         WHERE `f`.`name` LIKE ? OR `f`.`rus_name` LIKE ? OR `f`.`aze_name` LIKE ? OR `f`.`tur_name` LIKE ?
         ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
-        ORDER BY ' . getSortMode('f') . '
+        ORDER BY ' . Helper::getSortMode('f') . '
         LIMIT ?, ?
     ');
     $query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new')), PDO::PARAM_INT);

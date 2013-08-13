@@ -56,7 +56,7 @@ $template->setTemplate('cut.tpl');
 $template->assign('file', $v);
 $template->assignByRef('cut', $cut);
 
-$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['cut/' . $id] = Language::get('splitting');
 $template->assign('breadcrumbs', $breadcrumbs);
 

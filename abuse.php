@@ -50,7 +50,7 @@ if (!is_file($v['path'])) {
 
 $seo['title'] = Language::get('complain_about_a_file') . ' - ' . $v['name'];
 
-$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['abuse/' . $id] = Language::get('complain_about_a_file');
 $template->assign('breadcrumbs', $breadcrumbs);
 

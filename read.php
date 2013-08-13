@@ -48,7 +48,7 @@ if (!is_file($v['path'])) {
     error('File not found');
 }
 
-$paginatorConf = getPaginatorConf(PHP_INT_MAX);
+$paginatorConf = Helper::getPaginatorConf(PHP_INT_MAX);
 
 
 $template->setTemplate('read.tpl');
@@ -61,7 +61,7 @@ $directory = $q->fetch();
 
 $template->assign('directory', $directory);
 
-$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['read/' . $id] = Language::get('read');
 $template->assign('breadcrumbs', $breadcrumbs);
 

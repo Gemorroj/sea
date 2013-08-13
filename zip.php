@@ -60,7 +60,7 @@ $directory = $q->fetch();
 $template->assign('directory', $directory);
 
 
-$breadcrumbs = getBreadcrumbs($v, false);
+$breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['zip/' . $id] = Language::get('view_archive');
 $template->assign('breadcrumbs', $breadcrumbs);
 
@@ -125,7 +125,7 @@ switch ($action) {
             $content = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
             $content = Helper::str2utf8($content[0]['content']);
 
-            $paginatorConf = getPaginatorConf(PHP_INT_MAX);
+            $paginatorConf = Helper::getPaginatorConf(PHP_INT_MAX);
             $paginatorConf['pages'] = ceil(mb_strlen($content) / Config::get('lib'));
 
             $content = mb_substr($content, $paginatorConf['page'] * Config::get('lib') - Config::get('lib'), Config::get('lib') + 64);
@@ -152,7 +152,7 @@ switch ($action) {
         if (!($list = $zip->listContent())) {
             error('Can not list archive');
         }
-        $paginatorConf = getPaginatorConf(sizeof($list));
+        $paginatorConf = Helper::getPaginatorConf(sizeof($list));
 
         for ($i = ($paginatorConf['page'] - 1) * $paginatorConf['onpage'], $end = $paginatorConf['page'] * $paginatorConf['onpage']; $i < $end; ++$i) {
             if (isset($list[$i]) && !$list[$i]['folder']) {

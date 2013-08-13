@@ -56,7 +56,7 @@ $all = $mysqldb->query('
 )->fetchColumn();
 $all = $all > Config::get('top_num') ? Config::get('top_num') : $all;
 
-$paginatorConf = getPaginatorConf($all);
+$paginatorConf = Helper::getPaginatorConf($all);
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
@@ -81,7 +81,7 @@ $query = $mysqldb->prepare('
     LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
     WHERE `f`.`dir` = "0"
     ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
-    ORDER BY `f`.`loads` DESC, ' . getSortMode('f') . '
+    ORDER BY `f`.`loads` DESC, ' . Helper::getSortMode('f') . '
     LIMIT ?, ?
 ');
 $query->bindValue(1, $paginatorConf['start'], PDO::PARAM_INT);

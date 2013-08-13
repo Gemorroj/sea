@@ -98,6 +98,6 @@ $template->assign('rate', $rate);
 $template->assign('commentsCount', $commentsCount);
 $template->assign('comments', $comments);
 
-$template->assign('breadcrumbs', getBreadcrumbs($file, false));
+$template->assign('breadcrumbs', Helper::getBreadcrumbs($file, false));
 
 $template->send();

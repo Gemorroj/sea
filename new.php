@@ -64,7 +64,7 @@ $q->bindValue(1, $new, PDO::PARAM_INT);
 $q->execute();
 $all = $q->fetchColumn();
 
-$paginatorConf = getPaginatorConf($all);
+$paginatorConf = Helper::getPaginatorConf($all);
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
@@ -91,7 +91,7 @@ $query = $mysqldb->prepare('
     WHERE `f`.`dir` = "0"
     AND `f`.`timeupload` >= ?
     ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
-    ORDER BY ' . getSortMode('f') . '
+    ORDER BY ' . Helper::getSortMode('f') . '
     LIMIT ?, ?
 ');
 

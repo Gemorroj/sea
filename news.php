@@ -46,7 +46,7 @@ $mysqldb = MysqlDb::getInstance();
 // всего новостей
 $all = $mysqldb->query('SELECT COUNT(1) FROM `news`')->fetchColumn();
 
-$paginatorConf = getPaginatorConf($all);
+$paginatorConf = Helper::getPaginatorConf($all);
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
