@@ -690,7 +690,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->assign('artists', $idv2['tag']['artist']);
         $template->assign('album', $idv2['tag']['album']);
         $template->assign('year', $idv2['tag']['date']);
-        $template->assign('track', str_to_utf8($id3->track));
+        $template->assign('track', Helper::str2utf8($id3->track));
         $template->assign('genre', $idv2['tag']['genre']);
         $template->assign('comment', $idv2['tag']['comment']);
 
@@ -864,7 +864,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $all = $q->rowCount();
                 $i = 0;
                 $textLen = mb_strlen($_POST['text']);
-                $rgb = hex2rgb($_POST['color']);
+                $rgb = Helper::hex2rgb($_POST['color']);
 
                 foreach ($q as $arr) {
                     list($w, $h, $type) = getimagesize($arr['path']);

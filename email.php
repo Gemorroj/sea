@@ -58,7 +58,7 @@ $template->assign('breadcrumbs', $breadcrumbs);
 
 
 if (isset($_POST['email'])) {
-    if (!isValidEmail($_POST['email'])) {
+    if (!Helper::isValidEmail($_POST['email'])) {
         error(Language::get('email_incorrect'));
     }
 

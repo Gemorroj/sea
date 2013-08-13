@@ -91,11 +91,11 @@ switch ($action) {
     case 'down':
         $zipFileName = rtrim($_GET['name'], '/');
 
-        $mime = ext_to_mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
+        $mime = Helper::ext2mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
         header('Content-Type: ' . $mime);
         if ($mime == 'text/plain') {
             $f = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
-            echo str_to_utf8($f[0]['content']);
+            echo Helper::str2utf8($f[0]['content']);
         } else {
             $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_IN_OUTPUT);
         }
@@ -106,7 +106,7 @@ switch ($action) {
         $zipFileName = rtrim($_GET['name'], '/');
         $seo['title'] .= ' - ' . Language::get('view_archive') . ' / ' . $zipFileName;
 
-        $mime = ext_to_mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
+        $mime = Helper::ext2mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
 
         if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/jpeg' || $mime == 'image/bmp') {
             $f = Config::get('zppath') . '/' . str_replace(
@@ -123,7 +123,7 @@ switch ($action) {
             $zipFileData = DIRECTORY . $f;
         } elseif ($mime == 'text/plain') {
             $content = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
-            $content = str_to_utf8($content[0]['content']);
+            $content = Helper::str2utf8($content[0]['content']);
 
             $paginatorConf = getPaginatorConf(PHP_INT_MAX);
             $paginatorConf['pages'] = ceil(mb_strlen($content) / Config::get('lib'));

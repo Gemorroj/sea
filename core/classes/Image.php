@@ -94,7 +94,7 @@ class Image
             for ($i = 0; $i < $imageWidth; ++$i) {
                 $rgb = imagecolorsforindex($image, imagecolorat($image, $i, $j));
 
-                if ($GLOBALS['setup']['marker_where'] === 'top' && $j < $watermarkHeight && $i < $watermarkWidth) {
+                if (Config::get('marker_where') === 'top' && $j < $watermarkHeight && $i < $watermarkWidth) {
                     $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j));
                     if ($rgb2['alpha'] != 127) {
                         $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
@@ -102,7 +102,7 @@ class Image
                         $rgb['blue'] = intval(($rgb['blue'] + $rgb2['blue']) / 2);
                     }
                 } else {
-                    if ($GLOBALS['setup']['marker_where'] === 'foot' && $j >= $footH && $i < $watermarkWidth) {
+                    if (Config::get('marker_where') === 'foot' && $j >= $footH && $i < $watermarkWidth) {
                         $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j - $footH));
                         if ($rgb2['alpha'] != 127) {
                             $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
@@ -142,7 +142,7 @@ class Image
         $hn = imagesy($data);
         $wn = imagesx($data);
 
-        list($w, $h) = explode('*', $GLOBALS['setup']['prev_size']);
+        list($w, $h) = explode('*', Config::get('prev_size'));
 
         $sxy = round($wn / $hn, 3);
         if ($sxy < 1) {
@@ -179,7 +179,7 @@ class Image
         //$out = realpath($out['dirname']) . '/' . $out['basename'];
 
         if (!$w || !$h) {
-            list($w, $h) = explode('*', $GLOBALS['setup']['prev_size']);
+            list($w, $h) = explode('*', Config::get('prev_size'));
         }
 
 
@@ -195,7 +195,7 @@ class Image
 
         switch ($type) {
             case 1:
-                if ($GLOBALS['setup']['anim_change']) {
+                if (Config::get('anim_change')) {
                     ini_set('memory_limit', '256M');
 
                     // GIF Поддержка анимации

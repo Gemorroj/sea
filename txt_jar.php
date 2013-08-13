@@ -51,7 +51,7 @@ if (file_exists($v['path'])) {
     $tmp = Config::get('jpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.jar';
 
     if (!file_exists($tmp)) {
-        $f = str_to_utf8(file_get_contents($v['path']));
+        $f = Helper::str2utf8(file_get_contents($v['path']));
 
         copy('core/resources/book.zip', $tmp);
         copy('core/resources/props.ini', Config::get('jpath') . '/props.ini');

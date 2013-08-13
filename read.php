@@ -95,7 +95,7 @@ if ($paginatorConf['page'] > 1) {
     $content = substr($content, $i);
 }
 
-$content = str_to_utf8($content);
+$content = Helper::str2utf8($content);
 $paginatorConf['pages'] = ceil(filesize($v['path']) / $lib);
 if ($paginatorConf['page'] > $paginatorConf['pages']) {
     $paginatorConf['page'] = 1;

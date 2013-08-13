@@ -1,8 +1,8 @@
 <?php
 $directories = $files = array();
 
-$sort = get2ses('sort');
-$prev = get2ses('prev');
+$sort = Helper::get2ses('sort');
+$prev = Helper::get2ses('prev');
 if ($prev != '0' && $prev != '1') {
     $prev = Config::get('prev');
 }

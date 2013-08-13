@@ -169,7 +169,7 @@ class Import
     {
         $toFile = $this->_filesFolder . strstr(ltrim(strstr($file, '/'), '/'), '/');
 
-        if (checkExt(pathinfo($file, PATHINFO_EXTENSION)) === false) {
+        if (Helper::isBlockedExt(pathinfo($file, PATHINFO_EXTENSION))) {
             $this->_error[] = 'Импорт файла ' . $file . ' окончилась неудачно: недоступное расширение';
             return;
         }

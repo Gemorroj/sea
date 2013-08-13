@@ -148,7 +148,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
     $mail = $q->fetchColumn();
 
     if ($mail) {
-        $pass = pass();
+        $pass = Helper::getRandPass();
         $mysqldb->prepare('UPDATE `users_profiles` SET `pass` = MD5(?) WHERE `id` = ?')->execute(array($pass, $_POST['id']));
 
         mail(

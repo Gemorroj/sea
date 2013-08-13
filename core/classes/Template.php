@@ -175,15 +175,14 @@ class Template extends Smarty
         }
 
         if ($params['pages'] > 3 && $params['pages'] > $page4) {
-            $go .= '... <a href="' . $params['url'] . '/' . $params['pages'] . $appendStr . '">' . $params['pages']
-                . '</a>';
+            $go .= '... <a href="' . $params['url'] . '/' . $params['pages'] . $appendStr . '">' . $params['pages'] . '</a>';
         }
 
         if ($page1 > 1) {
             $go = '<a href="' . $params['url'] . '/1' . $appendStr . '">1</a> ... ' . $go;
         }
 
-        if ($GLOBALS['setup']['pagehand_change'] && $params['pages'] > $GLOBALS['setup']['pagehand']) {
+        if (Config::get('pagehand_change') && $params['pages'] > Config::get('pagehand')) {
             $page = str_replace(
                 array('%page%', '%pages%'),
                 array($params['page'], $params['pages']),
@@ -192,15 +191,11 @@ class Template extends Smarty
             $hiddens = '';
             if (isset($params['query'])) {
                 foreach ($params['query'] as $key => $value) {
-                    $hiddens
-                        .=
-                        '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value)
-                            . '"/>';
+                    $hiddens .= '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '"/>';
                 }
             }
 
-            $go
-                .= '<br/>
+            $go .= '<br/>
             <form action="' . $params['url'] . '" method="get">
                 <div class="iblock">
                     ' . $hiddens . '

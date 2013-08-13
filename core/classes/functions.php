@@ -33,26 +33,6 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-/**
- * $_GET -> $_SESSION
- *
- * @param string $name
- *
- * @return string
- */
-function get2ses($name)
-{
-    if (isset($_SESSION[$name]) === false) {
-        $_SESSION[$name] = $GLOBALS['setup'][$name];
-    }
-    if (isset($_GET[$name]) === true) {
-        $_SESSION[$name] = $_GET[$name];
-    }
-
-    // да, именно переменная переменных
-    return $$name = $_SESSION[$name];
-}
-
 
 /**
  * Часть SQL запроса для сортировки ORDER BY
@@ -63,7 +43,7 @@ function get2ses($name)
  */
 function getSortMode($prefix = null)
 {
-    $sort = get2ses('sort');
+    $sort = Helper::get2ses('sort');
     $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
     if ($sort === 'date') {
@@ -92,7 +72,7 @@ function getSortMode($prefix = null)
 function getPaginatorConf($items)
 {
     global $id;
-    $onpage = get2ses('onpage');
+    $onpage = Helper::get2ses('onpage');
     $items = intval($items);
     $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
 
@@ -230,7 +210,7 @@ function addAttach($file, $id, $attachFile, $attachedArray = array())
     $error = array();
     $message = array();
 
-    if (checkExt(pathinfo($attachFile, PATHINFO_EXTENSION)) === false) {
+    if (Helper::isBlockedExt(pathinfo($attachFile, PATHINFO_EXTENSION))) {
         $error[] = 'Недоступное расширение вложения';
     }
 
@@ -382,7 +362,7 @@ function uploadUrls($newpath)
         }
         $to = $newpath . $parameter[1];
 
-        if (checkExt(pathinfo($parameter[0], PATHINFO_EXTENSION)) === false) {
+        if (Helper::isBlockedExt(pathinfo($parameter[0], PATHINFO_EXTENSION))) {
             $error[] = 'Загрузка файла ' . $parameter[0] . ' окончилась неудачно: недоступное расширение';
             continue;
         }
@@ -447,7 +427,7 @@ function uploadFiles($newpath)
         $name = $_FILES['userfile']['name'][$i];
         $to = $newpath . $name;
 
-        if (checkExt(pathinfo($name, PATHINFO_EXTENSION)) === false) {
+        if (Helper::isBlockedExt(pathinfo($name, PATHINFO_EXTENSION))) {
             $error[] = 'Загрузка файла ' . $name . ' окончилась неудачно: недоступное расширение';
             continue;
         }
@@ -499,48 +479,12 @@ function uploadFiles($newpath)
  */
 function del_attach($folder, $id, $files)
 {
-    $attach = $GLOBALS['setup']['apath'] . strstr($folder, '/') . '/';
+    $attach = Config::get('apath') . strstr($folder, '/') . '/';
     foreach ($files as $k => $v) {
         unlink($attach . $id . '_' . $k . '_' . $v);
     }
 
     return true;
-}
-
-
-/**
- * Проверяем расширение по черному списку
- *
- * @param string $ext
- *
- * @return bool
- */
-function checkExt($ext)
-{
-    return !in_array(
-        strtolower($ext),
-        array(
-            'php',
-            'php3',
-            'php4',
-            'php5',
-            'php6',
-            'html',
-            'htm',
-            'wml',
-            'phtml',
-            'phtm',
-            'cgi',
-            'asp',
-            'js',
-            'py',
-            'pl',
-            'jsp',
-            'ry',
-            'shtm',
-            'shtml'
-        )
-    );
 }
 
 
@@ -689,21 +633,21 @@ function scanner($path = '', $cont = 'folder.png')
 
         if ($is_dir === true) {
             // скриншоты
-            $screen = $GLOBALS['setup']['spath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
+            $screen = Config::get('spath') . mb_substr($f, mb_strlen(Config::get('path')));
             if (file_exists($screen) === false) {
                 mkdir($screen, 0777);
             }
             chmod($screen, 0777);
 
             // описания
-            $desc = $GLOBALS['setup']['opath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
+            $desc = Config::get('opath') . mb_substr($f, mb_strlen(Config::get('path')));
             if (file_exists($desc) === false) {
                 mkdir($desc, 0777);
             }
             chmod($desc, 0777);
 
             // вложения
-            $attach = $GLOBALS['setup']['apath'] . mb_substr($f, mb_strlen($GLOBALS['setup']['path']));
+            $attach = Config::get('apath') . mb_substr($f, mb_strlen(Config::get('path')));
             if (file_exists($attach) === false) {
                 mkdir($attach, 0777);
             }
@@ -1079,41 +1023,6 @@ function redirect($url, $httpCode = 302)
 
 
 /**
- * Возвращает случайный пароль
- *
- * @param int $min
- * @param int $max
- *
- * @return string random password 6-8 symbols
- */
-function pass($min = 6, $max = 8)
-{
-    return substr(
-        str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ0123456789'),
-        0,
-        mt_rand($min, $max)
-    );
-}
-
-
-/**
- * Конвертируем из Windows-1251 в UTF-8
- *
- * @param string $str
- *
- * @return string
- */
-function str_to_utf8($str)
-{
-    if (@mb_convert_encoding($str, 'UTF-8', 'UTF-8') !== $str) {
-        $str = mb_convert_encoding($str, 'UTF-8', 'Windows-1251');
-    }
-
-    return $str;
-}
-
-
-/**
  * Постраничная навигация
  *
  * @param int     $pg  текущая страница
@@ -1160,182 +1069,6 @@ function go($pg = 0, $all = 0, $str)
         return '';
     } else {
         return '<div class="row">&#160;' . $go . '</div>';
-    }
-}
-
-
-/**
- * Возвращает MIME файла по его расширению
- *
- * @param  string $ext  расширение
- *
- * @return string       MIME тип
- */
-function ext_to_mime($ext = '')
-{
-    switch (strtolower($ext)) {
-        default:
-            return 'application/octet-stream';
-            break;
-
-        case 'jar':
-            return 'application/java-archive';
-            break;
-
-        case 'jad':
-            return 'text/vnd.sun.j2me.app-descriptor';
-            break;
-
-        case 'cab':
-            return 'application/vnd.ms-cab-compressed';
-            break;
-
-        case 'sis':
-            return 'application/vnd.symbian.install';
-            break;
-
-        case 'zip':
-            return 'application/x-zip';
-            break;
-
-        case 'rar':
-            return 'application/x-rar-compressed';
-            break;
-
-        case '7z':
-            return 'application/x-7z-compressed';
-            break;
-
-        case 'gz':
-        case 'tgz':
-            return 'application/x-gzip';
-            break;
-
-        case 'bz':
-        case 'bz2':
-            return 'application/x-bzip';
-            break;
-
-        case 'jpg':
-        case 'jpe':
-        case 'jpeg':
-            return 'image/jpeg';
-            break;
-
-        case 'gif':
-            return 'image/gif';
-            break;
-
-        case 'png':
-            return 'image/png';
-            break;
-
-        case 'bmp':
-            return 'image/bmp';
-            break;
-
-        case 'txt':
-        case 'dat':
-        case 'php':
-        case 'php4':
-        case 'php5':
-        case 'phtml':
-        case 'htm':
-        case 'html':
-        case 'shtm':
-        case 'shtml':
-        case 'wml':
-        case 'css':
-        case 'js':
-        case 'xml':
-        case 'sql':
-        case 'tpl':
-        case 'ini':
-        case 'log':
-            return 'text/plain';
-            break;
-
-        case 'mmf':
-            return 'application/x-smaf';
-            break;
-
-        case 'mid':
-            return 'audio/mid';
-            break;
-
-        case 'mp3':
-            return 'audio/mpeg';
-            break;
-
-        case 'amr':
-            return 'audio/amr';
-            break;
-
-        case 'wav':
-            return 'audio/x-wav';
-            break;
-
-        case 'mp4':
-            return 'video/mp4';
-            break;
-
-        case 'wmv':
-            return 'video/x-ms-wmv';
-            break;
-
-        case '3gp':
-            return 'video/3gpp';
-            break;
-
-        case 'flv':
-            return 'video/x-flv';
-            break;
-
-        case 'avi':
-            return 'video/x-msvideo';
-            break;
-
-        case 'mpg':
-        case 'mpe':
-        case 'mpeg':
-            return 'video/mpeg';
-            break;
-
-        case 'pdf':
-            return 'application/pdf';
-            break;
-
-        case 'doc':
-            return 'application/msword';
-            break;
-
-        case 'docx':
-            return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-            break;
-
-        case 'xls':
-            return 'application/vnd.ms-excel';
-            break;
-
-        case 'xlsx':
-            return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-            break;
-
-        case 'swf':
-            return 'application/x-shockwave-flash';
-            break;
-
-        case 'apk':
-            return 'application/vnd.android.package-archive';
-            break;
-
-        case 'webm':
-            return 'video/webm';
-            break;
-
-        case 'ogg':
-            return 'audio/ogg';
-            break;
     }
 }
 
@@ -1421,32 +1154,32 @@ function getMusicInfo($id, $path)
             $comments['APIC'] = false;
         }
         if (isset($audio->id3_title)) {
-            $comments['TITLE'] = str_to_utf8($audio->id3_title);
+            $comments['TITLE'] = Helper::str2utf8($audio->id3_title);
         } else {
             $comments['TITLE'] = '';
         }
         if (isset($audio->id3_artist)) {
-            $comments['ARTIST'] = str_to_utf8($audio->id3_artist);
+            $comments['ARTIST'] = Helper::str2utf8($audio->id3_artist);
         } else {
             $comments['ARTIST'] = '';
         }
         if (isset($audio->id3_album)) {
-            $comments['ALBUM'] = str_to_utf8($audio->id3_album);
+            $comments['ALBUM'] = Helper::str2utf8($audio->id3_album);
         } else {
             $comments['ALBUM'] = '';
         }
         if (isset($audio->id3_year)) {
-            $comments['DATE'] = str_to_utf8($audio->id3_year);
+            $comments['DATE'] = Helper::str2utf8($audio->id3_year);
         } else {
             $comments['DATE'] = '';
         }
         if (isset($audio->id3_genre)) {
-            $comments['GENRE'] = str_to_utf8($audio->id3_genre);
+            $comments['GENRE'] = Helper::str2utf8($audio->id3_genre);
         } else {
             $comments['GENRE'] = '';
         }
         if (isset($audio->id3_comment)) {
-            $comments['COMMENT'] = str_to_utf8($audio->id3_comment);
+            $comments['COMMENT'] = Helper::str2utf8($audio->id3_comment);
         } else {
             $comments['COMMENT'] = '';
         }
@@ -1473,32 +1206,32 @@ function getMusicInfo($id, $path)
             $comments = array();
 
             if (isset($obj->_comments['TITLE'])) {
-                $comments['TITLE'] = str_to_utf8($obj->_comments['TITLE']);
+                $comments['TITLE'] = Helper::str2utf8($obj->_comments['TITLE']);
             } else {
                 $comments['TITLE'] = '';
             }
             if (isset($obj->_comments['ARTIST'])) {
-                $comments['ARTIST'] = str_to_utf8($obj->_comments['ARTIST']);
+                $comments['ARTIST'] = Helper::str2utf8($obj->_comments['ARTIST']);
             } else {
                 $comments['ARTIST'] = '';
             }
             if (isset($obj->_comments['ALBUM'])) {
-                $comments['ALBUM'] = str_to_utf8($obj->_comments['ALBUM']);
+                $comments['ALBUM'] = Helper::str2utf8($obj->_comments['ALBUM']);
             } else {
                 $comments['ALBUM'] = '';
             }
             if (isset($obj->_comments['DATE'])) {
-                $comments['DATE'] = str_to_utf8($obj->_comments['DATE']);
+                $comments['DATE'] = Helper::str2utf8($obj->_comments['DATE']);
             } else {
                 $comments['DATE'] = '';
             }
             if (isset($obj->_comments['GENRE'])) {
-                $comments['GENRE'] = str_to_utf8($obj->_comments['GENRE']);
+                $comments['GENRE'] = Helper::str2utf8($obj->_comments['GENRE']);
             } else {
                 $comments['GENRE'] = '';
             }
             if (isset($obj->_comments['COMMENT'])) {
-                $comments['COMMENT'] = str_to_utf8($obj->_comments['COMMENT']);
+                $comments['COMMENT'] = Helper::str2utf8($obj->_comments['COMMENT']);
             } else {
                 $comments['COMMENT'] = '';
             }
@@ -1558,17 +1291,6 @@ function getVideoInfo($id, $path)
 
 
 /**
- * @param string $email
- *
- * @return bool
- */
-function isValidEmail ($email)
-{
-    return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
-}
-
-
-/**
  * Данные файла из БД
  *
  * @param int $id
@@ -1622,22 +1344,4 @@ function updFileLoad ($id)
         `timeload` = ?
         WHERE `id` = ?
     ')->execute(array($_SERVER['REQUEST_TIME'], $id));
-}
-
-
-function hex2rgb($hex)
-{
-    $hex = str_replace('#', '', $hex);
-
-    if (strlen($hex) === 3) {
-        $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
-        $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
-        $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
-    } else {
-        $r = hexdec(substr($hex, 0, 2));
-        $g = hexdec(substr($hex, 2, 2));
-        $b = hexdec(substr($hex, 4, 2));
-    }
-
-    return array($r, $g, $b);
 }
