@@ -199,7 +199,7 @@ class Image
                     ini_set('memory_limit', '256M');
 
                     // GIF Поддержка анимации
-                    $gif = new GIFDecoder(file_get_contents($in));
+                    $gif = new Image_GIFDecoder(file_get_contents($in));
 
                     $arr = $gif->GIFGetFrames();
                     $dly = $gif->GIFGetDelays();
@@ -233,7 +233,7 @@ class Image
                     }
                     unset($gif, $arr, $dly);
 
-                    $gif = new GIFEncoder(
+                    $gif = new Image_GIFEncoder(
                         $frames,
                         $framed,
                         0,
