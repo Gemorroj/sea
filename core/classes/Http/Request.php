@@ -35,5 +35,133 @@
  */
 class Http_Request
 {
+    protected static $_post = array();
+    protected static $_get = array();
+    protected static $_cookies = array();
+    protected static $_files = array();
+    protected static $_queryString;
+    protected static $_ip;
+    protected static $_host;
+    protected static $_userAgent;
 
+
+    /**
+     * Инициализация
+     */
+    public static function init()
+    {
+        self::$_post = $_POST;
+        self::$_get = $_GET;
+        self::$_cookies = $_COOKIE;
+        self::$_files = $_FILES;
+        self::$_queryString = $_SERVER['QUERY_STRING'];
+        self::$_ip = $_SERVER['REMOTE_ADDR'];
+        self::$_host = $_SERVER['HTTP_HOST'];
+        self::$_userAgent = $_SERVER['HTTP_USER_AGENT'];
+    }
+
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public static function get($key)
+    {
+        return self::$_get[$key];
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public static function post($key)
+    {
+        return self::$_post[$key];
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public static function cookie($key)
+    {
+        return self::$_cookies[$key];
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public static function file($key)
+    {
+        return self::$_files[$key];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getCookies()
+    {
+        return self::$_cookies;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getFiles()
+    {
+        return self::$_files;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getGet()
+    {
+        return self::$_get;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPost()
+    {
+        return self::$_post;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getHost()
+    {
+        return self::$_host;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getIp()
+    {
+        return self::$_ip;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getQueryString()
+    {
+        return self::$_queryString;
+    }
+
+    /**
+     * @return static string
+     */
+    public static function getUserAgent()
+    {
+        return self::$_userAgent;
+    }
 }

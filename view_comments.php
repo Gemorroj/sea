@@ -62,6 +62,7 @@ if (!$seo['title']) {
 $seo['title'] .= ' - ' . Language::get('comments');
 
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
 
 $breadcrumbs = Helper::getBreadcrumbs($v, false);
@@ -145,4 +146,4 @@ if ($_POST) {
 
 
 $template->assign('comments', $comments);
-$template->send();
+Http_Response::getInstance()->render();

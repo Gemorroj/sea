@@ -41,6 +41,7 @@ require 'core/header.php';
 if (!Config::get('new_change') || !Config::get('day_new')) {
     error('Not found');
 }
+$template = Http_Response::getInstance()->getTemplate();
 
 $template->setTemplate('new.tpl');
 $seo['title'] = Language::get('new_files');
@@ -106,4 +107,4 @@ require 'core/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);
-$template->send();
+Http_Response::getInstance()->render();

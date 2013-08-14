@@ -41,7 +41,7 @@ if (!Config::get('service_change_advanced')) {
     error('Not found');
 }
 
-
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('service.tpl');
 
 $seo['title'] = Language::get('advanced_service');
@@ -294,4 +294,4 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
 
 $template->assign('breadcrumbs', array('service' => Language::get('advanced_service')));
-$template->send();
+Http_Response::getInstance()->render();

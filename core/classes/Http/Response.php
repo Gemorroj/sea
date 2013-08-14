@@ -35,5 +35,105 @@
  */
 class Http_Response
 {
+    /**
+     * @var Http_Response
+     */
+    private static $_instance;
+
+    /**
+     * @var Template
+     */
+    protected $_template;
+    /**
+     * @var array
+     */
+    protected $_headers = array();
+    /**
+     * @var string
+     */
+    protected $_body = '';
+
+
+    /**
+     * Конструктор
+     */
+    private function __construct(Template $template)
+    {
+        $this->_template = $template;
+    }
+
+
+    /**
+     * Инициализация
+     */
+    public static function init(Template $template)
+    {
+        if (null === self::$_instance) {
+            self::$_instance = new self($template);
+        }
+    }
+
+    /**
+     * @return Http_Response
+     */
+    public static function getInstance()
+    {
+        return self::$_instance;
+    }
+
+    /**
+     * @return Template
+     */
+    public function getTemplate()
+    {
+        return $this->_template;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->_headers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->_body;
+    }
+
+    /**
+     * @param string $body
+     *
+     * @return Http_Response
+     */
+    public function setBody($body)
+    {
+        $this->_body = $body;
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     *
+     * @return Http_Response
+     */
+    public function setHeader($key, $value)
+    {
+        $this->_headers[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Вывод в браузер
+     */
+    public function render()
+    {
+        $this->_template->send();
+    }
 
 }

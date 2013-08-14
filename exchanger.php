@@ -41,6 +41,7 @@ if (!Config::get('exchanger_change')) {
     error('Not found');
 }
 
+$template = Http_Response::getInstance()->getTemplate();
 
 $template->setTemplate('exchanger.tpl');
 
@@ -172,4 +173,4 @@ $template->assign('insertId', $insertId);
 $template->assign('upload_max_filesize', ini_get('upload_max_filesize'));
 $template->assign('dirs', $dirs);
 $template->assign('breadcrumbs', array('exchanger' => Language::get('upload_file')));
-$template->send();
+Http_Response::getInstance()->render();

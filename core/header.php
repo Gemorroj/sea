@@ -37,17 +37,18 @@ $GLOBALS['tm'] = microtime(true);
 
 require_once dirname(__FILE__) . '/config.php';
 
-header('Content-type: text/html; charset=utf-8');
+Http_Request::init();
+Http_Response::init(new Template());
+
+Http_Response::getInstance()->setHeader('Content-Type', 'text/html; charset=utf-8');
 
 
 // заменяем языковой пакет
-isset($_POST['langpack']) && Language::setLangpack($_POST['langpack']);
-isset($_GET['langpack']) && Language::setLangpack($_GET['langpack']);
-$language = Language::getLanguage();
-$setup = Config::getAll();
+Language::setLangpack(Http_Request::post('langpack'));
+Language::setLangpack(Http_Request::get('langpack'));
 
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$id = intval(Http_Request::get('id'));
 $seo = array();
 
 
@@ -57,15 +58,13 @@ require CORE_DIRECTORY . '/inc/_online.php';
 require CORE_DIRECTORY . '/inc/_service.php';
 
 
-$template = new Template();
-
-$template->assignByRef('seo', $seo);
-$template->assign('setup', $setup);
-$template->assign('style', $style);
-$template->assign('language', $language);
-$template->assign('id', $id);
-$template->assign('buy', $buy);
-$template->assign('banner', $banner);
-$template->assign('serviceBuy', $serviceBuy);
-$template->assign('serviceBanner', $serviceBanner);
-$template->assign('online', $online);
+Http_Response::getInstance()->getTemplate()
+    ->assignByRef('seo', $seo)
+    ->assign('setup', Config::getAll())
+    ->assign('style', $style)
+    ->assign('language', Language::getLanguage())
+    ->assign('id', $id)
+    ->assign('buy', $buy)
+    ->assign('banner', $banner)
+    ->assign('serviceBuy', $serviceBuy)
+    ->assign('online', $online);

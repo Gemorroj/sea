@@ -73,7 +73,7 @@ if (!is_dir($d['path'])) {
 }
 
 $paginatorConf = Helper::getPaginatorConf($d['all']);
-
+$template = Http_Response::getInstance()->getTemplate();
 
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
@@ -130,4 +130,4 @@ require 'core/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);
-$template->send();
+Http_Response::getInstance()->render();

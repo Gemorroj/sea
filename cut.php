@@ -41,7 +41,7 @@ if (!Config::get('cut_change')) {
     error('Not found!');
 }
 
-
+$template = Http_Response::getInstance()->getTemplate();
 // Получаем инфу о файле
 $v = getFileInfo($id);
 
@@ -140,4 +140,4 @@ if ($_POST) {
 }
 
 
-$template->send();
+Http_Response::getInstance()->render();

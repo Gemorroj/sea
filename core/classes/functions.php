@@ -40,11 +40,11 @@
  */
 function error($str = '')
 {
-    global $template; // for included files
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';
 
+    $template = Http_Response::getInstance()->getTemplate();
     $template->setTemplate('message.tpl');
     $template->assign('isError', true);
     $template->assign('message', is_array($str) ? $str : array($str));
@@ -53,7 +53,7 @@ function error($str = '')
         $template->assign('breadcrumbs', array());
     }
 
-    $template->send();
+    Http_Response::getInstance()->render();
     exit;
 }
 
@@ -62,11 +62,11 @@ function error($str = '')
  */
 function message($str = '')
 {
-    global $template; // for included files
     $dir = dirname(__FILE__);
 
     require_once $dir . '/../header.php';
 
+    $template = Http_Response::getInstance()->getTemplate();
     $template->setTemplate('message.tpl');
     $template->assign('isError', false);
     $template->assign('message', is_array($str) ? $str : array($str));
@@ -75,7 +75,7 @@ function message($str = '')
         $template->assign('breadcrumbs', array());
     }
 
-    $template->send();
+    Http_Response::getInstance()->render();
     exit;
 }
 

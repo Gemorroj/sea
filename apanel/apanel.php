@@ -42,6 +42,7 @@ chdir('../');
 
 require 'core/header.php';
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('apanel/index.tpl');
 $db = Db_Mysql::getInstance();
 
@@ -64,23 +65,23 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if (!$_FILES || !isset($_FILES['attach'])) {
             $template->assign('error', 'Нет загружаемого файла');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
         if ($_FILES['attach']['error']) {
             $template->assign('error', 'Ошибка при загрузке файла. Код ошибки: ' . $_FILES['attach']['error']);
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $tmp = CORE_DIRECTORY . '/tmp/attach_' . $_FILES['attach']['name'];
         if (move_uploaded_file($_FILES['attach']['tmp_name'], $tmp) === false) {
             $err = error_get_last();
             $template->assign('error', $err['message']);
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $result = addAttach($file['path'], $id, $tmp, ($file['attach'] ? unserialize($file['attach']) : array()));
@@ -99,7 +100,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $attach = unserialize($file['attach']);
@@ -131,7 +132,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $folder = Config::get('path') . trim($_POST['topath']);
@@ -139,20 +140,20 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         if (!is_dir($folder)) {
             $template->assign('error', 'Указанной директории не существует');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
         if (!is_writeable($folder)) {
             $template->assign('error', 'Указанная директория не доступна для записи');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
         if (file_exists($folder . $filename)) {
             $template->assign('error', 'Файл с таким именем в указанной директории уже есть');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
         if (!rename($file['path'], $folder . $filename)) {
             $err = error_get_last();
             $template->assign('error', $err['message']);
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $q = $db->prepare('UPDATE `files` SET `path` = ?, `infolder` = ? WHERE `id` = ?');
@@ -200,7 +201,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория или файл не найдены');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $q = $db->prepare('UPDATE `files` SET `hidden` = ? WHERE `id` = ?');
@@ -224,7 +225,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория или файл не найдены');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $template->assign('info', $file);
@@ -236,7 +237,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             foreach ($_POST['new'] as $k => $v) {
                 if ($v == '') {
                     $template->assign('error', $k . ': укажите название');
-                    $template->send();
+                    Http_Response::getInstance()->render();
                 }
             }
 
@@ -261,13 +262,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'del_dir':
         if (!Config::get('delete_dir')) {
             $template->assign('error', 'Error');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория не найдена');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $ex = explode('/', $file['path']);
@@ -280,12 +281,12 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         foreach (glob($file['path'] . '*') as $vv) {
             if (is_dir($vv)) {
                 $template->assign('error', 'Разрешено удалять только директории с одним уровнем вложенности');
-                $template->send();
+                Http_Response::getInstance()->render();
             } else {
                 if (!unlink($vv)) {
                     $err = error_get_last();
                     $template->assign('error', $err['message']);
-                    $template->send();
+                    Http_Response::getInstance()->render();
                 }
             }
         }
@@ -294,19 +295,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $result = $q->execute(array($file['path']));
         if (!$result) {
             $template->assign('error', implode("\n", $q->errorInfo()));
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if (!rmdir($file['path'])) {
             $err = error_get_last();
             $template->assign('error', $err['message']);
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $q = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
         if (!$q->execute(array($id))) {
             $template->assign('error', implode("\n", $q->errorInfo()));
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
 
@@ -325,12 +326,12 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'del_file':
         if (!Config::get('delete_dir')) {
             $template->assign('error', 'Error');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $ex = explode('/', $file['path']);
@@ -347,13 +348,13 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $q = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
         if (!$q->execute(array($id))) {
             $template->assign('error', implode("\n", $q->errorInfo()));
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if (!unlink($file['path'])) {
             $err = error_get_last();
             $template->assign('error', $err['message']);
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if ($file['attach']) {
@@ -370,7 +371,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория не найдена');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if ($_GET['to'] == 'down') {
@@ -393,7 +394,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if ($_POST) {
@@ -417,7 +418,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $seo = unserialize($file['seo']);
@@ -449,14 +450,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $file = getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найден файл');
-                $template->send();
+                Http_Response::getInstance()->render();
             }
 
             $tmp = CORE_DIRECTORY . '/tmp/screen_' . $_FILES['screen']['name'];
             if (move_uploaded_file($_FILES['screen']['tmp_name'], $tmp) === false) {
                 $err = error_get_last();
                 $template->assign('error', $err['message']);
-                $template->send();
+                Http_Response::getInstance()->render();
             }
 
             $result = addScreen($file['path'], $tmp);
@@ -476,7 +477,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Не найдена директория');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         $path = strstr($file['path'], '/'); // убираем папку с загрузками
@@ -502,18 +503,18 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $file = getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найдена директория');
-                $template->send();
+                Http_Response::getInstance()->render();
             }
 
             $to = $file['path'] . 'folder.png';
 
             if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
                 $template->assign('error', 'Поддерживаются иконки только png формата');
-                $template->send();
+                Http_Response::getInstance()->render();
             }
             if (file_exists($to)) {
                 $template->assign('error', 'Иконка уже существует');
-                $template->send();
+                Http_Response::getInstance()->render();
             }
             if (move_uploaded_file($_FILES['ico']['tmp_name'], $to)) {
                 chmod($to, 0644);
@@ -529,12 +530,12 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $file = getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Не найдена директория');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if (!file_exists($file['path'] . 'folder.png')) {
             $template->assign('error', 'Иконки к данной папке не существует');
-            $template->send();
+            Http_Response::getInstance()->render();
         }
 
         if (unlink($file['path'] . 'folder.png')) {
@@ -583,7 +584,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             foreach ($_POST['new'] as $k => $v) {
                 if ($v == '') {
                     $template->assign('error', $k . ': введите текст новости.');
-                    $template->send();
+                    Http_Response::getInstance()->render();
                 }
             }
 
@@ -617,7 +618,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             foreach ($_POST['new'] as $k => $v) {
                 if ($v == '') {
                     $template->assign('error', $k . ': введите текст новости.');
-                    $template->send();
+                    Http_Response::getInstance()->render();
                 }
             }
 
@@ -650,7 +651,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
             if (!$file || is_dir($file['path']) === false) {
                 $template->assign('error', 'Такой категории не существует');
-                $template->send();
+                Http_Response::getInstance()->render();
             } else {
                 $scan = $file['path'];
             }
@@ -971,11 +972,11 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $newpath = Config::get('path') . trim($_POST['topath']);
             if ($newpath == '') {
                 $template->assign('error', 'Нет конечного пути');
-                $template->send();
+                Http_Response::getInstance()->render();
             }
             if (is_writable($newpath) === false) {
                 $template->assign('error', 'Директория ' . $newpath . ' недоступна для записи');
-                $template->send();
+                Http_Response::getInstance()->render();
             }
             @chmod($newpath, 0777);
 
@@ -1096,7 +1097,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         if ($_POST) {
             if (!$_POST['pwd'] || md5($_POST['pwd']) != Config::get('password')) {
                 $template->assign('error', 'Неверный пароль');
-                $template->send();
+                Http_Response::getInstance()->render();
             }
 
             $_POST['autologin'] = $_POST['autologin'] ? 1 : 0;
@@ -1106,7 +1107,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             foreach ($_POST as $key => $value) {
                 if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir' && $key != 'delete_file') {
                     $template->assign('error', 'Не заполнено одно из полей');
-                    $template->send();
+                    Http_Response::getInstance()->render();
                 }
             }
 
@@ -1362,4 +1363,4 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 }
 
 
-$template->send();
+Http_Response::getInstance()->render();

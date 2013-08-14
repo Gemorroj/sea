@@ -7,6 +7,7 @@ if ($prev != '0' && $prev != '1') {
     $prev = Config::get('prev');
 }
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->assign('prev', $prev);
 $template->assign('sort', $sort);
 

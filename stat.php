@@ -40,6 +40,7 @@ if (!Config::get('stat_change')) {
     error('Not found');
 }
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('stat.tpl');
 
 $seo['title'] = Language::get('statistics');
@@ -65,4 +66,4 @@ $stat['total_new_files'] = $db->query('
 
 $template->assign('stat', $stat);
 $template->assign('breadcrumbs', array('stat' => Language::get('statistics')));
-$template->send();
+Http_Response::getInstance()->render();

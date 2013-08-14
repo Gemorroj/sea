@@ -36,6 +36,7 @@
 
 require 'core/header.php';
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('settings.tpl');
 
 if (isset($_POST['lib'])) {
@@ -59,4 +60,4 @@ $template->assign('langpacks', Language::getLangpacks());
 $template->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
 
 $template->assign('breadcrumbs', array('settings' => Language::get('settings')));
-$template->send();
+Http_Response::getInstance()->render();

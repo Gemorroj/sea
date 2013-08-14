@@ -50,6 +50,7 @@ if (!is_file($v['path'])) {
 }
 
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('zip.tpl');
 
 // Директория
@@ -172,4 +173,4 @@ $template->assign('file', $v);
 $template->assign('zipFiles', $zipFiles);
 $template->assign('allItemsSize', $size);
 $template->assign('paginatorConf', $paginatorConf);
-$template->send();
+Http_Response::getInstance()->render();

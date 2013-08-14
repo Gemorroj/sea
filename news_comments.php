@@ -53,7 +53,7 @@ if (!$news || !$news['news']) {
 
 $desc = mb_substr($news['news'], 0, Config::get('desc'));
 
-
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
 $seo['title'] = $desc . ' - ' . Language::get('comments');
 $template->assign('breadcrumbs', array(
@@ -137,4 +137,4 @@ if ($_POST) {
 }
 
 $template->assign('comments', $comments);
-$template->send();
+Http_Response::getInstance()->render();

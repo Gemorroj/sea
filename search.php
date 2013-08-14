@@ -45,6 +45,7 @@ if (!Config::get('search_change')) {
 
 $word = isset($_GET['word']) ? $_GET['word'] : '';
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('search.tpl');
 $seo['title'] = Language::get('search');
 $template->assign('word', $word);
@@ -120,4 +121,4 @@ if ($word != '') {
 $template->assign('paginatorConf', $paginatorConf);
 $template->assign('directories', $directories);
 $template->assign('files', $files);
-$template->send();
+Http_Response::getInstance()->render();

@@ -43,6 +43,7 @@ if (!Config::get('top_change')) {
 }
 
 $db = Db_Mysql::getInstance();
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('top.tpl');
 $seo['title'] = str_replace('%files%', Config::get('top_num'), Language::get('top20'));
 $template->assign('breadcrumbs', array('top' => $seo['title']));
@@ -93,4 +94,4 @@ require 'core/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);
-$template->send();
+Http_Response::getInstance()->render();

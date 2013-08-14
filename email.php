@@ -41,6 +41,8 @@ if (!Config::get('send_email')) {
     error('Not found');
 }
 
+$template = Http_Response::getInstance()->getTemplate();
+
 // Получаем инфу о файле
 $v = getFileInfo($id);
 
@@ -81,4 +83,4 @@ if (isset($_POST['email'])) {
 }
 
 
-$template->send();
+Http_Response::getInstance()->render();

@@ -43,7 +43,7 @@ if (!is_file($file['path'])) {
     error('File not found');
 }
 
-
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('view.tpl');
 
 
@@ -88,7 +88,7 @@ require 'core/inc/view/_comments.php';
 $prevNext = array('prev' => array(), 'next' => array());
 require 'core/inc/view/_prevnext.php';
 
-
+$template = Http_Response::getInstance()->getTemplate();
 $template->assign('dirs', (IS_ADMIN === true ? getAllDirs() : array()));
 $template->assign('prevNext', $prevNext);
 $template->assign('file', $file);
@@ -100,4 +100,4 @@ $template->assign('comments', $comments);
 
 $template->assign('breadcrumbs', Helper::getBreadcrumbs($file, false));
 
-$template->send();
+Http_Response::getInstance()->render();

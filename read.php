@@ -50,7 +50,7 @@ if (!is_file($v['path'])) {
 
 $paginatorConf = Helper::getPaginatorConf(PHP_INT_MAX);
 
-
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('read.tpl');
 
 
@@ -105,4 +105,4 @@ if ($paginatorConf['page'] > $paginatorConf['pages']) {
 $template->assign('content', $content);
 $template->assign('file', $v);
 $template->assign('paginatorConf', $paginatorConf);
-$template->send();
+Http_Response::getInstance()->render();

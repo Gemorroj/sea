@@ -35,19 +35,7 @@
  */
 class Config
 {
-    private static $_config;
     private static $_setup = array();
-
-
-    /**
-     * Конструктор
-     */
-    private function __construct()
-    {
-        foreach (Db_Mysql::getInstance()->query('SELECT name, value FROM setting') as $v) {
-            self::$_setup[$v['name']] = $v['value'];
-        }
-    }
 
 
     /**
@@ -55,8 +43,8 @@ class Config
      */
     public static function init()
     {
-        if (null === self::$_config) {
-            self::$_config = new self();
+        foreach (Db_Mysql::getInstance()->query('SELECT name, value FROM setting') as $v) {
+            self::$_setup[$v['name']] = $v['value'];
         }
     }
 

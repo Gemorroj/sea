@@ -36,7 +36,7 @@
 
 require 'core/header.php';
 
-
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('news.tpl');
 $seo['title'] = Language::get('news');
 $template->assign('breadcrumbs', array('news' => Language::get('news')));
@@ -72,4 +72,4 @@ $q->execute();
 $news = $q->fetchAll();
 
 $template->assign('news', $news);
-$template->send();
+Http_Response::getInstance()->render();

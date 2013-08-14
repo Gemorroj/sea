@@ -40,6 +40,7 @@ if (!Config::get('zakaz_change')) {
     error('Not found');
 }
 
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('table.tpl');
 
 $seo['title'] = Language::get('orders');
@@ -68,4 +69,4 @@ if ($_POST) {
 
 $template->assign('sended', $sended);
 $template->assign('breadcrumbs', array('table' => Language::get('orders')));
-$template->send();
+Http_Response::getInstance()->render();
