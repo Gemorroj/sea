@@ -38,7 +38,7 @@ require 'core/header.php';
 
 
 if (!Config::get('service_change_advanced')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 $template = Http_Response::getInstance()->getTemplate();
@@ -65,9 +65,9 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         $_SESSION['mail'] = $assoc['mail'];
         $_SESSION['style'] = $assoc['style'];
 
-        redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
+        Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
     } else {
-        error(Language::get('user_not_found'));
+        Http_Response::getInstance()->renderError(Language::get('user_not_found'));
     }
 } elseif (isset($_GET['act']) && $_GET['act'] == 'registration') {
     if ($_POST) {
@@ -97,7 +97,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         }
 
         if ($error) {
-            error($error);
+            Http_Response::getInstance()->renderError($error);
         }
 
 
@@ -106,7 +106,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
         if ($q->rowCount() > 0) {
             // Такой URL уже есть
-            error(Language::get('duplicate_url'));
+            Http_Response::getInstance()->renderError(Language::get('duplicate_url'));
         } else {
             $result = $db->prepare('
                 INSERT INTO `users_profiles` (
@@ -136,9 +136,9 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
                 );
 
-                redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
+                Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
             } else {
-                error(Language::get('error'));
+                Http_Response::getInstance()->renderError(Language::get('error'));
             }
         }
     }
@@ -158,9 +158,9 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
         );
 
-        message(Language::get('email_sent_successfully'));
+        Http_Response::getInstance()->renderMessage(Language::get('email_sent_successfully'));
     } else {
-        error(Language::get('email_not_found'));
+        Http_Response::getInstance()->renderError(Language::get('email_not_found'));
     }
 } else {
     if (isset($_SESSION['id'])) {
@@ -280,13 +280,13 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 //$db->exec('OPTIMIZE TABLE `users_profiles`, `users_settings`');
                 //$db->exec('ANALYZE TABLE `users_profiles`, `users_settings`');
 
-                message(Language::get('settings_saved'));
+                Http_Response::getInstance()->renderMessage(Language::get('settings_saved'));
                 break;
 
 
             case 'exit':
                 session_destroy();
-                error(Language::get('signed_out'));
+                Http_Response::getInstance()->renderError(Language::get('signed_out'));
                 break;
         }
     }

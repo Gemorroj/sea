@@ -39,7 +39,7 @@ define('IS_P_NAME', true);
 require 'core/header.php';
 ###############Если топ выключен###############
 if (!Config::get('new_change') || !Config::get('day_new')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 $template = Http_Response::getInstance()->getTemplate();
 

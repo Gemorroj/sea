@@ -42,7 +42,7 @@ require 'core/config.php';
 
 ###############Если jad выключен##########
 if (!Config::get('jad_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 ###############Проверка переменных###############
 $id = intval($_GET['id']);
@@ -62,5 +62,5 @@ if (is_file($v['path'])) {
         'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" .
         'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'];
 } else {
-    error(Language::get('error'));
+    Http_Response::getInstance()->renderError(Language::get('error'));
 }

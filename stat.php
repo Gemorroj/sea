@@ -37,7 +37,7 @@
 require 'core/header.php';
 ###############Если статистика выключена###############
 if (!Config::get('stat_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 $template = Http_Response::getInstance()->getTemplate();

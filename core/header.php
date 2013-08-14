@@ -37,12 +37,6 @@ $GLOBALS['tm'] = microtime(true);
 
 require_once dirname(__FILE__) . '/config.php';
 
-Http_Request::init();
-Http_Response::init(new Template());
-
-Http_Response::getInstance()->setHeader('Content-Type', 'text/html; charset=utf-8');
-
-
 // заменяем языковой пакет
 Language::setLangpack(Http_Request::post('langpack'));
 Language::setLangpack(Http_Request::get('langpack'));
@@ -50,7 +44,6 @@ Language::setLangpack(Http_Request::get('langpack'));
 
 $id = intval(Http_Request::get('id'));
 $seo = array();
-
 
 require CORE_DIRECTORY . '/inc/_style.php';
 require CORE_DIRECTORY . '/inc/_buy.php';

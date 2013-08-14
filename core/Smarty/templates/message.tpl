@@ -5,7 +5,7 @@
 {block content}
     <div class="row">
         {foreach $message as $mess}
-            <span class="{if $isError}no{else}yes{/if}">{$mess}</span><br/>
+            <span class="yes">{$mess}</span><br/>
         {/foreach}
     </div>
 {/block}

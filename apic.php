@@ -39,7 +39,7 @@ require 'core/config.php';
 $id = intval($_GET['id']);
 
 if (!is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 $data = unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));

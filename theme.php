@@ -50,9 +50,9 @@ $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $name;
 
 
 if (file_exists($name)) {
-    redirect($location, 301);
+    Http_Response::getInstance()->redirect($location, 301);
 } elseif (file_exists($name . '.swf')) {
-    redirect($location . '.swf', 301);
+    Http_Response::getInstance()->redirect($location . '.swf', 301);
 }
 
 
@@ -401,4 +401,4 @@ if ($ext == 'nth') {
     Image::resize($name, $name, 0, 0, Config::get('marker'));
 }
 
-redirect($location, 301);
+Http_Response::getInstance()->redirect($location, 301);

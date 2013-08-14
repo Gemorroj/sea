@@ -38,7 +38,7 @@ require 'core/header.php';
 
 
 if (!Config::get('exchanger_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 $template = Http_Response::getInstance()->getTemplate();
@@ -54,7 +54,7 @@ $db = Db_Mysql::getInstance();
 
 if ($_POST) {
     if (!$_FILES['file'] || $_FILES['file']['error']) {
-        error(Language::get('when_downloading_a_file_error_occurred'));
+        Http_Response::getInstance()->renderError(Language::get('when_downloading_a_file_error_occurred'));
     }
 
     $pathinfo = pathinfo($_FILES['file']['name']);
@@ -63,11 +63,11 @@ if ($_POST) {
 
     $ext = explode(',', strtolower(Config::get('exchanger_extensions')));
     if (!in_array(strtolower($pathinfo['extension']), $ext)) {
-        error(Language::get('invalid_file_extension'));
+        Http_Response::getInstance()->renderError(Language::get('invalid_file_extension'));
     }
 
     if (!preg_match('/^' . Config::get('exchanger_name') . '+$/i', $pathinfo['filename'])) {
-        error(Language::get('not_a_valid_file_name'));
+        Http_Response::getInstance()->renderError(Language::get('not_a_valid_file_name'));
     }
 
 
@@ -81,7 +81,7 @@ if ($_POST) {
     $q->execute(array($path));
 
     if (!$q || $q->rowCount() < 1) {
-        error(Language::get('you_have_specified_the_correct_path_to_load'));
+        Http_Response::getInstance()->renderError(Language::get('you_have_specified_the_correct_path_to_load'));
     }
 
 
@@ -89,11 +89,11 @@ if ($_POST) {
     $q->execute(array($pathname));
 
     if ($q->rowCount() > 0) {
-        error(Language::get('file_with_this_name_already_exists'));
+        Http_Response::getInstance()->renderError(Language::get('file_with_this_name_already_exists'));
     }
 
     if (!move_uploaded_file($_FILES['file']['tmp_name'], $pathname)) {
-        error(Language::get('an_error_occurred_while_copying_files'));
+        Http_Response::getInstance()->renderError(Language::get('an_error_occurred_while_copying_files'));
     }
 
     $q = $db->prepare('
@@ -115,7 +115,7 @@ if ($_POST) {
 
     if (!$result) {
         unlink($pathname);
-        error(Language::get('error_writing_to_database'));
+        Http_Response::getInstance()->renderError(Language::get('error_writing_to_database'));
     }
     $insertId = $db->lastInsertId();
     if (!Config::get('exchanger_hidden')) {

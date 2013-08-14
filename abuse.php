@@ -38,14 +38,14 @@ require 'core/header.php';
 
 // Если жалобы выключены
 if (!Config::get('abuse_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 // Получаем инфу о файле
 $v = getFileInfo($id);
 
 if (!is_file($v['path'])) {
-    error('File not found');
+    Http_Response::getInstance()->renderError('File not found');
 }
 
 $seo['title'] = Language::get('complain_about_a_file') . ' - ' . $v['name'];
@@ -63,7 +63,7 @@ if (mail(
         'IP: ' . $_SERVER['REMOTE_ADDR'],
     "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
 )) {
-    message(Language::get('complaint_sent_to_the_administration'));
+    Http_Response::getInstance()->renderMessage(Language::get('complaint_sent_to_the_administration'));
 } else {
-    error(Language::get('sending_email_error_occurred'));
+    Http_Response::getInstance()->renderError(Language::get('sending_email_error_occurred'));
 }

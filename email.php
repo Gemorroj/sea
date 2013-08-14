@@ -38,7 +38,7 @@ require 'core/header.php';
 
 // Если email выключен
 if (!Config::get('send_email')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 $template = Http_Response::getInstance()->getTemplate();
@@ -47,7 +47,7 @@ $template = Http_Response::getInstance()->getTemplate();
 $v = getFileInfo($id);
 
 if (!is_file($v['path'])) {
-    error('File not found');
+    Http_Response::getInstance()->renderError('File not found');
 }
 
 $seo['title'] = Language::get('send_a_link_to_email') . ' - ' . $v['name'];
@@ -61,7 +61,7 @@ $template->assign('breadcrumbs', $breadcrumbs);
 
 if (isset($_POST['email'])) {
     if (!Helper::isValidEmail($_POST['email'])) {
-        error(Language::get('email_incorrect'));
+        Http_Response::getInstance()->renderError(Language::get('email_incorrect'));
     }
 
     setcookie('sea_email', $_POST['email'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
@@ -76,9 +76,9 @@ if (isset($_POST['email'])) {
         "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
     )
     ) {
-        message(Language::get('email_sent_successfully'));
+        Http_Response::getInstance()->renderMessage(Language::get('email_sent_successfully'));
     } else {
-        error(Language::get('sending_email_error_occurred'));
+        Http_Response::getInstance()->renderError(Language::get('sending_email_error_occurred'));
     }
 }
 

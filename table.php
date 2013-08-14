@@ -37,7 +37,7 @@
 require 'core/header.php';
 ###############Если стол выключен###############
 if (!Config::get('zakaz_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 $template = Http_Response::getInstance()->getTemplate();
@@ -49,12 +49,12 @@ $seo['title'] = Language::get('orders');
 $sended = false;
 if ($_POST) {
     if (empty($_POST['back']) || empty($_POST['text'])) {
-        error(Language::get('do_not_fill_in_the_required_fields'));
+        Http_Response::getInstance()->renderError(Language::get('do_not_fill_in_the_required_fields'));
     }
     if (Config::get('comments_captcha')) {
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
             unset($_SESSION['captcha_keystring']);
-            error(Language::get('not_a_valid_code'));
+            Http_Response::getInstance()->renderError(Language::get('not_a_valid_code'));
         }
         unset($_SESSION['captcha_keystring']);
     }

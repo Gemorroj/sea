@@ -49,7 +49,7 @@ if (file_exists($v['path'])) {
 
     $dir = dirname($_SERVER['PHP_SELF']);
     $dir = ($dir == DIRECTORY_SEPARATOR ? '' : $dir);
-    redirect('http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
+    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
 } else {
-    error(Language::get('error'));
+    Http_Response::getInstance()->renderError(Language::get('error'));
 }

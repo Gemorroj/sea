@@ -120,7 +120,7 @@ MIDlet-Delete-Confirm: GoodBye =)',
         chmod($tmp, 0644);
     }
 
-    redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
+    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
 } else {
-    error(Language::get('error'));
+    Http_Response::getInstance()->renderError(Language::get('error'));
 }

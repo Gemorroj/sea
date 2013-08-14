@@ -38,14 +38,14 @@ require 'core/header.php';
 
 // если библиотека отключена
 if (!Config::get('lib_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 
 // Получаем инфу о файле
 $v = getFileInfo($id);
 if (!is_file($v['path'])) {
-    error('File not found');
+    Http_Response::getInstance()->renderError('File not found');
 }
 
 $paginatorConf = Helper::getPaginatorConf(PHP_INT_MAX);

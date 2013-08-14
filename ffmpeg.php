@@ -73,4 +73,4 @@ if (substr($pic, 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $pre
     unlink($tmp);
 }
 
-redirect($location, 301);
+Http_Response::getInstance()->redirect($location, 301);

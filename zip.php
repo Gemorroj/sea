@@ -39,14 +39,14 @@ require 'core/header.php';
 
 // если просмотр zip
 if (!Config::get('zip_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 
 // Получаем инфу о файле
 $v = getFileInfo($id);
 if (!is_file($v['path'])) {
-    error('File not found');
+    Http_Response::getInstance()->renderError('File not found');
 }
 
 
@@ -84,7 +84,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : null;
 
 $zip = new PclZip($v['path']);
 if (!$zip) {
-    error('Can not open archive');
+    Http_Response::getInstance()->renderError('Can not open archive');
 }
 
 
@@ -145,13 +145,13 @@ switch ($action) {
             $zipFileType = 'text';
             $zipFileData = $content;
         } else {
-            message(Language::get('file_unavailable_for_viewing'));
+            Http_Response::getInstance()->renderMessage(Language::get('file_unavailable_for_viewing'));
         }
         break;
 
     default:
         if (!($list = $zip->listContent())) {
-            error('Can not list archive');
+            Http_Response::getInstance()->renderError('Can not list archive');
         }
         $paginatorConf = Helper::getPaginatorConf(sizeof($list));
 

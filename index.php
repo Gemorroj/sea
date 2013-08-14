@@ -69,7 +69,7 @@ if ($id) {
 
 
 if (!is_dir($d['path'])) {
-    error('Folder not found.');
+    Http_Response::getInstance()->renderError('Folder not found.');
 }
 
 $paginatorConf = Helper::getPaginatorConf($d['all']);

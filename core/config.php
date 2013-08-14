@@ -74,6 +74,11 @@ Config::init();
 // Инициализируем переводы
 Language::init();
 
+// Инициализируем прослойку над HTTP
+Http_Request::init();
+Http_Response::init(new Template());
+
+
 //TODO: перенести все в классы
 require_once CORE_DIRECTORY . '/classes/functions.php';
 

@@ -40,7 +40,7 @@ require 'core/header.php';
 $file = getFileInfo($id);
 
 if (!is_file($file['path'])) {
-    error('File not found');
+    Http_Response::getInstance()->renderError('File not found');
 }
 
 $template = Http_Response::getInstance()->getTemplate();

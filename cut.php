@@ -38,7 +38,7 @@ require 'core/header.php';
 
 // если нарезка отключена
 if (!Config::get('cut_change')) {
-    error('Not found!');
+    Http_Response::getInstance()->renderError('Not found!');
 }
 
 $template = Http_Response::getInstance()->getTemplate();
@@ -46,7 +46,7 @@ $template = Http_Response::getInstance()->getTemplate();
 $v = getFileInfo($id);
 
 if (!is_file($v['path'])) {
-    error('File not found');
+    Http_Response::getInstance()->renderError('File not found');
 }
 $v['info'] = getMusicInfo($id, $v['path']);
 $cut = array();
@@ -66,7 +66,7 @@ if ($_POST) {
     $p = isset($_POST['p']) ? intval($_POST['p']) : 0;
 
     if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') {
-        error(Language::get('error'));
+        Http_Response::getInstance()->renderError(Language::get('error'));
     }
 
     $allsize = 0;
@@ -132,10 +132,10 @@ if ($_POST) {
                 'size' => $ras,
             );
         } else {
-            error(Language::get('error'));
+            Http_Response::getInstance()->renderError(Language::get('error'));
         }
     } else {
-        error(Language::get('error'));
+        Http_Response::getInstance()->renderError(Language::get('error'));
     }
 }
 

@@ -4,7 +4,9 @@
 {* сообщение *}
 {block content}
     <div class="row">
-        <span class="no">{$message}</span>
+        {foreach $message as $mess}
+            <span class="no">{$mess}</span><br/>
+        {/foreach}
     </div>
 {/block}
 

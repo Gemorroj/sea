@@ -47,7 +47,7 @@ class Http_Response
     /**
      * @var array
      */
-    protected $_headers = array();
+    protected $_headers = array('Content-Type' => 'text/html; charset=UTF-8');
     /**
      * @var string
      */
@@ -129,11 +129,76 @@ class Http_Response
     }
 
     /**
+     * Отправляем HTTP заголовки
+     */
+    protected function _renderHeaders()
+    {
+        foreach ($this->_headers as $key => $value) {
+            header($key . ': ' . $value);
+        }
+    }
+
+    /**
      * Вывод в браузер
      */
     public function render()
     {
+        $this->_renderHeaders();
         $this->_template->send();
     }
 
+    /**
+     * Отображение сообщений
+     */
+    public function renderMessage($str = '')
+    {
+        $template = $this->getTemplate();
+
+        $template
+            ->setTemplate('message.tpl')
+            ->assign('message', is_array($str) ? $str : array($str));
+
+        if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
+            $template->assign('breadcrumbs', array());
+        }
+
+        $this->render();
+        exit;
+    }
+
+    /**
+     * Отображение ошибок
+     */
+    public function renderError($str = '')
+    {
+        $template = $this->getTemplate();
+
+        $template
+            ->setTemplate('error.tpl')
+            ->assign('message', is_array($str) ? $str : array($str));
+
+        if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
+            $template->assign('breadcrumbs', array());
+        }
+
+        $this->render();
+        exit;
+    }
+
+    /**
+     * Переадресация
+     *
+     * @param string $url
+     * @param int $code
+     */
+    public function redirect($url, $code = 302)
+    {
+        $this->getTemplate()->setTemplate('redirect.tpl')->assign('url', $url);
+
+        $this->_renderHeaders();
+        header('Location: ' . $url, true, $code);
+
+        $this->_template->send();
+        exit;
+    }
 }

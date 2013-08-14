@@ -74,8 +74,8 @@ $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('picpath
 
 if (!file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
     if (!Image::resize($pic, Config::get('picpath') . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
-        error('Error');
+        Http_Response::getInstance()->renderError('Error');
     }
 }
 
-redirect($location, 301);
+Http_Response::getInstance()->redirect($location, 301);

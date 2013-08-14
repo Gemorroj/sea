@@ -44,12 +44,12 @@ $info = $db->query('SELECT * FROM loginlog WHERE id = 1')->fetch();
 $timeban = $_SERVER['REQUEST_TIME'] - $info['time'];
 //-------------------------------
 if ($timeban < Config::get('timeban')) {
-    error('Следующая авторизация возможна через ' . (Config::get('timeban') - $timeban) . ' секунд!');
+    Http_Response::getInstance()->renderError('Следующая авторизация возможна через ' . (Config::get('timeban') - $timeban) . ' секунд!');
 }
 //-------------------------------
 if ($info['access_num'] > Config::get('countban')) {
     $db->prepare('UPDATE loginlog SET time = ?, access_num = 0')->execute(array($_SERVER['REQUEST_TIME']));
-    error(
+    Http_Response::getInstance()->renderError(
         'Вы ' . Config::get('countban') . ' раза ввели неверный пароль. Вы заблокированы на ' . Config::get('timeban') . ' секунд'
     );
 }
@@ -91,12 +91,12 @@ if ((isset($_POST['p']) && md5($_POST['p']) == Config::get('password')) ||
         )
     );
 
-    redirect('http://' . $_SERVER['HTTP_HOST'] . str_replace(
+    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . str_replace(
         array('\\', '//'),
         '/',
         dirname($_SERVER['PHP_SELF']) . '/'
     ) . 'apanel.php');
 } else {
     $db->exec('UPDATE loginlog SET access_num = access_num + 1 WHERE id = 1');
-    error('Пароль введен неверно. Осталось попыток до блокировки: ' . (Config::get('countban') - $info['access_num']));
+    Http_Response::getInstance()->renderError('Пароль введен неверно. Осталось попыток до блокировки: ' . (Config::get('countban') - $info['access_num']));
 }

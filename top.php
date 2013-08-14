@@ -39,7 +39,7 @@ define('IS_P_NAME', true);
 require 'core/header.php';
 ###############Если топ выключен###############
 if (!Config::get('top_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 $db = Db_Mysql::getInstance();

@@ -37,13 +37,13 @@ require 'core/header.php';
 
 // Если комментарии выключены
 if (!Config::get('comments_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 // Получаем инфу о файле
 $v = getFileInfo($id);
 if (!is_file($v['path'])) {
-    error('File not found!');
+    Http_Response::getInstance()->renderError('File not found!');
 }
 
 
@@ -104,16 +104,16 @@ $comments = $query->fetchAll();
 if ($_POST) {
     //Проверка на ошибки
     if (!$_POST['msg'] || !$_POST['name']) {
-        error(Language::get('not_filled_one_of_the_fields'));
+        Http_Response::getInstance()->renderError(Language::get('not_filled_one_of_the_fields'));
     }
     if (mb_strlen($_POST['msg']) < 4) {
-        error(Language::get('you_have_not_written_a_comment_or_he_is_too_short'));
+        Http_Response::getInstance()->renderError(Language::get('you_have_not_written_a_comment_or_he_is_too_short'));
     }
 
     if (Config::get('comments_captcha')) {
         if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
             unset($_SESSION['captcha_keystring']);
-            error(Language::get('not_a_valid_code'));
+            Http_Response::getInstance()->renderError(Language::get('not_a_valid_code'));
         }
         unset($_SESSION['captcha_keystring']);
     }
@@ -122,7 +122,7 @@ if ($_POST) {
     $q->execute(array($id, $_POST['msg']));
 
     if ($q->rowCount() > 0) {
-        error(Language::get('why_repeat_myself'));
+        Http_Response::getInstance()->renderError(Language::get('why_repeat_myself'));
     }
 
     //Если нет ошибок пишем в базу
@@ -138,10 +138,10 @@ if ($_POST) {
     $result = $q->execute(array($id, $_POST['name'], $_POST['msg']));
 
     if (!$result) {
-        error(Language::get('error'));
+        Http_Response::getInstance()->renderError(Language::get('error'));
     }
 
-    message(Language::get('your_comment_has_been_successfully_added'));
+    Http_Response::getInstance()->renderMessage(Language::get('your_comment_has_been_successfully_added'));
 }
 
 

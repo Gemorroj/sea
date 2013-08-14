@@ -39,7 +39,7 @@ define('IS_P_NAME', true);
 require 'core/header.php';
 ###############Если поиск выключен###############
 if (!Config::get('search_change')) {
-    error('Not found');
+    Http_Response::getInstance()->renderError('Not found');
 }
 
 
