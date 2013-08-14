@@ -46,10 +46,10 @@ $template->setTemplate('service.tpl');
 
 $seo['title'] = Language::get('advanced_service');
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         SELECT *
         FROM `users_profiles`
         WHERE `id` = ?
@@ -101,14 +101,14 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         }
 
 
-        $q = $mysqldb->prepare('SELECT 1 FROM `users_profiles` WHERE `url` = ?');
+        $q = $db->prepare('SELECT 1 FROM `users_profiles` WHERE `url` = ?');
         $q->execute(array($_POST['url']));
 
         if ($q->rowCount() > 0) {
             // Такой URL уже есть
             error(Language::get('duplicate_url'));
         } else {
-            $result = $mysqldb->prepare('
+            $result = $db->prepare('
                 INSERT INTO `users_profiles` (
                     `name`, `url`, `pass`, `mail`, `style`
                 ) VALUES (
@@ -123,7 +123,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             ));
 
             if ($result) {
-                $_SESSION['id'] = $mysqldb->lastInsertId();
+                $_SESSION['id'] = $db->lastInsertId();
                 $_SESSION['name'] = $_POST['name'];
                 $_SESSION['url'] = $_POST['url'];
                 $_SESSION['mail'] = $_POST['mail'];
@@ -143,13 +143,13 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         }
     }
 } elseif (isset($_GET['act']) && $_GET['act'] == 'pass') {
-    $q = $mysqldb->prepare('SELECT `mail` FROM `users_profiles` WHERE `id` = ?');
+    $q = $db->prepare('SELECT `mail` FROM `users_profiles` WHERE `id` = ?');
     $q->execute(array($_POST['id']));
     $mail = $q->fetchColumn();
 
     if ($mail) {
         $pass = Helper::getRandPass();
-        $mysqldb->prepare('UPDATE `users_profiles` SET `pass` = MD5(?) WHERE `id` = ?')->execute(array($pass, $_POST['id']));
+        $db->prepare('UPDATE `users_profiles` SET `pass` = MD5(?) WHERE `id` = ?')->execute(array($pass, $_POST['id']));
 
         mail(
             $mail,
@@ -171,7 +171,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             default:
                 $head = $foot = array();
 
-                $q = $mysqldb->prepare('
+                $q = $db->prepare('
                     SELECT `name`, `value`
                     FROM `users_settings`
                     WHERE `parent_id` = ?
@@ -222,7 +222,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                 $_SESSION['mail'] = $_POST['mail'];
 
 
-                $mysqldb->prepare('
+                $db->prepare('
                     UPDATE `users_profiles`
                     SET `name` = ?,
                     `url` = ?,
@@ -237,9 +237,9 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     $_SESSION['id']
                 ));
 
-                $mysqldb->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?')->execute(array($_SESSION['id']));
+                $db->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?')->execute(array($_SESSION['id']));
 
-                $q = $mysqldb->prepare('
+                $q = $db->prepare('
                     INSERT INTO `users_settings` (
                         `parent_id`, `position`, `name`, `value`
                     ) VALUES (
@@ -277,8 +277,8 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     }
                 }
 
-                //$mysqldb->exec('OPTIMIZE TABLE `users_profiles`, `users_settings`');
-                //$mysqldb->exec('ANALYZE TABLE `users_profiles`, `users_settings`');
+                //$db->exec('OPTIMIZE TABLE `users_profiles`, `users_settings`');
+                //$db->exec('ANALYZE TABLE `users_profiles`, `users_settings`');
 
                 message(Language::get('settings_saved'));
                 break;

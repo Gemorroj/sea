@@ -12,7 +12,7 @@ if (Config::get('service_change_advanced')) {
     $user = isset($_GET['user']) ? $_GET['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
 
     if ($user) {
-        $q = MysqlDb::getInstance()->prepare('SELECT `url`, `name`, `style` FROM `users_profiles` WHERE `id` = ?');
+        $q = Db_Mysql::getInstance()->prepare('SELECT `url`, `name`, `style` FROM `users_profiles` WHERE `id` = ?');
 
         if ($q->execute(array($user)) && $q->rowCount() > 0) {
             $fetch = $q->fetch();

@@ -38,9 +38,9 @@ define('APANEL', true);
 require '../core/config.php';
 
 $HeadTime = microtime(true);
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
-$info = $mysqldb->query('SELECT * FROM loginlog WHERE id = 1')->fetch();
+$info = $db->query('SELECT * FROM loginlog WHERE id = 1')->fetch();
 $timeban = $_SERVER['REQUEST_TIME'] - $info['time'];
 //-------------------------------
 if ($timeban < Config::get('timeban')) {
@@ -48,7 +48,7 @@ if ($timeban < Config::get('timeban')) {
 }
 //-------------------------------
 if ($info['access_num'] > Config::get('countban')) {
-    $mysqldb->prepare('UPDATE loginlog SET time = ?, access_num = 0')->execute(array($_SERVER['REQUEST_TIME']));
+    $db->prepare('UPDATE loginlog SET time = ?, access_num = 0')->execute(array($_SERVER['REQUEST_TIME']));
     error(
         'Вы ' . Config::get('countban') . ' раза ввели неверный пароль. Вы заблокированы на ' . Config::get('timeban') . ' секунд'
     );
@@ -83,7 +83,7 @@ if ((isset($_POST['p']) && md5($_POST['p']) == Config::get('password')) ||
     $_SESSION['ipu'] = $_SERVER['REMOTE_ADDR'];
     $_SESSION['authorise'] = Config::get('password');
 
-    $mysqldb->prepare('INSERT INTO loginlog SET time = ?, ua = ?, ip = ?')->execute(
+    $db->prepare('INSERT INTO loginlog SET time = ?, ua = ?, ip = ?')->execute(
         array(
              $_SERVER['REQUEST_TIME'],
              $_SERVER['HTTP_USER_AGENT'],
@@ -97,6 +97,6 @@ if ((isset($_POST['p']) && md5($_POST['p']) == Config::get('password')) ||
         dirname($_SERVER['PHP_SELF']) . '/'
     ) . 'apanel.php');
 } else {
-    $mysqldb->exec('UPDATE loginlog SET access_num = access_num + 1 WHERE id = 1');
+    $db->exec('UPDATE loginlog SET access_num = access_num + 1 WHERE id = 1');
     error('Пароль введен неверно. Осталось попыток до блокировки: ' . (Config::get('countban') - $info['access_num']));
 }

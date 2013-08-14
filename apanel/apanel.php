@@ -43,10 +43,10 @@ chdir('../');
 require 'core/header.php';
 
 $template->setTemplate('apanel/index.tpl');
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 
-$mysqldb->exec('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1');
+$db->exec('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1');
 ###################################################
 if (!$_SESSION) {
     exit('Не запущена сессия');
@@ -109,7 +109,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             unset($attach[$_GET['attach']]);
         }
 
-        $q = $mysqldb->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
+        $q = $db->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
         if (!$attach) {
             $q->bindValue(1, null, PDO::PARAM_NULL);
             $q->bindValue(2, $id, PDO::PARAM_INT);
@@ -155,7 +155,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $q = $mysqldb->prepare('UPDATE `files` SET `path` = ?, `infolder` = ? WHERE `id` = ?');
+        $q = $db->prepare('UPDATE `files` SET `path` = ?, `infolder` = ? WHERE `id` = ?');
         if ($q->execute(array($folder . $filename, $folder, $id))) {
             dir_count($folder, false);
             dir_count($file['path'], true);
@@ -203,7 +203,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $q = $mysqldb->prepare('UPDATE `files` SET `hidden` = ? WHERE `id` = ?');
+        $q = $db->prepare('UPDATE `files` SET `hidden` = ? WHERE `id` = ?');
         if ($_GET['hide'] == '1') {
             $result = $q->execute(array('1', $id));
         } else {
@@ -240,7 +240,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 }
             }
 
-            $q = $mysqldb->prepare('UPDATE `files` SET name = ?, rus_name = ?, aze_name = ?, tur_name = ? WHERE `id` = ?');
+            $q = $db->prepare('UPDATE `files` SET name = ?, rus_name = ?, aze_name = ?, tur_name = ? WHERE `id` = ?');
             $result = $q->execute(array(
                  $_POST['new']['english'],
                  $_POST['new']['russian'],
@@ -290,7 +290,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
         }
 
-        $q = $mysqldb->prepare('DELETE FROM `files` WHERE `infolder` = ?');
+        $q = $db->prepare('DELETE FROM `files` WHERE `infolder` = ?');
         $result = $q->execute(array($file['path']));
         if (!$result) {
             $template->assign('error', implode("\n", $q->errorInfo()));
@@ -303,7 +303,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->send();
         }
 
-        $q = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
+        $q = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
         if (!$q->execute(array($id))) {
             $template->assign('error', implode("\n", $q->errorInfo()));
             $template->send();
@@ -344,7 +344,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             @chmod($f_chmod, 0777);
         }
 
-        $q = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
+        $q = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
         if (!$q->execute(array($id))) {
             $template->assign('error', implode("\n", $q->errorInfo()));
             $template->send();
@@ -374,9 +374,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         if ($_GET['to'] == 'down') {
-            $q = $mysqldb->prepare('UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ?');
+            $q = $db->prepare('UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ?');
         } else {
-            $q = $mysqldb->prepare('UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ?');
+            $q = $db->prepare('UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ?');
         }
 
         if ($q->execute(array($id))) {
@@ -429,7 +429,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                  'description' => $_POST['description']
             );
 
-            $q = $mysqldb->prepare('UPDATE `files` SET `seo` = ? WHERE `id` = ?');
+            $q = $db->prepare('UPDATE `files` SET `seo` = ? WHERE `id` = ?');
             if ($q->execute(array(serialize($seo), $id))) {
                 $template->assign('message', 'Данные изменены');
             } else {
@@ -587,7 +587,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 }
             }
 
-            $q = $mysqldb->prepare('UPDATE `news` SET `news` = ?, `rus_news` = ?, `aze_news` = ?, `tur_news` = ? WHERE `id` = ?');
+            $q = $db->prepare('UPDATE `news` SET `news` = ?, `rus_news` = ?, `aze_news` = ?, `tur_news` = ? WHERE `id` = ?');
             $result = $q->execute(array(
                 $_POST['new']['english'],
                 $_POST['new']['russian'],
@@ -621,7 +621,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 }
             }
 
-            $q = $mysqldb->prepare('
+            $q = $db->prepare('
                 INSERT INTO `news` SET `news` = ?, `rus_news` = ?, `aze_news` = ?, `tur_news` = ?, `time` = UNIX_TIMESTAMP()
             ');
             $result = $q->execute(array(
@@ -780,7 +780,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $write = 0;
             $cacheDir = CORE_DIRECTORY . '/cache';
 
-            $q = $mysqldb->query('SELECT * FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")');
+            $q = $db->query('SELECT * FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")');
             foreach ($q as $f) {
                 $all++;
                 @unlink($cacheDir . '/' . $f['id'] . '.dat');
@@ -851,7 +851,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         if ($_POST) {
             if (isset($_POST['marker'])) {
-                $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+                $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
                 $result1 = $q->execute(array('marker', $_POST['marker']));
                 $result2 = $q->execute(array('marker_where', ($_POST['marker_where'] == 'top' ? 'top' : 'foot')));
                 if ($result1 && $result2) {
@@ -860,7 +860,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     $template->assign('error', implode("\n", $q->errorInfo()));
                 }
             } else {
-                $q = $mysqldb->query('SELECT `path` FROM `files` WHERE `path` LIKE "%.jpg" OR `path` LIKE "%.jpe" OR `path` LIKE "%.jpeg" OR `path` LIKE "%.gif" OR `path` LIKE "%.png"');
+                $q = $db->query('SELECT `path` FROM `files` WHERE `path` LIKE "%.jpg" OR `path` LIKE "%.jpe" OR `path` LIKE "%.jpeg" OR `path` LIKE "%.gif" OR `path` LIKE "%.png"');
                 $all = $q->rowCount();
                 $i = 0;
                 $textLen = mb_strlen($_POST['text']);
@@ -998,14 +998,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'service':
         $template->setTemplate('apanel/service.tpl');
 
-        $users = $mysqldb->query('SELECT COUNT(1) FROM `users_profiles`')->fetchColumn();
+        $users = $db->query('SELECT COUNT(1) FROM `users_profiles`')->fetchColumn();
         $template->assign('users', $users);
 
         if ($_POST) {
             switch (@$_GET['mode']) {
                 case 'del':
-                    $q1 = $mysqldb->prepare('DELETE FROM `users_profiles` WHERE `id` = ?');
-                    $q2 = $mysqldb->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?');
+                    $q1 = $db->prepare('DELETE FROM `users_profiles` WHERE `id` = ?');
+                    $q2 = $db->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?');
 
                     if ($q1->execute(array($_POST['user'])) && $q2->execute(array($_POST['user']))) {
                         $template->assign('message', 'Пользователь удален');
@@ -1015,7 +1015,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                     break;
 
                 default:
-                    $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+                    $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
                     if ($q->execute(array('service_head', $_POST['service_head'])) && $q->execute(array('service_foot', $_POST['service_foot']))) {
                         $template->assign('message', 'Настройки сервиса изменены');
@@ -1032,7 +1032,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/exchanger.tpl');
 
         if ($_POST) {
-            $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+            $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
             if ($q->execute(array('exchanger_notice', ($_POST['exchanger_notice'] ? 1 : 0))) &&
                 $q->execute(array('exchanger_extensions', $_POST['exchanger_extensions'])) &&
@@ -1050,7 +1050,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/lib.tpl');
 
         if ($_POST) {
-            $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+            $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
             if ($q->execute(array('lib', $_POST['lib'])) && $q->execute(array('lib_str', $_POST['lib_str']))) {
                 $template->assign('message', 'Настройки библиотеки изменены');
@@ -1065,7 +1065,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/buy.tpl');
 
         if ($_POST) {
-            $q = $mysqldb->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
+            $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
             if ($q->execute(array('buy', $_POST['buy'])) &&
                 $q->execute(array('randbuy', ($_POST['randbuy'] ? 1 : 0))) &&
@@ -1084,7 +1084,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'log':
         $template->setTemplate('apanel/log.tpl');
 
-        $logs = $mysqldb->query('SELECT * FROM `loginlog` WHERE `id` > 1 ORDER BY `time` DESC LIMIT 50')->fetchAll();
+        $logs = $db->query('SELECT * FROM `loginlog` WHERE `id` > 1 ORDER BY `time` DESC LIMIT 50')->fetchAll();
 
         $template->assign('logs', $logs);
         break;
@@ -1110,7 +1110,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 }
             }
 
-            $q = $mysqldb->prepare('UPDATE `setting` SET `value` = ? WHERE `name` = ?');
+            $q = $db->prepare('UPDATE `setting` SET `value` = ? WHERE `name` = ?');
 
             if ($_POST['password'] != '') {
                 $_SESSION['authorise'] = md5($_POST['password']);
@@ -1171,7 +1171,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $_POST['ignore_index_breadcrumbs'] = $_POST['ignore_index_breadcrumbs'] ? 1 : 0;
             $_POST['ignore_index_pages'] = $_POST['ignore_index_pages'] ? 1 : 0;
 
-            $q = $mysqldb->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
+            $q = $db->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
             foreach ($_POST as $key => $value) {
                 if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
                     $template->assign('error', 'Error');
@@ -1190,7 +1190,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         if ($_POST) {
             $_POST['site_url'] = str_ireplace('http://', '', $_POST['site_url']);
 
-            $q = $mysqldb->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
+            $q = $db->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
             foreach ($_POST as $key => $value) {
                 if ($value == '') {
                     $template->assign('error', 'Не заполнено одно из полей');
@@ -1214,7 +1214,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_news':
-        $q = $mysqldb->prepare('DELETE FROM `news` WHERE `id` = ?');
+        $q = $db->prepare('DELETE FROM `news` WHERE `id` = ?');
 
         if ($q->execute(array($_GET['news']))) {
             $template->assign('message', 'Новость удалена');
@@ -1225,7 +1225,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_comment_news_comments':
-        $q = $mysqldb->prepare('DELETE FROM `news_comments` WHERE `id` = ?');
+        $q = $db->prepare('DELETE FROM `news_comments` WHERE `id` = ?');
 
         if ($q->execute(array($_GET['comment']))) {
             $template->assign('message', 'Комментарий удален');
@@ -1236,7 +1236,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_comment_view_comments':
-        $q = $mysqldb->prepare('DELETE FROM `comments` WHERE `id` = ?');
+        $q = $db->prepare('DELETE FROM `comments` WHERE `id` = ?');
 
         if ($q->execute(array($_GET['comment']))) {
             $template->assign('message', 'Комментарий удален');
@@ -1247,7 +1247,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'clearcomm':
-        $q = $mysqldb->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
+        $q = $db->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
 
         if ($q->execute(array($id))) {
             $template->assign('message', 'Комментарии удалены');
@@ -1258,7 +1258,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'clearrate':
-        $q = $mysqldb->prepare('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ?');
+        $q = $db->prepare('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ?');
 
         if ($q->execute(array($id))) {
             $template->assign('message', 'Рейтинг сброшен');
@@ -1269,7 +1269,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'optm':
-        if ($mysqldb->exec('OPTIMIZE TABLE `comments`, `files`, `loginlog`, `news`, `news_comments`, `online`, `setting`, `users_profiles`, `users_settings`') !== false) {
+        if ($db->exec('OPTIMIZE TABLE `comments`, `files`, `loginlog`, `news`, `news_comments`, `online`, `setting`, `users_profiles`, `users_settings`') !== false) {
             $template->assign('message', 'Таблицы оптимизированы');
         } else {
             $template->assign('error', 'Ошибка при оптимизации таблиц');
@@ -1285,9 +1285,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'cleantrash':
         $d = 0;
 
-        $q1 = $mysqldb->prepare('DELETE FROM `files` WHERE `id` = ?');
-        $q2 = $mysqldb->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
-        foreach ($mysqldb->query('SELECT `id`, `path` FROM `files`') as $row) {
+        $q1 = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
+        $q2 = $db->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
+        foreach ($db->query('SELECT `id`, `path` FROM `files`') as $row) {
             if (!file_exists($row['path'])) {
                 $q1->execute(array($row['id']));
                 $q2->execute(array($row['id']));
@@ -1303,7 +1303,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'cleandb':
-        if ($mysqldb->exec('TRUNCATE TABLE `files`') !== false && $mysqldb->exec('TRUNCATE TABLE `comments`') !== false) {
+        if ($db->exec('TRUNCATE TABLE `files`') !== false && $db->exec('TRUNCATE TABLE `comments`') !== false) {
             $template->assign('message', 'Таблицы очищены');
         } else {
             $template->assign('error', 'Ошибка при очистке таблиц');
@@ -1312,7 +1312,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'cleannews':
-        if ($mysqldb->exec('TRUNCATE TABLE `news`') !== false && $mysqldb->exec('TRUNCATE TABLE `news_comments`') !== false) {
+        if ($db->exec('TRUNCATE TABLE `news`') !== false && $db->exec('TRUNCATE TABLE `news_comments`') !== false) {
             $template->assign('message', 'Таблицы очищены');
         } else {
             $template->assign('error', 'Ошибка при очистке таблиц');
@@ -1321,7 +1321,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'cleancomm':
-        if ($mysqldb->exec('TRUNCATE TABLE `comments`') !== false) {
+        if ($db->exec('TRUNCATE TABLE `comments`') !== false) {
             $template->assign('message', 'Все комментарии к файлам удалены');
         } else {
             $template->assign('error', 'Ошибка при удалении комментариев к файлам');
@@ -1330,7 +1330,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'cleancomm_news':
-        if ($mysqldb->exec('TRUNCATE TABLE `news_comments`') !== false) {
+        if ($db->exec('TRUNCATE TABLE `news_comments`') !== false) {
             $template->assign('message', 'Все комментарии к новостям удалены');
         } else {
             $template->assign('error', 'Ошибка при удалении комментариев к новостям');

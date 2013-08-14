@@ -62,7 +62,7 @@ require_once CORE_DIRECTORY . '/classes/Autoload.php';
 Autoload::init();
 
 // данные для соединения с БД
-MysqlDb::setOptions(array(
+Db_Mysql::setOptions(array(
     'host' => 'localhost',
     'username' => 'mysql',
     'password' => 'mysql',

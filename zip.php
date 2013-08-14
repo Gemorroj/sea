@@ -53,7 +53,7 @@ if (!is_file($v['path'])) {
 $template->setTemplate('zip.tpl');
 
 // Директория
-$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q = Db_Mysql::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
 $q->execute(array($v['infolder']));
 $directory = $q->fetch();
 

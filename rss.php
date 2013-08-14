@@ -42,7 +42,7 @@ $link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
 $rss = new Rss(Language::get('news'), $link, Language::get('news'));
 
 
-$q = MysqlDb::getInstance()->query('
+$q = Db_Mysql::getInstance()->query('
     SELECT ' . Language::buildNewsQuery() . ', `time`
     FROM `news`
     ORDER BY `id` DESC

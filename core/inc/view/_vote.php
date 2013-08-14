@@ -11,19 +11,19 @@ if (Config::get('eval_change') && isset($_GET['eval'])) {
             $ipp = $file['ips'] . "\n" . $_SERVER['REMOTE_ADDR'];
         }
 
-        $mysqldb = MysqlDb::getInstance();
+        $db = Db_Mysql::getInstance();
 
         if ($_GET['eval'] < 1) {
             $file['no'] += 1;
 
-            $q = $mysqldb->prepare('UPDATE `files` SET `no` = `no` + 1, `ips` = ? WHERE `id` = ?');
+            $q = $db->prepare('UPDATE `files` SET `no` = `no` + 1, `ips` = ? WHERE `id` = ?');
             $q->bindValue(1, $ipp);
             $q->bindValue(2, $file['id'], PDO::PARAM_INT);
             $q->execute();
         } else {
             $file['yes'] += 1;
 
-            $q = $mysqldb->prepare('UPDATE `files` SET `yes` = `yes` + 1, `ips` = ? WHERE `id` = ?');
+            $q = $db->prepare('UPDATE `files` SET `yes` = `yes` + 1, `ips` = ? WHERE `id` = ?');
             $q->bindValue(1, $ipp);
             $q->bindValue(2, $file['id'], PDO::PARAM_INT);
             $q->execute();

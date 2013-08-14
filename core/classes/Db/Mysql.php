@@ -33,10 +33,10 @@
  * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-class MysqlDb extends PDO
+class Db_Mysql extends PDO
 {
     /**
-     * @var MysqlDb
+     * @var Db_Mysql
      */
     private static $_instance;
     /**
@@ -51,7 +51,7 @@ class MysqlDb extends PDO
 
 
     /**
-     * @return MysqlDb
+     * @return Db_Mysql
      */
     public static function getInstance()
     {

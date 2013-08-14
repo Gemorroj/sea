@@ -49,7 +49,7 @@ $seo['title'] = Language::get('upload_file');
 $dirs = array();
 $insertId = null;
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 if ($_POST) {
     if (!$_FILES['file'] || $_FILES['file']['error']) {
@@ -70,7 +70,7 @@ if ($_POST) {
     }
 
 
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         SELECT 1
         FROM `files`
         WHERE `path` = ?
@@ -84,7 +84,7 @@ if ($_POST) {
     }
 
 
-    $q = $mysqldb->prepare('SELECT 1 FROM `files` WHERE `path` = ?');
+    $q = $db->prepare('SELECT 1 FROM `files` WHERE `path` = ?');
     $q->execute(array($pathname));
 
     if ($q->rowCount() > 0) {
@@ -95,7 +95,7 @@ if ($_POST) {
         error(Language::get('an_error_occurred_while_copying_files'));
     }
 
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         INSERT INTO `files` (
             `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`, `hidden`
         ) VALUES ("0", ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -116,7 +116,7 @@ if ($_POST) {
         unlink($pathname);
         error(Language::get('error_writing_to_database'));
     }
-    $insertId = $mysqldb->lastInsertId();
+    $insertId = $db->lastInsertId();
     if (!Config::get('exchanger_hidden')) {
         dir_count($path, true);
     }

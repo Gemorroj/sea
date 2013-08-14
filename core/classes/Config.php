@@ -44,7 +44,7 @@ class Config
      */
     private function __construct()
     {
-        foreach (MysqlDb::getInstance()->query('SELECT name, value FROM setting') as $v) {
+        foreach (Db_Mysql::getInstance()->query('SELECT name, value FROM setting') as $v) {
             self::$_setup[$v['name']] = $v['value'];
         }
     }

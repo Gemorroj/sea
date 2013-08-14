@@ -33,73 +33,7 @@
  * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-class Autoload
+class Http_Response
 {
-    private static $_autoload;
-    private static $_coreDirectory;
 
-
-    /**
-     * Конструктор
-     */
-    private function __construct()
-    {
-        set_include_path(
-            get_include_path() . PATH_SEPARATOR . self::$_coreDirectory . DIRECTORY_SEPARATOR . 'PEAR'
-        );
-
-        spl_autoload_register(array($this, '_classes'));
-        spl_autoload_register(array($this, '_smarty'));
-        spl_autoload_register(array($this, '_pear'));
-    }
-
-
-    /**
-     * Инициализация
-     */
-    public static function init()
-    {
-        if (null === self::$_autoload) {
-            self::$_coreDirectory = realpath(dirname(__FILE__) . '/../');
-            self::$_autoload = new self();
-        }
-    }
-
-
-    /**
-     * @param string $class
-     */
-    protected function _classes($class)
-    {
-        $this->_include(self::$_coreDirectory . '/classes/' . str_replace('_', '/', $class) . '.php');
-    }
-
-
-    /**
-     * @param string $class
-     */
-    protected function _smarty($class)
-    {
-        $this->_include(self::$_coreDirectory . '/Smarty/libs/' . $class . '.class.php');
-    }
-
-
-    /**
-     * @param string $class
-     */
-    protected function _pear($class)
-    {
-        $this->_include(self::$_coreDirectory . '/PEAR/' . str_replace('_', '/', $class) . '.php');
-    }
-
-
-    /**
-     * @param string $file
-     */
-    protected function _include($file)
-    {
-        if (true === file_exists($file)) {
-            include $file;
-        }
-    }
 }

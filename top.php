@@ -42,13 +42,13 @@ if (!Config::get('top_change')) {
     error('Not found');
 }
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 $template->setTemplate('top.tpl');
 $seo['title'] = str_replace('%files%', Config::get('top_num'), Language::get('top20'));
 $template->assign('breadcrumbs', array('top' => $seo['title']));
 
 
-$all = $mysqldb->query('
+$all = $db->query('
     SELECT COUNT(1)
     FROM `files`
     WHERE `dir` = "0"
@@ -61,7 +61,7 @@ $paginatorConf = Helper::getPaginatorConf($all);
 ###############Постраничная навигация###############
 $template->assign('paginatorConf', $paginatorConf);
 
-$query = $mysqldb->prepare('
+$query = $db->prepare('
     SELECT `f`.`id`,
     `f`.`hidden`,
     `f`.`dir`,

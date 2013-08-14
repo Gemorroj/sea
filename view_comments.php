@@ -47,10 +47,10 @@ if (!is_file($v['path'])) {
 }
 
 
-$mysqldb = Mysqldb::getInstance();
+$db = Db_Mysql::getInstance();
 
 // Директория
-$q = $mysqldb->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q = $db->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
 $q->execute(array($v['infolder']));
 $directory = $q->fetch();
 
@@ -74,7 +74,7 @@ $template->assign('comments_module_backname', $v['name']);
 
 
 // всего комментариев
-$q = $mysqldb->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
+$q = $db->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
 $q->execute(array($id));
 $all = $q->fetchColumn();
 
@@ -84,7 +84,7 @@ $paginatorConf = Helper::getPaginatorConf($all);
 $template->assign('paginatorConf', $paginatorConf);
 
 
-$query = $mysqldb->prepare('
+$query = $db->prepare('
     SELECT *
     FROM `comments`
     WHERE `file_id` = ?
@@ -117,7 +117,7 @@ if ($_POST) {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $q = $mysqldb->prepare('SELECT 1 FROM `comments` WHERE `file_id` = ? AND `text` = ? LIMIT 1');
+    $q = $db->prepare('SELECT 1 FROM `comments` WHERE `file_id` = ? AND `text` = ? LIMIT 1');
     $q->execute(array($id, $_POST['msg']));
 
     if ($q->rowCount() > 0) {
@@ -127,7 +127,7 @@ if ($_POST) {
     //Если нет ошибок пишем в базу
     setcookie('sea_name', $_POST['name'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
 
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         INSERT INTO `comments` (
             `file_id`, `name`, `text`, `time`
         ) VALUES (

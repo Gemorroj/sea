@@ -70,12 +70,12 @@ require 'core/inc/view/_file.php';
 
 
 // Директория
-$q = Mysqldb::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q = Db_Mysql::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
 $q->execute(array($file['infolder']));
 $directory = $q->fetch();
 
 // Всего комментариев
-$q = Mysqldb::getInstance()->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
+$q = Db_Mysql::getInstance()->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
 $q->bindValue(1, $id, PDO::PARAM_INT);
 $q->execute();
 $commentsCount = $q->fetchColumn();

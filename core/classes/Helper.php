@@ -145,7 +145,7 @@ class Helper
                 }
             }
 
-            $q = Mysqldb::getInstance()->prepare('
+            $q = Db_Mysql::getInstance()->prepare('
             SELECT `id`, ' . Language::buildFilesQuery() . '
             FROM `files`
             WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')

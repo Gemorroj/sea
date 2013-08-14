@@ -108,14 +108,14 @@ class Import
         $this->_screenFolder = $setup['spath'];
         $this->_attachFolder = $setup['apath'];
 
-        $this->_importQuery = MysqlDb::getInstance()->prepare('
+        $this->_importQuery = Db_Mysql::getInstance()->prepare('
             INSERT INTO `files` (
                 `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
             ) VALUES (
                 "0", ?, ?, ?, ?, ?, ?, ?, ?
             )
         ');
-        $this->_directoryExistsQuery = MysqlDb::getInstance()->prepare('SELECT 1 FROM `files` WHERE `path` = ? AND `dir` = "1" LIMIT 1');
+        $this->_directoryExistsQuery = Db_Mysql::getInstance()->prepare('SELECT 1 FROM `files` WHERE `path` = ? AND `dir` = "1" LIMIT 1');
     }
 
 
@@ -198,7 +198,7 @@ class Import
                 filesize($toFile),
                 filectime($toFile)
             ));
-            $id = MysqlDb::getInstance()->lastInsertId();
+            $id = Db_Mysql::getInstance()->lastInsertId();
 
             dir_count($infolder, true);
             chmod($toFile, 0644);

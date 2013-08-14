@@ -40,7 +40,7 @@ if (Config::get('service_change_advanced') && (Config::get('service_head') || Co
     $user = isset($_GET['user']) ? $_GET['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
 
     if ($user) {
-        $q = MysqlDb::getInstance()->prepare('
+        $q = Db_Mysql::getInstance()->prepare('
             SELECT `name`, `value`
             FROM `users_settings`
             WHERE `parent_id` = ?

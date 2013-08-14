@@ -45,17 +45,17 @@ $template->setTemplate('stat.tpl');
 $seo['title'] = Language::get('statistics');
 
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 
-$stat = $mysqldb->query('
+$stat = $db->query('
     SELECT COUNT(1) AS all_files, SUM(`loads`) AS total_downloads, SUM(`size`) AS total_volume
     FROM `files`
     WHERE `dir` = "0"
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
 )->fetch();
 
-$stat['total_new_files'] = $mysqldb->query('
+$stat['total_new_files'] = $db->query('
     SELECT COUNT(1)
     FROM `files`
     WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new'))) . '

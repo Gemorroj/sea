@@ -50,10 +50,10 @@ $template->assign('breadcrumbs', array('new' => Language::get('new_files')));
 // новизна файла
 $new = ($_SERVER['REQUEST_TIME'] - (Config::get('day_new') * 86400));
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 
-$q = $mysqldb->prepare('
+$q = $db->prepare('
     SELECT COUNT(1)
     FROM `files`
     WHERE `dir` = "0"
@@ -70,7 +70,7 @@ $paginatorConf = Helper::getPaginatorConf($all);
 $template->assign('paginatorConf', $paginatorConf);
 
 
-$query = $mysqldb->prepare('
+$query = $db->prepare('
     SELECT `f`.`id`,
     `f`.`hidden`,
     `f`.`dir`,

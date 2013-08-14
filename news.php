@@ -41,10 +41,10 @@ $template->setTemplate('news.tpl');
 $seo['title'] = Language::get('news');
 $template->assign('breadcrumbs', array('news' => Language::get('news')));
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 // всего новостей
-$all = $mysqldb->query('SELECT COUNT(1) FROM `news`')->fetchColumn();
+$all = $db->query('SELECT COUNT(1) FROM `news`')->fetchColumn();
 
 $paginatorConf = Helper::getPaginatorConf($all);
 
@@ -52,7 +52,7 @@ $paginatorConf = Helper::getPaginatorConf($all);
 $template->assign('paginatorConf', $paginatorConf);
 
 
-$q = $mysqldb->prepare('
+$q = $db->prepare('
     SELECT `news`.`id`,
     ' . Language::buildNewsQuery() . ',
     `news`.`time`,

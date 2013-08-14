@@ -3,9 +3,9 @@
 
 //$prevNext = array('prev' => array(), 'next' => array());
 if (Config::get('prev_next')) {
-    $mysqldb = MysqlDb::getInstance();
+    $db = Db_Mysql::getInstance();
 
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         SELECT COUNT(1)
         FROM `files`
         WHERE `infolder` = ?
@@ -16,7 +16,7 @@ if (Config::get('prev_next')) {
     $prevNext['count'] = $q->fetchColumn();
 
     if ($prevNext['count'] > 1) {
-        $q = $mysqldb->prepare('
+        $q = $db->prepare('
             SELECT MIN(`id`) AS `min`, COUNT(`id`) AS `count`
             FROM `files`
             WHERE `id` > ?
@@ -27,7 +27,7 @@ if (Config::get('prev_next')) {
         $q->execute(array($id, $directory['path']));
         $next = $q->fetch();
 
-        $q = $mysqldb->prepare('
+        $q = $db->prepare('
             SELECT MAX(`id`) AS `max`, COUNT(`id`) AS `count`
             FROM `files`
             WHERE `id` < ?

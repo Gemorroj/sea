@@ -37,12 +37,12 @@ require 'core/header.php';
 
 define('IS_INDEX', !$id);
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 
 ###############Получаем текущий каталог#############
 if ($id) {
-    $d = $mysqldb->query('
+    $d = $db->query('
         SELECT `t1`.`path`,
         `t1`.`seo`,
         ' . Language::buildFilesQuery('t1') . ',
@@ -57,7 +57,7 @@ if ($id) {
     $seo = unserialize($d['seo']);
 } else {
     $d['path'] = Config::get('path') . '/';
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         SELECT COUNT(1)
         FROM `files`
         WHERE `infolder` = ?
@@ -83,7 +83,7 @@ $template->assign('breadcrumbs', Helper::getBreadcrumbs($d, true));
 
 
 /// новости
-$news = $mysqldb->query('
+$news = $db->query('
     SELECT *, ' . Language::buildNewsQuery() . '
     FROM `news`
     ORDER BY `id` DESC
@@ -93,7 +93,7 @@ $news = $mysqldb->query('
 $template->assign('news', $news);
 
 
-$query = $mysqldb->prepare('
+$query = $db->prepare('
     SELECT
     `id`,
     `dir`,

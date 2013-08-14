@@ -60,14 +60,14 @@ mod by Gemorroj
 
 Чтобы вывести общее количество файлов следует выполнить следующий код
 
-require_once 'path_to_sea/core/classes/MysqlDb.php';
-MysqlDb::setOptions(array(
+require_once 'path_to_sea/core/classes/Db_Mysql.php';
+Db_Mysql::setOptions(array(
     'host' => 'localhost',
     'dbname' => 'sea',
     'username' => 'root',
     'password' => '',
 ));
-$db = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 echo $db->query('SELECT COUNT(1) FROM `files` WHERE `dir` = "0" AND `hidden` = "0"')->fetchColumn();
 
 то же самое но с ограничением на какую-либо папку

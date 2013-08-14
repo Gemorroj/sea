@@ -55,10 +55,10 @@ $paginatorConf = array();
 $directories = $files = 0;
 
 if ($word != '') {
-    $mysqldb = MysqlDb::getInstance();
-    $sqlLikeWord = '%' . $mysqldb->escapeLike($word) . '%';
+    $db = Db_Mysql::getInstance();
+    $sqlLikeWord = '%' . $db->escapeLike($word) . '%';
 
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         SELECT COUNT(1)
         FROM `files`
         WHERE `name` LIKE ? OR `rus_name` LIKE ? OR `aze_name` LIKE ? OR `tur_name` LIKE ?
@@ -75,7 +75,7 @@ if ($word != '') {
     $template->assign('paginatorConf', $paginatorConf);
 
 
-    $query = $mysqldb->prepare('
+    $query = $db->prepare('
         SELECT `f`.`id`,
         `f`.`hidden`,
         `f`.`dir`,

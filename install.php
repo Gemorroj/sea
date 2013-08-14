@@ -61,7 +61,7 @@ if (!@$_GET['level']) {
     </fieldset>
     ';
 } else {
-    $mysqldb = MysqlDb::getInstance();
+    $db = Db_Mysql::getInstance();
     $errors = array();
 
     chmod('files/', 0777);
@@ -79,7 +79,7 @@ if (!@$_GET['level']) {
     chmod('cache/data/ffmpeg/', 0777);
     chmod('cache/data/pic/', 0777);
 
-    $mysqldb->exec('DROP TABLE IF EXISTS `files`,`comments`,`online`,`setting`,`loginlog`,`news`,`news_comments`,`users_profiles`,`users_settings`');
+    $db->exec('DROP TABLE IF EXISTS `files`,`comments`,`online`,`setting`,`loginlog`,`news`,`news_comments`,`users_profiles`,`users_settings`');
 
     $sql
         = "CREATE TABLE `files` (
@@ -110,8 +110,8 @@ if (!@$_GET['level']) {
       KEY `infolder` (`infolder`),
       KEY `infolder_timeupload` (`infolder`,`timeupload`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -125,8 +125,8 @@ if (!@$_GET['level']) {
       PRIMARY KEY (`id`),
       KEY `file_id` (`file_id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -136,8 +136,8 @@ if (!@$_GET['level']) {
       `time` datetime NOT NULL,
       UNIQUE KEY `ip` (`ip`)
     ) ENGINE=MEMORY ;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -147,8 +147,8 @@ if (!@$_GET['level']) {
       `value` varchar(1023) NOT NULL,
       UNIQUE KEY `name` (`name`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -161,8 +161,8 @@ if (!@$_GET['level']) {
       `access_num` tinyint(3) unsigned NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=1 ;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -176,8 +176,8 @@ if (!@$_GET['level']) {
       `time` int(11) unsigned NOT NULL default '0',
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -191,8 +191,8 @@ if (!@$_GET['level']) {
       PRIMARY KEY (`id`),
       KEY `id_news` (`id_news`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -206,8 +206,8 @@ if (!@$_GET['level']) {
       `style` varchar(255) NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=8 ;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
@@ -220,108 +220,108 @@ if (!@$_GET['level']) {
       KEY `parent_id` (`parent_id`),
       KEY `parent_id_position` (`parent_id`,`position`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;";
-    if ($mysqldb->exec($sql) === false) {
-        $errors[] = $mysqldb->errorInfo();
+    if ($db->exec($sql) === false) {
+        $errors[] = $db->errorInfo();
     }
 
 
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . md5(trim($_POST['pass'])) . "')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'path', 'files')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'opath', 'cache/about')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'apath', 'cache/attach')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'spath', 'cache/screen')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jpath', 'cache/data/jar')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ipath', 'cache/data/jar_ico')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zpath', 'cache/data/zip')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zppath', 'cache/data/zip_pic')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'tpath', 'cache/data/theme')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'mp3path', 'cache/data/mp3')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpegpath', 'cache/data/ffmpeg')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'picpath', 'cache/data/pic')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'limit', '10')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'onpage', '10')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prev', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'sort', 'name')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand', '10')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'view_size', '128*128,120*160,132*176,240*320')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_desc', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib', '1024')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_str', '160')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'desc', '50')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker', '2')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker_where', 'foot')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'css', 'style')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countban', '2')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'autologin', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'timeban', '10')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', '" . $_SERVER['HTTP_HOST'] . "')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'anim_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_file_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'swf_change', '0')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'swf_file_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jar_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jar_file_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'abuse_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_notice', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_hidden', '0')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_name', '[a-zA-Z0-9_]')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_extensions', 'jpg,gif,png,3gp,mp4,flv,avi,mp3,thm,nth,zip,txt,zip')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'send_email', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_breadcrumbs', '0')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_pages', '0')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_max', '0')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_max_time', 0)");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_change_advanced', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_head', '2')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_foot', '3')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'style_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpeg_frame', '5')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpeg_frames', '25,120,250')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zag', 'Downloads')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'day_new', '2')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'new_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_captcha', '0')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_view', '3')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'top_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ext', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'delete_dir', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'delete_file', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'search_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prev_next', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'eval_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'stat_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'onpage_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'preview_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prev_size', '80*80')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'top_num', '20')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zip_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jad_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'cut_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'audio_player_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'video_player_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_time', '60')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy', '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbuy', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbuy', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'banner', '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbanner', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbanner', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_change', '1')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email', 'admin@" . $_SERVER['HTTP_HOST'] . "')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'langpack', 'russian')");
-    $mysqldb->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . md5(trim($_POST['pass'])) . "')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'path', 'files')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'opath', 'cache/about')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'apath', 'cache/attach')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'spath', 'cache/screen')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jpath', 'cache/data/jar')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ipath', 'cache/data/jar_ico')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zpath', 'cache/data/zip')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zppath', 'cache/data/zip_pic')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'tpath', 'cache/data/theme')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'mp3path', 'cache/data/mp3')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpegpath', 'cache/data/ffmpeg')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'picpath', 'cache/data/pic')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'limit', '10')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'onpage', '10')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prev', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'sort', 'name')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand', '10')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'view_size', '128*128,120*160,132*176,240*320')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_desc', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib', '1024')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_str', '160')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'desc', '50')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker', '2')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker_where', 'foot')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'css', 'style')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countban', '2')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'autologin', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'timeban', '10')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', '" . $_SERVER['HTTP_HOST'] . "')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'anim_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_file_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'swf_change', '0')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'swf_file_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jar_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jar_file_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'abuse_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_notice', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_hidden', '0')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_name', '[a-zA-Z0-9_]')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'exchanger_extensions', 'jpg,gif,png,3gp,mp4,flv,avi,mp3,thm,nth,zip,txt,zip')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'send_email', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_breadcrumbs', '0')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ignore_index_pages', '0')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_max', '0')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_max_time', 0)");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_change_advanced', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_head', '2')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'service_foot', '3')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'style_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpeg_frame', '5')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ffmpeg_frames', '25,120,250')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zag', 'Downloads')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'day_new', '2')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'new_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_captcha', '0')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'comments_view', '3')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'top_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'ext', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'delete_dir', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'delete_file', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'search_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prev_next', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'eval_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'stat_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'onpage_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'preview_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'prev_size', '80*80')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'top_num', '20')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zip_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'jad_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'cut_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'audio_player_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'video_player_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_time', '60')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy', '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbuy', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbuy', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'banner', '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbanner', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbanner', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_change', '1')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email', 'admin@" . $_SERVER['HTTP_HOST'] . "')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'langpack', 'russian')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
 
-    $mysqldb->exec("INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('', '', '')");
+    $db->exec("INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('', '', '')");
 
-    $mysqldb->exec("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '3.1')");
+    $db->exec("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '3.1')");
 
     if ($errors) {
         echo '

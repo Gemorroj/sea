@@ -40,10 +40,10 @@ if (!Config::get('comments_change')) {
     error('Not found');
 }
 
-$mysqldb = MysqlDb::getInstance();
+$db = Db_Mysql::getInstance();
 
 // Получаем инфу о новости
-$q = $mysqldb->prepare('SELECT *, ' . Language::buildNewsQuery() . ' FROM `news` WHERE `id` = ?');
+$q = $db->prepare('SELECT *, ' . Language::buildNewsQuery() . ' FROM `news` WHERE `id` = ?');
 $q->execute(array($id));
 $news = $q->fetch();
 
@@ -67,7 +67,7 @@ $template->assign('comments_module_backname', Language::get('news'));
 
 
 // всего комментариев
-$q = $mysqldb->prepare('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ?');
+$q = $db->prepare('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ?');
 $q->execute(array($id));
 $all = $q->fetchColumn();
 
@@ -77,7 +77,7 @@ $paginatorConf = Helper::getPaginatorConf($all);
 $template->assign('paginatorConf', $paginatorConf);
 
 
-$query = $mysqldb->prepare('
+$query = $db->prepare('
     SELECT *
     FROM `news_comments`
     WHERE `id_news` = ?
@@ -110,7 +110,7 @@ if ($_POST) {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $q = $mysqldb->prepare('SELECT 1 FROM `news_comments` WHERE `id_news` = ? AND `text` = ? LIMIT 1');
+    $q = $db->prepare('SELECT 1 FROM `news_comments` WHERE `id_news` = ? AND `text` = ? LIMIT 1');
     $q->execute(array($id, $_POST['msg']));
 
     if ($q->rowCount() > 0) {
@@ -120,7 +120,7 @@ if ($_POST) {
     //Если нет ошибок пишем в базу
     setcookie('sea_name', $_POST['name'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
 
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         INSERT INTO `news_comments` (
             `id_news`, `name`, `text`, `time`
         ) VALUES (

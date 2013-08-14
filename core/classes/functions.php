@@ -210,7 +210,7 @@ function addAttach($file, $id, $attachFile, $attachedArray = array())
 
         if (copy($attachFile, $to . '/' . $id . '_' . $key . '_' . $name) === true) {
             $attachedArray[$key] = $name;
-            $q = MysqlDb::getInstance()->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
+            $q = Db_Mysql::getInstance()->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
             $result = $q->execute(array(serialize($attachedArray), $id));
             if ($result === true) {
                 $message[] = 'Вложение ' . $to . '/' . $id . '_' . $key . '_' . $name . ' добавлено';
@@ -293,7 +293,7 @@ function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
 
 
         // заносим в бд
-        $q = MysqlDb::getInstance()->prepare('
+        $q = Db_Mysql::getInstance()->prepare('
             INSERT INTO `files` (
                 `dir`, `dir_count`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`
             ) VALUES (?, ? , ?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP())
@@ -327,12 +327,12 @@ function addDir($realname, $topath, $name, $rus_name, $aze_name, $tur_name)
  */
 function uploadUrls($newpath)
 {
-    $mysqldb = MysqlDb::getInstance();
+    $db = Db_Mysql::getInstance();
     $message = array();
     $error = array();
 
     ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         INSERT INTO `files` (
             `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
         ) VALUES (
@@ -394,11 +394,11 @@ function uploadUrls($newpath)
  */
 function uploadFiles($newpath)
 {
-    $mysqldb = MysqlDb::getInstance();
+    $db = Db_Mysql::getInstance();
     $message = array();
     $error = array();
 
-    $q = $mysqldb->prepare('
+    $q = $db->prepare('
         INSERT INTO `files` (
             `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`
         ) VALUES (
@@ -495,7 +495,7 @@ function _scannerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, 
     static $preparedQueryUpdate = null;
 
     if ($preparedQueryInsert === null) {
-        $preparedQueryInsert = MysqlDb::getInstance()->prepare('
+        $preparedQueryInsert = Db_Mysql::getInstance()->prepare('
             INSERT INTO `files` (
                 `dir`, `size`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `timeupload`
             ) VALUES (
@@ -504,7 +504,7 @@ function _scannerDb($path, $name, $rus_name, $aze_name, $tur_name, $dir = true, 
         ');
     }
     if ($preparedQueryUpdate === null) {
-        $preparedQueryUpdate = MysqlDb::getInstance()->prepare('
+        $preparedQueryUpdate = Db_Mysql::getInstance()->prepare('
             UPDATE `files`
             SET `name` = IF(`name` <> "", `name`, ?),
             `rus_name` = IF(`rus_name` <> "", `rus_name`, ?),
@@ -559,7 +559,7 @@ function scanner($path = '', $cont = 'folder.png')
     static $preparedQuery = null;
 
     if ($preparedQuery === null) {
-        $preparedQuery = MysqlDb::getInstance()->prepare('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = ?');
+        $preparedQuery = Db_Mysql::getInstance()->prepare('SELECT `name`, `rus_name`, `aze_name`, `tur_name` FROM `files` WHERE `path` = ?');
     }
 
 
@@ -666,13 +666,13 @@ function scanner($path = '', $cont = 'folder.png')
  */
 function scannerCount()
 {
-    $mysqldb = Mysqldb::getInstance();
+    $db = Db_Mysql::getInstance();
 
-    $q1 = $mysqldb->prepare('SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE ? AND `hidden` = "0"');
-    $q2 = $mysqldb->prepare('UPDATE `files` SET `dir_count` = ? WHERE `path` = ?');
+    $q1 = $db->prepare('SELECT COUNT(1) FROM `files` WHERE `infolder` LIKE ? AND `hidden` = "0"');
+    $q2 = $db->prepare('UPDATE `files` SET `dir_count` = ? WHERE `path` = ?');
 
-    foreach ($mysqldb->query('SELECT `path` FROM `files` WHERE `dir` = "1" GROUP BY `path`') as $dir) {
-        $q1->execute(array($mysqldb->escapeLike($dir['path']) . '%'));
+    foreach ($db->query('SELECT `path` FROM `files` WHERE `dir` = "1" GROUP BY `path`') as $dir) {
+        $q1->execute(array($db->escapeLike($dir['path']) . '%'));
         $count = $q1->fetchColumn();
 
         $q2->execute(array($count, $dir['path']));
@@ -689,7 +689,7 @@ function getAllDirs()
 {
     $dirs = array('/' => '/');
 
-    foreach (Mysqldb::getInstance()->query('SELECT SUBSTR(`path`, ' . (strlen(Config::get('path')) + 1) . ') AS `path` FROM `files` WHERE `dir` = "1"') as $item) {
+    foreach (Db_Mysql::getInstance()->query('SELECT SUBSTR(`path`, ' . (strlen(Config::get('path')) + 1) . ') AS `path` FROM `files` WHERE `dir` = "1"') as $item) {
         $dirs[$item['path']] = $item['path'];
     }
 
@@ -718,7 +718,7 @@ function dir_count($path = '', $increment = true)
         }
     }
 
-    return Mysqldb::getInstance()->prepare('
+    return Db_Mysql::getInstance()->prepare('
         UPDATE `files`
         SET `dir_count` = `dir_count` ' . ($increment ? '+' : '-') . ' 1
         WHERE `path` IN (' . rtrim(str_repeat('?,', $all), ',') . ')
@@ -1094,7 +1094,7 @@ function getVideoInfo($id, $path)
  */
 function getFileInfo ($id)
 {
-    $q = MysqlDb::getInstance()->prepare('
+    $q = Db_Mysql::getInstance()->prepare('
         SELECT *, ' . Language::buildFilesQuery() . '
         FROM `files`
         WHERE `id` = ?
@@ -1114,7 +1114,7 @@ function getFileInfo ($id)
  */
 function getNewsInfo ($id)
 {
-    $q = MysqlDb::getInstance()->prepare('
+    $q = Db_Mysql::getInstance()->prepare('
         SELECT *, ' . Language::buildNewsQuery() . '
         FROM `news`
         WHERE `id` = ?
@@ -1133,7 +1133,7 @@ function getNewsInfo ($id)
  */
 function updFileLoad ($id)
 {
-    return MysqlDb::getInstance()->prepare('
+    return Db_Mysql::getInstance()->prepare('
         UPDATE `files`
         SET `loads` = `loads` + 1,
         `timeload` = ?
