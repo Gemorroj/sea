@@ -277,7 +277,7 @@ class Image
 
             case 6:
                 // BMP
-                $old = Bmp::imagecreatefrombmp($in, CORE_DIRECTORY . '/tmp');
+                $old = Image_Bmp::imagecreatefrombmp($in, CORE_DIRECTORY . '/tmp');
                 break;
 
 
