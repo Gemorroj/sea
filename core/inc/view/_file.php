@@ -71,12 +71,12 @@ if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext ==
     }
 }
 
-if ($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg') {
-    $file['info'] = getMusicInfo($id, $file['path']);
+if (Media_Audio::isSupported($ext)) {
+    $file['info'] = Media_Audio::getInfo($id, $file['path']);
 }
 
-if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && extension_loaded('ffmpeg')) {
-    $file['info'] = getVideoInfo($id, $file['path']);
+if (Media_Video::isSupported($ext)) {
+    $file['info'] = Media_Video::getInfo($id, $file['path']);
 
     if (Config::get('screen_file_change')) {
         $frame = isset($_GET['frame']) ? abs($_GET['frame']) : Config::get('ffmpeg_frame');
@@ -88,9 +88,7 @@ if (($ext == '3gp' || $ext == 'avi' || $ext == 'mp4' || $ext == 'flv') && extens
     }
 }
 
-if ($ext == 'thm' || $ext == 'nth' || $ext == 'utz' || $ext == 'sdt' || $ext == 'scs' || $ext == 'apk') {
-    $file['info'] = array('author' => '', 'version' => '', 'models' => '');
-
+if (Media_Theme::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
         if (file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif')) {
             $file['screen_file'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.gif';
@@ -101,9 +99,7 @@ if ($ext == 'thm' || $ext == 'nth' || $ext == 'utz' || $ext == 'sdt' || $ext == 
         }
     }
 
-    if ($ext == 'thm') {
-        $file['info'] = getThmInfo($id, $file['path']);
-    }
+    $file['info'] = Media_Theme::getInfo($id, $file['path']);
 }
 
 if (Config::get('swf_file_change') && $ext == 'swf') {

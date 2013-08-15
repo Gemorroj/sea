@@ -9,8 +9,8 @@
 
 
 {block javascripts}
-    {assign var="audio_player" value=($setup.audio_player_change && ($file.ext == 'mp3' || $file.ext == 'ogg' || $file.ext == 'aac'))}
-    {assign var="video_player" value=($setup.video_player_change && ($file.ext == 'flv' || $file.ext == 'mp4' || $file.ext == 'webm'))}
+    {assign var="audio_player" value=($setup.audio_player_change && Media_Audio::isPlayerSupported($file.ext))}
+    {assign var="video_player" value=($setup.video_player_change && Media_Video::isPlayerSupported($file.ext))}
 
     {if $audio_player}
         <script type="text/javascript" src="{$smarty.const.DIRECTORY}style/jwplayer/jwplayer.js"></script>

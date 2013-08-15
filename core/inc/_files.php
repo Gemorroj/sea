@@ -47,9 +47,7 @@ foreach ($query as $v) {
                     $v['pre'] = DIRECTORY . 'im/' . $v['id'];
                 }
             } else {
-                if (Config::get('screen_change') && ($ext == 'avi' || $ext == '3gp' || $ext == 'mp4' || $ext == 'flv')
-                    && extension_loaded('ffmpeg')
-                ) {
+                if (Config::get('screen_change') && Media_Video::isSupported($ext)) {
                     if (file_exists(
                         Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.gif'
                     )
@@ -62,9 +60,7 @@ foreach ($query as $v) {
                     }
                 } else {
                     if (Config::get('screen_change')
-                        && ($ext == 'thm' || $ext == 'nth' || $ext == 'utz' || $ext == 'sdt' || $ext == 'scs'
-                            || $ext == 'apk')
-                    ) {
+                        && (Media_Theme::isSupported($ext))) {
                         if (file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif')) {
                             $v['pre'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.gif';
                         } else {

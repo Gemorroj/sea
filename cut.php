@@ -48,7 +48,7 @@ $v = getFileInfo($id);
 if (!is_file($v['path'])) {
     Http_Response::getInstance()->renderError('File not found');
 }
-$v['info'] = getMusicInfo($id, $v['path']);
+$v['info'] = Media_Audio::getInfo($id, $v['path']);
 $cut = array();
 
 $seo['title'] = Language::get('splitting') . ' - ' . $v['name'];

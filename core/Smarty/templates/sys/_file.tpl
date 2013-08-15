@@ -41,7 +41,7 @@
     {/if}
 
 
-    {if ($file.ext == 'mp3' || $file.ext == 'wav' || $file.ext == 'ogg' || $file.ext == 'aac')}
+    {if Media_Audio::isSupported($file.ext)}
         <strong>{$language.info}:</strong><br/>
         {$language.channels}: {$file.info.channels}<br/>
         {$language.framerate}: {$file.info.sampleRate} Hz<br/>
@@ -72,7 +72,7 @@
     {/if}
 
 
-    {if (($file.ext == '3gp' || $file.ext == 'avi' || $file.ext == 'mp4' || $file.ext == 'flv' || $file.ext == 'webm') && extension_loaded('ffmpeg'))}
+    {if Media_Video::isSupported($file.ext)}
         {if $setup.screen_file_change}
             {foreach ','|explode:$setup.ffmpeg_frames as $i => $frame}
                 <a href="{$smarty.const.DIRECTORY}view/{$id}?frame={$frame}">[{$i + 1}]</a>{if !$frame@last}, {/if}
@@ -87,7 +87,7 @@
     {/if}
 
 
-    {if ($file.ext == 'thm' || $file.ext == 'nth' || $file.ext == 'utz' || $file.ext == 'sdt' || $file.ext == 'scs' || $file.ext == 'apk')}
+    {if Media_Theme::isSupported($file.ext)}
         {if $file.info.author}
             {$language.author}: {$file.info.author}<br/>
         {/if}

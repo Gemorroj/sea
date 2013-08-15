@@ -681,7 +681,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/id3_file.tpl');
 
         $file = getFileInfo($id);
-        $idv2 = getMusicInfo($id, $file['path']);
+        $idv2 = Media_Audio::getInfo($id, $file['path']);
 
         $id3 = new MP3_Id();
         $id3->read($file['path']);
