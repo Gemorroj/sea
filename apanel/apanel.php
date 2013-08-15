@@ -317,7 +317,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             chmod($f_chmod . '/', 0777);
         }
 
-        scannerCount();
+        $scanner = new Scanner();
+        $scanner->scanCount();
 
         $template->assign('message', 'Каталог удален');
         break;
@@ -664,8 +665,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         ini_set('memory_limit', '256M');
 
 
-        $data = scanner($scan);
-        scannerCount();
+        $scanner = new Scanner();
+        $data = $scanner->scan($scan);
+        $scanner->scanCount();
 
         if ($data['errors']) {
             $template->assign('error', implode("\n", $data['errors']));
