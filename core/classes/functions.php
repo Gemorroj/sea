@@ -442,52 +442,6 @@ function dir_count($path = '', $increment = true)
 
 
 /**
- * Иконки из JAR файлов
- */
-function jar_ico($jar, $f)
-{
-    $icon = array();
-    $archive = new PclZip($jar);
-
-    $list = $archive->extract(PCLZIP_OPT_BY_NAME, 'META-INF/MANIFEST.MF', PCLZIP_OPT_EXTRACT_AS_STRING);
-
-
-    if (@$list[0]['content']) {
-        if (!$icon) {
-            preg_match('/MIDlet\-Icon:[\s*](.*)/iux', $list[0]['content'], $arr);
-
-            if (@$arr[1]) {
-                foreach (explode(',', $arr[1]) as $v) {
-                    $v = trim(trim($v), '/');
-                    if (strtolower(pathinfo($v, PATHINFO_EXTENSION)) === 'png') {
-                        $icon = $archive->extract(PCLZIP_OPT_BY_NAME, $v, PCLZIP_OPT_EXTRACT_AS_STRING);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!$icon) {
-            preg_match('/MIDlet\-1:[\s*](.*)/iux', $list[0]['content'], $arr);
-
-            if (@$arr[1]) {
-                foreach (explode(',', $arr[1]) as $v) {
-                    $v = trim(trim($v), '/');
-                    if (strtolower(pathinfo($v, PATHINFO_EXTENSION)) === 'png') {
-                        $icon = $archive->extract(PCLZIP_OPT_BY_NAME, $v, PCLZIP_OPT_EXTRACT_AS_STRING);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-
-    return (@$icon[0]['content'] && file_put_contents($f, $icon[0]['content']));
-}
-
-
-/**
  * Данные файла из БД
  *
  * @param int $id

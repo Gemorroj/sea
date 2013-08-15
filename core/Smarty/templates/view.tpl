@@ -120,7 +120,7 @@
 
 
         <strong><a href="{$smarty.const.DIRECTORY}load/{$id}">{$language.download} [{$file.ext|upper}]</a></strong><br/>
-        {if ($setup.jad_change && $file.ext == 'jar')}
+        {if ($setup.jad_change && Media_Jar::isSupported($file.ext))}
             <strong><a href="{$smarty.const.DIRECTORY}jad/{$id}">{$language.download} [JAD]</a></strong><br/>
         {/if}
 

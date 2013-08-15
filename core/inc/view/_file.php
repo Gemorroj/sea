@@ -106,10 +106,10 @@ if (Config::get('swf_file_change') && $ext == 'swf') {
     $file['flash_file'] = DIRECTORY . $file['path'];
 }
 
-if (Config::get('jar_file_change') && $ext == 'jar') {
+if (Config::get('jar_file_change') && Media_Jar::isSupported($ext)) {
     if (file_exists(Config::get('ipath') . '/' . $prev_pic . '.png')) {
         $file['screen_file'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
-    } elseif (jar_ico($file['path'], Config::get('ipath') . '/' . $prev_pic . '.png')) {
-        $file['screen_file'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
+    } else {
+        $file['screen_file'] = DIRECTORY . 'jar/' . $id;
     }
 }

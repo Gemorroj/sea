@@ -38,7 +38,7 @@ foreach ($query as $v) {
 
         //Предпросмотр
         if ($prev) {
-            if (Config::get('screen_change') && (Media_Image::isSupported($ext))) {
+            if (Config::get('screen_change') && Media_Image::isSupported($ext)) {
                 if (file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
                     $v['pre'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
                 } else {
@@ -46,10 +46,7 @@ foreach ($query as $v) {
                 }
             } else {
                 if (Config::get('screen_change') && Media_Video::isSupported($ext)) {
-                    if (file_exists(
-                        Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.gif'
-                    )
-                    ) {
+                    if (file_exists(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.gif')) {
                         $v['pre']
                             = DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame')
                             . '.gif';
@@ -57,8 +54,7 @@ foreach ($query as $v) {
                         $v['pre'] = DIRECTORY . 'ffmpeg/' . $v['id'];
                     }
                 } else {
-                    if (Config::get('screen_change')
-                        && (Media_Theme::isSupported($ext))) {
+                    if (Config::get('screen_change') && Media_Theme::isSupported($ext)) {
                         if (file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif')) {
                             $v['pre'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.gif';
                         } else {
@@ -71,13 +67,11 @@ foreach ($query as $v) {
                             }
                         }
                     } else {
-                        if (Config::get('jar_change') && $ext == 'jar') {
+                        if (Config::get('jar_change') && Media_Jar::isSupported($ext)) {
                             if (file_exists(Config::get('ipath') . '/' . $prev_pic . '.png')) {
                                 $v['pre'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
                             } else {
-                                if (jar_ico($v['v'], Config::get('ipath') . '/' . $prev_pic . '.png')) {
-                                    $v['pre'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
-                                }
+                                $v['pre'] = DIRECTORY . 'jar/' . $v['id'];
                             }
                         } else {
                             if (Config::get('swf_change') && $ext == 'swf') {
