@@ -51,8 +51,7 @@ class Media_Theme
             return $name . '.swf';
         }
 
-        $filename = pathinfo($path);
-        $ext = strtolower($filename['extension']);
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
         switch ($ext) {
             case 'thm':

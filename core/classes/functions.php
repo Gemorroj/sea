@@ -50,28 +50,18 @@ function addScreen($file, $screen)
 
     $ext = strtolower(pathinfo($screen, PATHINFO_EXTENSION));
 
-    if ($ext !== 'gif' && $ext !== 'jpg' && $ext !== 'jpe' && $ext !== 'jpeg' && $ext !== 'png') {
-        $error[] = 'Поддерживаются скриншоты только gif, jpeg и png форматов';
-    }
-
-    Helper::touch($to);
-
-    if (copy($screen, $to) === true) {
-        if ($ext === 'jpg' || $ext === 'jpe' || $ext === 'jpeg') {
-            $im = imagecreatefromjpeg($to);
-            imagegif($im, $to);
-            imagedestroy($im);
-        } elseif ($ext === 'png') {
-            $im = imagecreatefrompng($to);
-            imagegif($im, $to);
-            imagedestroy($im);
-        }
-        Image::resize($to, $thumb, 0, 0, Config::get('marker'));
-
-        $message[] = 'Скриншот ' . $to . ' добавлен';
+    if (!Media_Image::isSupported($ext)) {
+        $error[] = 'Поддерживаются скриншоты только gif, jpeg, png и bmp форматов';
     } else {
-        $err = error_get_last();
-        $error[] = $err['message'];
+        Helper::touch($to);
+
+        if (copy($screen, $to) === true) {
+            Image::resize($to, $thumb, 0, 0, Config::get('marker'));
+            $message[] = 'Скриншот ' . $to . ' добавлен';
+        } else {
+            $err = error_get_last();
+            $error[] = $err['message'];
+        }
     }
 
     return array('message' => $message, 'error' => $error);

@@ -508,16 +508,26 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
 
             $to = $file['path'] . 'folder.png';
-
-            if (strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION)) != 'png') {
-                $template->assign('error', 'Поддерживаются иконки только png формата');
-                Http_Response::getInstance()->render();
-            }
             if (file_exists($to)) {
                 $template->assign('error', 'Иконка уже существует');
                 Http_Response::getInstance()->render();
             }
-            if (move_uploaded_file($_FILES['ico']['tmp_name'], $to)) {
+
+            $ext = strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION));
+            if (!Media_Image::isSupported($ext)) {
+                $template->assign('error', 'Поддерживаются иконки jpeg, gif, png и bmp формата');
+                Http_Response::getInstance()->render();
+            }
+
+            $tmp_file = CORE_DIRECTORY . '/tmp/' . uniqid('addico_') . '.png';
+            if (!move_uploaded_file($_FILES['ico']['tmp_name'], $tmp_file)) {
+                $template->assign('error', 'Не удалось переместить иконку');
+                Http_Response::getInstance()->render();
+            }
+
+            Media_Image::toPng($tmp_file);
+
+            if (rename($tmp_file, $to)) {
                 chmod($to, 0644);
                 $template->assign('message', 'Загрузка иконки прошла успешно');
             } else {
@@ -874,20 +884,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
                     switch ($type) {
-                        case 1:
+                        case IMAGETYPE_GIF:
                             $pic = imagecreatefromgif($arr['path']);
                             break;
 
 
-                        case 2:
+                        case IMAGETYPE_JPEG:
                             $pic = imagecreatefromjpeg($arr['path']);
                             break;
 
 
-                        case 3:
+                        case IMAGETYPE_PNG:
                             $pic = imagecreatefrompng($arr['path']);
                             break;
-
 
                         default:
                             $pic = false;
@@ -921,17 +930,17 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                         );
 
                         switch ($type) {
-                            case 1:
+                            case IMAGETYPE_GIF:
                                 $f = imagegif($pic, $arr[0]);
                                 break;
 
 
-                            case 2:
+                            case IMAGETYPE_JPEG:
                                 $f = imagejpeg($pic, $arr[0], 100);
                                 break;
 
 
-                            case 3:
+                            case IMAGETYPE_PNG:
                                 $f = imagepng($pic, $arr[0], 100);
                                 break;
                         }

@@ -24,7 +24,7 @@
     {/if}
 
 
-    {if ($file.ext == 'gif' || $file.ext == 'jpg' || $file.ext == 'jpeg' || $file.ext == 'jpe' || $file.ext == 'png' || $file.ext == 'bmp')}
+    {if Media_Image::isSupported($file.ext)}
         {$file.imagesize.w}x{$file.imagesize.h}<br/>
         <strong>{$language.custom_size}:</strong>
 

@@ -49,7 +49,7 @@ if ($file['attach']) {
 
 
 
-if ($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'jpe' || $ext == 'png' || $ext == 'bmp') {
+if (Media_Image::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
         if (file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
             $file['screen_file'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';

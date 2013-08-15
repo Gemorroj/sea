@@ -125,28 +125,12 @@ if ($_POST) {
 
     if (!$_FILES['screen']['error']) {
         $screen = Config::get('spath') . substr($pathname, strlen(Config::get('path'))) . '.gif';
-        $image = getimagesize($_FILES['screen']['tmp_name']);
-        switch ($image[2]) {
-            case 1: // GIF
-                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, Config::get('marker'));
-                break;
 
-
-            case 2: // JPEG
-                $im = imagecreatefromjpeg($_FILES['screen']['tmp_name']);
-                imagegif($im, $screen);
-                imagedestroy($im);
-                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, Config::get('marker'));
-                break;
-
-
-            case 3: //PNG
-                $im = imagecreatefrompng($_FILES['screen']['tmp_name']);
-                imagegif($im, $screen);
-                imagedestroy($im);
-                Image::resize($_FILES['screen']['tmp_name'], $screen, 0, 0, Config::get('marker'));
-                break;
+        if (!move_uploaded_file($_FILES['screen']['tmp_name'], $screen)) {
+            Http_Response::getInstance()->renderError('Error');
         }
+
+        Image::resize($screen, $screen, 0, 0, Config::get('marker'));
     }
 
     if ($_POST['about']) {

@@ -52,8 +52,7 @@ class Media_Audio
         $path = CORE_DIRECTORY . '/../' . $path;
 
         $tmpa = array();
-        $filename = pathinfo($path);
-        $ext = strtolower($filename['extension']);
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
         if ($ext === 'mp3' || $ext === 'wav') {
             $audio = new AudioFile;

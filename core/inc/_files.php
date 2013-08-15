@@ -38,9 +38,7 @@ foreach ($query as $v) {
 
         //Предпросмотр
         if ($prev) {
-            if (Config::get('screen_change')
-                && ($ext == 'gif' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'bmp')
-            ) {
+            if (Config::get('screen_change') && (Media_Image::isSupported($ext))) {
                 if (file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
                     $v['pre'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
                 } else {

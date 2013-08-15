@@ -194,7 +194,7 @@ class Image
         }
 
         switch ($type) {
-            case 1:
+            case IMAGETYPE_GIF:
                 if (Config::get('anim_change')) {
                     ini_set('memory_limit', '256M');
 
@@ -248,34 +248,30 @@ class Image
                     return file_put_contents($out, $gif->GetAnimation());
                     break;
                 } else {
-                    // GIF
                     $old = imagecreatefromgif($in);
                 }
                 break;
 
 
-            case 2:
-                // JPEG
+            case IMAGETYPE_JPEG:
                 $old = imagecreatefromjpeg($in);
                 break;
 
 
-            case 3:
-                // PNG
+            case IMAGETYPE_PNG:
                 $old = imagecreatefrompng($in);
                 break;
 
 
-            case 4:
-            case 13:
-                // SWF
+            case IMAGETYPE_SWF:
+            case IMAGETYPE_SWC:
                 rename($in, $out);
 
                 return true;
                 break;
 
 
-            case 6:
+            case IMAGETYPE_BMP:
                 // BMP
                 $old = Image_Bmp::imagecreatefrombmp($in, CORE_DIRECTORY . '/tmp');
                 break;
