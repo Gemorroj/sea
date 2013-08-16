@@ -56,9 +56,8 @@ Seo::addTitle($v['name']);
 $template->setTemplate('email.tpl');
 $template->assign('file', $v);
 
-$breadcrumbs = Helper::getBreadcrumbs($v, false);
-$breadcrumbs['email/' . $id] = Language::get('send_a_link_to_email');
-$template->assign('breadcrumbs', $breadcrumbs);
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('email/' . $id, Language::get('send_a_link_to_email'));
 
 
 if (isset($_POST['email'])) {

@@ -65,6 +65,8 @@ $basename = $filename['basename'];
 Seo::unserialize($file['seo']);
 Seo::addTitle($file['name']);
 
+Breadcrumbs::init($file['path']);
+
 // данные по файлам
 require 'core/inc/view/_file.php';
 
@@ -97,7 +99,5 @@ $template->assign('vote', $vote);
 $template->assign('rate', $rate);
 $template->assign('commentsCount', $commentsCount);
 $template->assign('comments', $comments);
-
-$template->assign('breadcrumbs', Helper::getBreadcrumbs($file, false));
 
 Http_Response::getInstance()->render();

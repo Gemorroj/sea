@@ -40,7 +40,7 @@ define('IS_INDEX', !$id);
 $db = Db_Mysql::getInstance();
 
 
-###############Получаем текущий каталог#############
+// текущий каталог
 if ($id) {
     $d = $db->query('
         SELECT `t1`.`path`,
@@ -75,11 +75,11 @@ if (!is_dir($d['path'])) {
 $paginatorConf = Helper::getPaginatorConf($d['all']);
 $template = Http_Response::getInstance()->getTemplate();
 
-###############Постраничная навигация###############
+// Постраничная навигация
 $template->assign('paginatorConf', $paginatorConf);
 
-###############Готовим заголовок###################
-$template->assign('breadcrumbs', Helper::getBreadcrumbs($d, true));
+// бредкрамбсы
+Breadcrumbs::init($d['path'], true);
 
 
 /// новости

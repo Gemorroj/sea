@@ -117,57 +117,6 @@ class Helper
 
 
     /**
-     * Бредкрамбсы для директорий или файлов
-     *
-     * @param array $info
-     * @param bool $isDir
-     *
-     * @return array
-     */
-    public static function getBreadcrumbs($info, $isDir = false)
-    {
-        $ex = explode('/', rtrim($info['path'], '/'));
-        $all = sizeof($ex);
-
-        $breadcrumbs = array();
-        if ($all > 1) {
-            $path = array();
-            $prefix = '';
-
-            for ($i = 0; $i < $all; ++$i) {
-                if (!$isDir && ($i + 1) === $all) {
-                    $path[] = $prefix . $ex[$i];
-                } else {
-                    $path[] = $prefix . $ex[$i] . '/';
-                    $prefix .= $ex[$i] . '/';
-                }
-            }
-
-            $q = Db_Mysql::getInstance()->prepare('
-                SELECT `id`, ' . Language::buildFilesQuery() . '
-                FROM `files`
-                WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')
-            ');
-            $q->execute($path);
-
-            foreach ($q as $s) {
-                $breadcrumbs[$s['id']] = $s['name'];
-            }
-            if (!$isDir) {
-                end($breadcrumbs);
-                $key = key($breadcrumbs);
-                $val = array_pop($breadcrumbs);
-                $breadcrumbs['view/' . $key] = $val;
-            }
-        }
-
-        //Seo::setTitle(implode(' / ', $breadcrumbs));
-
-        return $breadcrumbs;
-    }
-
-
-    /**
      * Создает файл
      * Последний элемент в path считается файлом. Директория согласно функции pathinfo
      *

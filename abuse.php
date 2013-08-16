@@ -51,10 +51,8 @@ if (!is_file($v['path'])) {
 Seo::addTitle(Language::get('complain_about_a_file'));
 Seo::addTitle($v['name']);
 
-$breadcrumbs = Helper::getBreadcrumbs($v, false);
-$breadcrumbs['abuse/' . $id] = Language::get('complain_about_a_file');
-Http_Response::getInstance()->getTemplate()->assign('breadcrumbs', $breadcrumbs);
-
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('abuse/' . $id, Language::get('complain_about_a_file'));
 
 if (mail(
     Config::get('zakaz_email'),

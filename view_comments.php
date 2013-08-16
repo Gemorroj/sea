@@ -61,9 +61,9 @@ Seo::addTitle(Language::get('comments'));
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
 
-$breadcrumbs = Helper::getBreadcrumbs($v, false);
-$breadcrumbs['view_comments/' . $id] = Language::get('comments');
-$template->assign('breadcrumbs', $breadcrumbs);
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('view_comments/' . $id, Language::get('comments'));
+
 
 $template->assign('comments_module', 'view_comments');
 $template->assign('comments_module_backlink', DIRECTORY . 'view/' . $id);

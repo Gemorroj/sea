@@ -59,9 +59,8 @@ $template->setTemplate('cut.tpl');
 $template->assign('file', $v);
 $template->assignByRef('cut', $cut);
 
-$breadcrumbs = Helper::getBreadcrumbs($v, false);
-$breadcrumbs['cut/' . $id] = Language::get('splitting');
-$template->assign('breadcrumbs', $breadcrumbs);
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('cut/' . $id, Language::get('splitting'));
 
 
 if ($_POST) {

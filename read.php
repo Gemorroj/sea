@@ -61,9 +61,8 @@ $directory = $q->fetch();
 
 $template->assign('directory', $directory);
 
-$breadcrumbs = Helper::getBreadcrumbs($v, false);
-$breadcrumbs['read/' . $id] = Language::get('read');
-$template->assign('breadcrumbs', $breadcrumbs);
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('read/' . $id, Language::get('read'));
 
 Seo::unserialize($v['seo']);
 Seo::addTitle($v['name']);

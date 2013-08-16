@@ -60,9 +60,9 @@ $directory = $q->fetch();
 
 $template->assign('directory', $directory);
 
-$breadcrumbs = Helper::getBreadcrumbs($v, false);
-$breadcrumbs['zip/' . $id] = Language::get('view_archive');
-$template->assign('breadcrumbs', $breadcrumbs);
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('zip/' . $id, Language::get('view_archive'));
+
 
 Seo::unserialize($v['seo']);
 Seo::addTitle($v['name']);

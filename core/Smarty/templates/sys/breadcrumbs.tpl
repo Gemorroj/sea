@@ -5,7 +5,7 @@
 {else}
     <div class="iblock">
         <img src="{$smarty.const.DIRECTORY}style/img/load.png" alt=""/><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a> &#187;
-        {foreach $breadcrumbs as $k => $v}
+        {foreach Breadcrumbs::getBreadcrumbs() as $k => $v}
             {if $v@last}
                 {$v}
             {else}
