@@ -56,14 +56,14 @@ $rate = $file['yes'] + $file['no'];
 $rate = $rate ? round($file['yes'] / $rate * 100, 0) : 50;
 
 
-#######Получаем имя файла и обратный каталог#####
+// Получаем имя файла и обратный каталог
 $filename = pathinfo($file['path']);
 $ext = strtolower($filename['extension']);
 $file['ext'] = $ext;
 $dir = $filename['dirname'] . '/';
 $basename = $filename['basename'];
 Seo::unserialize($file['seo']);
-Seo::addTitle($file['name']);
+//Seo::addTitle($file['name']);
 
 Breadcrumbs::init($file['path']);
 

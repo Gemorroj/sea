@@ -35,7 +35,7 @@
 
 
 require 'core/header.php';
-###############Если статистика выключена###############
+// Если статистика выключена
 if (!Config::get('stat_change')) {
     Http_Response::getInstance()->renderError('Not found');
 }
@@ -43,8 +43,8 @@ if (!Config::get('stat_change')) {
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('stat.tpl');
 
-Seo::addTitle(Language::get('statistics'));
-
+//Seo::addTitle(Language::get('statistics'));
+Breadcrumbs::add('stat', Language::get('statistics'));
 
 $db = Db_Mysql::getInstance();
 
@@ -65,5 +65,5 @@ $stat['total_new_files'] = $db->query('
 
 
 $template->assign('stat', $stat);
-$template->assign('breadcrumbs', array('stat' => Language::get('statistics')));
+
 Http_Response::getInstance()->render();

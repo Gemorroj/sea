@@ -55,8 +55,8 @@ $q->execute(array($v['infolder']));
 $directory = $q->fetch();
 
 Seo::unserialize($v['seo']);
-Seo::addTitle($v['name']);
-Seo::addTitle(Language::get('comments'));
+//Seo::addTitle($v['name']);
+//Seo::addTitle(Language::get('comments'));
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
@@ -77,7 +77,7 @@ $all = $q->fetchColumn();
 
 $paginatorConf = Helper::getPaginatorConf($all);
 
-###############Постраничная навигация###############
+// Постраничная навигация
 $template->assign('paginatorConf', $paginatorConf);
 
 
@@ -96,7 +96,7 @@ $query->execute();
 $comments = $query->fetchAll();
 
 
-###############Запись###########################
+// Запись
 if ($_POST) {
     //Проверка на ошибки
     if (!$_POST['msg'] || !$_POST['name']) {

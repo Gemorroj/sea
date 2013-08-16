@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width"/>
         <link rel="alternate" type="application/rss+xml" href="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}rss.php"/>
         <link rel="stylesheet" type="text/css" href="http://{$style}"/>
-        <title>{$setup.zag} - {Seo::getTitle()|default:'/'}</title>
+        <title>{$setup.zag} - {if Breadcrumbs::getBreadcrumbs()}{' / '|implode:Breadcrumbs::getBreadcrumbs()} - {/if}{Seo::getTitle()|default:'sea downloads'}</title>
         <meta name="keywords" content="{Seo::getKeywords()|default:'sea downloads'}"/>
         <meta name="description" content="{Seo::getDescription()|default:'sea downloads'}"/>
         {block javascripts}{/block}

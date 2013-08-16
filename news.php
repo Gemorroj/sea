@@ -40,8 +40,8 @@ $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('news.tpl');
 
 $title = Language::get('news');
-Seo::addTitle($title);
-$template->assign('breadcrumbs', array('news' => $title));
+//Seo::addTitle($title);
+Breadcrumbs::add('news', $title);
 
 $db = Db_Mysql::getInstance();
 
@@ -50,7 +50,7 @@ $all = $db->query('SELECT COUNT(1) FROM `news`')->fetchColumn();
 
 $paginatorConf = Helper::getPaginatorConf($all);
 
-###############Постраничная навигация###############
+// Постраничная навигация
 $template->assign('paginatorConf', $paginatorConf);
 
 

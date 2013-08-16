@@ -1,6 +1,6 @@
 {* бредкрамбсы *}
 
-{if $setup.ignore_index_breadcrumbs && $smarty.const.IS_INDEX === true && !$id}
+{if $setup.ignore_index_breadcrumbs && $smarty.const.IS_INDEX === true}
     {* игнорируем бредкрамбсы на главной *}
 {else}
     <div class="iblock">

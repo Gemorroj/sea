@@ -44,8 +44,8 @@ if (!Config::get('service_change_advanced')) {
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('service.tpl');
 
-Seo::addTitle(Language::get('advanced_service'));
-
+//Seo::addTitle(Language::get('advanced_service'));
+Breadcrumbs::add('service', Language::get('advanced_service'));
 
 $db = Db_Mysql::getInstance();
 
@@ -293,6 +293,4 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
     }
 }
 
-
-$template->assign('breadcrumbs', array('service' => Language::get('advanced_service')));
 Http_Response::getInstance()->render();

@@ -100,6 +100,4 @@ class Breadcrumbs
     {
         return self::$_breadcrumbs;
     }
-
-    //Seo::setTitle(implode(' / ', $breadcrumbs));
 }

@@ -65,8 +65,8 @@ Breadcrumbs::add('zip/' . $id, Language::get('view_archive'));
 
 
 Seo::unserialize($v['seo']);
-Seo::addTitle($v['name']);
-Seo::addTitle(Language::get('view_archive'));
+//Seo::addTitle($v['name']);
+//Seo::addTitle(Language::get('view_archive'));
 
 
 $paginatorConf = array();

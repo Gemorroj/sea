@@ -65,9 +65,9 @@ Breadcrumbs::init($v['path']);
 Breadcrumbs::add('read/' . $id, Language::get('read'));
 
 Seo::unserialize($v['seo']);
-Seo::addTitle($v['name']);
-Seo::addTitle(Language::get('read') . ' / ' . $paginatorConf['page']);
-
+//Seo::addTitle($v['name']);
+//Seo::addTitle(Language::get('read'));
+Seo::addTitle($paginatorConf['page']);
 
 $lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');
 

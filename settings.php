@@ -43,8 +43,8 @@ if (isset($_POST['lib'])) {
     $_SESSION['lib'] = intval($_POST['lib']);
 }
 
-Seo::addTitle(Language::get('settings'));
-
+//Seo::addTitle(Language::get('settings'));
+Breadcrumbs::add('settings', Language::get('settings'));
 
 $sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
 $onpage = isset($_SESSION['onpage']) ? $_SESSION['onpage'] : '';
@@ -59,5 +59,4 @@ $template->assign('langpack', Language::getLangpack());
 $template->assign('langpacks', Language::getLangpacks());
 $template->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
 
-$template->assign('breadcrumbs', array('settings' => Language::get('settings')));
 Http_Response::getInstance()->render();

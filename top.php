@@ -37,7 +37,7 @@
 define('IS_P_NAME', true);
 
 require 'core/header.php';
-###############Если топ выключен###############
+// Если топ выключен
 if (!Config::get('top_change')) {
     Http_Response::getInstance()->renderError('Not found');
 }
@@ -47,8 +47,8 @@ $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('top.tpl');
 
 $title = str_replace('%files%', Config::get('top_num'), Language::get('top20'));
-Seo::addTitle($title);
-$template->assign('breadcrumbs', array('top' => $title));
+//Seo::addTitle($title);
+Breadcrumbs::add('top', $title);
 
 
 $all = $db->query('
@@ -61,7 +61,7 @@ $all = $all > Config::get('top_num') ? Config::get('top_num') : $all;
 
 $paginatorConf = Helper::getPaginatorConf($all);
 
-###############Постраничная навигация###############
+// Постраничная навигация
 $template->assign('paginatorConf', $paginatorConf);
 
 $query = $db->prepare('

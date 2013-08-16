@@ -37,7 +37,7 @@
 define('IS_P_NAME', true);
 
 require 'core/header.php';
-###############Если топ выключен###############
+// Если топ выключен
 if (!Config::get('new_change') || !Config::get('day_new')) {
     Http_Response::getInstance()->renderError('Not found');
 }
@@ -46,8 +46,8 @@ $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('new.tpl');
 
 $title = Language::get('new_files');
-Seo::addTitle($title);
-$template->assign('breadcrumbs', array('new' => $title));
+//Seo::addTitle($title);
+Breadcrumbs::add('new', $title);
 
 
 // новизна файла
@@ -69,7 +69,7 @@ $all = $q->fetchColumn();
 
 $paginatorConf = Helper::getPaginatorConf($all);
 
-###############Постраничная навигация###############
+// Постраничная навигация
 $template->assign('paginatorConf', $paginatorConf);
 
 

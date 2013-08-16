@@ -56,14 +56,12 @@ $desc = mb_substr($news['news'], 0, Config::get('desc'));
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
 
-Seo::addTitle(Language::get('news'));
-Seo::addTitle($desc);
-Seo::addTitle(Language::get('comments'));
+//Seo::addTitle(Language::get('news'));
+//Seo::addTitle($desc);
+//Seo::addTitle(Language::get('comments'));
 
-$template->assign('breadcrumbs', array(
-    'news' => Language::get('news') . ' - ' . $desc,
-    'news_comments/' . $id => Language::get('comments')
-));
+Breadcrumbs::add('news', Language::get('news') . ' - ' . $desc);
+Breadcrumbs::add('news_comments/' . $id, Language::get('comments'));
 
 $template->assign('comments_module', 'news_comments');
 $template->assign('comments_module_backlink', DIRECTORY . 'news');
@@ -77,7 +75,7 @@ $all = $q->fetchColumn();
 
 $paginatorConf = Helper::getPaginatorConf($all);
 
-###############Постраничная навигация###############
+// Постраничная навигация
 $template->assign('paginatorConf', $paginatorConf);
 
 
@@ -96,7 +94,7 @@ $query->execute();
 $comments = $query->fetchAll();
 
 
-###############Запись###########################
+// Запись
 if ($_POST) {
     //Проверка на ошибки
     if (!$_POST['msg'] || !$_POST['name']) {

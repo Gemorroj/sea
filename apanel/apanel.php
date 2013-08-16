@@ -48,7 +48,6 @@ $db = Db_Mysql::getInstance();
 
 
 $db->exec('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1');
-###################################################
 if (!$_SESSION) {
     exit('Не запущена сессия');
 }

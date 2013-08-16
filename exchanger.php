@@ -45,7 +45,8 @@ $template = Http_Response::getInstance()->getTemplate();
 
 $template->setTemplate('exchanger.tpl');
 
-Seo::addTitle(Language::get('upload_file'));
+//Seo::addTitle(Language::get('upload_file'));
+Breadcrumbs::add('exchanger', Language::get('upload_file'));
 
 $dirs = array();
 $insertId = null;
@@ -156,5 +157,5 @@ if ($_POST) {
 $template->assign('insertId', $insertId);
 $template->assign('upload_max_filesize', ini_get('upload_max_filesize'));
 $template->assign('dirs', $dirs);
-$template->assign('breadcrumbs', array('exchanger' => Language::get('upload_file')));
+
 Http_Response::getInstance()->render();

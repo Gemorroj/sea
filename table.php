@@ -35,7 +35,7 @@
 
 
 require 'core/header.php';
-###############Если стол выключен###############
+// Если стол выключен
 if (!Config::get('zakaz_change')) {
     Http_Response::getInstance()->renderError('Not found');
 }
@@ -43,8 +43,8 @@ if (!Config::get('zakaz_change')) {
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('table.tpl');
 
-Seo::addTitle(Language::get('orders'));
-
+//Seo::addTitle(Language::get('orders'));
+Breadcrumbs::add('table', Language::get('orders'));
 
 $sended = false;
 if ($_POST) {
@@ -68,5 +68,5 @@ if ($_POST) {
 }
 
 $template->assign('sended', $sended);
-$template->assign('breadcrumbs', array('table' => Language::get('orders')));
+
 Http_Response::getInstance()->render();

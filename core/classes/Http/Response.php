@@ -158,10 +158,6 @@ class Http_Response
             ->setTemplate('message.tpl')
             ->assign('message', is_array($str) ? $str : array($str));
 
-        if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
-            $template->assign('breadcrumbs', array());
-        }
-
         $this->render();
         exit;
     }
@@ -176,10 +172,6 @@ class Http_Response
         $template
             ->setTemplate('error.tpl')
             ->assign('message', is_array($str) ? $str : array($str));
-
-        if ($template->getVariable('breadcrumbs') instanceof Undefined_Smarty_Variable) {
-            $template->assign('breadcrumbs', array());
-        }
 
         $this->render();
         exit;

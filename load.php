@@ -39,9 +39,9 @@ header('Cache-Control: public, max-age=8640000');
 header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 
 require 'core/config.php';
-###############Проверка переменных###############
+
 $id = intval($_GET['id']);
-###############Получаем инфу о файле###########
+// Получаем инфу о файле
 $v = Files::getFileInfo($id);
 
 if (file_exists($v['path'])) {

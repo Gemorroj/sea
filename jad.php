@@ -40,13 +40,13 @@ header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 
 require 'core/config.php';
 
-###############Если jad выключен##########
+// Если jad выключен
 if (!Config::get('jad_change')) {
     Http_Response::getInstance()->renderError('Not found');
 }
-###############Проверка переменных###############
+
 $id = intval($_GET['id']);
-###############Получаем инфу о файле###########
+// Получаем инфу о файле
 $v = Files::getFileInfo($id);
 
 if (is_file($v['path'])) {

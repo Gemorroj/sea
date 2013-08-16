@@ -50,8 +50,9 @@ if (!is_file($v['path'])) {
     Http_Response::getInstance()->renderError('File not found');
 }
 
-Seo::addTitle(Language::get('send_a_link_to_email'));
-Seo::addTitle($v['name']);
+Seo::unserialize($v['seo']);
+//Seo::addTitle(Language::get('send_a_link_to_email'));
+//Seo::addTitle($v['name']);
 
 $template->setTemplate('email.tpl');
 $template->assign('file', $v);
