@@ -94,12 +94,12 @@ class Media_Audio
             'avgBitrate' => $meta->getBitrate() * 1024,
             'streamLength' => $meta->getLength(),
             'tag' => array(
-                'title' => Helper::str2utf8($tags->getTrackTitle()),
-                'artist' => Helper::str2utf8($tags->getArtistName()),
-                'album' => Helper::str2utf8($tags->getAlbumTitle()),
-                'date' => Helper::str2utf8($tags->getYear()),
-                'genre' => Helper::str2utf8($tags->getGenre()->getName()),
-                'comment' => Helper::str2utf8($tags->getComment()),
+                'title' => self::_fixTag($tags->getTrackTitle()),
+                'artist' => self::_fixTag($tags->getArtistName()),
+                'album' => self::_fixTag($tags->getAlbumTitle()),
+                'date' => self::_fixTag($tags->getYear()),
+                'genre' => self::_fixTag($tags->getGenre()->getName()),
+                'comment' => self::_fixTag($tags->getComment()),
                 'apic' => $tags->getPicture()->getData()
             )
         );
@@ -153,7 +153,7 @@ class Media_Audio
             {
                 global $obj;
                 if (isset($obj->_comments[$key])) {
-                    return Helper::str2utf8(trim(str_replace(array(chr(0), chr(1)), '', $obj->_comments[$key])));
+                    return self::_fixTag($obj->_comments[$key]);
                 }
                 return '';
             }
@@ -201,5 +201,16 @@ class Media_Audio
     public static function isPlayerSupported($ext)
     {
         return ($ext === 'mp3' || $ext === 'ogg' || $ext === 'aac');
+    }
+
+
+    /**
+     * @param string $str
+     *
+     * @return string
+     */
+    protected static function _fixTag($str)
+    {
+        return Helper::str2utf8(trim(str_replace(array(chr(0), chr(1)), '', $str)));
     }
 }
