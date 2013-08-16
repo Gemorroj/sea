@@ -51,7 +51,10 @@ if (!is_file($v['path'])) {
 $v['info'] = Media_Audio::getInfo($id, $v['path']);
 $cut = array();
 
-$seo['title'] = Language::get('splitting') . ' - ' . $v['name'];
+
+Seo::addTitle(Language::get('splitting'));
+Seo::addTitle($v['name']);
+
 $template->setTemplate('cut.tpl');
 $template->assign('file', $v);
 $template->assignByRef('cut', $cut);

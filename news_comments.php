@@ -55,7 +55,11 @@ $desc = mb_substr($news['news'], 0, Config::get('desc'));
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
-$seo['title'] = $desc . ' - ' . Language::get('comments');
+
+Seo::addTitle(Language::get('news'));
+Seo::addTitle($desc);
+Seo::addTitle(Language::get('comments'));
+
 $template->assign('breadcrumbs', array(
     'news' => Language::get('news') . ' - ' . $desc,
     'news_comments/' . $id => Language::get('comments')

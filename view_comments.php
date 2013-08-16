@@ -54,13 +54,9 @@ $q = $db->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WH
 $q->execute(array($v['infolder']));
 $directory = $q->fetch();
 
-
-$seo = unserialize($v['seo']);
-if (!$seo['title']) {
-    $seo['title'] = $v['name'];
-}
-$seo['title'] .= ' - ' . Language::get('comments');
-
+Seo::unserialize($v['seo']);
+Seo::addTitle($v['name']);
+Seo::addTitle(Language::get('comments'));
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');

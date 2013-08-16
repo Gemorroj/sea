@@ -65,12 +65,9 @@ $breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['read/' . $id] = Language::get('read');
 $template->assign('breadcrumbs', $breadcrumbs);
 
-
-$seo = unserialize($v['seo']);
-if (!$seo['title']) {
-    $seo['title'] = $v['name'];
-}
-$seo['title'] .= ' - ' . Language::get('read') . ' / ' . $paginatorConf['page'];
+Seo::unserialize($v['seo']);
+Seo::addTitle($v['name']);
+Seo::addTitle(Language::get('read') . ' / ' . $paginatorConf['page']);
 
 
 $lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');

@@ -126,8 +126,6 @@ class Helper
      */
     public static function getBreadcrumbs($info, $isDir = false)
     {
-        global $seo;
-
         $ex = explode('/', rtrim($info['path'], '/'));
         $all = sizeof($ex);
 
@@ -146,10 +144,10 @@ class Helper
             }
 
             $q = Db_Mysql::getInstance()->prepare('
-            SELECT `id`, ' . Language::buildFilesQuery() . '
-            FROM `files`
-            WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')
-        ');
+                SELECT `id`, ' . Language::buildFilesQuery() . '
+                FROM `files`
+                WHERE `path` IN(' . rtrim(str_repeat('?,', $all), ',') . ')
+            ');
             $q->execute($path);
 
             foreach ($q as $s) {
@@ -163,9 +161,7 @@ class Helper
             }
         }
 
-        if (isset($seo['title']) === false || $seo['title'] == '') {
-            $seo['title'] = implode(' / ', $breadcrumbs);
-        }
+        //Seo::setTitle(implode(' / ', $breadcrumbs));
 
         return $breadcrumbs;
     }

@@ -422,25 +422,23 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             Http_Response::getInstance()->render();
         }
 
-        $seo = unserialize($file['seo']);
-
         if ($_POST) {
-            $seo = array(
-                 'title' => $_POST['title'],
-                 'keywords' => $_POST['keywords'],
-                 'description' => $_POST['description']
-            );
+            Seo::setTitle($_POST['title']);
+            Seo::setDescription($_POST['description']);
+            Seo::setKeywords($_POST['keywords']);
+            $seo = Seo::serialize();
 
             $q = $db->prepare('UPDATE `files` SET `seo` = ? WHERE `id` = ?');
-            if ($q->execute(array(serialize($seo), $id))) {
+            if ($q->execute(array($seo, $id))) {
                 $template->assign('message', 'Данные изменены');
             } else {
                 $template->assign('error', implode("\n", $q->errorInfo()));
             }
+        } else {
+            Seo::unserialize($file['seo']);
         }
 
         $template->assign('file', $file);
-        $template->assign('seo', $seo);
         break;
 
 

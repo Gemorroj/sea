@@ -48,7 +48,8 @@ if (!is_file($v['path'])) {
     Http_Response::getInstance()->renderError('File not found');
 }
 
-$seo['title'] = Language::get('complain_about_a_file') . ' - ' . $v['name'];
+Seo::addTitle(Language::get('complain_about_a_file'));
+Seo::addTitle($v['name']);
 
 $breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['abuse/' . $id] = Language::get('complain_about_a_file');

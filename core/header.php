@@ -43,7 +43,6 @@ Language::setLangpack(Http_Request::get('langpack'));
 
 
 $id = intval(Http_Request::get('id'));
-$seo = array();
 
 require CORE_DIRECTORY . '/inc/_style.php';
 require CORE_DIRECTORY . '/inc/_buy.php';
@@ -52,7 +51,6 @@ require CORE_DIRECTORY . '/inc/_service.php';
 
 
 Http_Response::getInstance()->getTemplate()
-    ->assignByRef('seo', $seo)
     ->assign('setup', Config::getAll())
     ->assign('style', $style)
     ->assign('language', Language::getLanguage())

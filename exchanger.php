@@ -45,7 +45,7 @@ $template = Http_Response::getInstance()->getTemplate();
 
 $template->setTemplate('exchanger.tpl');
 
-$seo['title'] = Language::get('upload_file');
+Seo::addTitle(Language::get('upload_file'));
 
 $dirs = array();
 $insertId = null;

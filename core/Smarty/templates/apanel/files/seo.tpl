@@ -2,22 +2,22 @@
 
 
 {block content}
-<h3>SEO</h3>
+<h3>Поисковая оптимизация - SEO</h3>
 
 <form action="apanel.php?action=seo&amp;id={$smarty.get.id}" method="post">
     <div data-role="fieldcontain">
-        <label for="title">Title:</label>
-        <input name="title" type="text" id="title" value="{$seo.title}" />
+        <label for="title">Заголовок (title):</label>
+        <input name="title" type="text" id="title" value="{Seo::getTitle()}" />
     </div>
 
     <div data-role="fieldcontain">
-        <label for="keywords">Keywords:</label>
-        <input name="keywords" type="text" id="keywords" value="{$seo.keywords}" />
+        <label for="keywords">Ключевые слова (keywords):</label>
+        <input name="keywords" type="text" id="keywords" value="{Seo::getKeywords()}" />
     </div>
 
     <div data-role="fieldcontain">
-        <label for="description">Description:</label>
-        <input name="description" type="text" id="description" value="{$seo.description}" />
+        <label for="description">Описание (description):</label>
+        <input name="description" type="text" id="description" value="{Seo::getDescription()}" />
     </div>
 
     <input type="submit" value="Сохранить"/>

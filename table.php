@@ -43,7 +43,7 @@ if (!Config::get('zakaz_change')) {
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('table.tpl');
 
-$seo['title'] = Language::get('orders');
+Seo::addTitle(Language::get('orders'));
 
 
 $sended = false;

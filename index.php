@@ -54,7 +54,7 @@ if ($id) {
         GROUP BY `t1`.`id`
         ORDER BY NULL
     ')->fetch();
-    $seo = unserialize($d['seo']);
+    Seo::unserialize($d['seo']);
 } else {
     $d['path'] = Config::get('path') . '/';
     $q = $db->prepare('

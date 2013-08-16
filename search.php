@@ -47,9 +47,12 @@ $word = isset($_GET['word']) ? $_GET['word'] : '';
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('search.tpl');
-$seo['title'] = Language::get('search');
+
+$title = Language::get('search');
+Seo::setTitle(Language::get('search'));
+
 $template->assign('word', $word);
-$template->assign('breadcrumbs', array('search' => Language::get('search')));
+$template->assign('breadcrumbs', array('search' => $title));
 
 
 $paginatorConf = array();

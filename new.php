@@ -44,8 +44,10 @@ if (!Config::get('new_change') || !Config::get('day_new')) {
 $template = Http_Response::getInstance()->getTemplate();
 
 $template->setTemplate('new.tpl');
-$seo['title'] = Language::get('new_files');
-$template->assign('breadcrumbs', array('new' => Language::get('new_files')));
+
+$title = Language::get('new_files');
+Seo::addTitle($title);
+$template->assign('breadcrumbs', array('new' => $title));
 
 
 // новизна файла

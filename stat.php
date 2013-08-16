@@ -43,7 +43,7 @@ if (!Config::get('stat_change')) {
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('stat.tpl');
 
-$seo['title'] = Language::get('statistics');
+Seo::addTitle(Language::get('statistics'));
 
 
 $db = Db_Mysql::getInstance();

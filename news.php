@@ -38,8 +38,10 @@ require 'core/header.php';
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('news.tpl');
-$seo['title'] = Language::get('news');
-$template->assign('breadcrumbs', array('news' => Language::get('news')));
+
+$title = Language::get('news');
+Seo::addTitle($title);
+$template->assign('breadcrumbs', array('news' => $title));
 
 $db = Db_Mysql::getInstance();
 

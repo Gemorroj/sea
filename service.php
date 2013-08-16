@@ -44,7 +44,8 @@ if (!Config::get('service_change_advanced')) {
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('service.tpl');
 
-$seo['title'] = Language::get('advanced_service');
+Seo::addTitle(Language::get('advanced_service'));
+
 
 $db = Db_Mysql::getInstance();
 

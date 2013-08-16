@@ -60,17 +60,13 @@ $directory = $q->fetch();
 
 $template->assign('directory', $directory);
 
-
 $breadcrumbs = Helper::getBreadcrumbs($v, false);
 $breadcrumbs['zip/' . $id] = Language::get('view_archive');
 $template->assign('breadcrumbs', $breadcrumbs);
 
-
-$seo = unserialize($v['seo']);
-if (!$seo['title']) {
-    $seo['title'] = $v['name'];
-}
-$seo['title'] .= ' - ' . Language::get('view_archive');
+Seo::unserialize($v['seo']);
+Seo::addTitle($v['name']);
+Seo::addTitle(Language::get('view_archive'));
 
 
 $paginatorConf = array();
@@ -105,11 +101,12 @@ switch ($action) {
 
     case 'preview':
         $zipFileName = rtrim($_GET['name'], '/');
-        $seo['title'] .= ' - ' . Language::get('view_archive') . ' / ' . $zipFileName;
+        Seo::addTitle($zipFileName);
 
-        $mime = Helper::ext2mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
+        $ext = pathinfo($zipFileName, PATHINFO_EXTENSION);
+        $mime = Helper::ext2mime($ext);
 
-        if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/jpeg' || $mime == 'image/bmp') {
+        if (Media_Image::isSupported($ext)) {
             $f = Config::get('zppath') . '/' . str_replace(
                 '/',
                 '--',

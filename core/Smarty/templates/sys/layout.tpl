@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width"/>
         <link rel="alternate" type="application/rss+xml" href="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}rss.php"/>
         <link rel="stylesheet" type="text/css" href="http://{$style}"/>
-        <title>{$setup.zag} - {$seo.title|default:'/'}</title>
-        <meta name="keywords" content="{$seo.keywords|default:'sea downloads'}"/>
-        <meta name="description" content="{$seo.description|default:'sea downloads'}"/>
+        <title>{$setup.zag} - {Seo::getTitle()|default:'/'}</title>
+        <meta name="keywords" content="{Seo::getKeywords()|default:'sea downloads'}"/>
+        <meta name="description" content="{Seo::getDescription()|default:'sea downloads'}"/>
         {block javascripts}{/block}
         {block styles}{/block}
     </head>

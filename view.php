@@ -59,11 +59,11 @@ $rate = $rate ? round($file['yes'] / $rate * 100, 0) : 50;
 #######Получаем имя файла и обратный каталог#####
 $filename = pathinfo($file['path']);
 $ext = strtolower($filename['extension']);
+$file['ext'] = $ext;
 $dir = $filename['dirname'] . '/';
 $basename = $filename['basename'];
-$seo = unserialize($file['seo']);
-$file['ext'] = $ext;
-
+Seo::unserialize($file['seo']);
+Seo::addTitle($file['name']);
 
 // данные по файлам
 require 'core/inc/view/_file.php';

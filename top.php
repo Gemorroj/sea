@@ -45,8 +45,10 @@ if (!Config::get('top_change')) {
 $db = Db_Mysql::getInstance();
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('top.tpl');
-$seo['title'] = str_replace('%files%', Config::get('top_num'), Language::get('top20'));
-$template->assign('breadcrumbs', array('top' => $seo['title']));
+
+$title = str_replace('%files%', Config::get('top_num'), Language::get('top20'));
+Seo::addTitle($title);
+$template->assign('breadcrumbs', array('top' => $title));
 
 
 $all = $db->query('

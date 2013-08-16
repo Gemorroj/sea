@@ -43,7 +43,7 @@ if (isset($_POST['lib'])) {
     $_SESSION['lib'] = intval($_POST['lib']);
 }
 
-$seo['title'] = Language::get('settings');
+Seo::addTitle(Language::get('settings'));
 
 
 $sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
