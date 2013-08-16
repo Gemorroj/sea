@@ -51,106 +51,222 @@ class Media_Audio
 
         $path = CORE_DIRECTORY . '/../' . $path;
 
-        $tmpa = array();
-        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        if ($ext === 'mp3' || $ext === 'wav') {
-            $audio = new AudioFile;
-            $audio->loadFile($path);
+        switch (strtolower(pathinfo($path, PATHINFO_EXTENSION))) {
+            case 'ogg':
+            case 'aac':
+                $tmp = self::_getOggInfo($path);
+                break;
 
-            if ($audio->wave_length > 0) {
-                $length = $audio->wave_length;
-            } else {
-                $mp3 = new mp3($path);
-                $mp3->setFileInfoExact();
-                $length = $mp3->time;
+            case 'wav':
+                $tmp = self::_getWavInfo($path);
+                break;
+
+            case 'mp3':
+                $tmp = self::_getMp3Info($path);
+                break;
+
+            default:
+                $tmp = array();
+                break;
+        }
+
+        file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmp));
+        return $tmp;
+    }
+
+    /**
+     * Данные об MP3 файле
+     *
+     * @param string $path
+     *
+     * @return array
+     */
+    protected static function _getMp3Info($path)
+    {
+        $id3 = new MP3_Id3($path);
+        $meta = $id3->getMeta();
+        $tags = $id3->getTags();
+
+        return array(
+            'channels' => null,
+            'sampleRate' => $meta->getFrequency(),
+            'avgBitrate' => $meta->getBitrate() * 1024,
+            'streamLength' => $meta->getLength(),
+            'tag' => array(
+                'title' => Helper::str2utf8($tags->getTrackTitle()),
+                'artist' => Helper::str2utf8($tags->getArtistName()),
+                'album' => Helper::str2utf8($tags->getAlbumTitle()),
+                'date' => Helper::str2utf8($tags->getYear()),
+                'genre' => Helper::str2utf8($tags->getGenre()->getName()),
+                'comment' => Helper::str2utf8($tags->getComment()),
+                'apic' => $tags->getPicture()->getData()
+            )
+        );
+    }
+
+    /**
+     * Данные об WAV файле
+     *
+     * @param string $path
+     *
+     * @return array
+     */
+    protected static function _getWavInfo($path)
+    {
+        $audio = new AudioFile;
+        $audio->loadFile($path);
+
+        $comments = array();
+
+        if (isset($audio->id3v2->APIC) && $audio->id3v2->APIC) {
+            $apic = $audio->id3v2->APIC;
+            $pos = strpos($apic,  "\0") + 1;
+            $apic = substr($apic, $pos);
+            $pos = strpos($apic,  "\0") + 1;
+            $apic = substr($apic, $pos);
+
+
+            function apicFix($apic)
+            {
+                // fix 1
+                $pos = strpos($apic,  "\0") + 1;
+                $apic = substr($apic, $pos);
+
+                $apic = str_replace("\xFF\x00\x00", "\xFF\x00", $apic);
+                // end fix 1
+                return $apic;
             }
+
+            function apicCheckFix($apic)
+            {
+                // fix 2
+                $tmp = @imagecreatefromstring($apic);
+                if ($tmp) {
+                    ob_start();
+                    imagejpeg($tmp);
+                    $apic = ob_get_contents();
+                    ob_end_clean();
+                    imagedestroy($tmp);
+                } else {
+                    $apic = false;
+                }
+                // end fix 2
+                return $apic;
+            }
+
+            $fixApic = apicCheckFix($apic);
+            if (!$fixApic) {
+                $fixApic = apicFix($apic);
+                if ($fixApic) {
+                    $fixApic = apicCheckFix($fixApic);
+                }
+            }
+
+            $comments['APIC'] = $fixApic;
+        } else {
+            $comments['APIC'] = null;
+        }
+        if (isset($audio->id3_title)) {
+            $comments['TITLE'] = Helper::str2utf8($audio->id3_title);
+        } else {
+            $comments['TITLE'] = '';
+        }
+        if (isset($audio->id3_artist)) {
+            $comments['ARTIST'] = Helper::str2utf8($audio->id3_artist);
+        } else {
+            $comments['ARTIST'] = '';
+        }
+        if (isset($audio->id3_album)) {
+            $comments['ALBUM'] = Helper::str2utf8($audio->id3_album);
+        } else {
+            $comments['ALBUM'] = '';
+        }
+        if (isset($audio->id3_year)) {
+            $comments['DATE'] = Helper::str2utf8($audio->id3_year);
+        } else {
+            $comments['DATE'] = '';
+        }
+        if (isset($audio->id3_genre)) {
+            $comments['GENRE'] = Helper::str2utf8($audio->id3_genre);
+        } else {
+            $comments['GENRE'] = '';
+        }
+        if (isset($audio->id3_comment)) {
+            $comments['COMMENT'] = Helper::str2utf8($audio->id3_comment);
+        } else {
+            $comments['COMMENT'] = '';
+        }
+
+        return array(
+            'channels' => $audio->wave_channels,
+            'sampleRate' => $audio->wave_framerate,
+            'avgBitrate' => intval($audio->wave_byterate) * 1024,
+            'streamLength' => $audio->wave_length,
+            'tag' => array(
+                'title' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
+                'artist' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
+                'album' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
+                'date' => $comments['DATE'],
+                'genre' => $comments['GENRE'],
+                'comment' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT'])),
+                'apic' => $comments['APIC']
+            )
+        );
+    }
+
+    /**
+     * Данные об OGG файле
+     *
+     * @param string $path
+     *
+     * @return array
+     */
+    protected static function _getOggInfo($path)
+    {
+        $tmp = array();
+
+        try {
+            $ogg = new File_Ogg($path);
+            $obj = & current($ogg->_streams);
             $comments = array();
 
-            if (isset($audio->id3v2->APIC) && $audio->id3v2->APIC) {
-                $apic = $audio->id3v2->APIC;
-                $pos = strpos($apic,  "\0") + 1;
-                $apic = substr($apic, $pos);
-                $pos = strpos($apic,  "\0") + 1;
-                $apic = substr($apic, $pos);
-
-
-                function apicFix($apic)
-                {
-                    // fix 1
-                    $pos = strpos($apic,  "\0") + 1;
-                    $apic = substr($apic, $pos);
-
-                    $apic = str_replace("\xFF\x00\x00", "\xFF\x00", $apic);
-                    // end fix 1
-                    return $apic;
-                }
-
-                function apicCheckFix($apic)
-                {
-                    // fix 2
-                    $tmp = @imagecreatefromstring($apic);
-                    if ($tmp) {
-                        ob_start();
-                        imagejpeg($tmp);
-                        $apic = ob_get_contents();
-                        ob_end_clean();
-                        imagedestroy($tmp);
-                    } else {
-                        $apic = false;
-                    }
-                    // end fix 2
-                    return $apic;
-                }
-
-                $fixApic = apicCheckFix($apic);
-                if (!$fixApic) {
-                    $fixApic = apicFix($apic);
-                    if ($fixApic) {
-                        $fixApic = apicCheckFix($fixApic);
-                    }
-                }
-
-                $comments['APIC'] = $fixApic;
-            } else {
-                $comments['APIC'] = false;
-            }
-            if (isset($audio->id3_title)) {
-                $comments['TITLE'] = Helper::str2utf8($audio->id3_title);
+            if (isset($obj->_comments['TITLE'])) {
+                $comments['TITLE'] = Helper::str2utf8($obj->_comments['TITLE']);
             } else {
                 $comments['TITLE'] = '';
             }
-            if (isset($audio->id3_artist)) {
-                $comments['ARTIST'] = Helper::str2utf8($audio->id3_artist);
+            if (isset($obj->_comments['ARTIST'])) {
+                $comments['ARTIST'] = Helper::str2utf8($obj->_comments['ARTIST']);
             } else {
                 $comments['ARTIST'] = '';
             }
-            if (isset($audio->id3_album)) {
-                $comments['ALBUM'] = Helper::str2utf8($audio->id3_album);
+            if (isset($obj->_comments['ALBUM'])) {
+                $comments['ALBUM'] = Helper::str2utf8($obj->_comments['ALBUM']);
             } else {
                 $comments['ALBUM'] = '';
             }
-            if (isset($audio->id3_year)) {
-                $comments['DATE'] = Helper::str2utf8($audio->id3_year);
+            if (isset($obj->_comments['DATE'])) {
+                $comments['DATE'] = Helper::str2utf8($obj->_comments['DATE']);
             } else {
                 $comments['DATE'] = '';
             }
-            if (isset($audio->id3_genre)) {
-                $comments['GENRE'] = Helper::str2utf8($audio->id3_genre);
+            if (isset($obj->_comments['GENRE'])) {
+                $comments['GENRE'] = Helper::str2utf8($obj->_comments['GENRE']);
             } else {
                 $comments['GENRE'] = '';
             }
-            if (isset($audio->id3_comment)) {
-                $comments['COMMENT'] = Helper::str2utf8($audio->id3_comment);
+            if (isset($obj->_comments['COMMENT'])) {
+                $comments['COMMENT'] = Helper::str2utf8($obj->_comments['COMMENT']);
             } else {
                 $comments['COMMENT'] = '';
             }
 
-            $tmpa = array(
-                'channels' => $audio->wave_channels,
-                'sampleRate' => $audio->wave_framerate,
-                'avgBitrate' => intval($audio->wave_byterate) * 1024,
-                'streamLength' => $length,
+            $tmp = array(
+                'channels' => $obj->_channels,
+                'sampleRate' => $obj->_sampleRate,
+                'avgBitrate' => $obj->_avgBitrate,
+                'streamLength' => $obj->_streamLength,
                 'tag' => array(
                     'title' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
                     'artist' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
@@ -158,68 +274,13 @@ class Media_Audio
                     'date' => $comments['DATE'],
                     'genre' => $comments['GENRE'],
                     'comment' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT'])),
-                    'apic' => $comments['APIC']
+                    'apic' => null
                 )
             );
-        } elseif ($ext === 'ogg') {
-            try {
-                $ogg = new File_Ogg($path);
-                $obj = & current($ogg->_streams);
-                $comments = array();
+        } catch (Exception $e) {}
 
-                if (isset($obj->_comments['TITLE'])) {
-                    $comments['TITLE'] = Helper::str2utf8($obj->_comments['TITLE']);
-                } else {
-                    $comments['TITLE'] = '';
-                }
-                if (isset($obj->_comments['ARTIST'])) {
-                    $comments['ARTIST'] = Helper::str2utf8($obj->_comments['ARTIST']);
-                } else {
-                    $comments['ARTIST'] = '';
-                }
-                if (isset($obj->_comments['ALBUM'])) {
-                    $comments['ALBUM'] = Helper::str2utf8($obj->_comments['ALBUM']);
-                } else {
-                    $comments['ALBUM'] = '';
-                }
-                if (isset($obj->_comments['DATE'])) {
-                    $comments['DATE'] = Helper::str2utf8($obj->_comments['DATE']);
-                } else {
-                    $comments['DATE'] = '';
-                }
-                if (isset($obj->_comments['GENRE'])) {
-                    $comments['GENRE'] = Helper::str2utf8($obj->_comments['GENRE']);
-                } else {
-                    $comments['GENRE'] = '';
-                }
-                if (isset($obj->_comments['COMMENT'])) {
-                    $comments['COMMENT'] = Helper::str2utf8($obj->_comments['COMMENT']);
-                } else {
-                    $comments['COMMENT'] = '';
-                }
-
-                $tmpa = array(
-                    'channels' => $obj->_channels,
-                    'sampleRate' => $obj->_sampleRate,
-                    'avgBitrate' => $obj->_avgBitrate,
-                    'streamLength' => $obj->_streamLength,
-                    'tag' => array(
-                        'title' => trim(str_replace(array(chr(0), chr(1)), '', $comments['TITLE'])),
-                        'artist' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ARTIST'])),
-                        'album' => trim(str_replace(array(chr(0), chr(1)), '', $comments['ALBUM'])),
-                        'date' => $comments['DATE'],
-                        'genre' => $comments['GENRE'],
-                        'comment' => trim(str_replace(array(chr(0), chr(1)), '', $comments['COMMENT'])),
-                        'apic' => false
-                    )
-                );
-            } catch (Exception $e) {}
-        }
-
-        file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmpa));
-        return $tmpa;
+        return $tmp;
     }
-
 
     /**
      * Поддерживается ли аудио

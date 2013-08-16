@@ -14,18 +14,18 @@
 // $Id$
 //
 
-// Uncomment the folling define if you want the class to automatically
+// Uncomment the following define if you want the class to automatically
 // read the MPEG frame info to get bitrate, mpeg version, layer, etc.
 //
 // NOTE: This is needed to maintain pre-version 1.0 behavior which maybe
 // needed if you are using info that is from the mpeg frame. This includes
 // the length of the song.
 //
-// This is discouraged because it will siginfincantly lengthen script
+// This is discouraged because it will significantly lengthen script
 // execution time if all you need is the ID3 tag info.
 // define('ID3_AUTO_STUDY', true);
 
-// Uncomment the following define if you want tons of debgging info.
+// Uncomment the following define if you want tons of debugging info.
 // Tip: make sure you use a <PRE> block so the print_r's are readable.
 // define('ID3_SHOW_DEBUG', true);
 
@@ -64,7 +64,7 @@ define('PEAR_MP3_ID_NOMP3', 4);
  *
  * Note: This code doesn't try to deal with corrupt mp3s. So if you get
  * incorrect length times or something else it may be your mp3. To fix just
- * re-enocde from the CD. :~)
+ * re-encode from the CD. :~)
  *
  * eg:
  * require_once("MP3/Id.php");
@@ -87,13 +87,12 @@ define('PEAR_MP3_ID_NOMP3', 4);
  */
 class MP3_Id
 {
-
     /**
      * mp3/mpeg file name
      *
-     * @var boolean
+     * @var string
      */
-    var $file = false;
+    var $file = '';
     /**
      * ID3 v1 tag found? (also true if v1.1 found)
      *
@@ -250,7 +249,7 @@ class MP3_Id
      */
     var $private = false;
     /**
-     * Mode (Stero etc)
+     * Mode (Stereo etc)
      *
      * @var string
      */
@@ -335,7 +334,7 @@ class MP3_Id
      * and loads a tag from a file.
      *
      * @param string    $study  study the mpeg frame to get extra info like bitrate and frequency
-     *                          You should advoid studing alot of files as it will siginficantly
+     *                          You should avoid studying a lot of files as it will significantly
      *                          slow this down.
      * @access public
      */
@@ -859,92 +858,92 @@ class MP3_Id
         $r = fread($f, 4);
 
         switch ($r) {
-        case 'Xing':
-            $this->encoding_type = 'VBR';
-        case 'Info':
-            // Extract info from Xing header
+            case 'Xing':
+                $this->encoding_type = 'VBR';
+            case 'Info':
+                // Extract info from Xing header
 
-            if ($this->debug) {
-                print('Encoding Header: ' . $r . "\n");
-            }
+                if ($this->debug) {
+                    print('Encoding Header: ' . $r . "\n");
+                }
 
-            $r = fread($f, 4);
-            $vbrbits = sprintf("%'08b", ord($r{3}));
-
-            if ($this->debug) {
-                print('XING Header Bits: ' . $vbrbits . "\n");
-            }
-
-            if ($vbrbits[7] == 1) {
-                // Next 4 bytes contain number of frames
                 $r = fread($f, 4);
-                $this->frames = unpack('N', $r);
-                $this->frames = $this->frames[1];
-            }
+                $vbrbits = sprintf("%'08b", ord($r{3}));
 
-            if ($vbrbits[6] == 1) {
+                if ($this->debug) {
+                    print('XING Header Bits: ' . $vbrbits . "\n");
+                }
+
+                if ($vbrbits[7] == 1) {
+                    // Next 4 bytes contain number of frames
+                    $r = fread($f, 4);
+                    $this->frames = unpack('N', $r);
+                    $this->frames = $this->frames[1];
+                }
+
+                if ($vbrbits[6] == 1) {
+                    // Next 4 bytes contain number of bytes
+                    $r = fread($f, 4);
+                    $this->musicsize = unpack('N', $r);
+                    $this->musicsize = $this->musicsize[1];
+                }
+
+                if ($vbrbits[5] == 1) {
+                    // Next 100 bytes contain TOC entries, skip
+                    fseek($f, ftell($f) + 100);
+                }
+
+                if ($vbrbits[4] == 1) {
+                    // Next 4 bytes contain Quality Indicator
+                    $r = fread($f, 4);
+                    $this->quality = unpack('N', $r);
+                    $this->quality = $this->quality[1];
+                }
+
+                break;
+
+            case 'VBRI':
+            default:
+                if ($vbroffset != 32) {
+                    // VBRI Header is fixed after 32 bytes, so maybe we are looking at the wrong place.
+                    fseek($f, ftell($f) + 32 - $vbroffset);
+                    $r = fread($f, 4);
+
+                    if ($r != 'VBRI') {
+                        $this->encoding_type = 'CBR';
+                        break;
+                    }
+                } else {
+                    $this->encoding_type = 'CBR';
+                    break;
+                }
+
+                if ($this->debug) {
+                    print('Encoding Header: ' . $r . "\n");
+                }
+
+                $this->encoding_type = 'VBR';
+
+                // Next 2 bytes contain Version ID, skip
+                fseek($f, ftell($f) + 2);
+
+                // Next 2 bytes contain Delay, skip
+                fseek($f, ftell($f) + 2);
+
+                // Next 2 bytes contain Quality Indicator
+                $r = fread($f, 2);
+                $this->quality = unpack('n', $r);
+                $this->quality = $this->quality[1];
+
                 // Next 4 bytes contain number of bytes
                 $r = fread($f, 4);
                 $this->musicsize = unpack('N', $r);
                 $this->musicsize = $this->musicsize[1];
-            }
 
-            if ($vbrbits[5] == 1) {
-                // Next 100 bytes contain TOC entries, skip
-                fseek($f, ftell($f) + 100);
-            }
-
-            if ($vbrbits[4] == 1) {
-                // Next 4 bytes contain Quality Indicator
+                // Next 4 bytes contain number of frames
                 $r = fread($f, 4);
-                $this->quality = unpack('N', $r);
-                $this->quality = $this->quality[1];
-            }
-
-            break;
-
-        case 'VBRI':
-        default:
-            if ($vbroffset != 32) {
-                // VBRI Header is fixed after 32 bytes, so maybe we are looking at the wrong place.
-                fseek($f, ftell($f) + 32 - $vbroffset);
-                $r = fread($f, 4);
-
-                if ($r != 'VBRI') {
-                    $this->encoding_type = 'CBR';
-                    break;
-                }
-            } else {
-                $this->encoding_type = 'CBR';
-                break;
-            }
-
-            if ($this->debug) {
-                print('Encoding Header: ' . $r . "\n");
-            }
-
-            $this->encoding_type = 'VBR';
-
-            // Next 2 bytes contain Version ID, skip
-            fseek($f, ftell($f) + 2);
-
-            // Next 2 bytes contain Delay, skip
-            fseek($f, ftell($f) + 2);
-
-            // Next 2 bytes contain Quality Indicator
-            $r = fread($f, 2);
-            $this->quality = unpack('n', $r);
-            $this->quality = $this->quality[1];
-
-            // Next 4 bytes contain number of bytes
-            $r = fread($f, 4);
-            $this->musicsize = unpack('N', $r);
-            $this->musicsize = $this->musicsize[1];
-
-            // Next 4 bytes contain number of frames
-            $r = fread($f, 4);
-            $this->frames = unpack('N', $r);
-            $this->frames = $this->frames[1];
+                $this->frames = unpack('N', $r);
+                $this->frames = $this->frames[1];
         }
 
         fclose($f);

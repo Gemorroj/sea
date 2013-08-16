@@ -27,7 +27,7 @@
     </div>
     <div data-role="fieldcontain">
         <label for="genre">Жанр:</label>
-        {html_options id='genre' name='genre' values=$genres output=$genres}
+        {html_options id='genre' name='genre' options=$genres}
     </div>
     <div data-role="fieldcontain">
         <label for="comment">Комментарии:</label>

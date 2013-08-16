@@ -688,21 +688,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/id3_file.tpl');
 
         $file = Files::getFileInfo($id);
-        $idv2 = Media_Audio::getInfo($id, $file['path']);
 
-        $id3 = new MP3_Id();
-        $id3->read($file['path']);
+        $id3 = new MP3_Id3($file['path']);
+        $tags = $id3->getTags();
 
-        $genres = $id3->genres();
-        $template->assign('genres', $genres);
+        $template->assign('genres', MP3_Id3_Genre::getGenres());
 
-        $template->assign('name', $idv2['tag']['title']);
-        $template->assign('artists', $idv2['tag']['artist']);
-        $template->assign('album', $idv2['tag']['album']);
-        $template->assign('year', $idv2['tag']['date']);
-        $template->assign('track', Helper::str2utf8($id3->track));
-        $template->assign('genre', $idv2['tag']['genre']);
-        $template->assign('comment', $idv2['tag']['comment']);
+        $template->assign('name', Helper::str2utf8($tags->getTrackTitle()));
+        $template->assign('artists', Helper::str2utf8($tags->getArtistName()));
+        $template->assign('album', Helper::str2utf8($tags->getAlbumTitle()));
+        $template->assign('year', Helper::str2utf8($tags->getYear()));
+        $template->assign('track', Helper::str2utf8($tags->getTrackNumber()));
+        $template->assign('genre', Helper::str2utf8($tags->getGenre()->getId()));
+        $template->assign('comment', Helper::str2utf8($tags->getComment()));
 
         if ($_POST) {
             @unlink(CORE_DIRECTORY . '/cache/' . $id . '.dat');
@@ -715,38 +713,18 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $genre = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
             $comment = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
 
+            $tags->setTrackTitle($name);
+            $tags->setArtistName($artist);
+            $tags->setAlbumTitle($album);
+            $tags->setYear($year);
+            $tags->setTrackNumber($track);
+            $tags->setComment($comment);
+            $tags->setGenreId($genre);
 
-            // Записываем Idv2 теги
-            $mp3 = new mp3($file['path']);
-            //$mp3->striptags(); // bug
-            $mp3->setIdv3_2(
-                $track,
-                $name,
-                $artist,
-                $album,
-                $year,
-                $genre,
-                $comment,
-                $artist,
-                $artist,
-                $comment,
-                'http://' . $_SERVER['HTTP_HOST'],
-                ''
-            );
-            $mp3->save($file['path']);
-
-            // записываем Idv1 теги
-            $id3->name = $name;
-            $id3->artists = $artist;
-            $id3->album = $album;
-            $id3->year = $year;
-            $id3->track = $track;
-            $id3->genre = $genre;
-            $id3->comment = $comment;
-            $id3->write();
-            if (PEAR::isError($result) == false) {
+            try {
+                $tags->write($file['path']);
                 $template->assign('message', 'MP3 теги изменены');
-            } else {
+            } catch (Exception $e) {
                 $template->assign('error', 'MP3 теги не изменены');
             }
         }
@@ -756,35 +734,19 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3':
         $template->setTemplate('apanel/id3.tpl');
 
-        $id3 = new MP3_Id();
-
-        $genres = $id3->genres();
-        array_unshift($genres, '');
+        $genres = array('' => '');
+        $genres += MP3_Id3_Genre::getGenres();
 
         $template->assign('genres', $genres);
 
         if ($_POST) {
-            if ($_POST['name'] != '') {
-                $_POST['name'] = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
-            }
-            if ($_POST['artists'] != '') {
-                $_POST['artists'] = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
-            }
-            if ($_POST['album'] != '') {
-                $_POST['album'] = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
-            }
-            if ($_POST['year'] != '') {
-                $_POST['year'] = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
-            }
-            if ($_POST['track'] != '') {
-                $_POST['track'] = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
-            }
-            if ($_POST['genre'] != '') {
-                $_POST['genre'] = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
-            }
-            if ($_POST['comment'] != '') {
-                $_POST['comment'] = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
-            }
+            $name = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
+            $artists = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
+            $album = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
+            $year = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
+            $track = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
+            $genre = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
+            $comment = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
 
             $all = 0;
             $write = 0;
@@ -795,60 +757,20 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $all++;
                 @unlink($cacheDir . '/' . $f['id'] . '.dat');
 
-                $f = realpath($f['path']);
+                $id3 = new MP3_Id3($f['path']);
+                $tags = $id3->getTags();
+                $tags->setTrackTitle($name);
+                $tags->setArtistName($artist);
+                $tags->setAlbumTitle($album);
+                $tags->setYear($year);
+                $tags->setTrackNumber($track);
+                $tags->setComment($comment);
+                $tags->setGenreId($genre);
 
-                // Записываем Idv2 теги
-                $mp3 = new mp3($f);
-                //$mp3->striptags(); // bug
-                $mp3->setIdv3_2(
-                    $_POST['track'],
-                    $_POST['name'],
-                    $_POST['artist'],
-                    $_POST['album'],
-                    $_POST['year'],
-                    $_POST['genre'],
-                    $_POST['comment'],
-                    $_POST['artist'],
-                    $_POST['artist'],
-                    $_POST['comment'],
-                    'http://' . $_SERVER['HTTP_HOST'],
-                    ''
-                );
-                $mp3->save($f);
-
-
-                $id3->read($f);
-                if (PEAR::isError($id3->read($f))) {
-                    continue;
-                }
-
-
-                if ($_POST['name'] != '') {
-                    $id3->name = $_POST['name'];
-                }
-                if ($_POST['artists'] != '') {
-                    $id3->artists = $_POST['artists'];
-                }
-                if ($_POST['album'] != '') {
-                    $id3->album = $_POST['album'];
-                }
-                if ($_POST['year'] != '') {
-                    $id3->year = $_POST['year'];
-                }
-                if ($_POST['track'] != '') {
-                    $id3->track = $_POST['track'];
-                }
-                if ($_POST['genre'] != '') {
-                    $id3->genre = $_POST['genre'];
-                }
-                if ($_POST['comment'] != '') {
-                    $id3->comment = $_POST['comment'];
-                }
-                $result = $id3->write();
-
-                if (PEAR::isError($result) == false) {
+                try {
+                    $tags->write($f['path']);
                     $write++;
-                }
+                } catch (Exception $e) {}
             }
 
             $template->assign('message', 'Всего просканировано ' . $all . ' файлов. Теги заданы для ' . $write . ' файлов');
