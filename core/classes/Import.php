@@ -27,8 +27,6 @@
  * @author Sea, Gemorroj
  */
 
-require_once 'functions.php';
-
 /**
  * Sea Downloads
  *
@@ -147,7 +145,7 @@ class Import
                     $this->_error[] = implode("\n", $this->_directoryExistsQuery->errorInfo());
                 }
                 if ($this->_directoryExistsQuery->rowCount() < 1) {
-                    $result = addDir($file, $toFolder, $file, $file, $file, $file);
+                    $result = Files::addDir($file, $toFolder, $file, $file, $file, $file);
                     $this->_error = array_merge($this->_error, $result['error']);
                     $this->_message = array_merge($this->_message, $result['message']);
                 }
@@ -200,7 +198,7 @@ class Import
             ));
             $id = Db_Mysql::getInstance()->lastInsertId();
 
-            dir_count($infolder, true);
+            Files::updateDirCount($infolder, true);
             chmod($toFile, 0644);
 
             $this->_importFileData($id, $toFile);
@@ -224,21 +222,21 @@ class Import
         $preFileAttach = $this->_importFolderAttach . strstr($file, '/') . '_';
 
         if (file_exists($preFileAbout . '.txt') === true) {
-            $result = addAbout($file, file_get_contents($preFileAbout . '.txt'));
+            $result = Files::addAbout($file, file_get_contents($preFileAbout . '.txt'));
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
         }
 
         if (file_exists($preFileScreen . '.gif') === true) {
-            $result = addScreen($file, $preFileScreen . '.gif');
+            $result = Files::addScreen($file, $preFileScreen . '.gif');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
         } elseif (file_exists($preFileScreen . '.jpg') === true) {
-            $result = addScreen($file, $preFileScreen . '.jpg');
+            $result = Files::addScreen($file, $preFileScreen . '.jpg');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
         } elseif (file_exists($preFileScreen . '.png') === true) {
-            $result = addScreen($file, $preFileScreen . '.png');
+            $result = Files::addScreen($file, $preFileScreen . '.png');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
         }
@@ -247,7 +245,7 @@ class Import
         if ($attach) {
             $array = array();
             foreach ($attach as $v) {
-                $result = addAttach($file, $id, $v, $array);
+                $result = Files::addAttach($file, $id, $v, $array);
                 $this->_error = array_merge($this->_error, $result['error']);
                 $this->_message = array_merge($this->_message, $result['message']);
 

@@ -44,7 +44,7 @@ if (!Config::get('send_email')) {
 $template = Http_Response::getInstance()->getTemplate();
 
 // Получаем инфу о файле
-$v = getFileInfo($id);
+$v = Files::getFileInfo($id);
 
 if (!is_file($v['path'])) {
     Http_Response::getInstance()->renderError('File not found');

@@ -62,7 +62,7 @@ if ($_SESSION['authorise'] != Config::get('password') || $_SESSION['ipu'] != $_S
 
 switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'add_attach':
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             Http_Response::getInstance()->render();
@@ -84,7 +84,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             Http_Response::getInstance()->render();
         }
 
-        $result = addAttach($file['path'], $id, $tmp, ($file['attach'] ? unserialize($file['attach']) : array()));
+        $result = Files::addAttach($file['path'], $id, $tmp, ($file['attach'] ? unserialize($file['attach']) : array()));
         unlink($tmp);
 
         if ($result['message']) {
@@ -97,7 +97,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_attach':
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             Http_Response::getInstance()->render();
@@ -120,7 +120,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         if ($q->execute()) {
-            del_attach($file['infolder'], $id, array($_GET['attach'] => $name));
+            Files::delAttach($file['infolder'], $id, array($_GET['attach'] => $name));
             $template->assign('message', 'Вложение удалено');
         } else {
             $template->assign('error', implode("\n", $q->errorInfo()));
@@ -129,7 +129,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'move':
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             Http_Response::getInstance()->render();
@@ -158,8 +158,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         $q = $db->prepare('UPDATE `files` SET `path` = ?, `infolder` = ? WHERE `id` = ?');
         if ($q->execute(array($folder . $filename, $folder, $id))) {
-            dir_count($folder, false);
-            dir_count($file['path'], true);
+            Files::updateDirCount($folder, false);
+            Files::updateDirCount($file['path'], true);
 
             $path1 = strstr($file['path'], '/'); // убираем папку с загрузками
             $path2 = strstr($folder, '/'); // убираем папку с загрузками
@@ -198,7 +198,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'hidden':
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория или файл не найдены');
             Http_Response::getInstance()->render();
@@ -222,7 +222,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'rename':
         $template->setTemplate('apanel/files/rename.tpl');
 
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория или файл не найдены');
             Http_Response::getInstance()->render();
@@ -265,7 +265,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             Http_Response::getInstance()->render();
         }
 
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория не найдена');
             Http_Response::getInstance()->render();
@@ -329,7 +329,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->assign('error', 'Error');
             Http_Response::getInstance()->render();
         }
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             Http_Response::getInstance()->render();
@@ -359,17 +359,17 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         if ($file['attach']) {
-            del_attach($file['infolder'], $id, unserialize($file['attach']));
+            Files::delAttach($file['infolder'], $id, unserialize($file['attach']));
         }
 
-        dir_count($file['path'], false);
+        Files::updateDirCount($file['path'], false);
 
         $template->assign('message', 'Файл удален');
         break;
 
 
     case 'priority':
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория не найдена');
             Http_Response::getInstance()->render();
@@ -392,14 +392,14 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'about':
         $template->setTemplate('apanel/files/about.tpl');
 
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             Http_Response::getInstance()->render();
         }
 
         if ($_POST) {
-            $result = addAbout($file['path'], $_POST['about']);
+            $result = Files::addAbout($file['path'], $_POST['about']);
 
             if ($result['message']) {
                 $template->assign('message', implode("\n", $result['message']));
@@ -416,7 +416,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'seo':
         $template->setTemplate('apanel/files/seo.tpl');
 
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             Http_Response::getInstance()->render();
@@ -448,7 +448,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/files/add_screen.tpl');
 
         if ($_FILES) {
-            $file = getFileInfo($id);
+            $file = Files::getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найден файл');
                 Http_Response::getInstance()->render();
@@ -461,7 +461,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 Http_Response::getInstance()->render();
             }
 
-            $result = addScreen($file['path'], $tmp);
+            $result = Files::addScreen($file['path'], $tmp);
             unlink($tmp);
 
             if ($result['message']) {
@@ -475,7 +475,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_screen':
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Не найдена директория');
             Http_Response::getInstance()->render();
@@ -501,7 +501,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/files/add_ico.tpl');
 
         if ($_FILES) {
-            $file = getFileInfo($id);
+            $file = Files::getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найдена директория');
                 Http_Response::getInstance()->render();
@@ -538,7 +538,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_ico':
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Не найдена директория');
             Http_Response::getInstance()->render();
@@ -564,7 +564,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->assign('langpacks', $langpacks);
 
         if ($_POST) {
-            $result = addDir(
+            $result = Files::addDir(
                 $_POST['realname'],
                 Config::get('path') . trim($_POST['topath']),
                 $_POST['dir']['english'],
@@ -581,7 +581,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
         }
 
-        $template->assign('dirs', getAllDirs());
+        $template->assign('dirs', Files::getAllDirs());
         break;
 
 
@@ -615,7 +615,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
         }
 
-        $template->assign('news', getNewsInfo($_GET['news']));
+        $template->assign('news', News::getNewsInfo($_GET['news']));
         break;
 
 
@@ -658,7 +658,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $scan = Config::get('path');
 
         if (isset($_GET['id'])) {
-            $file = getFileInfo($id);
+            $file = Files::getFileInfo($id);
 
             if (!$file || is_dir($file['path']) === false) {
                 $template->assign('error', 'Такой категории не существует');
@@ -690,7 +690,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3_file':
         $template->setTemplate('apanel/id3_file.tpl');
 
-        $file = getFileInfo($id);
+        $file = Files::getFileInfo($id);
         $idv2 = Media_Audio::getInfo($id, $file['path']);
 
         $id3 = new MP3_Id();
@@ -976,7 +976,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'upload':
         $template->setTemplate('apanel/upload.tpl');
 
-        $template->assign('dirs', getAllDirs());
+        $template->assign('dirs', Files::getAllDirs());
 
 
         if ($_POST) {
@@ -992,9 +992,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             @chmod($newpath, 0777);
 
             if ($_GET['type'] == 'url') {
-                $result = uploadUrls($newpath);
+                $result = Files::uploadUrls($newpath);
             } else {
-                $result = uploadFiles($newpath);
+                $result = Files::uploadFiles($newpath);
             }
 
             if ($result['message']) {
@@ -1304,7 +1304,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $q1->execute(array($row['id']));
                 $q2->execute(array($row['id']));
 
-                dir_count($row['path'], false);
+                Files::updateDirCount($row['path'], false);
 
                 $d++;
             }

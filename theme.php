@@ -40,7 +40,7 @@ ini_set('memory_limit', '128M');
 
 $id = intval($_GET['id']);
 
-$v = getFileInfo($id);
+$v = Files::getFileInfo($id);
 
 $location = Media_Theme::getImage($v['path']);
 

@@ -37,7 +37,7 @@
 require 'core/header.php';
 
 // Получаем инфу о файле
-$file = getFileInfo($id);
+$file = Files::getFileInfo($id);
 
 if (!is_file($file['path'])) {
     Http_Response::getInstance()->renderError('File not found');
@@ -89,7 +89,7 @@ $prevNext = array('prev' => array(), 'next' => array());
 require 'core/inc/view/_prevnext.php';
 
 $template = Http_Response::getInstance()->getTemplate();
-$template->assign('dirs', (IS_ADMIN === true ? getAllDirs() : array()));
+$template->assign('dirs', (IS_ADMIN === true ? Files::getAllDirs() : array()));
 $template->assign('prevNext', $prevNext);
 $template->assign('file', $file);
 $template->assign('directory', $directory);

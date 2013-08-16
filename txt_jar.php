@@ -40,11 +40,11 @@ require 'core/config.php';
 // Проверка переменных
 $id = intval($_GET['id']);
 // Получаем инфу о файле
-$v = getFileInfo($id);
+$v = Files::getFileInfo($id);
 
 
 if (file_exists($v['path'])) {
-    updFileLoad($id);
+    Files::updateFileLoad($id);
 
     $nm = array_reverse(explode('.', basename($v['path'])));
     $nm = $nm[1];

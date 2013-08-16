@@ -79,9 +79,6 @@ Http_Request::init();
 Http_Response::init(new Template());
 
 
-//TODO: перенести все в классы
-require_once CORE_DIRECTORY . '/classes/functions.php';
-
 define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));
 
 // Подключаем модуль партнерки

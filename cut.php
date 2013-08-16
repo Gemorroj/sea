@@ -43,7 +43,7 @@ if (!Config::get('cut_change')) {
 
 $template = Http_Response::getInstance()->getTemplate();
 // Получаем инфу о файле
-$v = getFileInfo($id);
+$v = Files::getFileInfo($id);
 
 if (!is_file($v['path'])) {
     Http_Response::getInstance()->renderError('File not found');
@@ -125,7 +125,7 @@ if ($_POST) {
             $ras = filesize($randintval);
             fclose($fp);
 
-            updFileLoad($id);
+            Files::updateFileLoad($id);
 
             $cut = array(
                 'link' => DIRECTORY . $randintval,

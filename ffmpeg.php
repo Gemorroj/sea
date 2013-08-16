@@ -48,7 +48,7 @@ require 'core/config.php';
 $id = intval($_GET['id']);
 $frame = $i = $_GET['frame'] ? abs($_GET['frame']) : Config::get('ffmpeg_frame') + 1;
 
-$v = getFileInfo($id);
+$v = Files::getFileInfo($id);
 
 $pic = $v['path'];
 $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));

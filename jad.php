@@ -47,10 +47,10 @@ if (!Config::get('jad_change')) {
 ###############Проверка переменных###############
 $id = intval($_GET['id']);
 ###############Получаем инфу о файле###########
-$v = getFileInfo($id);
+$v = Files::getFileInfo($id);
 
 if (is_file($v['path'])) {
-    updFileLoad($id);
+    Files::updateFileLoad($id);
 
     $zip = new PclZip($v['path']);
     $content = $zip->extract(PCLZIP_OPT_BY_NAME, 'META-INF/MANIFEST.MF', PCLZIP_OPT_EXTRACT_AS_STRING);

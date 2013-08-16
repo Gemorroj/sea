@@ -26,30 +26,30 @@
  *
  * @author Sea, Gemorroj
  */
+
 /**
  * Sea Downloads
  *
  * @author  Sea, Gemorroj
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
-
-
-header('Pragma: public');
-header('Cache-Control: public, max-age=8640000');
-header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
-
-require 'core/config.php';
-###############Проверка переменных###############
-$id = intval($_GET['id']);
-###############Получаем инфу о файле###########
-$v = Files::getFileInfo($id);
-
-if (file_exists($v['path'])) {
-    Files::updateFileLoad($id);
-
-    $dir = dirname($_SERVER['PHP_SELF']);
-    $dir = ($dir == DIRECTORY_SEPARATOR ? '' : $dir);
-    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
-} else {
-    Http_Response::getInstance()->renderError(Language::get('error'));
+class News
+{
+    /**
+     * Данные новости из БД
+     *
+     * @param int $id
+     *
+     * @return array
+     */
+    public static function getNewsInfo ($id)
+    {
+        $q = Db_Mysql::getInstance()->prepare('
+            SELECT *, ' . Language::buildNewsQuery() . '
+            FROM `news`
+            WHERE `id` = ?
+        ');
+        $q->execute(array($id));
+        return $q->fetch();
+    }
 }

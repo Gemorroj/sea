@@ -60,13 +60,13 @@ if (!$w || !$h) {
     }
 }
 
-$v = getFileInfo($id);
+$v = Files::getFileInfo($id);
 $pic = $v['path'];
 $prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
 
 if ($resize) {
     $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
-    updFileLoad($id);
+    Files::updateFileLoad($id);
 }
 
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';

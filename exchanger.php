@@ -119,7 +119,7 @@ if ($_POST) {
     }
     $insertId = $db->lastInsertId();
     if (!Config::get('exchanger_hidden')) {
-        dir_count($path, true);
+        Files::updateDirCount($path, true);
     }
 
 
@@ -150,7 +150,7 @@ if ($_POST) {
         );
     }
 } else {
-    $dirs = getAllDirs();
+    $dirs = Files::getAllDirs();
 }
 
 $template->assign('insertId', $insertId);
