@@ -43,10 +43,14 @@
 
     {if Media_Audio::isSupported($file.ext)}
         <strong>{$language.info}:</strong><br/>
-        {$language.channels}: {$file.info.channels}<br/>
+        {if $file.info.channels}
+            {$language.channels}: {$file.info.channels}<br/>
+        {/if}
         {$language.framerate}: {$file.info.sampleRate} Hz<br/>
         {$language.byterate}: {round($file.info.avgBitrate / 1024)} Kbps<br/>
-        {$language.length}: {mktime(0, 0, $file.info.streamLength)|date_format:'H:i:s'}<br/>
+        {if $file.info.streamLength}
+            {$language.length}: {mktime(0, 0, $file.info.streamLength)|date_format:'H:i:s'}<br/>
+        {/if}
 
         {if $file.info.tag.title}
             {$language.name}: {$file.info.tag.title}<br/>
