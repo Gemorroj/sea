@@ -20,9 +20,9 @@
     {/if}
 
     {* пагинация *}
-    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}{$comments_module}/{$id}"}
+    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}{$comments_module}/{Http_Request::get('id')}"}
 
-    <form action="{$smarty.const.DIRECTORY}{$comments_module}/{$id}" method="post">
+    <form action="{$smarty.const.DIRECTORY}{$comments_module}/{Http_Request::get('id')}" method="post">
         <div class="row">
             <label>
                 {$language.your_name}:<br/>
@@ -49,7 +49,7 @@
 {block footer}
     <ul class="iblock">
         <li><a href="{$comments_module_backlink}">{$comments_module_backname}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
         <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>

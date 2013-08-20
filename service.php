@@ -155,7 +155,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
         mail(
             $mail,
             '=?utf-8?B?' . base64_encode('Change Password ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
-            'Your new password: ' . $pass . "\r\n" . 'ID: ' . $id,
+            'Your new password: ' . $pass . "\r\n" . 'ID: ' . Http_Request::get('id'),
             'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
         );
 

@@ -43,6 +43,7 @@ if (!Config::get('zip_change')) {
 }
 
 
+$id = intval(Http_Request::get('id'));
 // Получаем инфу о файле
 $v = Files::getFileInfo($id);
 if (!is_file($v['path'])) {

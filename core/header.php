@@ -41,9 +41,6 @@ require_once dirname(__FILE__) . '/config.php';
 Language::setLangpack(Http_Request::post('langpack'));
 Language::setLangpack(Http_Request::get('langpack'));
 
-
-$id = intval(Http_Request::get('id'));
-
 require CORE_DIRECTORY . '/inc/_style.php';
 require CORE_DIRECTORY . '/inc/_buy.php';
 require CORE_DIRECTORY . '/inc/_online.php';
@@ -54,7 +51,6 @@ Http_Response::getInstance()->getTemplate()
     ->assign('setup', Config::getAll())
     ->assign('style', $style)
     ->assign('language', Language::getLanguage())
-    ->assign('id', $id)
     ->assign('buy', $buy)
     ->assign('banner', $banner)
     ->assign('serviceBuy', $serviceBuy)

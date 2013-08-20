@@ -33,7 +33,7 @@
         <script type="text/javascript">
             window.onload = function () {
                 jwplayer("video_player").setup({
-                    {if extension_loaded('ffmpeg')}'image': "{$smarty.const.DIRECTORY}ffmpeg/{$id}",{/if}
+                    {if extension_loaded('ffmpeg')}'image': "{$smarty.const.DIRECTORY}ffmpeg/{Http_Request::get('id')}",{/if}
                     'file': "{$smarty.const.DIRECTORY}{$file.path}",
                     'title': "{$file.name}",
                     'height': 180,
@@ -79,7 +79,7 @@
             <br/>
             <img src="{$smarty.const.DIRECTORY}rate/{$rate}" alt="" style="margin: 1px;"/><br/>
             {if $vote === null}
-                {$language.net}: <span class="yes"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=1">{$language.yes}</a></span>/<span class="no"><a href="{$smarty.const.DIRECTORY}view/{$id}?eval=0">{$language.no}</a></span>
+                {$language.net}: <span class="yes"><a href="{$smarty.const.DIRECTORY}view/{Http_Request::get('id')}?eval=1">{$language.yes}</a></span>/<span class="no"><a href="{$smarty.const.DIRECTORY}view/{Http_Request::get('id')}?eval=0">{$language.no}</a></span>
             {elseif $vote === true}
                 {$language.true_voice}
             {elseif $vote === false}
@@ -102,38 +102,38 @@
         <div id="audio_player"></div><div id="video_player"></div>
 
         {if ($setup.cut_change && $file.ext == 'mp3')}
-            <strong><a href="{$smarty.const.DIRECTORY}cut/{$id}">{$language.splitting}</a></strong><br/>
+            <strong><a href="{$smarty.const.DIRECTORY}cut/{Http_Request::get('id')}">{$language.splitting}</a></strong><br/>
         {/if}
 
         {if ($setup.zip_change && $file.ext == 'zip')}
-            <strong><a href="{$smarty.const.DIRECTORY}zip/{$id}">{$language.view_archive}</a></strong><br/>
+            <strong><a href="{$smarty.const.DIRECTORY}zip/{Http_Request::get('id')}">{$language.view_archive}</a></strong><br/>
         {/if}
 
         {if $file.ext == 'txt'}
             {if $setup.lib_change}
-                <strong><a href="{$smarty.const.DIRECTORY}read/{$id}">{$language.read}</a></strong><br/>
+                <strong><a href="{$smarty.const.DIRECTORY}read/{Http_Request::get('id')}">{$language.read}</a></strong><br/>
             {/if}
 
-            <a href="{$smarty.const.DIRECTORY}txt_zip/{$id}">{$language.download} [ZIP]</a><br/>
-            <a href="{$smarty.const.DIRECTORY}txt_jar/{$id}">{$language.download} [JAR]</a><br/>
+            <a href="{$smarty.const.DIRECTORY}txt_zip/{Http_Request::get('id')}">{$language.download} [ZIP]</a><br/>
+            <a href="{$smarty.const.DIRECTORY}txt_jar/{Http_Request::get('id')}">{$language.download} [JAR]</a><br/>
         {/if}
 
 
-        <strong><a href="{$smarty.const.DIRECTORY}load/{$id}">{$language.download} [{$file.ext|upper}]</a></strong><br/>
+        <strong><a href="{$smarty.const.DIRECTORY}load/{Http_Request::get('id')}">{$language.download} [{$file.ext|upper}]</a></strong><br/>
         {if ($setup.jad_change && Media_Jar::isSupported($file.ext))}
-            <strong><a href="{$smarty.const.DIRECTORY}jad/{$id}">{$language.download} [JAD]</a></strong><br/>
+            <strong><a href="{$smarty.const.DIRECTORY}jad/{Http_Request::get('id')}">{$language.download} [JAD]</a></strong><br/>
         {/if}
 
         <input class="enter" size="50" type="url" value="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}{$file.path}"/><br/>
         {if $setup.send_email}
-            <a href="{$smarty.const.DIRECTORY}email/{$id}">{$language.send_a_link_to_email}</a><br/>
+            <a href="{$smarty.const.DIRECTORY}email/{Http_Request::get('id')}">{$language.send_a_link_to_email}</a><br/>
         {/if}
         {if $setup.abuse_change}
-            <a href="{$smarty.const.DIRECTORY}abuse/{$id}">{$language.complain_about_a_file}</a><br/>
+            <a href="{$smarty.const.DIRECTORY}abuse/{Http_Request::get('id')}">{$language.complain_about_a_file}</a><br/>
         {/if}
 
         {if ($setup['comments_change'])}
-            <strong><a href="{$smarty.const.DIRECTORY}view_comments/{$id}">{$language.comments} [{$commentsCount}]</a></strong>
+            <strong><a href="{$smarty.const.DIRECTORY}view_comments/{Http_Request::get('id')}">{$language.comments} [{$commentsCount}]</a></strong>
 
 
             {* администрирование *}
@@ -150,7 +150,7 @@
 {block footer}
     <ul class="iblock">
         <li><a href="{$smarty.const.DIRECTORY}{$directory.id}">{$language.go_to_the_category}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
         <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>

@@ -35,6 +35,7 @@
 
 require 'core/header.php';
 
+$id = intval(Http_Request::get('id'));
 define('IS_INDEX', !$id);
 
 $db = Db_Mysql::getInstance();

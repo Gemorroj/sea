@@ -61,6 +61,7 @@ if ($_SESSION['authorise'] != Config::get('password') || $_SESSION['ipu'] != $_S
 
 switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'add_attach':
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
@@ -96,6 +97,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_attach':
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
@@ -128,6 +130,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'move':
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
@@ -197,6 +200,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'hidden':
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория или файл не найдены');
@@ -219,6 +223,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'rename':
+        $id = intval(Http_Request::get('id'));
         $template->setTemplate('apanel/files/rename.tpl');
 
         $file = Files::getFileInfo($id);
@@ -264,6 +269,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             Http_Response::getInstance()->render();
         }
 
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория не найдена');
@@ -328,6 +334,8 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             $template->assign('error', 'Error');
             Http_Response::getInstance()->render();
         }
+
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
@@ -368,6 +376,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'priority':
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Директория не найдена');
@@ -391,6 +400,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'about':
         $template->setTemplate('apanel/files/about.tpl');
 
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
@@ -415,6 +425,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'seo':
         $template->setTemplate('apanel/files/seo.tpl');
 
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
@@ -445,6 +456,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/files/add_screen.tpl');
 
         if ($_FILES) {
+            $id = intval(Http_Request::get('id'));
             $file = Files::getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найден файл');
@@ -498,6 +510,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/files/add_ico.tpl');
 
         if ($_FILES) {
+            $id = intval(Http_Request::get('id'));
             $file = Files::getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найдена директория');
@@ -535,6 +548,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'del_ico':
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Не найдена директория');
@@ -653,8 +667,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->setTemplate('apanel/scan.tpl');
 
         $scan = Config::get('path');
+        $id = intval(Http_Request::get('id'));
 
-        if (isset($_GET['id'])) {
+        if ($id) {
             $file = Files::getFileInfo($id);
 
             if (!$file || is_dir($file['path']) === false) {
@@ -666,10 +681,10 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         @set_time_limit(99999);
-        @ini_set('max_execution_time', 99999);
+        @ini_set('max_execution_time', 9999);
         @ignore_user_abort(true);
 
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', '512M');
 
 
         $scanner = new Scanner();
@@ -687,6 +702,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'id3_file':
         $template->setTemplate('apanel/id3_file.tpl');
 
+        $id = intval(Http_Request::get('id'));
         $file = Files::getFileInfo($id);
 
         $id3 = new MP3_Id3($file['path']);
@@ -1178,6 +1194,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'clearcomm':
+        $id = intval(Http_Request::get('id'));
         $q = $db->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
 
         if ($q->execute(array($id))) {
@@ -1189,6 +1206,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
 
     case 'clearrate':
+        $id = intval(Http_Request::get('id'));
         $q = $db->prepare('UPDATE `files` SET `ips` = "", `yes` = 0, `no` = 0 WHERE `id` = ?');
 
         if ($q->execute(array($id))) {

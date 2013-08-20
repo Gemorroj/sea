@@ -41,6 +41,7 @@ if (!Config::get('abuse_change')) {
     Http_Response::getInstance()->renderError('Not found');
 }
 
+$id = intval(Http_Request::get('id'));
 // Получаем инфу о файле
 $v = Files::getFileInfo($id);
 
@@ -59,8 +60,8 @@ if (mail(
     Config::get('zakaz_email'),
     '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
     'Получена жалоба на файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id . "\r\n" .
-        'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
-        'IP: ' . $_SERVER['REMOTE_ADDR'],
+    'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
+    'IP: ' . $_SERVER['REMOTE_ADDR'],
     "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
 )) {
     Http_Response::getInstance()->renderMessage(Language::get('complaint_sent_to_the_administration'));

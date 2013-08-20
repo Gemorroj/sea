@@ -196,7 +196,7 @@ class Image
         switch ($type) {
             case IMAGETYPE_GIF:
                 if (Config::get('anim_change')) {
-                    ini_set('memory_limit', '256M');
+                    //ini_set('memory_limit', '256M');
 
                     // GIF Поддержка анимации
                     $gif = new Image_GIFDecoder(file_get_contents($in));

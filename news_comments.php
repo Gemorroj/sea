@@ -41,6 +41,7 @@ if (!Config::get('comments_change')) {
 }
 
 $db = Db_Mysql::getInstance();
+$id = intval(Http_Request::get('id'));
 
 // Получаем инфу о новости
 $q = $db->prepare('SELECT *, ' . Language::buildNewsQuery() . ' FROM `news` WHERE `id` = ?');

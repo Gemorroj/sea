@@ -41,8 +41,7 @@ header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 
 require 'core/config.php';
 
-
-$id = intval($_REQUEST['id']);
+$id = intval(Http_Request::get('id') ? Http_Request::get('id') : Http_Request::post('id'));
 $resize = true;
 $marker = Config::get('marker');
 
@@ -54,10 +53,8 @@ $h = isset($_GET['h']) ? abs($_GET['h']) : 0;
 if (!$w || !$h) {
     $resize = false;
     list($w, $h) = explode('*', Config::get('prev_size'));
-} else {
-    if ($marker) {
-        $marker = ($marker == 2 ? 0 : 1);
-    }
+} elseif ($marker) {
+    $marker = ($marker == 2 ? 0 : 1);
 }
 
 $v = Files::getFileInfo($id);

@@ -2,7 +2,7 @@
 
 {block header}
     {* только если это главная *}
-    {if $id < 1}
+    {if $smarty.const.IS_INDEX}
         {* новости, поиск, топ *}
         <div class="iblock">
             {if $news}
@@ -31,20 +31,20 @@
     {include file='sys/_files.tpl'}
 
     {* пагинация *}
-    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}{$id}"}
+    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}{Http_Request::get('id')}"}
 {/block}
 
 
 {block footer}
     {* нижнее меню *}
     <ul class="iblock">
-        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
         {if $setup.stat_change}
-            <li><a href="{$smarty.const.DIRECTORY}stat/{$id}">{$language.statistics}</a></li>
+            <li><a href="{$smarty.const.DIRECTORY}stat/{Http_Request::get('id')}">{$language.statistics}</a></li>
         {/if}
-        <li><a href="{$smarty.const.DIRECTORY}table/{$id}">{$language.orders}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}table/{Http_Request::get('id')}">{$language.orders}</a></li>
         {if $setup.exchanger_change}
-            <li><a href="{$smarty.const.DIRECTORY}exchanger/{$id}">{$language.add_file}</a></li>
+            <li><a href="{$smarty.const.DIRECTORY}exchanger/{Http_Request::get('id')}">{$language.add_file}</a></li>
         {/if}
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>

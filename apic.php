@@ -36,7 +36,7 @@
 
 require 'core/config.php';
 
-$id = intval($_GET['id']);
+$id = intval(Http_Request::get('id'));
 
 if (!is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
     Http_Response::getInstance()->renderError('Not found');

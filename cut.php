@@ -42,6 +42,8 @@ if (!Config::get('cut_change')) {
 }
 
 $template = Http_Response::getInstance()->getTemplate();
+
+$id = intval(Http_Request::get('id'));
 // Получаем инфу о файле
 $v = Files::getFileInfo($id);
 

@@ -36,9 +36,7 @@
 
 require 'core/config.php';
 
-$id = intval($_GET['id']);
-
-$v = Files::getFileInfo($id);
+$v = Files::getFileInfo(Http_Request::get('id'));
 
 $location = Media_Jar::getImage($v['path']);
 

@@ -36,6 +36,7 @@
 
 require 'core/header.php';
 
+$id = intval(Http_Request::get('id'));
 // Получаем инфу о файле
 $file = Files::getFileInfo($id);
 

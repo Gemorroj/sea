@@ -36,11 +36,7 @@
 
 require 'core/config.php';
 
-ini_set('memory_limit', '128M');
-
-$id = intval($_GET['id']);
-
-$v = Files::getFileInfo($id);
+$v = Files::getFileInfo(Http_Request::get('id'));
 
 $location = Media_Theme::getImage($v['path']);
 

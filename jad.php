@@ -45,7 +45,7 @@ if (!Config::get('jad_change')) {
     Http_Response::getInstance()->renderError('Not found');
 }
 
-$id = intval($_GET['id']);
+$id = intval(Http_Request::get('id'));
 // Получаем инфу о файле
 $v = Files::getFileInfo($id);
 

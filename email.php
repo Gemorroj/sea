@@ -43,6 +43,7 @@ if (!Config::get('send_email')) {
 
 $template = Http_Response::getInstance()->getTemplate();
 
+$id = intval(Http_Request::get('id'));
 // Получаем инфу о файле
 $v = Files::getFileInfo($id);
 

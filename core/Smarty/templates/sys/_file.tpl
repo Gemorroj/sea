@@ -32,7 +32,7 @@
             <a href="{$link}">{$val}</a>
         {/foreach}
 
-        <form action="{$smarty.const.DIRECTORY}im/{$id}" method="get">
+        <form action="{$smarty.const.DIRECTORY}im/{Http_Request::get('id')}" method="get">
             <div class="row">
                 <input class="enter" type="number" size="5" name="w" required="required" min="1" max="65536"/>x<input class="enter" type="number" size="5" name="h" required="required" min="1" max="65536"/><br/>
                 <input class="buttom" type="submit" value="{$language.download}"/>
@@ -71,7 +71,7 @@
             {$language.comments}: {$file.info.tag.comment}<br/>
         {/if}
         {if $file.info.tag.apic}
-            <a href="{$smarty.const.DIRECTORY}apic/{$id}?full"><img src="{$smarty.const.DIRECTORY}apic/{$id}" alt=""/></a><br/>
+            <a href="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}?full"><img src="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}" alt=""/></a><br/>
         {/if}
     {/if}
 
@@ -79,7 +79,7 @@
     {if Media_Video::isSupported($file.ext)}
         {if $setup.screen_file_change}
             {foreach ','|explode:$setup.ffmpeg_frames as $i => $frame}
-                <a href="{$smarty.const.DIRECTORY}view/{$id}?frame={$frame}">[{$i + 1}]</a>{if !$frame@last}, {/if}
+                <a href="{$smarty.const.DIRECTORY}view/{Http_Request::get('id')}?frame={$frame}">[{$i + 1}]</a>{if !$frame@last}, {/if}
             {/foreach}
             <br/>
         {/if}
@@ -126,7 +126,7 @@
 {* администрирование *}
 {if $smarty.const.IS_ADMIN}
 <div class="iblock">
-    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$id}&amp;action=move" method="post">
+    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={Http_Request::get('id')}&amp;action=move" method="post">
         <div>
             <label for="topath">Директория:</label>
             {html_options class='buttom' id='topath' name='topath' options=$dirs selected=$file.infolder}
@@ -135,7 +135,7 @@
         </div>
     </form>
 
-    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$id}&amp;action=add_attach" method="post" enctype="multipart/form-data">
+    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={Http_Request::get('id')}&amp;action=add_attach" method="post" enctype="multipart/form-data">
         <div>
             <label for="attach">Вложение:</label>
             <input id="attach" name="attach" type="file" class="buttom" required="required" /><br/>

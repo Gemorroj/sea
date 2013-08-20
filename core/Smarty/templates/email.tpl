@@ -4,7 +4,7 @@
 
 {* email *}
 {block content}
-    <form action="{$smarty.const.DIRECTORY}email/{$id}" method="post">
+    <form action="{$smarty.const.DIRECTORY}email/{Http_Request::get('id')}" method="post">
         <div class="row">
             <label>
                 Email:<br/>
@@ -18,8 +18,8 @@
 
 {block footer}
     <ul class="iblock">
-        <li><a href="{$smarty.const.DIRECTORY}view/{$id}">{$file.name}</li>
-        <li><a href="{$smarty.const.DIRECTORY}settings/{$id}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.DIRECTORY}view/{Http_Request::get('id')}">{$file.name}</li>
+        <li><a href="{$smarty.const.DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
         <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>
