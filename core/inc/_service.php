@@ -1,7 +1,7 @@
 <?php
 if (Config::get('service_change')) {
-    if (isset($_GET['url'])) {
-        $_SESSION['site_url'] = preg_replace('/^(?:.*:\/\/)/', '', $_GET['url']);
+    if (Http_Request::get('url')) {
+        $_SESSION['site_url'] = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::get('url'));
     }
     if (isset($_SESSION['site_url'])) {
         Config::set('site_url', $_SESSION['site_url']);
@@ -9,7 +9,7 @@ if (Config::get('service_change')) {
 }
 
 if (Config::get('service_change_advanced')) {
-    $user = isset($_GET['user']) ? $_GET['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
+    $user = Http_Request::get('user', isset($_SESSION['user']) ? $_SESSION['user'] : '');
 
     if ($user) {
         $q = Db_Mysql::getInstance()->prepare('SELECT `url`, `name`, `style` FROM `users_profiles` WHERE `id` = ?');

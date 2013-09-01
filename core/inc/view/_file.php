@@ -79,7 +79,7 @@ if (Media_Video::isSupported($ext)) {
     $file['info'] = Media_Video::getInfo($id, $file['path']);
 
     if (Config::get('screen_file_change')) {
-        $frame = isset($_GET['frame']) ? abs($_GET['frame']) : Config::get('ffmpeg_frame');
+        $frame = abs(Http_Request::get('frame', Config::get('ffmpeg_frame')));
         if (file_exists(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
             $file['screen_file'] = DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif';
         } else {

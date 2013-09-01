@@ -76,7 +76,7 @@ $size = 0;
 $zipFileName = '';
 $zipFileType = '';
 $zipFileData = '';
-$action = isset($_GET['action']) ? $_GET['action'] : null;
+$action = Http_Request::get('action');
 
 
 $zip = new PclZip($v['path']);
@@ -87,7 +87,7 @@ if (!$zip) {
 
 switch ($action) {
     case 'down':
-        $zipFileName = rtrim($_GET['name'], '/');
+        $zipFileName = rtrim(Http_Request::get('name'), '/');
 
         $mime = Helper::ext2mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
         header('Content-Type: ' . $mime);
@@ -101,7 +101,7 @@ switch ($action) {
         break;
 
     case 'preview':
-        $zipFileName = rtrim($_GET['name'], '/');
+        $zipFileName = rtrim(Http_Request::get('name'), '/');
         Seo::addTitle($zipFileName);
 
         $ext = pathinfo($zipFileName, PATHINFO_EXTENSION);

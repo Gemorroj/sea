@@ -59,26 +59,28 @@ if ($_SESSION['authorise'] != Config::get('password') || $_SESSION['ipu'] != $_S
 }
 
 
-switch (isset($_GET['action']) ? $_GET['action'] : null) {
+switch (Http_Request::get('action')) {
     case 'add_attach':
         $id = intval(Http_Request::get('id'));
+
         $file = Files::getFileInfo($id);
         if (!$file) {
             $template->assign('error', 'Файл не найден');
             Http_Response::getInstance()->render();
         }
 
-        if (!$_FILES || !isset($_FILES['attach'])) {
+        $attach = Http_Request::file('attach');
+        if (!$attach) {
             $template->assign('error', 'Нет загружаемого файла');
             Http_Response::getInstance()->render();
         }
-        if ($_FILES['attach']['error']) {
-            $template->assign('error', 'Ошибка при загрузке файла. Код ошибки: ' . $_FILES['attach']['error']);
+        if ($attach['error']) {
+            $template->assign('error', 'Ошибка при загрузке файла. Код ошибки: ' . $attach['error']);
             Http_Response::getInstance()->render();
         }
 
-        $tmp = CORE_DIRECTORY . '/tmp/attach_' . $_FILES['attach']['name'];
-        if (move_uploaded_file($_FILES['attach']['tmp_name'], $tmp) === false) {
+        $tmp = CORE_DIRECTORY . '/tmp/attach_' . $attach['name'];
+        if (move_uploaded_file($attach['tmp_name'], $tmp) === false) {
             $err = error_get_last();
             $template->assign('error', $err['message']);
             Http_Response::getInstance()->render();
@@ -106,9 +108,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
 
         $attach = unserialize($file['attach']);
         $name = '';
-        if (isset($attach[$_GET['attach']])) {
-            $name = $attach[$_GET['attach']];
-            unset($attach[$_GET['attach']]);
+        if (isset($attach[Http_Request::get('attach')])) {
+            $name = $attach[Http_Request::get('attach')];
+            unset($attach[Http_Request::get('attach')]);
         }
 
         $q = $db->prepare('UPDATE `files` SET `attach` = ? WHERE `id` = ?');
@@ -121,7 +123,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         if ($q->execute()) {
-            Files::delAttach($file['infolder'], $id, array($_GET['attach'] => $name));
+            Files::delAttach($file['infolder'], $id, array(Http_Request::get('attach') => $name));
             $template->assign('message', 'Вложение удалено');
         } else {
             $template->assign('error', implode("\n", $q->errorInfo()));
@@ -208,7 +210,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         }
 
         $q = $db->prepare('UPDATE `files` SET `hidden` = ? WHERE `id` = ?');
-        if ($_GET['hide'] == '1') {
+        if (Http_Request::get('hide') == '1') {
             $result = $q->execute(array('1', $id));
         } else {
             $result = $q->execute(array('0', $id));
@@ -383,7 +385,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             Http_Response::getInstance()->render();
         }
 
-        if ($_GET['to'] == 'down') {
+        if (Http_Request::get('to') == 'down') {
             $q = $db->prepare('UPDATE `files` SET `priority` = `priority` - 1 WHERE `id` = ?');
         } else {
             $q = $db->prepare('UPDATE `files` SET `priority` = `priority` + 1 WHERE `id` = ?');
@@ -455,16 +457,18 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'add_screen':
         $template->setTemplate('apanel/files/add_screen.tpl');
 
-        if ($_FILES) {
+        if (Http_Request::isPost()) {
             $id = intval(Http_Request::get('id'));
+
             $file = Files::getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найден файл');
                 Http_Response::getInstance()->render();
             }
 
-            $tmp = CORE_DIRECTORY . '/tmp/screen_' . $_FILES['screen']['name'];
-            if (move_uploaded_file($_FILES['screen']['tmp_name'], $tmp) === false) {
+            $screen = Http_Request::file('screen');
+            $tmp = CORE_DIRECTORY . '/tmp/screen_' . $screen['name'];
+            if (move_uploaded_file($screen['tmp_name'], $tmp) === false) {
                 $err = error_get_last();
                 $template->assign('error', $err['message']);
                 Http_Response::getInstance()->render();
@@ -509,8 +513,9 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'add_ico':
         $template->setTemplate('apanel/files/add_ico.tpl');
 
-        if ($_FILES) {
+        if (Http_Request::isPost()) {
             $id = intval(Http_Request::get('id'));
+
             $file = Files::getFileInfo($id);
             if (!$file) {
                 $template->assign('error', 'Не найдена директория');
@@ -523,14 +528,15 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 Http_Response::getInstance()->render();
             }
 
-            $ext = strtolower(pathinfo($_FILES['ico']['name'], PATHINFO_EXTENSION));
+            $ico = Http_Request::file('ico');
+            $ext = strtolower(pathinfo($ico['name'], PATHINFO_EXTENSION));
             if (!Media_Image::isSupported($ext)) {
                 $template->assign('error', 'Поддерживаются иконки jpeg, gif, png и bmp формата');
                 Http_Response::getInstance()->render();
             }
 
             $tmp_file = CORE_DIRECTORY . '/tmp/' . uniqid('addico_') . '.png';
-            if (!move_uploaded_file($_FILES['ico']['tmp_name'], $tmp_file)) {
+            if (!move_uploaded_file($ico['tmp_name'], $tmp_file)) {
                 $template->assign('error', 'Не удалось переместить иконку');
                 Http_Response::getInstance()->render();
             }
@@ -616,7 +622,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
                 $_POST['new']['russian'],
                 $_POST['new']['azerbaijan'],
                 $_POST['new']['turkey'],
-                $_GET['news']
+                Http_Request::get('news')
             ));
 
             if (!$result) {
@@ -626,7 +632,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
         }
 
-        $template->assign('news', News::getNewsInfo($_GET['news']));
+        $template->assign('news', News::getNewsInfo(Http_Request::get('news')));
         break;
 
 
@@ -926,7 +932,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
             }
             @chmod($newpath, 0777);
 
-            if ($_GET['type'] == 'url') {
+            if (Http_Request::get('type') == 'url') {
                 $result = Files::uploadUrls($newpath);
             } else {
                 $result = Files::uploadFiles($newpath);
@@ -949,7 +955,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
         $template->assign('users', $users);
 
         if ($_POST) {
-            switch (@$_GET['mode']) {
+            switch (Http_Request::get('mode')) {
                 case 'del':
                     $q1 = $db->prepare('DELETE FROM `users_profiles` WHERE `id` = ?');
                     $q2 = $db->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?');
@@ -1163,7 +1169,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'del_news':
         $q = $db->prepare('DELETE FROM `news` WHERE `id` = ?');
 
-        if ($q->execute(array($_GET['news']))) {
+        if ($q->execute(array(Http_Request::get('news')))) {
             $template->assign('message', 'Новость удалена');
         } else {
             $template->assign('error', implode("\n", $q->errorInfo()));
@@ -1174,7 +1180,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'del_comment_news_comments':
         $q = $db->prepare('DELETE FROM `news_comments` WHERE `id` = ?');
 
-        if ($q->execute(array($_GET['comment']))) {
+        if ($q->execute(array(Http_Request::get('comment')))) {
             $template->assign('message', 'Комментарий удален');
         } else {
             $template->assign('error', implode("\n", $q->errorInfo()));
@@ -1185,7 +1191,7 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'del_comment_view_comments':
         $q = $db->prepare('DELETE FROM `comments` WHERE `id` = ?');
 
-        if ($q->execute(array($_GET['comment']))) {
+        if ($q->execute(array(Http_Request::get('comment')))) {
             $template->assign('message', 'Комментарий удален');
         } else {
             $template->assign('error', implode("\n", $q->errorInfo()));
@@ -1290,15 +1296,15 @@ switch (isset($_GET['action']) ? $_GET['action'] : null) {
     case 'clean_cache':
         $err = '';
 
-        $h = opendir($_GET['dir']);
+        $h = opendir(Http_Request::get('dir'));
 
         while (($f = readdir($h)) !== false) {
             if ($f == '.htaccess' || $f == '.' || $f == '..') {
                 continue;
             }
-            //chmod($_GET['dir'].'/'.$f, 0666);
-            if (!unlink($_GET['dir'] . '/' . $f)) {
-                $err .= $_GET['dir'] . '/' . $f . "\n";
+            //chmod(Http_Request::get('dir') . '/' . $f, 0666);
+            if (!unlink(Http_Request::get('dir') . '/' . $f)) {
+                $err .= Http_Request::get('dir') . '/' . $f . "\n";
             }
         }
 

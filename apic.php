@@ -50,7 +50,7 @@ if ($data && $data['tag']['apic']) {
     header('Cache-Control: public, max-age=8640000');
     header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 
-    if (isset($_GET['full']) === true) {
+    if (Http_Request::get('full')) {
         echo $data['tag']['apic'];
     } else {
         $im = imagecreatefromstring($data['tag']['apic']);

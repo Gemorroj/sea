@@ -83,7 +83,8 @@ class Language
     public static function setLangpack($langpack)
     {
         if ($langpack && in_array($langpack, self::getLangpacks())) {
-            self::$_langpack = $_SESSION['langpack'] = $langpack;
+            self::$_langpack = $langpack;
+            $_SESSION['langpack'] = $langpack;
             self::$_language = include CORE_DIRECTORY . '/resources/language/' . self::$_langpack . '.dat';
 
             return true;
@@ -98,6 +99,9 @@ class Language
      */
     private function _load()
     {
+        // заменяем языковой пакет
+        Language::setLangpack(Http_Request::post('langpack', Http_Request::get('langpack', Config::get('langpack'))));
+
         if (!isset($_SESSION['langpack']) || !in_array($_SESSION['langpack'], self::getLangpacks())) {
             // язык по умолчанию
             self::$_langpack = Config::get('langpack');

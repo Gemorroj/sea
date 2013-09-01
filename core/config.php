@@ -71,12 +71,11 @@ Db_Mysql::setOptions(array(
 
 // Инициализируем конфигурацию
 Config::init();
-// Инициализируем переводы
-Language::init();
-
 // Инициализируем прослойку над HTTP
 Http_Request::init();
 Http_Response::init(new Template());
+// Инициализируем переводы
+Language::init();
 
 
 define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));

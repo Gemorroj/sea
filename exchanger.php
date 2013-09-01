@@ -54,13 +54,16 @@ $insertId = null;
 $db = Db_Mysql::getInstance();
 
 if ($_POST) {
-    if (!$_FILES['file'] || $_FILES['file']['error']) {
+    $file = Http_Request::file('file');
+    $screen = Http_Request::file('screen');
+
+    if (!$file || $file['error']) {
         Http_Response::getInstance()->renderError(Language::get('when_downloading_a_file_error_occurred'));
     }
 
-    $pathinfo = pathinfo($_FILES['file']['name']);
+    $pathinfo = pathinfo($file['name']);
     $path = Config::get('path') . $_POST['topath'];
-    $pathname = $path . $_FILES['file']['name'];
+    $pathname = $path . $file['name'];
 
     $ext = explode(',', strtolower(Config::get('exchanger_extensions')));
     if (!in_array(strtolower($pathinfo['extension']), $ext)) {
@@ -93,7 +96,7 @@ if ($_POST) {
         Http_Response::getInstance()->renderError(Language::get('file_with_this_name_already_exists'));
     }
 
-    if (!move_uploaded_file($_FILES['file']['tmp_name'], $pathname)) {
+    if (!move_uploaded_file($file['tmp_name'], $pathname)) {
         Http_Response::getInstance()->renderError(Language::get('an_error_occurred_while_copying_files'));
     }
 
@@ -124,14 +127,14 @@ if ($_POST) {
     }
 
 
-    if (!$_FILES['screen']['error']) {
-        $screen = Config::get('spath') . substr($pathname, strlen(Config::get('path'))) . '.gif';
+    if ($screen && !$screen['error']) {
+        $screenPath = Config::get('spath') . substr($pathname, strlen(Config::get('path'))) . '.gif';
 
-        if (!move_uploaded_file($_FILES['screen']['tmp_name'], $screen)) {
+        if (!move_uploaded_file($screen['tmp_name'], $screenPath)) {
             Http_Response::getInstance()->renderError('Error');
         }
 
-        Image::resize($screen, $screen, 0, 0, Config::get('marker'));
+        Image::resize($screenPath, $screenPath, 0, 0, Config::get('marker'));
     }
 
     if ($_POST['about']) {

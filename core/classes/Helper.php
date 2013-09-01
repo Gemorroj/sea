@@ -46,7 +46,7 @@ class Helper
     {
         $onpage = Helper::get2ses('onpage');
         $items = intval($items);
-        $page = isset($_GET['page']) ? abs($_GET['page']) : 1;
+        $page = abs(Http_Request::get('page', 1));
 
         if (Config::get('ignore_index_pages') && defined('IS_INDEX') && IS_INDEX === true) {
             // переопределяем пагинацию, если это главная
@@ -216,8 +216,8 @@ class Helper
         if (isset($_SESSION[$name]) === false) {
             $_SESSION[$name] = Config::get($name);
         }
-        if (isset($_GET[$name]) === true) {
-            $_SESSION[$name] = $_GET[$name];
+        if (Http_Request::get($name) !== null) {
+            $_SESSION[$name] = Http_Request::get($name);
         }
 
         // да, именно переменная переменных

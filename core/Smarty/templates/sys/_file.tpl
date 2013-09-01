@@ -71,7 +71,7 @@
             {$language.comments}: {$file.info.tag.comment}<br/>
         {/if}
         {if $file.info.tag.apic}
-            <a href="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}?full"><img src="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}" alt=""/></a><br/>
+            <a href="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}?full=1"><img src="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}" alt=""/></a><br/>
         {/if}
     {/if}
 

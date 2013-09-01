@@ -49,7 +49,7 @@ echo '<!DOCTYPE html>
         <div>
 ';
 
-if (!@$_GET['level']) {
+if (!Http_Request::get('level')) {
     echo '
     <fieldset><legend>Введите ваши данные</legend>
         <form action="' . $_SERVER['PHP_SELF'] . '?level=1" method="post">

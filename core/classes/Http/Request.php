@@ -62,43 +62,65 @@ class Http_Request
 
 
     /**
+     * @return bool
+     */
+    public static function isPost()
+    {
+        return ('POST' === $_SERVER['REQUEST_METHOD']);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public static function isGet()
+    {
+        return ('GET' === $_SERVER['REQUEST_METHOD']);
+    }
+
+
+    /**
      * @param string $key
+     * @param mixed $default
      *
      * @return mixed
      */
-    public static function get($key)
+    public static function get($key, $default = null)
     {
-        return self::$_get[$key];
+        return array_key_exists($key, self::$_get) ? self::$_get[$key] : $default;
     }
 
     /**
      * @param string $key
+     * @param mixed $default
      *
      * @return mixed
      */
-    public static function post($key)
+    public static function post($key, $default = null)
     {
-        return self::$_post[$key];
+        return array_key_exists($key, self::$_post) ? self::$_post[$key] : $default;
     }
 
     /**
      * @param string $key
+     * @param mixed $default
      *
      * @return mixed
      */
-    public static function cookie($key)
+    public static function cookie($key, $default = null)
     {
-        return self::$_cookies[$key];
+        return array_key_exists($key, self::$_cookies) ? self::$_cookies[$key] : $default;
     }
 
     /**
      * @param string $key
+     * @param mixed $default
      *
      * @return mixed
      */
-    public static function file($key)
+    public static function file($key, $default = null)
     {
-        return self::$_files[$key];
+        return array_key_exists($key, self::$_files) ? self::$_files[$key] : $default;
     }
 
     /**

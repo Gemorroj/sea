@@ -37,7 +37,7 @@ if (Config::get('buy_change')) {
 // модуль расширенного сервиса
 $serviceBanner = $serviceBuy = array();
 if (Config::get('service_change_advanced') && (Config::get('service_head') || Config::get('service_foot'))) {
-    $user = isset($_GET['user']) ? $_GET['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : '');
+    $user = Http_Request::get('user', isset($_SESSION['user']) ? $_SESSION['user'] : '');
 
     if ($user) {
         $q = Db_Mysql::getInstance()->prepare('

@@ -37,10 +37,6 @@ $GLOBALS['tm'] = microtime(true);
 
 require_once dirname(__FILE__) . '/config.php';
 
-// заменяем языковой пакет
-Language::setLangpack(Http_Request::post('langpack'));
-Language::setLangpack(Http_Request::get('langpack'));
-
 require CORE_DIRECTORY . '/inc/_style.php';
 require CORE_DIRECTORY . '/inc/_buy.php';
 require CORE_DIRECTORY . '/inc/_online.php';

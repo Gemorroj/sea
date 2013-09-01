@@ -261,7 +261,7 @@ class Files
             )
         ');
 
-        foreach (explode("\n", trim($_POST['files'])) as $text) {
+        foreach (explode("\n", trim(Http_Request::post('files'))) as $text) {
             $parameter = explode('#', trim($text));
             $parameter[0] = trim($parameter[0]);
             if (isset($parameter[1]) === false) {
@@ -328,12 +328,13 @@ class Files
         ');
 
         $infolder = rtrim($newpath, '/') . '/';
+        $userfile = Http_Request::file('userfile');
 
-        for ($i = 0, $l = sizeof($_FILES['userfile']['name']); $i < $l; ++$i) {
-            if (empty($_FILES['userfile']['name'][$i]) === true) {
+        for ($i = 0, $l = sizeof($userfile['name']); $i < $l; ++$i) {
+            if (empty($userfile['name'][$i]) === true) {
                 continue;
             }
-            $name = $_FILES['userfile']['name'][$i];
+            $name = $userfile['name'][$i];
             $to = $newpath . $name;
 
             if (Helper::isBlockedExt(pathinfo($name, PATHINFO_EXTENSION))) {
@@ -345,7 +346,7 @@ class Files
                 continue;
             }
 
-            if (move_uploaded_file($_FILES['userfile']['tmp_name'][$i], $to) === true) {
+            if (move_uploaded_file($userfile['tmp_name'][$i], $to) === true) {
                 $aze_name = $tur_name = $rus_name = $name = basename($to, '.' . pathinfo($to, PATHINFO_EXTENSION));
                 // транслит
                 if ($name[0] === '!') {

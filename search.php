@@ -42,8 +42,7 @@ if (!Config::get('search_change')) {
     Http_Response::getInstance()->renderError('Not found');
 }
 
-
-$word = isset($_GET['word']) ? $_GET['word'] : '';
+$word = Http_Request::get('word', '');
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('search.tpl');

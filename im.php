@@ -46,8 +46,8 @@ $resize = true;
 $marker = Config::get('marker');
 
 
-$w = isset($_GET['w']) ? abs($_GET['w']) : 0;
-$h = isset($_GET['h']) ? abs($_GET['h']) : 0;
+$w = abs(Http_Request::get('w', 0));
+$h = abs(Http_Request::get('h', 0));
 
 
 if (!$w || !$h) {

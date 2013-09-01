@@ -54,7 +54,7 @@ if ($info['access_num'] > Config::get('countban')) {
     );
 }
 //-------------------------------
-if (!isset($_POST['p']) && !isset($_GET['p'])) {
+if (!Http_Request::post('p') && !Http_Request::get('p')) {
     echo '<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
     <head>
@@ -78,8 +78,8 @@ if (!isset($_POST['p']) && !isset($_GET['p'])) {
     exit;
 }
 
-if ((isset($_POST['p']) && md5($_POST['p']) == Config::get('password')) ||
-    Config::get('autologin') && (isset($_GET['p']) && md5($_GET['p']) == Config::get('password'))) {
+if ((Http_Request::post('p') && md5(Http_Request::post('p')) == Config::get('password')) ||
+    Config::get('autologin') && (Http_Request::get('p') && md5(Http_Request::get('p')) == Config::get('password'))) {
     $_SESSION['ipu'] = $_SERVER['REMOTE_ADDR'];
     $_SESSION['authorise'] = Config::get('password');
 

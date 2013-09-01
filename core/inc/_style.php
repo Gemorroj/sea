@@ -1,16 +1,19 @@
 <?php
 
 if (Config::get('style_change')) {
-    if (isset($_POST['style']) && parse_url($_POST['style']) && strpos($_POST['style'], '.')) {
-        $style = preg_replace('/^(?:.*:\/\/)/', '', $_POST['style']);
+    $stylePost = Http_Request::post('style');
+    if ($stylePost && parse_url($stylePost) && strpos($stylePost, '.')) {
+        $style = preg_replace('/^(?:.*:\/\/)/', '', $stylePost);
         setcookie('style', $style, $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
     } else {
-        if (isset($_GET['style']) && parse_url($_GET['style']) && strpos($_GET['style'], '.')) {
-            $style = preg_replace('/^(?:.*:\/\/)/', '', $_GET['style']);
+        $styleGet = Http_Request::get('style');
+        if (isset($styleGet) && parse_url($styleGet) && strpos($styleGet, '.')) {
+            $style = preg_replace('/^(?:.*:\/\/)/', '', $styleGet);
             setcookie('style', $style, $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
         } else {
-            if (isset($_COOKIE['style']) && parse_url($_COOKIE['style']) && strpos($_COOKIE['style'], '.')) {
-                $style = preg_replace('/^(?:.*:\/\/)/', '', $_COOKIE['style']);
+            $styleCookie = Http_Request::cookie('style');
+            if (isset($styleCookie) && parse_url($styleCookie) && strpos($styleCookie, '.')) {
+                $style = preg_replace('/^(?:.*:\/\/)/', '', $styleCookie);
             } else {
                 if (isset($_SESSION['style'])) {
                     $style = $_SESSION['style'];

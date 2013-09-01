@@ -46,7 +46,8 @@ header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
 require 'core/config.php';
 
 $id = intval(Http_Request::get('id'));
-$frame = $i = $_GET['frame'] ? abs($_GET['frame']) : Config::get('ffmpeg_frame') + 1;
+$frame = abs(Http_Request::get('frame', Config::get('ffmpeg_frame') + 1));
+$i = $frame;
 
 $v = Files::getFileInfo($id);
 
