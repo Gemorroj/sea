@@ -73,8 +73,8 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
     }
 } elseif ($act == 'registration') {
     if (Http_Request::isPost()) {
-        $style = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('style'));
-        $url = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('url'));
+        $style = Helper::removeSchema(Http_Request::post('style'));
+        $url = Helper::removeSchema(Http_Request::post('url'));
         $pass = Http_Request::post('pass');
         $mail = Http_Request::post('mail');
         $name = Http_Request::post('name');
@@ -217,8 +217,8 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
 
 
             case 'save':
-                $style = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('style'));
-                $url = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('url'));
+                $style = Helper::removeSchema(Http_Request::post('style'));
+                $url = Helper::removeSchema(Http_Request::post('url'));
                 $name = Http_Request::post('name');
                 $mail = Http_Request::post('mail');
 
@@ -257,7 +257,7 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
                 $all = $all < Config::get('service_head') ? $all : Config::get('service_head');
                 for ($i = 0; $i < $all; ++$i) {
                     $name = $head['name'][$i];
-                    $value = preg_replace('/^(?:.*:\/\/)/', '', $head['value'][$i]);
+                    $value = Helper::removeSchema($head['value'][$i]);
                     if ($name && $value) {
                         $q->execute(array(
                             $_SESSION['id'],
@@ -273,7 +273,7 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
                 $all = $all < Config::get('service_foot') ? $all : Config::get('service_foot');
                 for ($i = 0; $i < $all; ++$i) {
                     $name = $foot['name'][$i];
-                    $value = preg_replace('/^(?:.*:\/\/)/', '', $foot['value'][$i]);
+                    $value = Helper::removeSchema($foot['value'][$i]);
                     if ($name && $value) {
                         $q->execute(array(
                              $_SESSION['id'],

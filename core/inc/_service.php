@@ -1,7 +1,10 @@
 <?php
 if (Config::get('service_change')) {
     if (Http_Request::get('url')) {
-        $_SESSION['site_url'] = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::get('url'));
+        $url = Helper::removeSchema(Http_Request::get('url'));
+        if (Helper::isValidUrl($url)) {
+            $_SESSION['site_url'] = $url;
+        }
     }
     if (isset($_SESSION['site_url'])) {
         Config::set('site_url', $_SESSION['site_url']);

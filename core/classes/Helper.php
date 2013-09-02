@@ -157,6 +157,15 @@ class Helper
         return array($r, $g, $b);
     }
 
+    /**
+     * @param string $str
+     *
+     * @return string
+     */
+    public static function removeSchema($str)
+    {
+        return preg_replace('/^(?:.*:\/\/)/', '', $str);
+    }
 
     /**
      * @param string $email
