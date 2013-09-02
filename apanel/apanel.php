@@ -821,8 +821,8 @@ switch (Http_Request::get('action')) {
                 $q = $db->query('SELECT `path` FROM `files` WHERE `path` LIKE "%.jpg" OR `path` LIKE "%.jpe" OR `path` LIKE "%.jpeg" OR `path` LIKE "%.gif" OR `path` LIKE "%.png"');
                 $all = $q->rowCount();
                 $i = 0;
-                $textLen = mb_strlen($_POST['text']);
-                $rgb = Helper::hex2rgb($_POST['color']);
+                $textLen = mb_strlen(Http_Request::post('text'));
+                $rgb = Helper::hex2rgb(Http_Request::post('color'));
 
                 foreach ($q as $arr) {
                     list($w, $h, $type) = getimagesize($arr['path']);
@@ -856,23 +856,23 @@ switch (Http_Request::get('action')) {
                         $color = imagecolorallocate($pic, $rgb[0], $rgb[1], $rgb[2]);
 
                         // верх/низ
-                        if ($_POST['y'] == 'foot') {
-                            $y = $h - ($_POST['size'] * 1.5);
+                        if (Http_Request::post('y') == 'foot') {
+                            $y = $h - (Http_Request::post('size') * 1.5);
                         } else {
-                            $y = intval($_POST['size']);
+                            $y = intval(Http_Request::post('size'));
                         }
 
 
-                        // imagestring($pic, $_POST['size'], ($w/2)-(strlen($_POST['text'])*3), $y, $_POST['text'], $color);
+                        // imagestring($pic, Http_Request::post('size'), ($w/2)-(strlen(Http_Request::post('text')) * 3), $y, Http_Request::post('text'), $color);
                         imagettftext(
                             $pic,
-                            $_POST['size'],
+                            Http_Request::post('size'),
                             0,
                             ($w / 2) - ($textLen * 3),
                             $y,
                             $color,
                             CORE_DIRECTORY . '/resources/font.ttf',
-                            $_POST['text']
+                            Http_Request::post('text')
                         );
 
                         switch ($type) {
@@ -905,7 +905,7 @@ switch (Http_Request::get('action')) {
     case 'import':
         $template->setTemplate('apanel/import.tpl');
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
             $import = new Import(Config::getAll());
             $result = $import->importFiles();
 
@@ -925,8 +925,8 @@ switch (Http_Request::get('action')) {
         $template->assign('dirs', Files::getAllDirs());
 
 
-        if ($_POST) {
-            $newpath = Config::get('path') . trim($_POST['topath']);
+        if (Http_Request::isPost()) {
+            $newpath = Config::get('path') . trim(Http_Request::post('topath'));
             if ($newpath == '') {
                 $template->assign('error', 'Нет конечного пути');
                 Http_Response::getInstance()->render();
@@ -959,13 +959,13 @@ switch (Http_Request::get('action')) {
         $users = $db->query('SELECT COUNT(1) FROM `users_profiles`')->fetchColumn();
         $template->assign('users', $users);
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
             switch (Http_Request::get('mode')) {
                 case 'del':
                     $q1 = $db->prepare('DELETE FROM `users_profiles` WHERE `id` = ?');
                     $q2 = $db->prepare('DELETE FROM `users_settings` WHERE `parent_id` = ?');
 
-                    if ($q1->execute(array($_POST['user'])) && $q2->execute(array($_POST['user']))) {
+                    if ($q1->execute(array(Http_Request::post('user'))) && $q2->execute(array(Http_Request::post('user')))) {
                         $template->assign('message', 'Пользователь удален');
                     } else {
                         $template->assign('error', implode("\n", $q1->errorInfo()) . implode("\n", $q2->errorInfo()));
@@ -975,7 +975,7 @@ switch (Http_Request::get('action')) {
                 default:
                     $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
-                    if ($q->execute(array('service_head', $_POST['service_head'])) && $q->execute(array('service_foot', $_POST['service_foot']))) {
+                    if ($q->execute(array('service_head', Http_Request::post('service_head'))) && $q->execute(array('service_foot', Http_Request::post('service_foot')))) {
                         $template->assign('message', 'Настройки сервиса изменены');
                     } else {
                         $template->assign('error', implode("\n", $q->errorInfo()));
@@ -989,13 +989,13 @@ switch (Http_Request::get('action')) {
     case 'exchanger':
         $template->setTemplate('apanel/exchanger.tpl');
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
             $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
-            if ($q->execute(array('exchanger_notice', ($_POST['exchanger_notice'] ? 1 : 0))) &&
-                $q->execute(array('exchanger_extensions', $_POST['exchanger_extensions'])) &&
-                $q->execute(array('exchanger_name', $_POST['exchanger_name'])) &&
-                $q->execute(array('exchanger_hidden', ($_POST['exchanger_hidden'] ? 1 : 0)))) {
+            if ($q->execute(array('exchanger_notice', (Http_Request::post('exchanger_notice') ? 1 : 0))) &&
+                $q->execute(array('exchanger_extensions', Http_Request::post('exchanger_extensions'))) &&
+                $q->execute(array('exchanger_name', Http_Request::post('exchanger_name'))) &&
+                $q->execute(array('exchanger_hidden', (Http_Request::post('exchanger_hidden') ? 1 : 0)))) {
                 $template->assign('message', 'Настройки обменника изменены');
             } else {
                 $template->assign('error', implode("\n", $q->errorInfo()));
@@ -1007,10 +1007,10 @@ switch (Http_Request::get('action')) {
     case 'lib':
         $template->setTemplate('apanel/lib.tpl');
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
             $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
-            if ($q->execute(array('lib', $_POST['lib'])) && $q->execute(array('lib_str', $_POST['lib_str']))) {
+            if ($q->execute(array('lib', Http_Request::post('lib'))) && $q->execute(array('lib_str', Http_Request::post('lib_str')))) {
                 $template->assign('message', 'Настройки библиотеки изменены');
             } else {
                 $template->assign('error', implode("\n", $q->errorInfo()));
@@ -1022,15 +1022,15 @@ switch (Http_Request::get('action')) {
     case 'buy':
         $template->setTemplate('apanel/buy.tpl');
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
             $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
 
-            if ($q->execute(array('buy', $_POST['buy'])) &&
-                $q->execute(array('randbuy', ($_POST['randbuy'] ? 1 : 0))) &&
-                $q->execute(array('countbuy', $_POST['countbuy'])) &&
-                $q->execute(array('banner', $_POST['banner'])) &&
-                $q->execute(array('randbanner', ($_POST['randbanner'] ? 1 : 0))) &&
-                $q->execute(array('countbanner', $_POST['countbanner']))) {
+            if ($q->execute(array('buy', Http_Request::post('buy'))) &&
+                $q->execute(array('randbuy', (Http_Request::post('randbuy') ? 1 : 0))) &&
+                $q->execute(array('countbuy', Http_Request::post('countbuy'))) &&
+                $q->execute(array('banner', Http_Request::post('banner'))) &&
+                $q->execute(array('randbanner', (Http_Request::post('randbanner') ? 1 : 0))) &&
+                $q->execute(array('countbanner', Http_Request::post('countbanner')))) {
                 $template->assign('message', 'Настройки рекламы сохранены');
             } else {
                 $template->assign('error', implode("\n", $q->errorInfo()));
@@ -1051,17 +1051,14 @@ switch (Http_Request::get('action')) {
     case 'sec':
         $template->setTemplate('apanel/sec.tpl');
 
-        if ($_POST) {
-            if (!$_POST['pwd'] || md5($_POST['pwd']) != Config::get('password')) {
+        if (Http_Request::isPost()) {
+            if (!Http_Request::post('pwd') || md5(Http_Request::post('pwd')) != Config::get('password')) {
                 $template->assign('error', 'Неверный пароль');
                 Http_Response::getInstance()->render();
             }
 
-            $_POST['autologin'] = $_POST['autologin'] ? 1 : 0;
-            $_POST['delete_dir'] = $_POST['delete_dir'] ? 1 : 0;
-            $_POST['delete_file'] = $_POST['delete_file'] ? 1 : 0;
-
-            foreach ($_POST as $key => $value) {
+            $post = Http_Request::getPost();
+            foreach ($post as $key => $value) {
                 if ($value == '' && $key != 'password' && $key != 'autologin' && $key != 'delete_dir' && $key != 'delete_file') {
                     $template->assign('error', 'Не заполнено одно из полей');
                     Http_Response::getInstance()->render();
@@ -1070,15 +1067,15 @@ switch (Http_Request::get('action')) {
 
             $q = $db->prepare('UPDATE `setting` SET `value` = ? WHERE `name` = ?');
 
-            if ($_POST['password'] != '') {
-                $_SESSION['authorise'] = md5($_POST['password']);
+            if (Http_Request::post('password') != '') {
+                $_SESSION['authorise'] = md5(Http_Request::post('password'));
                 $q->execute(array($_SESSION['authorise'], 'password'));
             }
-            $q->execute(array($_POST['countban'], 'countban'));
-            $q->execute(array($_POST['timeban'], 'timeban'));
-            $q->execute(array($_POST['autologin'], 'autologin'));
-            $q->execute(array($_POST['delete_file'], 'delete_file'));
-            $q->execute(array($_POST['delete_dir'], 'delete_dir'));
+            $q->execute(array(Http_Request::post('countban'), 'countban'));
+            $q->execute(array(Http_Request::post('timeban'), 'timeban'));
+            $q->execute(array(Http_Request::post('autologin') ? 1 : 0, 'autologin'));
+            $q->execute(array(Http_Request::post('delete_file') ? 1 : 0, 'delete_file'));
+            $q->execute(array(Http_Request::post('delete_dir') ? 1 : 0, 'delete_dir'));
 
             $template->assign('message', 'Настройки изменены');
         }
@@ -1088,7 +1085,7 @@ switch (Http_Request::get('action')) {
     case 'modules':
         $template->setTemplate('apanel/modules.tpl');
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
             $_POST['comments_change'] = $_POST['comments_change'] ? 1 : 0;
             $_POST['comments_captcha'] = $_POST['comments_captcha'] ? 1 : 0;
             $_POST['eval_change'] = $_POST['eval_change'] ? 1 : 0;
