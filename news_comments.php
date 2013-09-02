@@ -96,17 +96,17 @@ $comments = $query->fetchAll();
 
 
 // Запись
-if ($_POST) {
+if (Http_Request::isPost()) {
     //Проверка на ошибки
-    if (!$_POST['msg'] || !$_POST['name']) {
+    if (!Http_Request::post('msg') || !Http_Request::post('name')) {
         Http_Response::getInstance()->renderError(Language::get('not_filled_one_of_the_fields'));
     }
-    if (mb_strlen($_POST['msg']) < 4) {
+    if (mb_strlen(Http_Request::post('msg')) < 4) {
         Http_Response::getInstance()->renderError(Language::get('you_have_not_written_a_comment_or_he_is_too_short'));
     }
 
     if (Config::get('comments_captcha')) {
-        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
+        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != Http_Request::post('keystring')) {
             unset($_SESSION['captcha_keystring']);
             Http_Response::getInstance()->renderError(Language::get('not_a_valid_code'));
         }
@@ -114,14 +114,14 @@ if ($_POST) {
     }
 
     $q = $db->prepare('SELECT 1 FROM `news_comments` WHERE `id_news` = ? AND `text` = ? LIMIT 1');
-    $q->execute(array($id, $_POST['msg']));
+    $q->execute(array($id, Http_Request::post('msg')));
 
     if ($q->rowCount() > 0) {
         Http_Response::getInstance()->renderError(Language::get('why_repeat_myself'));
     }
 
     //Если нет ошибок пишем в базу
-    setcookie('sea_name', $_POST['name'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
+    setcookie('sea_name', Http_Request::post('name'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
 
     $q = $db->prepare('
         INSERT INTO `news_comments` (
@@ -130,7 +130,7 @@ if ($_POST) {
             ?, ?, ?, UNIX_TIMESTAMP()
         )
     ');
-    $result = $q->execute(array($id, $_POST['name'], $_POST['msg']));
+    $result = $q->execute(array($id, Http_Request::post('name'), Http_Request::post('msg')));
 
     if (!$result) {
         Http_Response::getInstance()->renderError(Language::get('error'));

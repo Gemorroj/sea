@@ -48,15 +48,16 @@ $template->setTemplate('service.tpl');
 Breadcrumbs::add('service', Language::get('advanced_service'));
 
 $db = Db_Mysql::getInstance();
+$act = Http_Request::get('act');
 
-if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isset($_GET['pass'])) {
+if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
     $q = $db->prepare('
         SELECT *
         FROM `users_profiles`
         WHERE `id` = ?
         AND `pass` = MD5(?)
     ');
-    $q->execute(array($_GET['id'], $_GET['pass']));
+    $q->execute(array(Http_Request::get('id'), Http_Request::get('pass')));
 
     if ($q->rowCount() > 0) {
         $assoc = $q->fetch();
@@ -70,30 +71,33 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
     } else {
         Http_Response::getInstance()->renderError(Language::get('user_not_found'));
     }
-} elseif (isset($_GET['act']) && $_GET['act'] == 'registration') {
-    if ($_POST) {
-        $_POST['style'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['style']);
-        $_POST['url'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['url']);
+} elseif ($act == 'registration') {
+    if (Http_Request::isPost()) {
+        $style = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('style'));
+        $url = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('url'));
+        $pass = Http_Request::post('pass');
+        $mail = Http_Request::post('mail');
+        $name = Http_Request::post('name');
 
         $error = array();
-        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
+        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != Http_Request::post('keystring')) {
             $error[] = Language::get('not_a_valid_code');
         }
         unset($_SESSION['captcha_keystring']);
 
-        if (strlen($_POST['pass']) < 4) {
+        if (strlen($pass) < 4) {
             $error[] = Language::get('short_password');
         }
 
-        if (strlen($_POST['url']) < 4 || !strpos($_POST['url'], '.')) {
+        if (!Helper::isValidUrl($url)) {
             $error[] = Language::get('not_a_valid_url');
         }
 
-        if (strlen($_POST['style']) < 4 || !strpos($_POST['style'], '.')) {
+        if (!Helper::isValidStyle($style)) {
             $error[] = Language::get('not_a_valid_style');
         }
 
-        if (strlen($_POST['mail']) < 4 || !strpos($_POST['mail'], '@')) {
+        if (!Helper::isValidEmail($mail)) {
             $error[] = Language::get('not_a_valid_mail');
         }
 
@@ -103,7 +107,7 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
 
         $q = $db->prepare('SELECT 1 FROM `users_profiles` WHERE `url` = ?');
-        $q->execute(array($_POST['url']));
+        $q->execute(array($url));
 
         if ($q->rowCount() > 0) {
             // Такой URL уже есть
@@ -116,24 +120,24 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     ?, ?, MD5(?), ?, ?
                 )
             ')->execute(array(
-                $_POST['name'],
-                $_POST['url'],
-                $_POST['pass'],
-                $_POST['mail'],
-                $_POST['style']
+                $name,
+                $url,
+                $pass,
+                $mail,
+                $style
             ));
 
             if ($result) {
                 $_SESSION['id'] = $db->lastInsertId();
-                $_SESSION['name'] = $_POST['name'];
-                $_SESSION['url'] = $_POST['url'];
-                $_SESSION['mail'] = $_POST['mail'];
-                $_SESSION['style'] = $_POST['style'];
+                $_SESSION['name'] = $name;
+                $_SESSION['url'] = $url;
+                $_SESSION['mail'] = $mail;
+                $_SESSION['style'] = $style;
 
                 mail(
-                    $_POST['mail'],
+                    $mail,
                     '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
-                    'Your password: ' . $_POST['pass'] . "\r\n" . 'ID: ' . $_SESSION['id'],
+                    'Your password: ' . $pass . "\r\n" . 'ID: ' . $_SESSION['id'],
                     'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
                 );
 
@@ -143,14 +147,14 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
             }
         }
     }
-} elseif (isset($_GET['act']) && $_GET['act'] == 'pass') {
+} elseif ($act == 'pass') {
     $q = $db->prepare('SELECT `mail` FROM `users_profiles` WHERE `id` = ?');
-    $q->execute(array($_POST['id']));
+    $q->execute(array(Http_Request::post('id')));
     $mail = $q->fetchColumn();
 
     if ($mail) {
         $pass = Helper::getRandPass();
-        $db->prepare('UPDATE `users_profiles` SET `pass` = MD5(?) WHERE `id` = ?')->execute(array($pass, $_POST['id']));
+        $db->prepare('UPDATE `users_profiles` SET `pass` = MD5(?) WHERE `id` = ?')->execute(array($pass, Http_Request::post('id')));
 
         mail(
             $mail,
@@ -166,8 +170,6 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 } else {
     if (isset($_SESSION['id'])) {
         // если пользователь вошел в кабинет
-        $act = isset($_GET['act']) ? $_GET['act'] : '';
-
         switch ($act) {
             default:
                 $head = $foot = array();
@@ -215,12 +217,14 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
 
 
             case 'save':
-                $_POST['style'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['style']);
-                $_POST['url'] = preg_replace('/^(?:.*:\/\/)/', '', $_POST['url']);
+                $style = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('style'));
+                $url = preg_replace('/^(?:.*:\/\/)/', '', Http_Request::post('url'));
+                $name = Http_Request::post('name');
+                $mail = Http_Request::post('mail');
 
-                $_SESSION['url'] = $_POST['url'];
-                $_SESSION['name'] = $_POST['name'];
-                $_SESSION['mail'] = $_POST['mail'];
+                $_SESSION['url'] = $url;
+                $_SESSION['name'] = $name;
+                $_SESSION['mail'] = $mail;
 
 
                 $db->prepare('
@@ -231,10 +235,10 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     `style` = ?
                     WHERE `id` = ?
                 ')->execute(array(
-                    $_POST['name'],
-                    $_POST['url'],
-                    $_POST['mail'],
-                    $_POST['style'],
+                    $name,
+                    $url,
+                    $mail,
+                    $style,
                     $_SESSION['id']
                 ));
 
@@ -248,11 +252,12 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     )
                 ');
 
-                $all = sizeof($_POST['head']['name']);
+                $head = Http_Request::post('head');
+                $all = sizeof($head['name']);
                 $all = $all < Config::get('service_head') ? $all : Config::get('service_head');
                 for ($i = 0; $i < $all; ++$i) {
-                    $name = $_POST['head']['name'][$i];
-                    $value = preg_replace('/^(?:.*:\/\/)/', '', $_POST['head']['value'][$i]);
+                    $name = $head['name'][$i];
+                    $value = preg_replace('/^(?:.*:\/\/)/', '', $head['value'][$i]);
                     if ($name && $value) {
                         $q->execute(array(
                             $_SESSION['id'],
@@ -263,11 +268,12 @@ if (isset($_GET['act']) && $_GET['act'] == 'enter' && isset($_GET['id']) && isse
                     }
                 }
 
-                $all = sizeof($_POST['foot']['name']);
+                $foot = Http_Request::post('foot');
+                $all = sizeof($foot['name']);
                 $all = $all < Config::get('service_foot') ? $all : Config::get('service_foot');
                 for ($i = 0; $i < $all; ++$i) {
-                    $name = $_POST['foot']['name'][$i];
-                    $value = preg_replace('/^(?:.*:\/\/)/', '', $_POST['foot']['value'][$i]);
+                    $name = $foot['name'][$i];
+                    $value = preg_replace('/^(?:.*:\/\/)/', '', $foot['value'][$i]);
                     if ($name && $value) {
                         $q->execute(array(
                              $_SESSION['id'],

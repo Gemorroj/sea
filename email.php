@@ -62,14 +62,14 @@ Breadcrumbs::init($v['path']);
 Breadcrumbs::add('email/' . $id, Language::get('send_a_link_to_email'));
 
 
-if (isset($_POST['email'])) {
-    if (!Helper::isValidEmail($_POST['email'])) {
+if (Http_Request::isPost()) {
+    if (!Helper::isValidEmail(Http_Request::post('email'))) {
         Http_Response::getInstance()->renderError(Language::get('email_incorrect'));
     }
 
-    setcookie('sea_email', $_POST['email'], $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
+    setcookie('sea_email', Http_Request::post('email'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
     if (mail(
-        $_POST['email'],
+        Http_Request::post('email'),
         '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], Language::get('link_to_file'))) . '?=',
         str_replace(
             array('%file%', '%url%', '%link%'),

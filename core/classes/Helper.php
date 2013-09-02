@@ -168,6 +168,25 @@ class Helper
         return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
+    /**
+     * @param string $url
+     *
+     * @return bool
+     */
+    public static function isValidUrl($url)
+    {
+        return (bool)filter_var('http://' . $url, FILTER_VALIDATE_URL);
+    }
+
+    /**
+     * @param string $style
+     *
+     * @return bool
+     */
+    public static function isValidStyle($style)
+    {
+        return (bool)filter_var('http://' . $style, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+    }
 
     /**
      * Конвертируем из Windows-1251 в UTF-8

@@ -65,11 +65,12 @@ Breadcrumbs::init($v['path']);
 Breadcrumbs::add('cut/' . $id, Language::get('splitting'));
 
 
-if ($_POST) {
-    $s = isset($_POST['s']) ? intval($_POST['s']) : 0;
-    $p = isset($_POST['p']) ? intval($_POST['p']) : 0;
+if (Http_Request::isPost()) {
+    $s = intval(Http_Request::post('s', 0));
+    $p = intval(Http_Request::post('p', 0));
 
-    if (isset($_POST['way']) && $_POST['way'] != 'size' && $_POST['way'] != 'time') {
+    $way = Http_Request::post('way');
+    if ($way && $way != 'size' && $way != 'time') {
         Http_Response::getInstance()->renderError(Language::get('error'));
     }
 
@@ -93,7 +94,7 @@ if ($_POST) {
         $fp = fopen($randintval, 'rb');
         $raz = filesize($randintval);
 
-        if ($_POST['way'] == 'size') {
+        if ($way == 'size') {
             $s *= 1024;
             $p *= 1024;
             if ($s > $raz || $s < 0) {

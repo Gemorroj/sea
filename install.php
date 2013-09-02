@@ -225,7 +225,7 @@ if (!Http_Request::get('level')) {
     }
 
 
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . md5(trim($_POST['pass'])) . "')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . md5(trim(Http_Request::post('pass'))) . "')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'path', 'files')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'opath', 'cache/about')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'apath', 'cache/attach')");

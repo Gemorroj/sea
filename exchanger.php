@@ -53,7 +53,7 @@ $insertId = null;
 
 $db = Db_Mysql::getInstance();
 
-if ($_POST) {
+if (Http_Request::isPost()) {
     $file = Http_Request::file('file');
     $screen = Http_Request::file('screen');
 
@@ -62,7 +62,7 @@ if ($_POST) {
     }
 
     $pathinfo = pathinfo($file['name']);
-    $path = Config::get('path') . $_POST['topath'];
+    $path = Config::get('path') . Http_Request::post('topath');
     $pathname = $path . $file['name'];
 
     $ext = explode(',', strtolower(Config::get('exchanger_extensions')));
@@ -137,9 +137,9 @@ if ($_POST) {
         Image::resize($screenPath, $screenPath, 0, 0, Config::get('marker'));
     }
 
-    if ($_POST['about']) {
+    if (Http_Request::post('about')) {
         $about = Config::get('opath') . substr($pathname, strlen(Config::get('path'))) . '.txt';
-        file_put_contents($about, trim($_POST['about']));
+        file_put_contents($about, trim(Http_Request::post('about')));
     }
 
     if (Config::get('exchanger_notice')) {

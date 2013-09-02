@@ -47,12 +47,12 @@ $template->setTemplate('table.tpl');
 Breadcrumbs::add('table', Language::get('orders'));
 
 $sended = false;
-if ($_POST) {
-    if (empty($_POST['back']) || empty($_POST['text'])) {
+if (Http_Request::isPost()) {
+    if (!Http_Request::post('back') || !Http_Request::post('text')) {
         Http_Response::getInstance()->renderError(Language::get('do_not_fill_in_the_required_fields'));
     }
     if (Config::get('comments_captcha')) {
-        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != $_POST['keystring']) {
+        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != Http_Request::post('keystring')) {
             unset($_SESSION['captcha_keystring']);
             Http_Response::getInstance()->renderError(Language::get('not_a_valid_code'));
         }
@@ -62,7 +62,7 @@ if ($_POST) {
     $sended = mail(
         Config::get('zakaz_email'),
         '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=',
-        'СООБЩЕНИЕ: ' . $_POST['text'] . "\n\n" . ' ОБРАТНЫЙ АДРЕС: ' . $_POST['back'],
+        'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\n\n" . ' ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back'),
         'Content-Type: text/plain; charset=utf-8' . "\r\n" . 'From: support@' . $_SERVER['HTTP_HOST']
     );
 }

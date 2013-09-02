@@ -39,8 +39,8 @@ require 'core/header.php';
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('settings.tpl');
 
-if (isset($_POST['lib'])) {
-    $_SESSION['lib'] = intval($_POST['lib']);
+if (Http_Request::post('lib')) {
+    $_SESSION['lib'] = intval(Http_Request::post('lib'));
 }
 
 //Seo::addTitle(Language::get('settings'));
