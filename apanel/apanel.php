@@ -139,7 +139,7 @@ switch (Http_Request::get('action')) {
             Http_Response::getInstance()->render();
         }
 
-        $folder = Config::get('path') . trim($_POST['topath']);
+        $folder = Config::get('path') . trim(Http_Request::post('topath'));
         $filename = basename($file['path']);
 
         if (!is_dir($folder)) {
@@ -239,8 +239,9 @@ switch (Http_Request::get('action')) {
         $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
-        if ($_POST) {
-            foreach ($_POST['new'] as $k => $v) {
+        if (Http_Request::isPost()) {
+            $new = Http_Request::post('new');
+            foreach ($new as $k => $v) {
                 if ($v == '') {
                     $template->assign('error', $k . ': укажите название');
                     Http_Response::getInstance()->render();
@@ -249,10 +250,10 @@ switch (Http_Request::get('action')) {
 
             $q = $db->prepare('UPDATE `files` SET name = ?, rus_name = ?, aze_name = ?, tur_name = ? WHERE `id` = ?');
             $result = $q->execute(array(
-                 $_POST['new']['english'],
-                 $_POST['new']['russian'],
-                 $_POST['new']['azerbaijan'],
-                 $_POST['new']['turkey'],
+                 $new['english'],
+                 $new['russian'],
+                 $new['azerbaijan'],
+                 $new['turkey'],
                  $id
             ));
 
@@ -409,8 +410,8 @@ switch (Http_Request::get('action')) {
             Http_Response::getInstance()->render();
         }
 
-        if ($_POST) {
-            $result = Files::addAbout($file['path'], $_POST['about']);
+        if (Http_Request::isPost()) {
+            $result = Files::addAbout($file['path'], Http_Request::post('about'));
 
             if ($result['message']) {
                 $template->assign('message', implode("\n", $result['message']));
@@ -434,10 +435,10 @@ switch (Http_Request::get('action')) {
             Http_Response::getInstance()->render();
         }
 
-        if ($_POST) {
-            Seo::setTitle($_POST['title']);
-            Seo::setDescription($_POST['description']);
-            Seo::setKeywords($_POST['keywords']);
+        if (Http_Request::isPost()) {
+            Seo::setTitle(Http_Request::post('title'));
+            Seo::setDescription(Http_Request::post('description'));
+            Seo::setKeywords(Http_Request::post('keywords'));
             $seo = Seo::serialize();
 
             $q = $db->prepare('UPDATE `files` SET `seo` = ? WHERE `id` = ?');
@@ -580,14 +581,15 @@ switch (Http_Request::get('action')) {
         $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
+            $dir = Http_Request::post('dir');
             $result = Files::addDir(
-                $_POST['realname'],
-                Config::get('path') . trim($_POST['topath']),
-                $_POST['dir']['english'],
-                $_POST['dir']['russian'],
-                $_POST['dir']['azerbaijan'],
-                $_POST['dir']['turkey']
+                Http_Request::post('realname'),
+                Config::get('path') . trim(Http_Request::post('topath')),
+                $dir['english'],
+                $dir['russian'],
+                $dir['azerbaijan'],
+                $dir['turkey']
             );
 
             if ($result['message']) {
@@ -608,8 +610,9 @@ switch (Http_Request::get('action')) {
         $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
-        if ($_POST) {
-            foreach ($_POST['new'] as $k => $v) {
+        if (Http_Request::isPost()) {
+            $new = Http_Request::post('new');
+            foreach ($new as $k => $v) {
                 if ($v == '') {
                     $template->assign('error', $k . ': введите текст новости.');
                     Http_Response::getInstance()->render();
@@ -618,10 +621,10 @@ switch (Http_Request::get('action')) {
 
             $q = $db->prepare('UPDATE `news` SET `news` = ?, `rus_news` = ?, `aze_news` = ?, `tur_news` = ? WHERE `id` = ?');
             $result = $q->execute(array(
-                $_POST['new']['english'],
-                $_POST['new']['russian'],
-                $_POST['new']['azerbaijan'],
-                $_POST['new']['turkey'],
+                $new['english'],
+                $new['russian'],
+                $new['azerbaijan'],
+                $new['turkey'],
                 Http_Request::get('news')
             ));
 
@@ -642,8 +645,9 @@ switch (Http_Request::get('action')) {
         $langpacks = Language::getLangpacks();
         $template->assign('langpacks', $langpacks);
 
-        if ($_POST) {
-            foreach ($_POST['new'] as $k => $v) {
+        if (Http_Request::isPost()) {
+            $new = Http_Request::post('new');
+            foreach ($new as $k => $v) {
                 if ($v == '') {
                     $template->assign('error', $k . ': введите текст новости.');
                     Http_Response::getInstance()->render();
@@ -654,10 +658,10 @@ switch (Http_Request::get('action')) {
                 INSERT INTO `news` SET `news` = ?, `rus_news` = ?, `aze_news` = ?, `tur_news` = ?, `time` = UNIX_TIMESTAMP()
             ');
             $result = $q->execute(array(
-                $_POST['new']['english'],
-                $_POST['new']['russian'],
-                $_POST['new']['azerbaijan'],
-                $_POST['new']['turkey']
+                $new['english'],
+                $new['russian'],
+                $new['azerbaijan'],
+                $new['turkey']
             ));
 
             if (!$result) {
@@ -724,16 +728,16 @@ switch (Http_Request::get('action')) {
         $template->assign('genre', Helper::str2utf8($tags->getGenre()->getId()));
         $template->assign('comment', Helper::str2utf8($tags->getComment()));
 
-        if ($_POST) {
+        if (Http_Request::isPost()) {
             @unlink(CORE_DIRECTORY . '/cache/' . $id . '.dat');
 
-            $name = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
-            $artist = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
-            $album = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
-            $year = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
-            $track = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
-            $genre = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
-            $comment = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
+            $name = mb_convert_encoding(Http_Request::post('name'), 'windows-1251', 'utf-8');
+            $artist = mb_convert_encoding(Http_Request::post('artists'), 'windows-1251', 'utf-8');
+            $album = mb_convert_encoding(Http_Request::post('album'), 'windows-1251', 'utf-8');
+            $year = mb_convert_encoding(Http_Request::post('year'), 'windows-1251', 'utf-8');
+            $track = mb_convert_encoding(Http_Request::post('track'), 'windows-1251', 'utf-8');
+            $genre = mb_convert_encoding(Http_Request::post('genre'), 'windows-1251', 'utf-8');
+            $comment = mb_convert_encoding(Http_Request::post('comment'), 'windows-1251', 'utf-8');
 
             $tags->setTrackTitle($name);
             $tags->setArtistName($artist);
@@ -761,14 +765,14 @@ switch (Http_Request::get('action')) {
 
         $template->assign('genres', $genres);
 
-        if ($_POST) {
-            $name = mb_convert_encoding($_POST['name'], 'windows-1251', 'utf-8');
-            $artists = mb_convert_encoding($_POST['artists'], 'windows-1251', 'utf-8');
-            $album = mb_convert_encoding($_POST['album'], 'windows-1251', 'utf-8');
-            $year = mb_convert_encoding($_POST['year'], 'windows-1251', 'utf-8');
-            $track = mb_convert_encoding($_POST['track'], 'windows-1251', 'utf-8');
-            $genre = mb_convert_encoding($_POST['genre'], 'windows-1251', 'utf-8');
-            $comment = mb_convert_encoding($_POST['comment'], 'windows-1251', 'utf-8');
+        if (Http_Request::isPost()) {
+            $name = mb_convert_encoding(Http_Request::post('name'), 'windows-1251', 'utf-8');
+            $artists = mb_convert_encoding(Http_Request::post('artists'), 'windows-1251', 'utf-8');
+            $album = mb_convert_encoding(Http_Request::post('album'), 'windows-1251', 'utf-8');
+            $year = mb_convert_encoding(Http_Request::post('year'), 'windows-1251', 'utf-8');
+            $track = mb_convert_encoding(Http_Request::post('track'), 'windows-1251', 'utf-8');
+            $genre = mb_convert_encoding(Http_Request::post('genre'), 'windows-1251', 'utf-8');
+            $comment = mb_convert_encoding(Http_Request::post('comment'), 'windows-1251', 'utf-8');
 
             $all = 0;
             $write = 0;
@@ -803,11 +807,11 @@ switch (Http_Request::get('action')) {
     case 'mark':
         $template->setTemplate('apanel/mark.tpl');
 
-        if ($_POST) {
-            if (isset($_POST['marker'])) {
+        if (Http_Request::isPost()) {
+            if (Http_Request::post('marker')) {
                 $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
-                $result1 = $q->execute(array('marker', $_POST['marker']));
-                $result2 = $q->execute(array('marker_where', ($_POST['marker_where'] == 'top' ? 'top' : 'foot')));
+                $result1 = $q->execute(array('marker', Http_Request::post('marker')));
+                $result2 = $q->execute(array('marker_where', (Http_Request::post('marker_where') == 'top' ? 'top' : 'foot')));
                 if ($result1 && $result2) {
                     $template->assign('message', 'Настройки маркера изменены');
                 } else {
@@ -838,6 +842,7 @@ switch (Http_Request::get('action')) {
                         case IMAGETYPE_PNG:
                             $pic = imagecreatefrompng($arr['path']);
                             break;
+
 
                         default:
                             $pic = false;
@@ -882,7 +887,7 @@ switch (Http_Request::get('action')) {
 
 
                             case IMAGETYPE_PNG:
-                                $f = imagepng($pic, $arr[0], 100);
+                                $f = imagepng($pic, $arr[0], 9);
                                 break;
                         }
 
