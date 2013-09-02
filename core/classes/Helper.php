@@ -44,7 +44,7 @@ class Helper
      */
     public static function getPaginatorConf($items)
     {
-        $onpage = Helper::get2ses('onpage');
+        $onpage = self::get2ses('onpage');
         $items = intval($items);
         $page = abs(Http_Request::get('page', 1));
 
@@ -97,7 +97,7 @@ class Helper
      */
     public static function getSortMode($prefix = null)
     {
-        $sort = Helper::get2ses('sort');
+        $sort = self::get2ses('sort');
         $prefix = ($prefix === null ? '' : '`' . $prefix . '`.');
 
         if ($sort === 'date') {
