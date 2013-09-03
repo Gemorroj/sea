@@ -1143,7 +1143,7 @@ switch (Http_Request::get('action')) {
         $template->setTemplate('apanel/setting.tpl');
 
         if ($_POST) {
-            $_POST['site_url'] = str_ireplace('http://', '', $_POST['site_url']);
+            $_POST['site_url'] = Helper::removeSchema($_POST['site_url']);
 
             $q = $db->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
             foreach ($_POST as $key => $value) {
