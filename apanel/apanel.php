@@ -1086,48 +1086,49 @@ switch (Http_Request::get('action')) {
         $template->setTemplate('apanel/modules.tpl');
 
         if (Http_Request::isPost()) {
-            $_POST['comments_change'] = $_POST['comments_change'] ? 1 : 0;
-            $_POST['comments_captcha'] = $_POST['comments_captcha'] ? 1 : 0;
-            $_POST['eval_change'] = $_POST['eval_change'] ? 1 : 0;
-            $_POST['onpage_change'] = $_POST['onpage_change'] ? 1 : 0;
-            $_POST['preview_change'] = $_POST['preview_change'] ? 1 : 0;
-            $_POST['top_change'] = $_POST['top_change'] ? 1 : 0;
-            $_POST['new_change'] = $_POST['new_change'] ? 1 : 0;
-            $_POST['stat_change'] = $_POST['stat_change'] ? 1 : 0;
-            $_POST['search_change'] = $_POST['search_change'] ? 1 : 0;
-            $_POST['pagehand_change'] = $_POST['pagehand_change'] ? 1 : 0;
-            $_POST['zip_change'] = $_POST['zip_change'] ? 1 : 0;
-            $_POST['jad_change'] = $_POST['jad_change'] ? 1 : 0;
-            $_POST['zakaz_change'] = $_POST['zakaz_change'] ? 1 : 0;
-            $_POST['buy_change'] = $_POST['buy_change'] ? 1 : 0;
-            $_POST['cut_change'] = $_POST['cut_change'] ? 1 : 0;
-            $_POST['audio_player_change'] = $_POST['audio_player_change'] ? 1 : 0;
-            $_POST['video_player_change'] = $_POST['video_player_change'] ? 1 : 0;
-            $_POST['lib_change'] = $_POST['lib_change'] ? 1 : 0;
+            $post = Http_Request::getPost();
+            $post['comments_change'] = $post['comments_change'] ? 1 : 0;
+            $post['comments_captcha'] = $post['comments_captcha'] ? 1 : 0;
+            $post['eval_change'] = $post['eval_change'] ? 1 : 0;
+            $post['onpage_change'] = $post['onpage_change'] ? 1 : 0;
+            $post['preview_change'] = $post['preview_change'] ? 1 : 0;
+            $post['top_change'] = $post['top_change'] ? 1 : 0;
+            $post['new_change'] = $post['new_change'] ? 1 : 0;
+            $post['stat_change'] = $post['stat_change'] ? 1 : 0;
+            $post['search_change'] = $post['search_change'] ? 1 : 0;
+            $post['pagehand_change'] = $post['pagehand_change'] ? 1 : 0;
+            $post['zip_change'] = $post['zip_change'] ? 1 : 0;
+            $post['jad_change'] = $post['jad_change'] ? 1 : 0;
+            $post['zakaz_change'] = $post['zakaz_change'] ? 1 : 0;
+            $post['buy_change'] = $post['buy_change'] ? 1 : 0;
+            $post['cut_change'] = $post['cut_change'] ? 1 : 0;
+            $post['audio_player_change'] = $post['audio_player_change'] ? 1 : 0;
+            $post['video_player_change'] = $post['video_player_change'] ? 1 : 0;
+            $post['lib_change'] = $post['lib_change'] ? 1 : 0;
 
-            $_POST['screen_change'] = $_POST['screen_change'] ? 1 : 0;
-            $_POST['screen_file_change'] = $_POST['screen_file_change'] ? 1 : 0;
-            $_POST['swf_change'] = $_POST['swf_change'] ? 1 : 0;
-            $_POST['swf_file_change'] = $_POST['swf_file_change'] ? 1 : 0;
-            $_POST['jar_change'] = $_POST['jar_change'] ? 1 : 0;
-            $_POST['jar_file_change'] = $_POST['jar_file_change'] ? 1 : 0;
+            $post['screen_change'] = $post['screen_change'] ? 1 : 0;
+            $post['screen_file_change'] = $post['screen_file_change'] ? 1 : 0;
+            $post['swf_change'] = $post['swf_change'] ? 1 : 0;
+            $post['swf_file_change'] = $post['swf_file_change'] ? 1 : 0;
+            $post['jar_change'] = $post['jar_change'] ? 1 : 0;
+            $post['jar_file_change'] = $post['jar_file_change'] ? 1 : 0;
 
-            $_POST['anim_change'] = $_POST['anim_change'] ? 1 : 0;
-            $_POST['prev'] = $_POST['prev'] ? 1 : 0;
-            $_POST['lib_desc'] = $_POST['lib_desc'] ? 1 : 0;
-            $_POST['ext'] = $_POST['ext'] ? 1 : 0;
-            $_POST['prev_next'] = $_POST['prev_next'] ? 1 : 0;
-            $_POST['style_change'] = $_POST['style_change'] ? 1 : 0;
-            $_POST['service_change'] = $_POST['service_change'] ? 1 : 0;
-            $_POST['service_change_advanced'] = $_POST['service_change_advanced'] ? 1 : 0;
-            $_POST['abuse_change'] = $_POST['abuse_change'] ? 1 : 0;
-            $_POST['exchanger_change'] = $_POST['exchanger_change'] ? 1 : 0;
-            $_POST['send_email'] = $_POST['send_email'] ? 1 : 0;
-            $_POST['ignore_index_breadcrumbs'] = $_POST['ignore_index_breadcrumbs'] ? 1 : 0;
-            $_POST['ignore_index_pages'] = $_POST['ignore_index_pages'] ? 1 : 0;
+            $post['anim_change'] = $post['anim_change'] ? 1 : 0;
+            $post['prev'] = $post['prev'] ? 1 : 0;
+            $post['lib_desc'] = $post['lib_desc'] ? 1 : 0;
+            $post['ext'] = $post['ext'] ? 1 : 0;
+            $post['prev_next'] = $post['prev_next'] ? 1 : 0;
+            $post['style_change'] = $post['style_change'] ? 1 : 0;
+            $post['service_change'] = $post['service_change'] ? 1 : 0;
+            $post['service_change_advanced'] = $post['service_change_advanced'] ? 1 : 0;
+            $post['abuse_change'] = $post['abuse_change'] ? 1 : 0;
+            $post['exchanger_change'] = $post['exchanger_change'] ? 1 : 0;
+            $post['send_email'] = $post['send_email'] ? 1 : 0;
+            $post['ignore_index_breadcrumbs'] = $post['ignore_index_breadcrumbs'] ? 1 : 0;
+            $post['ignore_index_pages'] = $post['ignore_index_pages'] ? 1 : 0;
 
             $q = $db->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
-            foreach ($_POST as $key => $value) {
+            foreach ($post as $key => $value) {
                 if ($key == 'password' || $key == 'delete_dir' || $key == 'delete_file') {
                     $template->assign('error', 'Error');
                     break;
@@ -1142,11 +1143,12 @@ switch (Http_Request::get('action')) {
     case 'setting':
         $template->setTemplate('apanel/setting.tpl');
 
-        if ($_POST) {
-            $_POST['site_url'] = Helper::removeSchema($_POST['site_url']);
+        if (Http_Request::isPost()) {
+            $post = Http_Request::getPost();
+            $post['site_url'] = Helper::removeSchema($post['site_url']);
 
             $q = $db->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
-            foreach ($_POST as $key => $value) {
+            foreach ($post as $key => $value) {
                 if ($value == '') {
                     $template->assign('error', 'Не заполнено одно из полей');
                     break;
