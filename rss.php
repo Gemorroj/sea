@@ -60,4 +60,8 @@ foreach ($q as $arr) {
     );
 }
 
-$rss->output();
+
+Http_Response::getInstance()
+    ->setHeader('Content-Type', 'application/rss+xml; charset=UTF-8')
+    ->setBody($rss->saveXML())
+    ->renderBinary();

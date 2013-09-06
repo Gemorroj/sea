@@ -38,7 +38,7 @@ require 'core/header.php';
 
 
 if (!Config::get('service_change_advanced')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
 $template = Http_Response::getInstance()->getTemplate();

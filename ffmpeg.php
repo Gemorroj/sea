@@ -34,31 +34,29 @@
  */
 
 
-if (!extension_loaded('ffmpeg')) {
-    exit('Error');
-}
-
-
-header('Pragma: public');
-header('Cache-Control: public, max-age=8640000');
-header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
-
 require 'core/config.php';
 
+if (!extension_loaded('ffmpeg')) {
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
+}
+
 $id = intval(Http_Request::get('id'));
-$frame = abs(Http_Request::get('frame', Config::get('ffmpeg_frame') + 1));
+$frame = abs(Http_Request::get('frame', (int)Config::get('ffmpeg_frame') + 1));
 $i = $frame;
 
 $v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}
 
-$pic = $v['path'];
-$prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
+
+$prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif';
 
-if (substr($pic, 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
-    $mov = new ffmpeg_movie($pic, false);
+if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
+    $mov = new ffmpeg_movie($v['path'], false);
     if (!$mov) {
-        exit('Error');
+        Http_Response::getInstance()->renderError(Language::get('error'));
     }
 
     while (!$fr = $mov->getFrame($i)) {
@@ -74,4 +72,7 @@ if (substr($pic, 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $pre
     unlink($tmp);
 }
 
-Http_Response::getInstance()->redirect($location, 301);
+
+Http_Response::getInstance()
+    ->setCache()
+    ->redirect($location, 301);

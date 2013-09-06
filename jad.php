@@ -34,33 +34,27 @@
  */
 
 
-header('Pragma: public');
-header('Cache-Control: public, max-age=8640000');
-header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
-
 require 'core/config.php';
 
-// Если jad выключен
 if (!Config::get('jad_change')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $v = Files::getFileInfo($id);
 
-if (is_file($v['path'])) {
-    Files::updateFileLoad($id);
-
-    $zip = new PclZip($v['path']);
-    $content = $zip->extract(PCLZIP_OPT_BY_NAME, 'META-INF/MANIFEST.MF', PCLZIP_OPT_EXTRACT_AS_STRING);
-
-    header('Content-type: text/vnd.sun.j2me.app-descriptor');
-    header('Content-Disposition: attachment; filename="' . rawurlencode(basename($v['path'])) . '.jad";');
-
-    echo trim($content[0]['content']) . "\n" .
-        'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" .
-        'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'];
-} else {
-    Http_Response::getInstance()->renderError(Language::get('error'));
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
+
+Files::updateFileLoad($id);
+
+$zip = new PclZip($v['path']);
+$content = $zip->extract(PCLZIP_OPT_BY_NAME, 'META-INF/MANIFEST.MF', PCLZIP_OPT_EXTRACT_AS_STRING);
+
+Http_Response::getInstance()
+    ->setCache()
+    ->setHeader('Content-Type', 'text/vnd.sun.j2me.app-descriptor')
+    ->setHeader('Content-Disposition', 'attachment; filename="' . rawurlencode(basename($v['path'])) . '.jad"')
+    ->setBody(trim($content[0]['content']) . "\n" . 'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" . 'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'])
+    ->renderBinary();

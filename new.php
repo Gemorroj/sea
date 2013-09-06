@@ -37,12 +37,12 @@
 define('IS_P_NAME', true);
 
 require 'core/header.php';
-// Если топ выключен
-if (!Config::get('new_change') || !Config::get('day_new')) {
-    Http_Response::getInstance()->renderError('Not found');
-}
-$template = Http_Response::getInstance()->getTemplate();
 
+if (!Config::get('new_change') || !Config::get('day_new')) {
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
+}
+
+$template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('new.tpl');
 
 $title = Language::get('new_files');

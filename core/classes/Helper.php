@@ -356,6 +356,7 @@ class Helper
                 break;
 
             case 'txt':
+            case 'cfg':
             case 'dat':
             case 'php':
             case 'php4':

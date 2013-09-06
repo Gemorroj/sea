@@ -36,27 +36,24 @@
 
 require 'core/header.php';
 
-// Если email выключен
 if (!Config::get('send_email')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
-$template = Http_Response::getInstance()->getTemplate();
 
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $v = Files::getFileInfo($id);
-
-if (!is_file($v['path'])) {
-    Http_Response::getInstance()->renderError('File not found');
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
 Seo::unserialize($v['seo']);
 //Seo::addTitle(Language::get('send_a_link_to_email'));
 //Seo::addTitle($v['name']);
 
-$template->setTemplate('email.tpl');
-$template->assign('file', $v);
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('email.tpl')
+    ->assign('file', $v);
 
 Breadcrumbs::init($v['path']);
 Breadcrumbs::add('email/' . $id, Language::get('send_a_link_to_email'));

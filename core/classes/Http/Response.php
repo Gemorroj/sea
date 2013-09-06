@@ -148,6 +148,16 @@ class Http_Response
     }
 
     /**
+     * Вывод в браузер
+     */
+    public function renderBinary()
+    {
+        $this->_renderHeaders();
+        echo $this->_body;
+        exit;
+    }
+
+    /**
      * Отображение сообщений
      */
     public function renderMessage($str = '')
@@ -192,5 +202,21 @@ class Http_Response
 
         $this->_template->send();
         exit;
+    }
+
+
+    /**
+     * HTTP кэширование
+     *
+     * @param int $expires
+     * @return Http_Response
+     */
+    public function setCache($expires = 8640000)
+    {
+        $this->setHeader('Pragma', 'public')
+            ->setHeader('Cache-Control', 'public, max-age=' . $expires)
+            ->setHeader('Expires', date('r', time() + $expires));
+
+        return $this;
     }
 }

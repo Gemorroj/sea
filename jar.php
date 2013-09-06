@@ -37,11 +37,14 @@
 require 'core/config.php';
 
 $v = Files::getFileInfo(Http_Request::get('id'));
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}
 
 $location = Media_Jar::getImage($v['path']);
 
 if ($location !== null) {
-    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $location, 301);
+    Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $location, 301);
 } else {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }

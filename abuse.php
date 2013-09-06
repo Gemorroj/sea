@@ -36,17 +36,15 @@
 
 require 'core/header.php';
 
-// Если жалобы выключены
 if (!Config::get('abuse_change')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $v = Files::getFileInfo($id);
 
-if (!is_file($v['path'])) {
-    Http_Response::getInstance()->renderError('File not found');
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
 Seo::unserialize($v['seo']);

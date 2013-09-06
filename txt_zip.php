@@ -36,32 +36,28 @@
 
 require 'core/config.php';
 
-
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}
 
 
-if (file_exists($v['path'])) {
-    Files::updateFileLoad($id);
+Files::updateFileLoad($id);
 
-    $tmp = Config::get('zpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.zip';
+$tmp = Config::get('zpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.zip';
 
-    if (!file_exists($tmp)) {
-        $zip = new PclZip($tmp);
+if (!is_file($tmp)) {
+    $zip = new PclZip($tmp);
 
-        function cb($p_event, &$p_header)
-        {
-            $p_header['stored_filename'] = basename($p_header['filename']);
+    function cb($p_event, &$p_header)
+    {
+        $p_header['stored_filename'] = basename($p_header['filename']);
 
-            return 1;
-        }
-
-        $zip->create($v['path'], PCLZIP_CB_PRE_ADD, 'cb');
-        chmod($tmp, 0644);
+        return 1;
     }
 
-    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
-} else {
-    Http_Response::getInstance()->renderError(Language::get('error'));
+    $zip->create($v['path'], PCLZIP_CB_PRE_ADD, 'cb');
 }
+
+Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);

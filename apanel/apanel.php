@@ -545,7 +545,6 @@ switch (Http_Request::get('action')) {
             Media_Image::toPng($tmp_file);
 
             if (rename($tmp_file, $to)) {
-                chmod($to, 0644);
                 $template->assign('message', 'Загрузка иконки прошла успешно');
             } else {
                 $template->assign('error', 'Загрузка иконки окончилась неудачно');

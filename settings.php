@@ -36,9 +36,6 @@
 
 require 'core/header.php';
 
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('settings.tpl');
-
 if (Http_Request::post('lib')) {
     $_SESSION['lib'] = intval(Http_Request::post('lib'));
 }
@@ -51,12 +48,14 @@ $onpage = isset($_SESSION['onpage']) ? $_SESSION['onpage'] : '';
 $prev = isset($_SESSION['prev']) ? $_SESSION['prev'] : '';
 $lib = isset($_SESSION['lib']) ? $_SESSION['lib'] :Config::get('lib');
 
-$template->assign('sort', $sort);
-$template->assign('onpage', $onpage);
-$template->assign('prev', $prev);
-$template->assign('lib', $lib);
-$template->assign('langpack', Language::getLangpack());
-$template->assign('langpacks', Language::getLangpacks());
-$template->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('settings.tpl')
+    ->assign('sort', $sort)
+    ->assign('onpage', $onpage)
+    ->assign('prev', $prev)
+    ->assign('lib', $lib)
+    ->assign('langpack', Language::getLangpack())
+    ->assign('langpacks', Language::getLangpacks())
+    ->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
 
 Http_Response::getInstance()->render();

@@ -38,38 +38,39 @@ require 'core/config.php';
 
 
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}
 
 
-if (file_exists($v['path'])) {
-    Files::updateFileLoad($id);
+Files::updateFileLoad($id);
 
-    $nm = array_reverse(explode('.', basename($v['path'])));
-    $nm = $nm[1];
-    $tmp = Config::get('jpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.jar';
+$nm = array_reverse(explode('.', basename($v['path'])));
+$nm = $nm[1];
+$tmp = Config::get('jpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.jar';
 
-    if (!file_exists($tmp)) {
-        $f = Helper::str2utf8(file_get_contents($v['path']));
+if (!is_file($tmp)) {
+    $f = Helper::str2utf8(file_get_contents($v['path']));
 
-        copy('core/resources/book.zip', $tmp);
-        copy('core/resources/props.ini', Config::get('jpath') . '/props.ini');
-        copy('core/resources/MANIFEST.MF', Config::get('jpath') . '/MANIFEST.MF');
+    copy('core/resources/book.zip', $tmp);
+    copy('core/resources/props.ini', Config::get('jpath') . '/props.ini');
+    copy('core/resources/MANIFEST.MF', Config::get('jpath') . '/MANIFEST.MF');
 
-        $arr = str_split($f, 25600);
-        $all = sizeof($arr);
-        $ar = file('core/resources/props.ini');
+    $arr = str_split($f, 25600);
+    $all = sizeof($arr);
+    $ar = file('core/resources/props.ini');
 
-        $ar[] = chr(0) . chr(10) . chr(0) . wordwrap('J/textfile.txt.label=1', 1, chr(0), true);
-        for ($i = 1; $i < $all; ++$i) {
-            $ar[] = chr(10) . chr(0) . wordwrap('J/textfile' . $i . '.txt.label=' . ($i + 1), 1, chr(0), true);
-        }
-        $ar[] = chr(10);
+    $ar[] = chr(0) . chr(10) . chr(0) . wordwrap('J/textfile.txt.label=1', 1, chr(0), true);
+    for ($i = 1; $i < $all; ++$i) {
+        $ar[] = chr(10) . chr(0) . wordwrap('J/textfile' . $i . '.txt.label=' . ($i + 1), 1, chr(0), true);
+    }
+    $ar[] = chr(10);
 
-        file_put_contents(Config::get('jpath') . '/props.ini', $ar);
-        file_put_contents(
-            Config::get('jpath') . '/MANIFEST.MF',
-            'Manifest-Version: 1.0
+    file_put_contents(Config::get('jpath') . '/props.ini', $ar);
+    file_put_contents(
+        Config::get('jpath') . '/MANIFEST.MF',
+        'Manifest-Version: 1.0
 MicroEdition-Configuration: CLDC-1.0
 MicroEdition-Profile: MIDP-1.0
 MIDlet-Name: ' . $nm . '
@@ -78,48 +79,43 @@ MIDlet-1: ' . $nm . ', /icon.png, br.BookReader
 MIDlet-Version: 1.6
 MIDlet-Info-URL: http://' . $_SERVER['HTTP_HOST'] . '
 MIDlet-Delete-Confirm: GoodBye =)',
-            FILE_APPEND
-        );
+        FILE_APPEND
+    );
 
-        $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
-        //echo 'ERROR : '.$zip->errorInfo(true);
+    $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
+    //echo 'ERROR : '.$zip->errorInfo(true);
 
-        $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/props.ini', PCLZIP_OPT_REMOVE_ALL_PATH);
-        //echo 'ERROR : '.$zip->errorInfo(true);
+    $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/props.ini', PCLZIP_OPT_REMOVE_ALL_PATH);
+    //echo 'ERROR : '.$zip->errorInfo(true);
+
+    $zip->add(
+        dirname(__FILE__) . '/' . Config::get('jpath') . '/MANIFEST.MF',
+        PCLZIP_OPT_REMOVE_ALL_PATH,
+        PCLZIP_OPT_ADD_PATH,
+        'META-INF'
+    );
+    //echo 'ERROR : '.$zip->errorInfo(true);
+
+    file_put_contents(Config::get('jpath') . '/textfile.txt', $arr[0]);
+
+    $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile.txt', PCLZIP_OPT_REMOVE_ALL_PATH);
+    //echo 'ERROR : '.$zip->errorInfo(true);
+
+    unlink(Config::get('jpath') . '/textfile.txt');
+
+    for ($i = 1; $i < $all; ++$i) {
+        file_put_contents(Config::get('jpath') . '/textfile' . $i . '.txt', $arr[$i]);
 
         $zip->add(
-            dirname(__FILE__) . '/' . Config::get('jpath') . '/MANIFEST.MF',
-            PCLZIP_OPT_REMOVE_ALL_PATH,
-            PCLZIP_OPT_ADD_PATH,
-            'META-INF'
+            dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile' . $i . '.txt',
+            PCLZIP_OPT_REMOVE_ALL_PATH
         );
         //echo 'ERROR : '.$zip->errorInfo(true);
-
-        file_put_contents(Config::get('jpath') . '/textfile.txt', $arr[0]);
-
-        $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile.txt', PCLZIP_OPT_REMOVE_ALL_PATH);
-        //echo 'ERROR : '.$zip->errorInfo(true);
-
-        unlink(Config::get('jpath') . '/textfile.txt');
-
-        for ($i = 1; $i < $all; ++$i) {
-            file_put_contents(Config::get('jpath') . '/textfile' . $i . '.txt', $arr[$i]);
-
-            $zip->add(
-                dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile' . $i . '.txt',
-                PCLZIP_OPT_REMOVE_ALL_PATH
-            );
-            //echo 'ERROR : '.$zip->errorInfo(true);
-            unlink(Config::get('jpath') . '/textfile' . $i . '.txt');
-        }
-
-        unlink(Config::get('jpath') . '/MANIFEST.MF');
-        unlink(Config::get('jpath') . '/props.ini');
-
-        chmod($tmp, 0644);
+        unlink(Config::get('jpath') . '/textfile' . $i . '.txt');
     }
 
-    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
-} else {
-    Http_Response::getInstance()->renderError(Language::get('error'));
+    unlink(Config::get('jpath') . '/MANIFEST.MF');
+    unlink(Config::get('jpath') . '/props.ini');
 }
+
+Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);

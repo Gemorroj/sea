@@ -37,21 +37,20 @@
 define('IS_P_NAME', true);
 
 require 'core/header.php';
-// Если поиск выключен
+
 if (!Config::get('search_change')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
 $word = Http_Request::get('word', '');
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('search.tpl');
+$template->assign('word', $word);
 
 $title = Language::get('search');
 //Seo::setTitle(Language::get('search'));
 Breadcrumbs::add('search', $title);
-
-$template->assign('word', $word);
 
 
 $paginatorConf = array();

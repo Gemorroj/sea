@@ -36,14 +36,9 @@
 
 require 'core/header.php';
 
-
 if (!Config::get('exchanger_change')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
-
-$template = Http_Response::getInstance()->getTemplate();
-
-$template->setTemplate('exchanger.tpl');
 
 //Seo::addTitle(Language::get('upload_file'));
 Breadcrumbs::add('exchanger', Language::get('upload_file'));
@@ -51,9 +46,8 @@ Breadcrumbs::add('exchanger', Language::get('upload_file'));
 $dirs = array();
 $insertId = null;
 
-$db = Db_Mysql::getInstance();
-
 if (Http_Request::isPost()) {
+    $db = Db_Mysql::getInstance();
     $file = Http_Request::file('file');
     $screen = Http_Request::file('screen');
 
@@ -131,7 +125,7 @@ if (Http_Request::isPost()) {
         $screenPath = Config::get('spath') . substr($pathname, strlen(Config::get('path'))) . '.gif';
 
         if (!move_uploaded_file($screen['tmp_name'], $screenPath)) {
-            Http_Response::getInstance()->renderError('Error');
+            Http_Response::getInstance()->renderError(Language::get('error'));
         }
 
         Image::resize($screenPath, $screenPath, 0, 0, Config::get('marker'));
@@ -146,10 +140,9 @@ if (Http_Request::isPost()) {
         mail(
             Config::get('zakaz_email'),
             '=?utf-8?B?' . base64_encode('Новый файл') . '?=',
-            'Загружен новый файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'apanel/apanel_view.php?id=' . $insertId
-                . "\r\n" .
-                'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
-                'IP: ' . $_SERVER['REMOTE_ADDR'],
+            'Загружен новый файл: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'apanel/apanel_view.php?id=' . $insertId . "\r\n" .
+            'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
+            'IP: ' . $_SERVER['REMOTE_ADDR'],
             "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
         );
     }
@@ -157,8 +150,10 @@ if (Http_Request::isPost()) {
     $dirs = Files::getAllDirs();
 }
 
-$template->assign('insertId', $insertId);
-$template->assign('upload_max_filesize', ini_get('upload_max_filesize'));
-$template->assign('dirs', $dirs);
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('exchanger.tpl')
+    ->assign('insertId', $insertId)
+    ->assign('upload_max_filesize', ini_get('upload_max_filesize'))
+    ->assign('dirs', $dirs);
 
 Http_Response::getInstance()->render();

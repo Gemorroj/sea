@@ -296,7 +296,6 @@ class Files
                     filectime($to)
                 ));
                 self::updateDirCount($infolder, true);
-                chmod($to, 0644);
                 $message[] = 'Загрузка файла ' . $parameter[0] . ' прошла успешно';
             } else {
                 $err = error_get_last();
@@ -364,8 +363,6 @@ class Files
                     filesize($to),
                     filectime($to)
                 ));
-
-                chmod($to, 0644);
                 $message[] = 'Загрузка файла ' . $name . ' прошла успешно';
             } else {
                 $err = error_get_last();

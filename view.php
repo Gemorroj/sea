@@ -37,15 +37,11 @@
 require 'core/header.php';
 
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $file = Files::getFileInfo($id);
 
-if (!is_file($file['path'])) {
-    Http_Response::getInstance()->renderError('File not found');
+if (!$v || !is_file($file['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
-
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('view.tpl');
 
 
 // Система голосований
@@ -92,6 +88,7 @@ $prevNext = array('prev' => array(), 'next' => array());
 require 'core/inc/view/_prevnext.php';
 
 $template = Http_Response::getInstance()->getTemplate();
+$template->setTemplate('view.tpl');
 $template->assign('dirs', (IS_ADMIN === true ? Files::getAllDirs() : array()));
 $template->assign('prevNext', $prevNext);
 $template->assign('file', $file);

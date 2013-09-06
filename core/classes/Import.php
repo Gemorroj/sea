@@ -199,7 +199,6 @@ class Import
             $id = Db_Mysql::getInstance()->lastInsertId();
 
             Files::updateDirCount($infolder, true);
-            chmod($toFile, 0644);
 
             $this->_importFileData($id, $toFile);
 

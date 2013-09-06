@@ -35,13 +35,10 @@
 
 
 require 'core/header.php';
-// Если стол выключен
-if (!Config::get('zakaz_change')) {
-    Http_Response::getInstance()->renderError('Not found');
-}
 
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('table.tpl');
+if (!Config::get('zakaz_change')) {
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
+}
 
 //Seo::addTitle(Language::get('orders'));
 Breadcrumbs::add('table', Language::get('orders'));
@@ -62,11 +59,14 @@ if (Http_Request::isPost()) {
     $sended = mail(
         Config::get('zakaz_email'),
         '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=',
-        'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\n\n" . ' ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back'),
-        'Content-Type: text/plain; charset=utf-8' . "\r\n" . 'From: support@' . $_SERVER['HTTP_HOST']
+        'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\r\n" .
+        'ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back'),
+        'Content-Type: text/plain; charset=UTF-8' . "\r\n" . 'From: robot@' . $_SERVER['HTTP_HOST']
     );
 }
 
-$template->assign('sended', $sended);
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('table.tpl')
+    ->assign('sended', $sended);
 
 Http_Response::getInstance()->render();

@@ -156,4 +156,6 @@ return array(
     'recent_comments' => 'Recent comments',
 
     'attachments' => 'Attachments',
+    'not_available' => 'Not available',
+    'not_found' => 'Not found',
 );

@@ -156,4 +156,6 @@ return array(
     'recent_comments' => 'Последние комментарии',
 
     'attachments' => 'Вложения',
+    'not_available' => 'Недоступно',
+    'not_found' => 'Не найдено',
 );

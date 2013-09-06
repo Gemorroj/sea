@@ -35,19 +35,15 @@
 
 
 require 'core/header.php';
-// Если статистика выключена
-if (!Config::get('stat_change')) {
-    Http_Response::getInstance()->renderError('Not found');
-}
 
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('stat.tpl');
+if (!Config::get('stat_change')) {
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
+}
 
 //Seo::addTitle(Language::get('statistics'));
 Breadcrumbs::add('stat', Language::get('statistics'));
 
 $db = Db_Mysql::getInstance();
-
 
 $stat = $db->query('
     SELECT COUNT(1) AS all_files, SUM(`loads`) AS total_downloads, SUM(`size`) AS total_volume
@@ -63,7 +59,8 @@ $stat['total_new_files'] = $db->query('
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
 )->fetchColumn();
 
-
-$template->assign('stat', $stat);
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('stat.tpl')
+    ->assign('stat', $stat);
 
 Http_Response::getInstance()->render();

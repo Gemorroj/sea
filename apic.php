@@ -38,23 +38,27 @@ require 'core/config.php';
 
 $id = intval(Http_Request::get('id'));
 
-if (!is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
-    Http_Response::getInstance()->renderError('Not found');
+if (!$id || !is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
 $data = unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
 if ($data && $data['tag']['apic']) {
-    // обычно, в оригинале jpeg
-    header('Content-Type: image/jpeg');
-    header('Pragma: public');
-    header('Cache-Control: public, max-age=8640000');
-    header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
+    $im = imagecreatefromstring($data['tag']['apic']);
+    if ($im) {
+        if (!Http_Request::get('full')) {
+            $im = Image::resizeSimple($im);
+        }
 
-    if (Http_Request::get('full')) {
-        echo $data['tag']['apic'];
-    } else {
-        $im = imagecreatefromstring($data['tag']['apic']);
-        imagejpeg(Image::resizeSimple($im));
+        ob_start();
+        imagejpeg($im);
+        $body = ob_get_clean();
         imagedestroy($im);
+
+        Http_Response::getInstance()
+            ->setCache()
+            ->setHeader('Content-Type', 'image/jpeg')
+            ->setBody($body)
+            ->renderBinary();
     }
 }

@@ -36,20 +36,18 @@
 
 require 'core/header.php';
 
-// если нарезка отключена
 if (!Config::get('cut_change')) {
-    Http_Response::getInstance()->renderError('Not found!');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
-$template = Http_Response::getInstance()->getTemplate();
 
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $v = Files::getFileInfo($id);
 
-if (!is_file($v['path'])) {
-    Http_Response::getInstance()->renderError('File not found');
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
+
 $v['info'] = Media_Audio::getInfo($id, $v['path']);
 $cut = array();
 
@@ -57,9 +55,10 @@ Seo::unserialize($v['seo']);
 //Seo::addTitle(Language::get('splitting'));
 //Seo::addTitle($v['name']);
 
-$template->setTemplate('cut.tpl');
-$template->assign('file', $v);
-$template->assignByRef('cut', $cut);
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('cut.tpl')
+    ->assign('file', $v)
+    ->assignByRef('cut', $cut);
 
 Breadcrumbs::init($v['path']);
 Breadcrumbs::add('cut/' . $id, Language::get('splitting'));

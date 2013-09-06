@@ -35,9 +35,8 @@
 
 require 'core/header.php';
 
-// Если комментарии выключены
 if (!Config::get('comments_change')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
 $db = Db_Mysql::getInstance();
@@ -49,13 +48,10 @@ $q->execute(array($id));
 $news = $q->fetch();
 
 if (!$news || !$news['news']) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
 $desc = mb_substr($news['news'], 0, Config::get('desc'));
-
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('comments.tpl');
 
 //Seo::addTitle(Language::get('news'));
 //Seo::addTitle($desc);
@@ -64,40 +60,8 @@ $template->setTemplate('comments.tpl');
 Breadcrumbs::add('news', Language::get('news') . ' - ' . $desc);
 Breadcrumbs::add('news_comments/' . $id, Language::get('comments'));
 
-$template->assign('comments_module', 'news_comments');
-$template->assign('comments_module_backlink', DIRECTORY . 'news');
-$template->assign('comments_module_backname', Language::get('news'));
 
-
-// всего комментариев
-$q = $db->prepare('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ?');
-$q->execute(array($id));
-$all = $q->fetchColumn();
-
-$paginatorConf = Helper::getPaginatorConf($all);
-
-// Постраничная навигация
-$template->assign('paginatorConf', $paginatorConf);
-
-
-$query = $db->prepare('
-    SELECT *
-    FROM `news_comments`
-    WHERE `id_news` = ?
-    ORDER BY `id` DESC
-    LIMIT ?, ?
-');
-$query->bindValue(1, $id, PDO::PARAM_INT);
-$query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
-$query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
-
-$query->execute();
-$comments = $query->fetchAll();
-
-
-// Запись
 if (Http_Request::isPost()) {
-    //Проверка на ошибки
     if (!Http_Request::post('msg') || !Http_Request::post('name')) {
         Http_Response::getInstance()->renderError(Language::get('not_filled_one_of_the_fields'));
     }
@@ -138,6 +102,41 @@ if (Http_Request::isPost()) {
 
     Http_Response::getInstance()->renderMessage(Language::get('your_comment_has_been_successfully_added'));
 }
+
+
+
+$template = Http_Response::getInstance()->getTemplate();
+$template->setTemplate('comments.tpl');
+$template->assign('comments_module', 'news_comments');
+$template->assign('comments_module_backlink', DIRECTORY . 'news');
+$template->assign('comments_module_backname', Language::get('news'));
+
+
+// всего комментариев
+$q = $db->prepare('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ?');
+$q->execute(array($id));
+$all = $q->fetchColumn();
+
+$paginatorConf = Helper::getPaginatorConf($all);
+
+// Постраничная навигация
+$template->assign('paginatorConf', $paginatorConf);
+
+
+$query = $db->prepare('
+    SELECT *
+    FROM `news_comments`
+    WHERE `id_news` = ?
+    ORDER BY `id` DESC
+    LIMIT ?, ?
+');
+$query->bindValue(1, $id, PDO::PARAM_INT);
+$query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
+$query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
+
+$query->execute();
+$comments = $query->fetchAll();
+
 
 $template->assign('comments', $comments);
 Http_Response::getInstance()->render();

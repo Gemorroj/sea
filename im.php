@@ -34,22 +34,20 @@
  */
 
 
-header('Content-Type: image/jpeg');
-header('Pragma: public');
-header('Cache-Control: public, max-age=8640000');
-header('Expires: ' . date('r', $_SERVER['REQUEST_TIME'] + 8640000));
-
 require 'core/config.php';
 
 $id = intval(Http_Request::get('id') ? Http_Request::get('id') : Http_Request::post('id'));
-$resize = true;
-$marker = Config::get('marker');
 
+$v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}
 
 $w = abs(Http_Request::get('w', 0));
 $h = abs(Http_Request::get('h', 0));
 
-
+$marker = Config::get('marker');
+$resize = true;
 if (!$w || !$h) {
     $resize = false;
     list($w, $h) = explode('*', Config::get('prev_size'));
@@ -57,9 +55,8 @@ if (!$w || !$h) {
     $marker = ($marker == 2 ? 0 : 1);
 }
 
-$v = Files::getFileInfo($id);
-$pic = $v['path'];
-$prev_pic = str_replace('/', '--', mb_substr(strstr($pic, '/'), 1));
+
+$prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
 
 if ($resize) {
     $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
@@ -68,11 +65,13 @@ if ($resize) {
 
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
 
-
 if (!file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
-    if (!Image::resize($pic, Config::get('picpath') . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
-        Http_Response::getInstance()->renderError('Error');
+    if (!Image::resize($v['path'], Config::get('picpath') . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
+        Http_Response::getInstance()->renderError(Language::get('error'));
     }
 }
 
-Http_Response::getInstance()->redirect($location, 301);
+Http_Response::getInstance()
+    ->setCache()
+    ->setHeader('Content-Type', 'image/jpeg')
+    ->redirect($location, 301);

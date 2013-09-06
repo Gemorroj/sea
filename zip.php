@@ -36,18 +36,14 @@
 
 require 'core/header.php';
 
-
-// если просмотр zip
 if (!Config::get('zip_change')) {
-    Http_Response::getInstance()->renderError('Not found');
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
-
 $id = intval(Http_Request::get('id'));
-// Получаем инфу о файле
 $v = Files::getFileInfo($id);
-if (!is_file($v['path'])) {
-    Http_Response::getInstance()->renderError('File not found');
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
 
@@ -81,23 +77,25 @@ $action = Http_Request::get('action');
 
 $zip = new PclZip($v['path']);
 if (!$zip) {
-    Http_Response::getInstance()->renderError('Can not open archive');
+    Http_Response::getInstance()->renderError(Language::get('error'));
 }
 
 
 switch ($action) {
     case 'down':
         $zipFileName = rtrim(Http_Request::get('name'), '/');
-
         $mime = Helper::ext2mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
-        header('Content-Type: ' . $mime);
+
+        $f = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
         if ($mime == 'text/plain') {
-            $f = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
-            echo Helper::str2utf8($f[0]['content']);
+            Http_Response::getInstance()->setBody(Helper::str2utf8($f[0]['content']));
         } else {
-            $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_IN_OUTPUT);
+            Http_Response::getInstance()->setBody($f[0]['content']);
         }
-        exit;
+        Http_Response::getInstance()
+            ->setHeader('Content-Type', $mime)
+            ->setCache()
+            ->renderBinary();
         break;
 
     case 'preview':
@@ -127,7 +125,7 @@ switch ($action) {
             $paginatorConf = Helper::getPaginatorConf(PHP_INT_MAX);
             $paginatorConf['pages'] = ceil(mb_strlen($content) / Config::get('lib'));
 
-            $content = mb_substr($content, $paginatorConf['page'] * Config::get('lib') - Config::get('lib'), Config::get('lib') + 64);
+            $content = mb_substr($content, $paginatorConf['page'] * Config::get('lib') - Config::get('lib'), (int)Config::get('lib') + 64);
 
             if ($paginatorConf['page'] > 1) {
                 $i = 0;
@@ -149,7 +147,7 @@ switch ($action) {
 
     default:
         if (!($list = $zip->listContent())) {
-            Http_Response::getInstance()->renderError('Can not list archive');
+            Http_Response::getInstance()->renderError(Language::get('error'));
         }
         $paginatorConf = Helper::getPaginatorConf(sizeof($list));
 
