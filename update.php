@@ -36,8 +36,7 @@
 
 require 'core/config.php';
 
-
-set_time_limit(999);
+set_time_limit(1000);
 ignore_user_abort(true);
 
 $db = Db_Mysql::getInstance();
@@ -149,8 +148,8 @@ if ($version < 3.1) {
 
 
 $db->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute(array('version', $version));
-?>
-<!DOCTYPE html>
+
+Http_Response::getInstance()->setBody('<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" xml:lang="ru" lang="ru">
     <head>
         <meta name="viewport" content="width=device-width"/>
@@ -161,7 +160,7 @@ $db->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute
             <fieldset>
                 <legend>Обновление закончено</legend>
                 <p>
-                    Текущая версия: <strong><?php echo $version; ?></strong><br/><br/>
+                    Текущая версия: <strong>' . $version . '</strong><br/><br/>
                     Не забудьте удалить файл install.php и update.php<br/><br/>
                     <strong><a href="./apanel/">В админку</a><br/>
                     <strong><a href="./">К загрузкам</a><br/>
@@ -169,4 +168,4 @@ $db->prepare("REPLACE INTO `setting` (`name`, `value` ) VALUES (?, ?)")->execute
             </fieldset>
         </div>
     </body>
-</html>
+</html>')->renderBinary();

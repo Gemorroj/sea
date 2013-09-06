@@ -83,10 +83,8 @@ MIDlet-Delete-Confirm: GoodBye =)',
     );
 
     $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
-    //echo 'ERROR : '.$zip->errorInfo(true);
 
     $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/props.ini', PCLZIP_OPT_REMOVE_ALL_PATH);
-    //echo 'ERROR : '.$zip->errorInfo(true);
 
     $zip->add(
         dirname(__FILE__) . '/' . Config::get('jpath') . '/MANIFEST.MF',
@@ -94,12 +92,10 @@ MIDlet-Delete-Confirm: GoodBye =)',
         PCLZIP_OPT_ADD_PATH,
         'META-INF'
     );
-    //echo 'ERROR : '.$zip->errorInfo(true);
 
     file_put_contents(Config::get('jpath') . '/textfile.txt', $arr[0]);
 
     $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile.txt', PCLZIP_OPT_REMOVE_ALL_PATH);
-    //echo 'ERROR : '.$zip->errorInfo(true);
 
     unlink(Config::get('jpath') . '/textfile.txt');
 
@@ -110,7 +106,6 @@ MIDlet-Delete-Confirm: GoodBye =)',
             dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile' . $i . '.txt',
             PCLZIP_OPT_REMOVE_ALL_PATH
         );
-        //echo 'ERROR : '.$zip->errorInfo(true);
         unlink(Config::get('jpath') . '/textfile' . $i . '.txt');
     }
 

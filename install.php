@@ -36,10 +36,10 @@
 error_reporting(0);
 require 'core/config.php';
 
-set_time_limit(999);
+set_time_limit(1000);
 ignore_user_abort(true);
 
-echo '<!DOCTYPE html>
+$body = '<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
     <head>
         <meta name="viewport" content="width=device-width"/>
@@ -50,7 +50,7 @@ echo '<!DOCTYPE html>
 ';
 
 if (!Http_Request::get('level')) {
-    echo '
+    $body .= '
     <fieldset><legend>Введите ваши данные</legend>
         <form action="' . $_SERVER['PHP_SELF'] . '?level=1" method="post">
             <div>
@@ -324,7 +324,7 @@ if (!Http_Request::get('level')) {
     $db->exec("INSERT INTO `setting` (`name`, `value` ) VALUES ('version', '3.1')");
 
     if ($errors) {
-        echo '
+        $body .= '
         <fieldset>
             <legend>В ходе установки произошли ошибки</legend>
             <pre>' . print_r($errors, true) . '</pre>
@@ -332,19 +332,26 @@ if (!Http_Request::get('level')) {
         ';
     }
 
-    echo '
+    $body .= '
     <fieldset>
         <legend>Установка закончена</legend>
-        Не забудьте удалить файл install.php и update.php<br/>
-        <strong><a href="./apanel/">В админку</a><br/>
-        <strong><a href="./">К загрузкам</a><br/>
+        <p>
+            Текущая версия: <strong>' . $version . '</strong><br/><br/>
+            Не забудьте удалить файл install.php и update.php<br/><br/>
+            <strong><a href="./apanel/">В админку</a><br/>
+            <strong><a href="./">К загрузкам</a><br/>
+        </p>
     </fieldset>
     ';
 }
 
 
-echo '
+$body .= '
         </div>
     </body>
 </html>
 ';
+
+Http_Response::getInstance()
+    ->setBody($body)
+    ->renderBinary();

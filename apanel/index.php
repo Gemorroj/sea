@@ -55,7 +55,7 @@ if ($info['access_num'] > Config::get('countban')) {
 }
 //-------------------------------
 if (!Http_Request::post('p') && !Http_Request::get('p')) {
-    echo '<!DOCTYPE html>
+    Http_Response::getInstance()->setBody('<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
     <head>
         <meta name="viewport" content="width=device-width"/>
@@ -65,7 +65,7 @@ if (!Http_Request::post('p') && !Http_Request::get('p')) {
         <div>
             <fieldset>
                 <legend>Вход для администратора</legend>
-                <form method="post" action="' . $_SERVER['PHP_SELF'] . '">
+                <form method="post" action="./">
                     <div>
                         <label>Пароль: <input type="password" name="p" /></label><br/>
                         <input type="submit" value="Войти"/>
@@ -74,8 +74,7 @@ if (!Http_Request::post('p') && !Http_Request::get('p')) {
             </fieldset>
         </div>
     </body>
-</html>';
-    exit;
+</html>')->renderBinary();
 }
 
 if ((Http_Request::post('p') && md5(Http_Request::post('p')) == Config::get('password')) ||
