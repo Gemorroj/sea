@@ -98,7 +98,7 @@ class Autoload
      */
     protected function _include($file)
     {
-        if (true === file_exists($file)) {
+        if (true === is_file($file)) {
             include $file;
         }
     }

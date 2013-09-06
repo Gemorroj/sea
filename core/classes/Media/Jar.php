@@ -44,7 +44,7 @@ class Media_Jar
     public static function getImage($path = '')
     {
         $name = Config::get('ipath') . '/' . str_replace('/', '--', mb_substr(strstr($path, '/'), 1)) . '.png';
-        if (file_exists($name)) {
+        if (is_file($name)) {
             return $name;
         }
 

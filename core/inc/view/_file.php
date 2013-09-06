@@ -15,16 +15,16 @@ $file['flash_file'] = '';
 
 
 // Скриншот
-if (file_exists(Config::get('spath') . $screen . '.gif')) {
+if (is_file(Config::get('spath') . $screen . '.gif')) {
     $file['screen'] = DIRECTORY . Config::get('spath') . $screen . '.gif';
-} elseif (file_exists(Config::get('spath') . $screen . '.jpg')) {
+} elseif (is_file(Config::get('spath') . $screen . '.jpg')) {
     $file['screen'] = DIRECTORY . Config::get('spath') . $screen . '.jpg';
-} elseif (file_exists(Config::get('spath') . $screen . '.png')) {
+} elseif (is_file(Config::get('spath') . $screen . '.png')) {
     $file['screen'] = DIRECTORY . Config::get('spath') . $screen . '.png';
 }
 
 // Описание
-if (file_exists(Config::get('opath') . '/' . $screen . '.txt')) {
+if (is_file(Config::get('opath') . '/' . $screen . '.txt')) {
     $file['description'] = trim(file_get_contents(Config::get('opath') . '/' . $screen . '.txt'));
 } elseif (Config::get('lib_desc') && $ext == 'txt') {
     $fp = fopen($file['path'], 'r');
@@ -51,7 +51,7 @@ if ($file['attach']) {
 
 if (Media_Image::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
-        if (file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
+        if (is_file(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
             $file['screen_file'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
         } else {
             $file['screen_file'] = DIRECTORY . 'im/' . $id;
@@ -63,7 +63,7 @@ if (Media_Image::isSupported($ext)) {
 
     foreach (explode(',', Config::get('view_size')) as $val) {
         $wh = explode('*', $val);
-        if (file_exists(Config::get('picpath') . '/' . $wh[0] . 'x' . $wh[1] . '_' . $prev_pic . '.gif')) {
+        if (is_file(Config::get('picpath') . '/' . $wh[0] . 'x' . $wh[1] . '_' . $prev_pic . '.gif')) {
             $file['imagelink'][$val] = DIRECTORY . Config::get('picpath') . '/' . $wh[0] . 'x' . $wh[1] . '_' . $prev_pic . '.gif';
         } else {
             $file['imagelink'][$val] = DIRECTORY . 'im/' . $id . '?w=' . $wh[0] . '&h=' . $wh[1];
@@ -80,7 +80,7 @@ if (Media_Video::isSupported($ext)) {
 
     if (Config::get('screen_file_change')) {
         $frame = abs(Http_Request::get('frame', Config::get('ffmpeg_frame')));
-        if (file_exists(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
+        if (is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
             $file['screen_file'] = DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif';
         } else {
             $file['screen_file'] = DIRECTORY . 'ffmpeg/' . $id . '?frame=' . $frame;
@@ -90,9 +90,9 @@ if (Media_Video::isSupported($ext)) {
 
 if (Media_Theme::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
-        if (file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif')) {
+        if (is_file(Config::get('tpath') . '/' . $prev_pic . '.gif')) {
             $file['screen_file'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.gif';
-        } elseif (file_exists(Config::get('tpath') . '/' . $prev_pic . '.gif.swf')) {
+        } elseif (is_file(Config::get('tpath') . '/' . $prev_pic . '.gif.swf')) {
             $file['flash_file'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.gif.swf';
         } else {
             $file['screen_file'] = DIRECTORY . 'theme/' . $id;
@@ -107,7 +107,7 @@ if (Config::get('swf_file_change') && $ext == 'swf') {
 }
 
 if (Config::get('jar_file_change') && Media_Jar::isSupported($ext)) {
-    if (file_exists(Config::get('ipath') . '/' . $prev_pic . '.png')) {
+    if (is_file(Config::get('ipath') . '/' . $prev_pic . '.png')) {
         $file['screen_file'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
     } else {
         $file['screen_file'] = DIRECTORY . 'jar/' . $id;

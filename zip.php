@@ -111,7 +111,7 @@ switch ($action) {
                 '--',
                 mb_substr(strstr($v['path'], '/'), 1) . '_' . strtolower($zipFileName)
             );
-            if (!file_exists($f)) {
+            if (!is_file($f)) {
                 $content = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
                 file_put_contents($f, $content[0]['content']);
             }

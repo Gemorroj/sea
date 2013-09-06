@@ -171,7 +171,7 @@ class Import
             $this->_error[] = 'Импорт файла ' . $file . ' окончилась неудачно: недоступное расширение';
             return;
         }
-        if (file_exists($toFile) === true) {
+        if (is_file($toFile) === true) {
             $this->_error[] = 'Загрузка файла ' . $file . ' окончилась неудачно: файл ' . $toFile . ' уже существует';
             return;
         }
@@ -220,21 +220,21 @@ class Import
         $preFileScreen = $this->_importFolderScreen . strstr($file, '/');
         $preFileAttach = $this->_importFolderAttach . strstr($file, '/') . '_';
 
-        if (file_exists($preFileAbout . '.txt') === true) {
+        if (is_file($preFileAbout . '.txt') === true) {
             $result = Files::addAbout($file, file_get_contents($preFileAbout . '.txt'));
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
         }
 
-        if (file_exists($preFileScreen . '.gif') === true) {
+        if (is_file($preFileScreen . '.gif') === true) {
             $result = Files::addScreen($file, $preFileScreen . '.gif');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
-        } elseif (file_exists($preFileScreen . '.jpg') === true) {
+        } elseif (is_file($preFileScreen . '.jpg') === true) {
             $result = Files::addScreen($file, $preFileScreen . '.jpg');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
-        } elseif (file_exists($preFileScreen . '.png') === true) {
+        } elseif (is_file($preFileScreen . '.png') === true) {
             $result = Files::addScreen($file, $preFileScreen . '.png');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);

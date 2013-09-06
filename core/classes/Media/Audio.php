@@ -45,7 +45,7 @@ class Media_Audio
      */
     public static function getInfo($id, $path)
     {
-        if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
+        if (is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
             return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
         }
 

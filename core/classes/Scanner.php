@@ -182,21 +182,21 @@ class Scanner
             if ($is_dir === true) {
                 // скриншоты
                 $screen = Config::get('spath') . mb_substr($f, mb_strlen(Config::get('path')));
-                if (file_exists($screen) === false) {
+                if (is_file($screen) === false) {
                     mkdir($screen, 0777);
                 }
                 chmod($screen, 0777);
 
                 // описания
                 $desc = Config::get('opath') . mb_substr($f, mb_strlen(Config::get('path')));
-                if (file_exists($desc) === false) {
+                if (is_file($desc) === false) {
                     mkdir($desc, 0777);
                 }
                 chmod($desc, 0777);
 
                 // вложения
                 $attach = Config::get('apath') . mb_substr($f, mb_strlen(Config::get('path')));
-                if (file_exists($attach) === false) {
+                if (is_file($attach) === false) {
                     mkdir($attach, 0777);
                 }
                 chmod($attach, 0777);

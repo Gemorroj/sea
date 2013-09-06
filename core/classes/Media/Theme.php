@@ -45,9 +45,9 @@ class Media_Theme
     {
         $name = Config::get('tpath') . '/' . str_replace('/', '--', mb_substr(strstr($path, '/'), 1)) . '.gif';
 
-        if (file_exists($name)) {
+        if (is_file($name)) {
             return $name;
-        } elseif (file_exists($name . '.swf')) {
+        } elseif (is_file($name . '.swf')) {
             return $name . '.swf';
         }
 
@@ -523,7 +523,7 @@ class Media_Theme
      */
     protected static function _getThmInfo($id, $path)
     {
-        if (file_exists(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
+        if (is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
             return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
         }
 

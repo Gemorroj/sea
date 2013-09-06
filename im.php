@@ -65,7 +65,7 @@ if ($resize) {
 
 $location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
 
-if (!file_exists(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
+if (!is_file(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
     if (!Image::resize($v['path'], Config::get('picpath') . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
         Http_Response::getInstance()->renderError(Language::get('error'));
     }

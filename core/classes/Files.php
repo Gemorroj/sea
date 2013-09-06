@@ -275,7 +275,7 @@ class Files
                 $error[] = 'Загрузка файла ' . $parameter[0] . ' окончилась неудачно: недоступное расширение';
                 continue;
             }
-            if (file_exists($to) === true) {
+            if (is_file($to) === true) {
                 $error[] = 'Загрузка файла ' . $parameter[0] . ' окончилась неудачно: файл ' . $to . ' уже существует';
                 continue;
             }
@@ -340,7 +340,7 @@ class Files
                 $error[] = 'Загрузка файла ' . $name . ' окончилась неудачно: недоступное расширение';
                 continue;
             }
-            if (file_exists($to) === true) {
+            if (is_file($to) === true) {
                 $error[] = 'Загрузка файла ' . $name . ' окончилась неудачно: файл ' . $to . ' уже существует';
                 continue;
             }

@@ -150,7 +150,7 @@ switch (Http_Request::get('action')) {
             $template->assign('error', 'Указанная директория не доступна для записи');
             Http_Response::getInstance()->render();
         }
-        if (file_exists($folder . $filename)) {
+        if (is_file($folder . $filename)) {
             $template->assign('error', 'Файл с таким именем в указанной директории уже есть');
             Http_Response::getInstance()->render();
         }
@@ -524,7 +524,7 @@ switch (Http_Request::get('action')) {
             }
 
             $to = $file['path'] . 'folder.png';
-            if (file_exists($to)) {
+            if (is_file($to)) {
                 $template->assign('error', 'Иконка уже существует');
                 Http_Response::getInstance()->render();
             }
@@ -561,7 +561,7 @@ switch (Http_Request::get('action')) {
             Http_Response::getInstance()->render();
         }
 
-        if (!file_exists($file['path'] . 'folder.png')) {
+        if (!is_file($file['path'] . 'folder.png')) {
             $template->assign('error', 'Иконки к данной папке не существует');
             Http_Response::getInstance()->render();
         }
@@ -1246,7 +1246,7 @@ switch (Http_Request::get('action')) {
         $q1 = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
         $q2 = $db->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
         foreach ($db->query('SELECT `id`, `path` FROM `files`') as $row) {
-            if (!file_exists($row['path'])) {
+            if (!is_file($row['path'])) {
                 $q1->execute(array($row['id']));
                 $q2->execute(array($row['id']));
 
