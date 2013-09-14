@@ -336,7 +336,7 @@ if (!Http_Request::get('level')) {
     <fieldset>
         <legend>Установка закончена</legend>
         <p>
-            Текущая версия: <strong>' . $version . '</strong><br/><br/>
+            Текущая версия: <strong>3.1</strong><br/><br/>
             Не забудьте удалить файл install.php и update.php<br/><br/>
             <strong><a href="./apanel/">В админку</a><br/>
             <strong><a href="./">К загрузкам</a><br/>

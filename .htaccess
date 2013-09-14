@@ -195,7 +195,7 @@ AddType x-world/x-vrml .wrl
 # Кодировка
 php_value default_charset UTF-8
 
-# максимальный размер файлов для аплоада
+# максимальный размер файлов для загрузки
 php_value upload_max_filesize 999M
 php_value post_max_size 999M
 
@@ -246,9 +246,9 @@ php_value error_log /error_log
 </IfModule>
 
 
-#ErrorDocument 304 /?
-#ErrorDocument 400 /?
-ErrorDocument 404 /?
-#ErrorDocument 406 /?
-#ErrorDocument 500 /?
-#ErrorDocument 502 /?
+#ErrorDocument 304 /
+#ErrorDocument 400 /
+ErrorDocument 404 /
+#ErrorDocument 406 /
+#ErrorDocument 500 /
+#ErrorDocument 502 /
