@@ -129,6 +129,7 @@ class Scanner
         }
 
         chmod($path, 0777);
+        $pathLen = mb_strlen(Config::get('path'));
 
         foreach (array_diff(scandir($path, 0), array('.', '..')) as $file) {
             if ($file[0] === '.') {
@@ -144,7 +145,7 @@ class Scanner
             }
             $is_file = ($is_dir === false && $pathinfo['basename'] != $cont && is_file($f) === true);
 
-            if (!$preparedQuery->execute(array($f))) {
+            if ($preparedQuery->execute(array($f)) !== true) {
                 $errors[] = implode("\n", $preparedQuery->errorInfo());
                 continue;
             }
@@ -181,28 +182,25 @@ class Scanner
 
             if ($is_dir === true) {
                 // скриншоты
-                $screen = Config::get('spath') . mb_substr($f, mb_strlen(Config::get('path')));
-                if (is_file($screen) === false) {
+                $screen = Config::get('spath') . mb_substr($f, $pathLen);
+                if (is_dir($screen) === false) {
                     mkdir($screen, 0777);
                 }
-                chmod($screen, 0777);
 
                 // описания
-                $desc = Config::get('opath') . mb_substr($f, mb_strlen(Config::get('path')));
-                if (is_file($desc) === false) {
+                $desc = Config::get('opath') . mb_substr($f, $pathLen);
+                if (is_dir($desc) === false) {
                     mkdir($desc, 0777);
                 }
-                chmod($desc, 0777);
 
                 // вложения
-                $attach = Config::get('apath') . mb_substr($f, mb_strlen(Config::get('path')));
-                if (is_file($attach) === false) {
+                $attach = Config::get('apath') . mb_substr($f, $pathLen);
+                if (is_dir($attach) === false) {
                     mkdir($attach, 0777);
                 }
-                chmod($attach, 0777);
 
                 $q = $this->_scanDb($f, $name, $rus_name, $aze_name, $tur_name, true, $insert);
-                if (!$q->execute()) {
+                if ($q->execute() !== true) {
                     $errors[] = implode("\n", $q->errorInfo());
                 }
 
@@ -211,7 +209,7 @@ class Scanner
             } elseif ($is_file === true) {
                 $files++;
                 $q = $this->_scanDb($f, $name, $rus_name, $aze_name, $tur_name, false, $insert);
-                if (!$q->execute()) {
+                if ($q->execute() !== true) {
                     $errors[] = implode("\n", $q->errorInfo());
                 }
             }

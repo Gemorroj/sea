@@ -198,19 +198,15 @@ class Files
             $attach = Config::get('apath') . $temp;
 
             mkdir($directory, 0777);
-            chmod($directory, 0777); // fix
 
             // скриншоты
             mkdir($screen, 0777);
-            chmod($screen, 0777); // fix
 
             // описания
             mkdir($desc, 0777);
-            chmod($desc, 0777); // fix
 
             // вложения
             mkdir($attach, 0777);
-            chmod($attach, 0777); // fix
 
 
             // заносим в бд
