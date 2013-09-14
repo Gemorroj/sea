@@ -39,7 +39,7 @@ require 'core/header.php';
 $id = intval(Http_Request::get('id'));
 $file = Files::getFileInfo($id);
 
-if (!$v || !is_file($file['path'])) {
+if (!$file || !is_file($file['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
