@@ -21,7 +21,7 @@
 // | Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA |
 // +----------------------------------------------------------------------------+
 
-require_once(dirname(__FILE__) . '/Bitstream.php');
+require_once('File/Ogg/Bitstream.php');
 
 /**
  * Check number for the first header in a Vorbis stream.
@@ -81,7 +81,7 @@ define("OGG_VORBIS_ERROR_ILLEGAL_COMMENT",  3);
  * @link        http://pear.php.net/package/File_Ogg
  * @link        http://www.xiph.org/vorbis/doc/
  * @package     File_Ogg
- * @version     CVS: $Id: Vorbis.php 302834 2010-08-27 02:16:20Z tstarling $
+ * @version     CVS: $Id$
  */
 class File_Ogg_Vorbis extends File_Ogg_Media
 {
@@ -311,23 +311,6 @@ class File_Ogg_Vorbis extends File_Ogg_Media
     function getEncoderVersion()
     {
         return ($this->_version);
-    }
-
-    /**
-     * Number of channels used in this stream
-     *
-     * This function returns the number of channels used in this stream.  This
-     * can range from 1 to 255, but will likely be 2 (stereo) or 1 (mono).
-     *
-     * @access  public
-     * @return  int
-     * @see     File_Ogg_Vorbis::isMono()
-     * @see     File_Ogg_Vorbis::isStereo()
-     * @see     File_Ogg_Vorbis::isQuadrophonic()
-     */
-    function getChannels()
-    {
-        return ($this->_channels);
     }
 
     /**

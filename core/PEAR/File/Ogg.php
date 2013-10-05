@@ -28,7 +28,7 @@
  * @license     http://www.gnu.org/copyleft/lesser.html GNU LGPL
  * @link        http://pear.php.net/package/File_Ogg
  * @package     File_Ogg
- * @version     CVS: $Id: Ogg.php 302834 2010-08-27 02:16:20Z tstarling $
+ * @version     CVS: $Id$
  */
 
 /**
@@ -47,6 +47,10 @@ define("OGG_STREAM_SPEEX",      3);
  * @access  public
  */
 define("OGG_STREAM_FLAC",       4);
+/**
+ * @access  public
+ */
+define("OGG_STREAM_OPUS",       5);
 
 /**
  * Capture pattern to determine if a file is an Ogg physical stream.
@@ -86,6 +90,11 @@ define("OGG_STREAM_CAPTURE_FLAC",   "FLAC");
  */
 define("OGG_STREAM_CAPTURE_THEORA", "theora");
 /**
+ * Capture pattern for an Ogg Opus logical stream.
+ * @access  private
+ */
+define("OGG_STREAM_CAPTURE_OPUS",  "OpusHead");
+/**
  * Error thrown if the file location passed is nonexistant or unreadable.
  *
  * @access  private
@@ -112,12 +121,13 @@ define("OGG_ERROR_BAD_SERIAL",   3);
 define("OGG_ERROR_UNDECODABLE",      4);
 
 require_once('PEAR.php');
-require_once('Exception.php');
-require_once('Ogg/Bitstream.php');
-require_once('Ogg/Flac.php');
-require_once('Ogg/Speex.php');
-require_once('Ogg/Theora.php');
-require_once('Ogg/Vorbis.php');
+require_once('PEAR/Exception.php');
+require_once('File/Ogg/Bitstream.php');
+require_once("File/Ogg/Flac.php");
+require_once("File/Ogg/Speex.php");
+require_once("File/Ogg/Theora.php");
+require_once("File/Ogg/Vorbis.php");
+require_once("File/Ogg/Opus.php");
 
 
 /**
@@ -192,7 +202,7 @@ class File_Ogg
         }
 
         // Open this file as a binary, and split the file into streams.
-        $this->_filePointer = fopen($fileLocation, 'rb');
+        $this->_filePointer = fopen($fileLocation, "rb");
         if (!is_resource($this->_filePointer))
             throw new PEAR_Exception("Couldn't Open File.  Check File Permissions.", OGG_ERROR_INVALID_FILE);
 
@@ -207,21 +217,19 @@ class File_Ogg
         fclose($this->_filePointer);
     }
 
-
     /**
      * Little-endian equivalent for bin2hex
      * @static
      */
-    static function _littleEndianBin2Hex( $bin )
-    {
+    static function _littleEndianBin2Hex( $bin ) {
         $bigEndian = bin2hex( $bin );
         // Reverse entire string
         $reversed = strrev( $bigEndian );
         // Swap nibbles back
-        for ( $i = 0, $all = strlen( $bigEndian ); $i < $all; $i += 2 ) {
+        for ( $i = 0; $i < strlen( $bigEndian ); $i += 2 ) {
             $temp = $reversed[$i];
-            $reversed[$i] = $reversed[$i + 1];
-            $reversed[$i + 1] = $temp;
+            $reversed[$i] = $reversed[$i+1];
+            $reversed[$i+1] = $temp;
         }
         return $reversed;
     }
@@ -241,9 +249,7 @@ class File_Ogg
     {
         $bufferLength = ceil(array_sum($fields) / 8);
         $buffer = fread($file, $bufferLength);
-        $bufferStrlen = strlen($buffer);
-
-        if ($bufferStrlen != $bufferLength) {
+        if (strlen($buffer) != $bufferLength) {
             throw new PEAR_Exception('Unexpected end of file', OGG_ERROR_UNDECODABLE);
         }
         $bytePos = 0;
@@ -260,7 +266,7 @@ class File_Ogg
                     $value = ($value * 256) + ord($buffer[$bytePos]);
                     $bytePos++;
                 }
-                if ($bytePos < $bufferStrlen) {
+                if ($bytePos < strlen($buffer)) {
                     $byteValue = ord($buffer[$bytePos]);
                 }
             } else {
@@ -293,7 +299,6 @@ class File_Ogg
         return $output;
     }
 
-
     /**
      * Read a binary structure from a file. An array of unsigned integers are read.
      * Large integers are upgraded to floating point on overflow.
@@ -303,13 +308,10 @@ class File_Ogg
      * @param   resource    $file
      * @param   array       $fields Associative array mapping name to length in bits
      */
-    static function _readLittleEndian( $file, $fields )
-    {
+    static function _readLittleEndian( $file, $fields ) {
         $bufferLength = ceil(array_sum($fields) / 8);
         $buffer = fread($file, $bufferLength);
-        $bufferStrlen = strlen($buffer);
-
-        if ($bufferStrlen != $bufferLength) {
+        if (strlen($buffer) != $bufferLength) {
             throw new PEAR_Exception('Unexpected end of file', OGG_ERROR_UNDECODABLE);
         }
 
@@ -325,7 +327,7 @@ class File_Ogg
                 for ($i = 0; $i < $bytes; $i++, $bytePos++) {
                     $value += pow(256, $i) * ord($buffer[$bytePos]);
                 }
-                if ($bytePos < $bufferStrlen) {
+                if ($bytePos < strlen($buffer)) {
                     $byteValue = ord($buffer[$bytePos]) << 8;
                 }
             } else {
@@ -414,7 +416,7 @@ class File_Ogg
             );
         }
         $stream =& $this->_streamList[$stream_serial['data']];
-        if ( sizeof( $stream['pages'] ) < $this->_maxPageCacheSize ) {
+        if ( count( $stream['pages'] ) < $this->_maxPageCacheSize ) {
             $stream['pages'][$page_sequence['data']] = $page;
         }
         $stream['last_page'] = $page;
@@ -431,7 +433,6 @@ class File_Ogg
         $pageData = null;
         return $page;
     }
-
 
     /**
      *  @access         private
@@ -486,8 +487,11 @@ class File_Ogg
             } elseif (preg_match("/" . OGG_STREAM_CAPTURE_THEORA . "/", $pattern)) {
                 $this->_streamList[$stream_serial]['stream_type'] = OGG_STREAM_THEORA;
                 $stream = new File_Ogg_Theora($stream_serial, $streamData, $this->_filePointer);
+            } elseif (preg_match("/" . OGG_STREAM_CAPTURE_OPUS . "/", $pattern)) {
+                $this->_streamList[$stream_serial]['stream_type'] = OGG_STREAM_OPUS;
+                $stream = new File_Ogg_Opus($stream_serial, $streamData, $this->_filePointer);
             } else {
-                $streamData['stream_type'] = 'unknown';
+                $streamData['stream_type'] = "unknown";
                 $stream = false;
             }
 
@@ -511,7 +515,6 @@ class File_Ogg
         unset($this->_streamList);
     }
 
-
     /**
      * Returns the overead percentage used by the Ogg headers.
      *
@@ -520,8 +523,7 @@ class File_Ogg
      *
      * @return float
      */
-    function getOverhead()
-    {
+    function getOverhead() {
         $header_size    = 0;
         $stream_size    = 0;
         foreach ($this->_streams as $serial => $stream) {
@@ -530,9 +532,8 @@ class File_Ogg
                 $stream_size  = $stream_data['body_finish'];
             }
         }
-        return sprintf('%0.2f', ($header_size / $stream_size) * 100);
+        return sprintf("%0.2f", ($header_size / $stream_size) * 100);
     }
-
 
     /**
      * Returns the appropriate logical bitstream that corresponds to the provided serial.
@@ -546,13 +547,11 @@ class File_Ogg
      */
     function &getStream($streamSerial)
     {
-        if (! array_key_exists($streamSerial, $this->_streams)) {
-            throw new PEAR_Exception("The stream number is invalid.", OGG_ERROR_BAD_SERIAL);
-        }
+        if (! array_key_exists($streamSerial, $this->_streams))
+                throw new PEAR_Exception("The stream number is invalid.", OGG_ERROR_BAD_SERIAL);
 
         return $this->_streams[$streamSerial];
     }
-
 
     /**
      * This function returns true if a logical bitstream of the requested type can be found.
@@ -566,14 +565,12 @@ class File_Ogg
      */
     function hasStream($streamType)
     {
-        foreach ($this->_stream as $stream) {
-            if ($stream['stream_type'] == $streamType) {
-                return true;
-            }
+        foreach ($this->_streams as $stream) {
+            if ($stream['stream_type'] == $streamType)
+                return (true);
         }
-        return false;
+        return (false);
     }
-
 
     /**
      * Returns an array of logical streams inside this physical bitstream.
@@ -598,59 +595,46 @@ class File_Ogg
                 case "file_ogg_flac":
                     $stream_type = OGG_STREAM_FLAC;
                     break;
-
                 case "file_ogg_speex":
                     $stream_type = OGG_STREAM_SPEEX;
                     break;
-
                 case "file_ogg_theora":
                     $stream_type = OGG_STREAM_THEORA;
                     break;
-
                 case "file_ogg_vorbis":
                     $stream_type = OGG_STREAM_VORBIS;
                     break;
             }
-            if (! isset($streams[$stream_type])) {
+            if (! isset($streams[$stream_type]))
                 // Initialise the result list for this stream type.
                 $streams[$stream_type] = array();
-            }
 
             $streams[$stream_type][] = $serial;
         }
 
         // Perform filtering.
-        if (is_null($filter)) {
-            return $streams;
-        } else if (isset($streams[$filter])) {
-            return $streams[$filter];
-        } else {
+        if (is_null($filter))
+            return ($streams);
+        elseif (isset($streams[$filter]))
+            return ($streams[$filter]);
+        else
             return array();
-        }
     }
-
-
     /**
      * getStartOffset
      *
      * @return unknown
      */
-	function getStartOffset()
-    {
-		if( $this->_startOffset === false) {
+	function getStartOffset(){
+		if( $this->_startOffset === false)
 			return 0;
-        }
 		return $this->_startOffset;
 	}
-
-
     /**
      * Get the total length of the group of streams
      */
-    function getLength()
-    {
+    function getLength() {
         return $this->_totalLength;
     }
 }
-
 ?>

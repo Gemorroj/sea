@@ -21,7 +21,7 @@
 // | Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA |
 // +----------------------------------------------------------------------------+
 
-require_once(dirname(__FILE__) . '/Media.php');
+require_once('File/Ogg/Media.php');
 
 /**
  * @author      David Grant <david@grant.org.uk>, Tim Starling <tstarling@wikimedia.org>
@@ -31,7 +31,7 @@ require_once(dirname(__FILE__) . '/Media.php');
  * @link        http://pear.php.net/package/File_Ogg
  * @link        http://www.speex.org/docs.html
  * @package     File_Ogg
- * @version     CVS: $Id: Speex.php 302834 2010-08-27 02:16:20Z tstarling $
+ * @version     CVS: $Id$
  */
 class File_Ogg_Speex extends File_Ogg_Media
 {
