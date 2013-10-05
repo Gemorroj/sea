@@ -84,7 +84,7 @@ AddType text/plain .txt
 AddType text/plain .dat
 AddType text/xml .xml
 AddType text/css .css
-AddType text/javascript .js
+AddType application/javascript .js
 
 AddType application/vnd.android.package-archive .apk
 AddType application/java-archive .jar
@@ -240,9 +240,10 @@ php_value error_log /error_log
     ExpiresByType image/gif "access plus 2 months"
     ExpiresByType image/jpeg "access plus 2 months"
     ExpiresByType image/png "access plus 2 months"
+    ExpiresByType image/bmp "access plus 2 months"
+    ExpiresByType image/vnd.microsoft.icon "access plus 2 months"
     ExpiresByType text/css "access plus 2 months"
     ExpiresByType application/javascript "access plus 2 months"
-    ExpiresByType image/vnd.microsoft.icon "access plus 2 months"
 </IfModule>
 
 
