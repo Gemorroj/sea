@@ -5,7 +5,22 @@
         <meta name="viewport" content="width=device-width"/>
         <link rel="alternate" type="application/rss+xml" href="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}rss.php"/>
         <link rel="stylesheet" type="text/css" href="http://{$style}"/>
-        <title>{$setup.zag} - {if Breadcrumbs::getBreadcrumbs()}{' / '|implode:Breadcrumbs::getBreadcrumbs()} - {/if}{Seo::getTitle()|default:'sea downloads'}</title>
+        <title>{strip}
+            {*
+            {if IS_INDEX|defined}
+                {if $smarty.const.IS_INDEX}
+                    {$setup.zag}
+                {else}
+                    {' / '|implode:Breadcrumbs::getBreadcrumbs()}
+                {/if}
+            {else}
+                {assign var='directory' value=Breadcrumbs::getBreadcrumbs()}
+                {assign var='file' value=$directory|array_pop}
+                {$file}{if $directory} | {' / '|implode:$directory}{/if}
+            {/if} | {$smarty.server.HTTP_HOST}
+            *}
+            {$setup.zag} - {if Breadcrumbs::getBreadcrumbs()}{' / '|implode:Breadcrumbs::getBreadcrumbs()} - {/if}{Seo::getTitle()|default:'sea downloads'}
+        {/strip}</title>
         <meta name="keywords" content="{Seo::getKeywords()|default:'sea downloads'}"/>
         <meta name="description" content="{Seo::getDescription()|default:'sea downloads'}"/>
         {block javascripts}{/block}
