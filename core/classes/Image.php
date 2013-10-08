@@ -146,9 +146,9 @@ class Image
 
         $sxy = round($wn / $hn, 3);
         if ($sxy < 1) {
-            $w = intval($h * $sxy);
+            $w = ceil($h * $sxy);
         } else {
-            $h = intval($w / $sxy);
+            $h = ceil($w / $sxy);
         }
 
         $im = imagecreatetruecolor($w, $h);
@@ -188,9 +188,9 @@ class Image
 
         $sxy = round($wn / $hn, 3);
         if ($sxy < 1) {
-            $w = intval($h * $sxy);
+            $w = ceil($h * $sxy);
         } else {
-            $h = intval($w / $sxy);
+            $h = ceil($w / $sxy);
         }
 
         switch ($type) {

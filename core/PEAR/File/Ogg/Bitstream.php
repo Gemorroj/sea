@@ -29,7 +29,7 @@
  * @license     http://www.gnu.org/copyleft/lesser.html GNU LGPL
  * @link        http://pear.php.net/package/File_Ogg
  * @package     File_Ogg
- * @version     CVS: $Id: Bitstream.php 302834 2010-08-27 02:16:20Z tstarling $
+ * @version     CVS: $Id$
  */
 class File_Ogg_Bitstream
 {
