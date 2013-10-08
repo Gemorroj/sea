@@ -33,7 +33,6 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-$GLOBALS['tm'] = microtime(true);
 
 require_once dirname(__FILE__) . '/config.php';
 
@@ -50,4 +49,5 @@ Http_Response::getInstance()->getTemplate()
     ->assign('buy', $buy)
     ->assign('banner', $banner)
     ->assign('serviceBuy', $serviceBuy)
+    ->assign('serviceBanner', $serviceBanner)
     ->assign('online', $online);

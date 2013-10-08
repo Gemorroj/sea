@@ -36,6 +36,8 @@
 
 //error_reporting(0);
 
+define('START_TIME', microtime(true));
+
 define('CORE_DIRECTORY', dirname(__FILE__));
 if (defined('APANEL') === true) {
     define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname(dirname($_SERVER['PHP_SELF'])) . '/'));
