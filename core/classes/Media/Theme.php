@@ -43,9 +43,11 @@ class Media_Theme
      */
     public static function getImage($path = '')
     {
-        $name = Config::get('tpath') . '/' . str_replace('/', '--', mb_substr(strstr($path, '/'), 1)) . '.gif';
+        $name = Config::get('tpath') . '/' . str_replace('/', '--', mb_substr(strstr($path, '/'), 1)) . '.png';
 
         if (is_file($name)) {
+            return $name;
+        } elseif (is_file($name . '.gif')) {
             return $name;
         } elseif (is_file($name . '.swf')) {
             return $name . '.swf';
@@ -228,15 +230,9 @@ class Media_Theme
         }
 
         file_put_contents($name, $image[0]['content']);
-        $info = getimagesize($name);
 
-        if ($info[2] == 4 || $info[2] == 13) {
-            Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
-            return $name . '.swf';
-        } else {
-            Image::resize($name, $name, 0, 0, Config::get('marker'));
-            return $name;
-        }
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
+        return $name;
     }
 
     /**
@@ -306,15 +302,9 @@ class Media_Theme
 
         file_put_contents($name, $image[0]['content']);
         unset($image);
-        $info = getimagesize($name);
 
-        if ($info[2] == 4 || $info[2] == 13) {
-            Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
-            return $name . '.swf';
-        } else {
-            Image::resize($name, $name, 0, 0, Config::get('marker'));
-            return $name;
-        }
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
+        return $name;
     }
 
     /**
@@ -418,15 +408,9 @@ class Media_Theme
         }
 
         file_put_contents($name, $image[0]['content']);
-        $info = getimagesize($name);
 
-        if ($info[2] == 4 || $info[2] == 13) {
-            Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
-            return $name . '.swf';
-        } else {
-            Image::resize($name, $name, 0, 0, Config::get('marker'));
-            return $name;
-        }
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
+        return $name;
     }
 
     /**
@@ -475,15 +459,9 @@ class Media_Theme
 
         file_put_contents($name, $thm->extractInString($load));
         unset($load, $content);
-        $info = getimagesize($name);
 
-        if ($info[2] == 4 || $info[2] == 13) {
-            Image::resize($name, $name . '.swf', 0, 0, Config::get('marker'));
-            return $name . '.swf';
-        } else {
-            Image::resize($name, $name, 0, 0, Config::get('marker'));
-            return $name;
-        }
+        Image::resize($name, $name, 0, 0, Config::get('marker'));
+        return $name;
     }
 
 

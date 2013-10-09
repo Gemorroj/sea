@@ -122,7 +122,7 @@ if (Http_Request::isPost()) {
 
 
     if ($screen && !$screen['error']) {
-        $screenPath = Config::get('spath') . substr($pathname, strlen(Config::get('path'))) . '.gif';
+        $screenPath = Config::get('spath') . substr($pathname, strlen(Config::get('path'))) . '.png';
 
         if (!move_uploaded_file($screen['tmp_name'], $screenPath)) {
             Http_Response::getInstance()->renderError(Language::get('error'));

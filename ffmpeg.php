@@ -51,9 +51,9 @@ if (!$v || !is_file($v['path'])) {
 
 
 $prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif';
+$cache = Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png';
 
-if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif')) {
+if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png')) {
     $mov = new ffmpeg_movie($v['path'], false);
     if (!$mov) {
         Http_Response::getInstance()->renderError(Language::get('error'));
@@ -66,13 +66,13 @@ if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' 
         }
     }
 
-    $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.gif';
-    imagegif($fr->toGDImage(), $tmp);
-    Image::resize($tmp, Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.gif', 0, 0, Config::get('marker'));
+    $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.png';
+    imagepng($fr->toGDImage(), $tmp);
+    Image::resize($tmp, $cache, 0, 0, Config::get('marker'));
     unlink($tmp);
 }
 
 
 Http_Response::getInstance()
     ->setCache()
-    ->redirect($location, 301);
+    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);

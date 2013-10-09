@@ -88,6 +88,7 @@ class Image
         }
 
         $new = imagecreatetruecolor($imageWidth, $imageHeight);
+
         $footH = $imageHeight - $watermarkHeight;
 
         for ($j = 0; $j < $imageHeight; ++$j) {
@@ -152,6 +153,10 @@ class Image
         }
 
         $im = imagecreatetruecolor($w, $h);
+
+        imagealphablending($im, false);
+        imagesavealpha($im, true);
+
         imagecopyresampled($im, $data, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
         return $im;
@@ -169,7 +174,7 @@ class Image
      *
      * @return bool
      */
-    public static function resize($in = '', $out = '', $w = 0, $h = 0, $marker = false)
+    public static function resize($in, &$out, $w = 0, $h = 0, $marker = false)
     {
         if (false === is_writable(dirname($out))) {
             return false;
@@ -214,6 +219,10 @@ class Image
                         $resize = imagecreatefromgif($tmp1);
 
                         $image_p = imagecreatetruecolor($w, $h);
+
+                        imagealphablending($image_p, false);
+                        imagesavealpha($image_p, true);
+
                         imagecopyresampled($image_p, $resize, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
 
@@ -245,6 +254,7 @@ class Image
 
                     unset($frames, $framed);
 
+                    $out = $out . '.gif';
                     return file_put_contents($out, $gif->GetAnimation());
                     break;
                 } else {
@@ -265,6 +275,7 @@ class Image
 
             case IMAGETYPE_SWF:
             case IMAGETYPE_SWC:
+                $out = $out . '.swf';
                 rename($in, $out);
 
                 return true;
@@ -284,6 +295,10 @@ class Image
 
 
         $new = imagecreatetruecolor($w, $h);
+
+        imagealphablending($new, false);
+        imagesavealpha($new, true);
+
         imagecopyresampled($new, $old, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
         if ($marker) {
@@ -291,7 +306,7 @@ class Image
         }
 
 
-        $f = imagegif($new, $out);
+        $f = imagepng($new, $out);
         imagedestroy($old);
         imagedestroy($new);
 

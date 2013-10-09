@@ -63,15 +63,13 @@ if ($resize) {
     Files::updateFileLoad($id);
 }
 
-$location = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.gif';
-
-if (!is_file(Config::get('picpath') . '/' . $prev_pic . '.gif')) {
-    if (!Image::resize($v['path'], Config::get('picpath') . '/' . $prev_pic . '.gif', $w, $h, $marker)) {
+$cache = Config::get('picpath') . '/' . $prev_pic . '.png';
+if (!is_file($cache)) {
+    if (!Image::resize($v['path'], $cache, $w, $h, $marker)) {
         Http_Response::getInstance()->renderError(Language::get('error'));
     }
 }
 
 Http_Response::getInstance()
     ->setCache()
-    ->setHeader('Content-Type', 'image/jpeg')
-    ->redirect($location, 301);
+    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);

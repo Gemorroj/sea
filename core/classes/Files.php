@@ -47,8 +47,8 @@ class Files
         $message = array();
 
         $file = strstr($file, '/'); // убираем папку с загрузками
-        $to = Config::get('spath') . $file . '.gif'; // имя конечного файла
-        $thumb = Config::get('spath') . $file . '.thumb.gif'; // имя конечного файла
+        $to = Config::get('spath') . $file . '.png'; // имя конечного файла
+        $thumb = Config::get('spath') . $file . '.thumb.png'; // имя конечного файла
 
         $ext = strtolower(pathinfo($screen, PATHINFO_EXTENSION));
 

@@ -181,8 +181,11 @@ switch (Http_Request::get('action')) {
             if (is_file(Config::get('opath') . $path1 . '.txt')) {
                 rename(Config::get('opath') . $path1 . '.txt', Config::get('opath') . $path2 . $filename . '.txt');
             }
-            if (is_file(Config::get('spath') . $path1 . '.thumb.gif')) {
-                rename(Config::get('spath') . $path1 . '.thumb.gif', Config::get('spath') . $path2 . $filename . '.thumb.gif');
+            if (is_file(Config::get('spath') . $path1 . '.thumb.png')) {
+                rename(Config::get('spath') . $path1 . '.thumb.png', Config::get('spath') . $path2 . $filename . '.thumb.png');
+            }
+            if (is_file(Config::get('spath') . $path1 . '.thumb.png.gif')) {
+                rename(Config::get('spath') . $path1 . '.thumb.png.gif', Config::get('spath') . $path2 . $filename . '.thumb.png.gif');
             }
 
             // перемещаем вложения
@@ -498,11 +501,12 @@ switch (Http_Request::get('action')) {
         $path = strstr($file['path'], '/'); // убираем папку с загрузками
 
         $a = @unlink(Config::get('spath') . $path . '.gif');
-        $b = @unlink(Config::get('spath') . $path . '.thumb.gif');
-        $c = @unlink(Config::get('spath') . $path . '.jpg');
-        $d = @unlink(Config::get('spath') . $path . '.png');
+        $b = @unlink(Config::get('spath') . $path . '.thumb.png');
+        $c = @unlink(Config::get('spath') . $path . '.thumb.png.gif');
+        $d = @unlink(Config::get('spath') . $path . '.jpg');
+        $e = @unlink(Config::get('spath') . $path . '.png');
 
-        if ($a || $b || $c || $d) {
+        if ($a || $b || $c || $d || $e) {
             $template->assign('message', 'Скриншот удален');
         } else {
             $err = error_get_last();
@@ -807,7 +811,7 @@ switch (Http_Request::get('action')) {
         $template->setTemplate('apanel/mark.tpl');
 
         if (Http_Request::isPost()) {
-            if (Http_Request::post('marker')) {
+            if (Http_Request::post('marker') !== null) {
                 $q = $db->prepare('REPLACE INTO setting(name, value) VALUES(?, ?)');
                 $result1 = $q->execute(array('marker', Http_Request::post('marker')));
                 $result2 = $q->execute(array('marker_where', (Http_Request::post('marker_where') == 'top' ? 'top' : 'foot')));

@@ -226,16 +226,16 @@ class Import
             $this->_message = array_merge($this->_message, $result['message']);
         }
 
-        if (is_file($preFileScreen . '.gif') === true) {
+        if (is_file($preFileScreen . '.png') === true) {
+            $result = Files::addScreen($file, $preFileScreen . '.png');
+            $this->_error = array_merge($this->_error, $result['error']);
+            $this->_message = array_merge($this->_message, $result['message']);
+        } elseif (is_file($preFileScreen . '.gif') === true) {
             $result = Files::addScreen($file, $preFileScreen . '.gif');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
         } elseif (is_file($preFileScreen . '.jpg') === true) {
             $result = Files::addScreen($file, $preFileScreen . '.jpg');
-            $this->_error = array_merge($this->_error, $result['error']);
-            $this->_message = array_merge($this->_message, $result['message']);
-        } elseif (is_file($preFileScreen . '.png') === true) {
-            $result = Files::addScreen($file, $preFileScreen . '.png');
             $this->_error = array_merge($this->_error, $result['error']);
             $this->_message = array_merge($this->_message, $result['message']);
         }
