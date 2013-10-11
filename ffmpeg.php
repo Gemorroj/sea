@@ -61,15 +61,18 @@ if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' 
 
     while (!$fr = $mov->getFrame($i)) {
         $i--;
-        if ($i < 0) {
-            exit;
+        if ($i <= 0) {
+            copy(CORE_DIRECTORY . '/resources/video.png', $cache);
+            break;
         }
     }
 
-    $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.png';
-    imagepng($fr->toGDImage(), $tmp);
-    Image::resize($tmp, $cache, 0, 0, Config::get('marker'));
-    unlink($tmp);
+    if ($fr) {
+        $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.png';
+        imagepng($fr->toGDImage(), $tmp);
+        Image::resize($tmp, $cache, 0, 0, Config::get('marker'));
+        unlink($tmp);
+    }
 }
 
 
