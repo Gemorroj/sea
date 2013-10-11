@@ -88,36 +88,41 @@ class Image
         }
 
         $new = imagecreatetruecolor($imageWidth, $imageHeight);
+        imagefill($new, 0, 0, imagecolorallocatealpha($new, 0, 0, 0, 127));
+        imagesavealpha($new, true);
 
         $footH = $imageHeight - $watermarkHeight;
+        $markerWhere = Config::get('marker_where');
 
         for ($j = 0; $j < $imageHeight; ++$j) {
             for ($i = 0; $i < $imageWidth; ++$i) {
                 $rgb = imagecolorsforindex($image, imagecolorat($image, $i, $j));
 
-                if (Config::get('marker_where') === 'top' && $j < $watermarkHeight && $i < $watermarkWidth) {
+                if ($markerWhere === 'top' && $j < $watermarkHeight && $i < $watermarkWidth) {
                     $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j));
                     if ($rgb2['alpha'] != 127) {
                         $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
                         $rgb['green'] = intval(($rgb['green'] + $rgb2['green']) / 2);
                         $rgb['blue'] = intval(($rgb['blue'] + $rgb2['blue']) / 2);
+                        $rgb['alpha'] = intval(($rgb['alpha'] + $rgb2['alpha']) / 2);
                     }
                 } else {
-                    if (Config::get('marker_where') === 'foot' && $j >= $footH && $i < $watermarkWidth) {
+                    if ($markerWhere === 'foot' && $j >= $footH && $i < $watermarkWidth) {
                         $rgb2 = imagecolorsforindex($watermark, @imagecolorat($watermark, $i, $j - $footH));
                         if ($rgb2['alpha'] != 127) {
                             $rgb['red'] = intval(($rgb['red'] + $rgb2['red']) / 2);
                             $rgb['green'] = intval(($rgb['green'] + $rgb2['green']) / 2);
                             $rgb['blue'] = intval(($rgb['blue'] + $rgb2['blue']) / 2);
+                            $rgb['alpha'] = intval(($rgb['alpha'] + $rgb2['alpha']) / 2);
                         }
                     }
                 }
 
-                $ind = imagecolorexact($new, $rgb['red'], $rgb['green'], $rgb['blue']);
+                $ind = imagecolorexactalpha($new, $rgb['red'], $rgb['green'], $rgb['blue'], $rgb['alpha']);
                 if ($ind < 1) {
-                    $ind = imagecolorallocate($new, $rgb['red'], $rgb['green'], $rgb['blue']);
+                    $ind = imagecolorallocatealpha($new, $rgb['red'], $rgb['green'], $rgb['blue'], $rgb['alpha']);
                     if ($ind < 1) {
-                        $ind = imagecolorclosest($new, $rgb['red'], $rgb['green'], $rgb['blue']);
+                        $ind = imagecolorclosestalpha($new, $rgb['red'], $rgb['green'], $rgb['blue'], $rgb['alpha']);
                     }
                 }
                 imagesetpixel($new, $i, $j, $ind);
