@@ -34,69 +34,39 @@
  */
 
 
-require 'core/header.php';
+require_once CORE_DIRECTORY . '/header.php';
 
-if (!Config::get('lib_change')) {
+if (!Config::get('zakaz_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
-$id = intval(Http_Request::get('id'));
-$v = Files::getFileInfo($id);
-if (!$v || !is_file($v['path'])) {
-    Http_Response::getInstance()->renderError(Language::get('not_found'));
-}
+//Seo::addTitle(Language::get('orders'));
+Breadcrumbs::add('table', Language::get('orders'));
 
-$paginatorConf = Helper::getPaginatorConf(PHP_INT_MAX);
-
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('read.tpl');
-
-
-// Директория
-$q = Db_Mysql::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
-$q->execute(array($v['infolder']));
-$directory = $q->fetch();
-
-$template->assign('directory', $directory);
-
-Breadcrumbs::init($v['path']);
-Breadcrumbs::add('read/' . $id, Language::get('read'));
-
-Seo::unserialize($v['seo']);
-//Seo::addTitle($v['name']);
-//Seo::addTitle(Language::get('read'));
-Seo::addTitle($paginatorConf['page']);
-
-$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');
-
-
-// UTF-8
-$fp = fopen($v['path'], 'rb');
-if ($paginatorConf['page'] > 1) {
-    fseek($fp, $paginatorConf['page'] * $lib - $lib);
-}
-$content = fread($fp, $lib) . fgets($fp, 1024);
-fclose($fp);
-
-if ($paginatorConf['page'] > 1) {
-    $i = 0;
-    foreach (str_split($content, 1) as $f) {
-        if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
-            break;
-        }
-        $i++;
+$sended = false;
+if (Http_Request::isPost()) {
+    if (!Http_Request::post('back') || !Http_Request::post('text')) {
+        Http_Response::getInstance()->renderError(Language::get('do_not_fill_in_the_required_fields'));
     }
-    $content = substr($content, $i);
+    if (Config::get('comments_captcha')) {
+        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != Http_Request::post('keystring')) {
+            unset($_SESSION['captcha_keystring']);
+            Http_Response::getInstance()->renderError(Language::get('not_a_valid_code'));
+        }
+        unset($_SESSION['captcha_keystring']);
+    }
+
+    $sended = mail(
+        Config::get('zakaz_email'),
+        '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=',
+        'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\r\n" .
+        'ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back'),
+        'Content-Type: text/plain; charset=UTF-8' . "\r\n" . 'From: robot@' . $_SERVER['HTTP_HOST']
+    );
 }
 
-$content = Helper::str2utf8($content);
-$paginatorConf['pages'] = ceil(filesize($v['path']) / $lib);
-if ($paginatorConf['page'] > $paginatorConf['pages']) {
-    $paginatorConf['page'] = 1;
-}
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('table.tpl')
+    ->assign('sended', $sended);
 
-
-$template->assign('content', $content);
-$template->assign('file', $v);
-$template->assign('paginatorConf', $paginatorConf);
 Http_Response::getInstance()->render();

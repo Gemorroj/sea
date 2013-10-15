@@ -34,79 +34,33 @@
  */
 
 
-define('IS_P_NAME', true);
+require_once CORE_DIRECTORY . '/header.php';
 
-require 'core/header.php';
-
-if (!Config::get('new_change') || !Config::get('day_new')) {
+if (!Config::get('stat_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('new.tpl');
-
-$title = Language::get('new_files');
-//Seo::addTitle($title);
-Breadcrumbs::add('new', $title);
-
-
-// новизна файла
-$new = ($_SERVER['REQUEST_TIME'] - (Config::get('day_new') * 86400));
+//Seo::addTitle(Language::get('statistics'));
+Breadcrumbs::add('stat', Language::get('statistics'));
 
 $db = Db_Mysql::getInstance();
 
-
-$q = $db->prepare('
-    SELECT COUNT(1)
+$stat = $db->query('
+    SELECT COUNT(1) AS all_files, SUM(`loads`) AS total_downloads, SUM(`size`) AS total_volume
     FROM `files`
     WHERE `dir` = "0"
-    AND `timeupload` >= ?
     ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
-);
-$q->bindValue(1, $new, PDO::PARAM_INT);
-$q->execute();
-$all = $q->fetchColumn();
+)->fetch();
 
-$paginatorConf = Helper::getPaginatorConf($all);
+$stat['total_new_files'] = $db->query('
+    SELECT COUNT(1)
+    FROM `files`
+    WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new'))) . '
+    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+)->fetchColumn();
 
-// Постраничная навигация
-$template->assign('paginatorConf', $paginatorConf);
+Http_Response::getInstance()->getTemplate()
+    ->setTemplate('stat.tpl')
+    ->assign('stat', $stat);
 
-
-$query = $db->prepare('
-    SELECT `f`.`id`,
-    `f`.`hidden`,
-    `f`.`dir`,
-    `f`.`dir_count`,
-    `f`.`path` AS `v`,
-    `f`.`infolder`,
-    ' . Language::buildFilesQuery('f') . ',
-    `f`.`size`,
-    `f`.`loads`,
-    `f`.`timeupload`,
-    `f`.`yes`,
-    `f`.`no`,
-    0 AS `count`,
-    `p_files`.`id` AS `p_id`,
-    ' . Language::buildFilesQuery('p_files', 'p_name') . '
-    FROM `files` AS `f`
-    LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
-    WHERE `f`.`dir` = "0"
-    AND `f`.`timeupload` >= ?
-    ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
-    ORDER BY ' . Helper::getSortMode('f') . '
-    LIMIT ?, ?
-');
-
-$query->bindValue(1, $new, PDO::PARAM_INT);
-$query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
-$query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
-
-
-$query->execute();
-
-require 'core/inc/_files.php';
-
-$template->assign('directories', $directories);
-$template->assign('files', $files);
 Http_Response::getInstance()->render();

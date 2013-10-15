@@ -40,7 +40,8 @@ ignore_user_abort(true);
 $HeadTime = microtime(true);
 chdir('../');
 
-require 'core/header.php';
+require dirname(__FILE__) . '/../core/config.php';
+require dirname(__FILE__) . '/../core/header.php';
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('apanel/index.tpl');

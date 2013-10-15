@@ -34,7 +34,7 @@
  */
 
 
-require 'core/config.php';
+require dirname(__FILE__) . '/core/config.php';
 
 set_time_limit(1000);
 ignore_user_abort(true);

@@ -34,28 +34,40 @@
  */
 
 
-require 'core/header.php';
+$id = intval(Http_Request::get('id') ? Http_Request::get('id') : Http_Request::post('id'));
 
-if (Http_Request::post('lib')) {
-    $_SESSION['lib'] = intval(Http_Request::post('lib'));
+$v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
-//Seo::addTitle(Language::get('settings'));
-Breadcrumbs::add('settings', Language::get('settings'));
+$w = abs(Http_Request::get('w', 0));
+$h = abs(Http_Request::get('h', 0));
 
-$sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
-$onpage = isset($_SESSION['onpage']) ? $_SESSION['onpage'] : '';
-$prev = isset($_SESSION['prev']) ? $_SESSION['prev'] : '';
-$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] :Config::get('lib');
+$marker = Config::get('marker');
+$resize = true;
+if (!$w || !$h) {
+    $resize = false;
+    list($w, $h) = explode('*', Config::get('prev_size'));
+} elseif ($marker) {
+    $marker = ($marker == 2 ? 0 : 1);
+}
 
-Http_Response::getInstance()->getTemplate()
-    ->setTemplate('settings.tpl')
-    ->assign('sort', $sort)
-    ->assign('onpage', $onpage)
-    ->assign('prev', $prev)
-    ->assign('lib', $lib)
-    ->assign('langpack', Language::getLangpack())
-    ->assign('langpacks', Language::getLangpacks())
-    ->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
 
-Http_Response::getInstance()->render();
+$prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
+
+if ($resize) {
+    $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
+    Files::updateFileLoad($id);
+}
+
+$cache = Config::get('picpath') . '/' . $prev_pic . '.png';
+if (!is_file($cache)) {
+    if (!Image::resize($v['path'], $cache, $w, $h, $marker)) {
+        Http_Response::getInstance()->renderError(Language::get('error'));
+    }
+}
+
+Http_Response::getInstance()
+    ->setCache()
+    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);

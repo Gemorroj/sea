@@ -186,4 +186,13 @@ class Http_Request
     {
         return self::$_userAgent;
     }
+
+    /**
+     * @param string $key
+     * @param string $value
+     */
+    public static function addGet($key, $value)
+    {
+        self::$_get[$key] = $value;
+    }
 }

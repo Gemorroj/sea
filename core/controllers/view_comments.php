@@ -33,34 +33,33 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-require 'core/header.php';
+
+require_once CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('comments_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
-$db = Db_Mysql::getInstance();
 $id = intval(Http_Request::get('id'));
-
-// Получаем инфу о новости
-$q = $db->prepare('SELECT *, ' . Language::buildNewsQuery() . ' FROM `news` WHERE `id` = ?');
-$q->execute(array($id));
-$news = $q->fetch();
-
-if (!$news || !$news['news']) {
+$v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
-$desc = mb_substr($news['news'], 0, Config::get('desc'));
 
-//Seo::addTitle(Language::get('news'));
-//Seo::addTitle($desc);
+$db = Db_Mysql::getInstance();
+
+
+Seo::unserialize($v['seo']);
+//Seo::addTitle($v['name']);
 //Seo::addTitle(Language::get('comments'));
 
-Breadcrumbs::add('news', Language::get('news') . ' - ' . $desc);
-Breadcrumbs::add('news_comments/' . $id, Language::get('comments'));
+
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('view_comments/' . $id, Language::get('comments'));
 
 
+// Запись
 if (Http_Request::isPost()) {
     if (!Http_Request::post('msg') || !Http_Request::post('name')) {
         Http_Response::getInstance()->renderError(Language::get('not_filled_one_of_the_fields'));
@@ -77,7 +76,7 @@ if (Http_Request::isPost()) {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $q = $db->prepare('SELECT 1 FROM `news_comments` WHERE `id_news` = ? AND `text` = ? LIMIT 1');
+    $q = $db->prepare('SELECT 1 FROM `comments` WHERE `file_id` = ? AND `text` = ? LIMIT 1');
     $q->execute(array($id, Http_Request::post('msg')));
 
     if ($q->rowCount() > 0) {
@@ -88,8 +87,8 @@ if (Http_Request::isPost()) {
     setcookie('sea_name', Http_Request::post('name'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
 
     $q = $db->prepare('
-        INSERT INTO `news_comments` (
-            `id_news`, `name`, `text`, `time`
+        INSERT INTO `comments` (
+            `file_id`, `name`, `text`, `time`
         ) VALUES (
             ?, ?, ?, UNIX_TIMESTAMP()
         )
@@ -104,16 +103,14 @@ if (Http_Request::isPost()) {
 }
 
 
-
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
-$template->assign('comments_module', 'news_comments');
-$template->assign('comments_module_backlink', DIRECTORY . 'news');
-$template->assign('comments_module_backname', Language::get('news'));
-
+$template->assign('comments_module', 'view_comments');
+$template->assign('comments_module_backlink', DIRECTORY . 'view/' . $id);
+$template->assign('comments_module_backname', $v['name']);
 
 // всего комментариев
-$q = $db->prepare('SELECT COUNT(1) FROM `news_comments` WHERE `id_news` = ?');
+$q = $db->prepare('SELECT COUNT(1) FROM `comments` WHERE `file_id` = ?');
 $q->execute(array($id));
 $all = $q->fetchColumn();
 
@@ -125,8 +122,8 @@ $template->assign('paginatorConf', $paginatorConf);
 
 $query = $db->prepare('
     SELECT *
-    FROM `news_comments`
-    WHERE `id_news` = ?
+    FROM `comments`
+    WHERE `file_id` = ?
     ORDER BY `id` DESC
     LIMIT ?, ?
 ');

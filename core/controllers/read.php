@@ -34,27 +34,69 @@
  */
 
 
-require 'core/config.php';
+require_once CORE_DIRECTORY . '/header.php';
 
-if (!Config::get('jad_change')) {
+if (!Config::get('lib_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
 $id = intval(Http_Request::get('id'));
 $v = Files::getFileInfo($id);
-
 if (!$v || !is_file($v['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
-Files::updateFileLoad($id);
+$paginatorConf = Helper::getPaginatorConf(PHP_INT_MAX);
 
-$zip = new PclZip($v['path']);
-$content = $zip->extract(PCLZIP_OPT_BY_NAME, 'META-INF/MANIFEST.MF', PCLZIP_OPT_EXTRACT_AS_STRING);
+$template = Http_Response::getInstance()->getTemplate();
+$template->setTemplate('read.tpl');
 
-Http_Response::getInstance()
-    ->setCache()
-    ->setHeader('Content-Type', 'text/vnd.sun.j2me.app-descriptor')
-    ->setHeader('Content-Disposition', 'attachment; filename="' . rawurlencode(basename($v['path'])) . '.jad"')
-    ->setBody(trim($content[0]['content']) . "\n" . 'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" . 'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'])
-    ->renderBinary();
+
+// Директория
+$q = Db_Mysql::getInstance()->prepare('SELECT *, ' . Language::buildFilesQuery() . ' FROM `files` WHERE `path` = ? LIMIT 1');
+$q->execute(array($v['infolder']));
+$directory = $q->fetch();
+
+$template->assign('directory', $directory);
+
+Breadcrumbs::init($v['path']);
+Breadcrumbs::add('read/' . $id, Language::get('read'));
+
+Seo::unserialize($v['seo']);
+//Seo::addTitle($v['name']);
+//Seo::addTitle(Language::get('read'));
+Seo::addTitle($paginatorConf['page']);
+
+$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');
+
+
+// UTF-8
+$fp = fopen($v['path'], 'rb');
+if ($paginatorConf['page'] > 1) {
+    fseek($fp, $paginatorConf['page'] * $lib - $lib);
+}
+$content = fread($fp, $lib) . fgets($fp, 1024);
+fclose($fp);
+
+if ($paginatorConf['page'] > 1) {
+    $i = 0;
+    foreach (str_split($content, 1) as $f) {
+        if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
+            break;
+        }
+        $i++;
+    }
+    $content = substr($content, $i);
+}
+
+$content = Helper::str2utf8($content);
+$paginatorConf['pages'] = ceil(filesize($v['path']) / $lib);
+if ($paginatorConf['page'] > $paginatorConf['pages']) {
+    $paginatorConf['page'] = 1;
+}
+
+
+$template->assign('content', $content);
+$template->assign('file', $v);
+$template->assign('paginatorConf', $paginatorConf);
+Http_Response::getInstance()->render();

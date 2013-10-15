@@ -34,39 +34,28 @@
  */
 
 
-require 'core/header.php';
+require_once CORE_DIRECTORY . '/header.php';
 
-if (!Config::get('zakaz_change')) {
-    Http_Response::getInstance()->renderError(Language::get('not_available'));
+if (Http_Request::post('lib')) {
+    $_SESSION['lib'] = intval(Http_Request::post('lib'));
 }
 
-//Seo::addTitle(Language::get('orders'));
-Breadcrumbs::add('table', Language::get('orders'));
+//Seo::addTitle(Language::get('settings'));
+Breadcrumbs::add('settings', Language::get('settings'));
 
-$sended = false;
-if (Http_Request::isPost()) {
-    if (!Http_Request::post('back') || !Http_Request::post('text')) {
-        Http_Response::getInstance()->renderError(Language::get('do_not_fill_in_the_required_fields'));
-    }
-    if (Config::get('comments_captcha')) {
-        if (!isset($_SESSION['captcha_keystring']) || $_SESSION['captcha_keystring'] != Http_Request::post('keystring')) {
-            unset($_SESSION['captcha_keystring']);
-            Http_Response::getInstance()->renderError(Language::get('not_a_valid_code'));
-        }
-        unset($_SESSION['captcha_keystring']);
-    }
-
-    $sended = mail(
-        Config::get('zakaz_email'),
-        '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=',
-        'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\r\n" .
-        'ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back'),
-        'Content-Type: text/plain; charset=UTF-8' . "\r\n" . 'From: robot@' . $_SERVER['HTTP_HOST']
-    );
-}
+$sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
+$onpage = isset($_SESSION['onpage']) ? $_SESSION['onpage'] : '';
+$prev = isset($_SESSION['prev']) ? $_SESSION['prev'] : '';
+$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] :Config::get('lib');
 
 Http_Response::getInstance()->getTemplate()
-    ->setTemplate('table.tpl')
-    ->assign('sended', $sended);
+    ->setTemplate('settings.tpl')
+    ->assign('sort', $sort)
+    ->assign('onpage', $onpage)
+    ->assign('prev', $prev)
+    ->assign('lib', $lib)
+    ->assign('langpack', Language::getLangpack())
+    ->assign('langpacks', Language::getLangpacks())
+    ->assign('styles', glob('style/*.css', GLOB_NOESCAPE));
 
 Http_Response::getInstance()->render();

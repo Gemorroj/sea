@@ -34,44 +34,29 @@
  */
 
 
-require 'core/header.php';
+$id = intval(Http_Request::get('id'));
 
-$template = Http_Response::getInstance()->getTemplate();
-$template->setTemplate('news.tpl');
+if (!$id || !is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}
 
-$title = Language::get('news');
-//Seo::addTitle($title);
-Breadcrumbs::add('news', $title);
+$data = unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
+if ($data && $data['tag']['apic']) {
+    $im = imagecreatefromstring($data['tag']['apic']);
+    if ($im) {
+        if (!Http_Request::get('full')) {
+            $im = Image::resizeSimple($im);
+        }
 
-$db = Db_Mysql::getInstance();
+        ob_start();
+        imagejpeg($im);
+        $body = ob_get_clean();
+        imagedestroy($im);
 
-// всего новостей
-$all = $db->query('SELECT COUNT(1) FROM `news`')->fetchColumn();
-
-$paginatorConf = Helper::getPaginatorConf($all);
-
-// Постраничная навигация
-$template->assign('paginatorConf', $paginatorConf);
-
-
-$q = $db->prepare('
-    SELECT `news`.`id`,
-    ' . Language::buildNewsQuery() . ',
-    `news`.`time`,
-    COUNT(k.id) AS `count`
-    FROM `news`
-    LEFT JOIN `news_comments` AS k ON `news`.`id` = k.id_news
-    WHERE `news`.`id` > 0
-    GROUP BY `news`.`id`
-    ORDER BY `news`.`id` DESC
-    LIMIT ?, ?
-');
-$q->bindValue(1, $paginatorConf['start'], PDO::PARAM_INT);
-$q->bindValue(2, $paginatorConf['onpage'], PDO::PARAM_INT);
-
-$q->execute();
-
-$news = $q->fetchAll();
-
-$template->assign('news', $news);
-Http_Response::getInstance()->render();
+        Http_Response::getInstance()
+            ->setCache()
+            ->setHeader('Content-Type', 'image/jpeg')
+            ->setBody($body)
+            ->renderBinary();
+    }
+}

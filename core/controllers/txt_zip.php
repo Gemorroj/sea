@@ -34,17 +34,28 @@
  */
 
 
-require 'core/config.php';
-
-$v = Files::getFileInfo(Http_Request::get('id'));
+$id = intval(Http_Request::get('id'));
+$v = Files::getFileInfo($id);
 if (!$v || !is_file($v['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
-$location = Media_Jar::getImage($v['path']);
 
-if ($location !== null) {
-    Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $location, 301);
-} else {
-    Http_Response::getInstance()->renderError(Language::get('not_found'));
+Files::updateFileLoad($id);
+
+$tmp = Config::get('zpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1)) . '.zip';
+
+if (!is_file($tmp)) {
+    $zip = new PclZip($tmp);
+
+    function cb($p_event, &$p_header)
+    {
+        $p_header['stored_filename'] = basename($p_header['filename']);
+
+        return 1;
+    }
+
+    $zip->create($v['path'], PCLZIP_CB_PRE_ADD, 'cb');
 }
+
+Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);

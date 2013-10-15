@@ -34,9 +34,6 @@
  */
 
 
-require 'core/config.php';
-
-
 $id = intval(Http_Request::get('id'));
 $v = Files::getFileInfo($id);
 if (!$v || !is_file($v['path'])) {
@@ -53,13 +50,13 @@ $tmp = Config::get('jpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['
 if (!is_file($tmp)) {
     $f = Helper::str2utf8(file_get_contents($v['path']));
 
-    copy('core/resources/book.zip', $tmp);
-    copy('core/resources/props.ini', Config::get('jpath') . '/props.ini');
-    copy('core/resources/MANIFEST.MF', Config::get('jpath') . '/MANIFEST.MF');
+    copy(CORE_DIRECTORY . '/resources/book.zip', $tmp);
+    copy(CORE_DIRECTORY . '/resources/props.ini', Config::get('jpath') . '/props.ini');
+    copy(CORE_DIRECTORY . '/resources/MANIFEST.MF', Config::get('jpath') . '/MANIFEST.MF');
 
     $arr = str_split($f, 25600);
     $all = sizeof($arr);
-    $ar = file('core/resources/props.ini');
+    $ar = file(CORE_DIRECTORY . '/resources/props.ini');
 
     $ar[] = chr(0) . chr(10) . chr(0) . wordwrap('J/textfile.txt.label=1', 1, chr(0), true);
     for ($i = 1; $i < $all; ++$i) {
@@ -82,12 +79,12 @@ MIDlet-Delete-Confirm: GoodBye =)',
         FILE_APPEND
     );
 
-    $zip = new PclZip(dirname(__FILE__) . '/' . $tmp);
+    $zip = new PclZip($tmp);
 
-    $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/props.ini', PCLZIP_OPT_REMOVE_ALL_PATH);
+    $zip->add(Config::get('jpath') . '/props.ini', PCLZIP_OPT_REMOVE_ALL_PATH);
 
     $zip->add(
-        dirname(__FILE__) . '/' . Config::get('jpath') . '/MANIFEST.MF',
+        Config::get('jpath') . '/MANIFEST.MF',
         PCLZIP_OPT_REMOVE_ALL_PATH,
         PCLZIP_OPT_ADD_PATH,
         'META-INF'
@@ -95,7 +92,7 @@ MIDlet-Delete-Confirm: GoodBye =)',
 
     file_put_contents(Config::get('jpath') . '/textfile.txt', $arr[0]);
 
-    $zip->add(dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile.txt', PCLZIP_OPT_REMOVE_ALL_PATH);
+    $zip->add(Config::get('jpath') . '/textfile.txt', PCLZIP_OPT_REMOVE_ALL_PATH);
 
     unlink(Config::get('jpath') . '/textfile.txt');
 
@@ -103,7 +100,7 @@ MIDlet-Delete-Confirm: GoodBye =)',
         file_put_contents(Config::get('jpath') . '/textfile' . $i . '.txt', $arr[$i]);
 
         $zip->add(
-            dirname(__FILE__) . '/' . Config::get('jpath') . '/textfile' . $i . '.txt',
+            Config::get('jpath') . '/textfile' . $i . '.txt',
             PCLZIP_OPT_REMOVE_ALL_PATH
         );
         unlink(Config::get('jpath') . '/textfile' . $i . '.txt');

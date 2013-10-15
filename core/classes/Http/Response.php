@@ -221,4 +221,19 @@ class Http_Response
 
         return $this;
     }
+
+
+    /**
+     * HTTP кэширование
+     *
+     * @return Http_Response
+     */
+    public function setNoCache()
+    {
+        $this->setHeader('Pragma', 'no-cache')
+            ->setHeader('Cache-Control', 'no-cache, must-revalidate, no-store')
+            ->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+
+        return $this;
+    }
 }

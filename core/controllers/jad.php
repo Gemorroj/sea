@@ -34,48 +34,25 @@
  */
 
 
-require 'core/config.php';
-
-if (!extension_loaded('ffmpeg')) {
+if (!Config::get('jad_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
 }
 
 $id = intval(Http_Request::get('id'));
-$frame = abs(Http_Request::get('frame', (int)Config::get('ffmpeg_frame') + 1));
-$i = $frame;
-
 $v = Files::getFileInfo($id);
+
 if (!$v || !is_file($v['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
+Files::updateFileLoad($id);
 
-$prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
-$cache = Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png';
-
-if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png')) {
-    $mov = new ffmpeg_movie($v['path'], false);
-    if (!$mov) {
-        Http_Response::getInstance()->renderError(Language::get('error'));
-    }
-
-    while (!$fr = $mov->getFrame($i)) {
-        $i--;
-        if ($i <= 0) {
-            copy(CORE_DIRECTORY . '/resources/video.png', $cache);
-            break;
-        }
-    }
-
-    if ($fr) {
-        $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.png';
-        imagepng($fr->toGDImage(), $tmp);
-        Image::resize($tmp, $cache, 0, 0, Config::get('marker'));
-        unlink($tmp);
-    }
-}
-
+$zip = new PclZip($v['path']);
+$content = $zip->extract(PCLZIP_OPT_BY_NAME, 'META-INF/MANIFEST.MF', PCLZIP_OPT_EXTRACT_AS_STRING);
 
 Http_Response::getInstance()
     ->setCache()
-    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);
+    ->setHeader('Content-Type', 'text/vnd.sun.j2me.app-descriptor')
+    ->setHeader('Content-Disposition', 'attachment; filename="' . rawurlencode(basename($v['path'])) . '.jad"')
+    ->setBody(trim($content[0]['content']) . "\n" . 'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" . 'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'])
+    ->renderBinary();

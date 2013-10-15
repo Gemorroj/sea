@@ -34,19 +34,15 @@
  */
 
 
-require 'core/config.php';
-
-$id = intval(Http_Request::get('id'));
-$v = Files::getFileInfo($id);
+$v = Files::getFileInfo(Http_Request::get('id'));
 if (!$v || !is_file($v['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
-Files::updateFileLoad($id);
+$location = Media_Jar::getImage($v['path']);
 
-$dir = dirname($_SERVER['PHP_SELF']);
-$dir = ($dir == DIRECTORY_SEPARATOR ? '' : $dir);
-Http_Response::getInstance()
-    ->setCache()
-    ->redirect('http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
-
+if ($location !== null) {
+    Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $location, 301);
+} else {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}

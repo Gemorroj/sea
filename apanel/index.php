@@ -35,7 +35,7 @@
 
 
 define('APANEL', true);
-require '../core/config.php';
+require dirname(__FILE__) . '/../core/config.php';
 
 $HeadTime = microtime(true);
 $db = Db_Mysql::getInstance();

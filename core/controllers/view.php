@@ -34,7 +34,7 @@
  */
 
 
-require 'core/header.php';
+require_once CORE_DIRECTORY . '/header.php';
 
 $id = intval(Http_Request::get('id'));
 $file = Files::getFileInfo($id);
@@ -46,7 +46,7 @@ if (!$file || !is_file($file['path'])) {
 
 // Система голосований
 $vote = null;
-require 'core/inc/view/_vote.php';
+require CORE_DIRECTORY . '/inc/view/_vote.php';
 
 // рейтинг
 $rate = $file['yes'] + $file['no'];
@@ -65,7 +65,7 @@ Seo::unserialize($file['seo']);
 Breadcrumbs::init($file['path']);
 
 // данные по файлам
-require 'core/inc/view/_file.php';
+require CORE_DIRECTORY . '/inc/view/_file.php';
 
 
 // Директория
@@ -81,11 +81,11 @@ $commentsCount = $q->fetchColumn();
 
 // Последние комментарии
 $comments = array();
-require 'core/inc/view/_comments.php';
+require CORE_DIRECTORY . '/inc/view/_comments.php';
 
 // предыдущий/следующий файл
 $prevNext = array('prev' => array(), 'next' => array());
-require 'core/inc/view/_prevnext.php';
+require CORE_DIRECTORY . '/inc/view/_prevnext.php';
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('view.tpl');

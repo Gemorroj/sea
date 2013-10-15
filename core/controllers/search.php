@@ -36,7 +36,7 @@
 
 define('IS_P_NAME', true);
 
-require 'core/header.php';
+require_once CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('search_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -116,7 +116,7 @@ if ($word != '') {
 
     $query->execute();
 
-    require 'core/inc/_files.php';
+    require CORE_DIRECTORY . '/inc/_files.php';
 }
 
 $template->assign('paginatorConf', $paginatorConf);

@@ -34,19 +34,46 @@
  */
 
 
-header('Content-type: image/png');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Cache-Control: no-cache, must-revalidate, no-store');
-header('Pragma: no-cache');
+if (!extension_loaded('ffmpeg')) {
+    Http_Response::getInstance()->renderError(Language::get('not_available'));
+}
+
+$id = intval(Http_Request::get('id'));
+$frame = abs(Http_Request::get('frame', (int)Config::get('ffmpeg_frame') + 1));
+$i = $frame;
+
+$v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
+}
 
 
-$im = imagecreate(100, 4);
-$c0 = imagecolorallocate($im, 0, 0, 0);
-$c1 = imagecolorallocate($im, 255, 128, 0);
-$c2 = imagecolorallocate($im, 100, 150, 225);
-$c3 = imagecolorallocate($im, 168, 175, 187);
-imagefill($im, 100, 0, $c2);
-imagefilledrectangle($im, 0, 0, intval($_GET['i']), 4, $c1);
-imagerectangle($im, 0, 0, 99, 3, $c0);
-imagepng($im);
-imagedestroy($im);
+$prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
+$cache = Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png';
+
+if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png')) {
+    $mov = new ffmpeg_movie($v['path'], false);
+    if (!$mov) {
+        Http_Response::getInstance()->renderError(Language::get('error'));
+    }
+
+    while (!$fr = $mov->getFrame($i)) {
+        $i--;
+        if ($i <= 0) {
+            copy(CORE_DIRECTORY . '/resources/video.png', $cache);
+            break;
+        }
+    }
+
+    if ($fr) {
+        $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.png';
+        imagepng($fr->toGDImage(), $tmp);
+        Image::resize($tmp, $cache, 0, 0, Config::get('marker'));
+        unlink($tmp);
+    }
+}
+
+
+Http_Response::getInstance()
+    ->setCache()
+    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);

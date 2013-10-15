@@ -34,34 +34,17 @@
  */
 
 
-require 'core/config.php';
-
-$link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
-
-
-$rss = new Rss(Language::get('news'), $link, Language::get('news'));
-
-
-$q = Db_Mysql::getInstance()->query('
-    SELECT ' . Language::buildNewsQuery() . ', `time`
-    FROM `news`
-    ORDER BY `id` DESC
-    LIMIT 0, 10
-');
-
-foreach ($q as $arr) {
-    $date = new DateTime('@' . $arr['time']);
-
-    $rss->addItem(
-        Language::get('news') . ' - ' . $date->format('Y.m.d H:i'),
-        $link,
-        '<div>' . $arr['news'] . '</div>',
-        $date
-    );
+$id = intval(Http_Request::get('id'));
+$v = Files::getFileInfo($id);
+if (!$v || !is_file($v['path'])) {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
+Files::updateFileLoad($id);
 
+$dir = dirname($_SERVER['PHP_SELF']);
+$dir = ($dir == DIRECTORY_SEPARATOR ? '' : $dir);
 Http_Response::getInstance()
-    ->setHeader('Content-Type', 'application/rss+xml; charset=UTF-8')
-    ->setBody($rss->saveXML())
-    ->renderBinary();
+    ->setCache()
+    ->redirect('http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
+

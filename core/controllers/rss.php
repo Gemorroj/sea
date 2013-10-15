@@ -34,31 +34,31 @@
  */
 
 
-require 'core/config.php';
+$link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
 
-$id = intval(Http_Request::get('id'));
+$rss = new Rss(Language::get('news'), $link, Language::get('news'));
 
-if (!$id || !is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
-    Http_Response::getInstance()->renderError(Language::get('not_found'));
+
+$q = Db_Mysql::getInstance()->query('
+    SELECT ' . Language::buildNewsQuery() . ', `time`
+    FROM `news`
+    ORDER BY `id` DESC
+    LIMIT 0, 10
+');
+
+foreach ($q as $arr) {
+    $date = new DateTime('@' . $arr['time']);
+
+    $rss->addItem(
+        Language::get('news') . ' - ' . $date->format('Y.m.d H:i'),
+        $link,
+        '<div>' . $arr['news'] . '</div>',
+        $date
+    );
 }
 
-$data = unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
-if ($data && $data['tag']['apic']) {
-    $im = imagecreatefromstring($data['tag']['apic']);
-    if ($im) {
-        if (!Http_Request::get('full')) {
-            $im = Image::resizeSimple($im);
-        }
 
-        ob_start();
-        imagejpeg($im);
-        $body = ob_get_clean();
-        imagedestroy($im);
-
-        Http_Response::getInstance()
-            ->setCache()
-            ->setHeader('Content-Type', 'image/jpeg')
-            ->setBody($body)
-            ->renderBinary();
-    }
-}
+Http_Response::getInstance()
+    ->setHeader('Content-Type', 'application/rss+xml; charset=UTF-8')
+    ->setBody($rss->saveXML())
+    ->renderBinary();

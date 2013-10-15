@@ -36,7 +36,7 @@
 
 define('IS_P_NAME', true);
 
-require 'core/header.php';
+require_once CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('top_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -92,7 +92,7 @@ $query->bindValue(2, $paginatorConf['onpage'], PDO::PARAM_INT);
 
 $query->execute();
 
-require 'core/inc/_files.php';
+require CORE_DIRECTORY . '/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);

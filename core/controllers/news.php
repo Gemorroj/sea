@@ -34,17 +34,44 @@
  */
 
 
-require 'core/config.php';
+require_once CORE_DIRECTORY . '/header.php';
 
-$v = Files::getFileInfo(Http_Request::get('id'));
-if (!$v || !is_file($v['path'])) {
-    Http_Response::getInstance()->renderError(Language::get('not_found'));
-}
+$template = Http_Response::getInstance()->getTemplate();
+$template->setTemplate('news.tpl');
 
-$location = Media_Theme::getImage($v['path']);
+$title = Language::get('news');
+//Seo::addTitle($title);
+Breadcrumbs::add('news', $title);
 
-if ($location !== null) {
-    Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $location, 301);
-} else {
-    Http_Response::getInstance()->renderError(Language::get('not_found'));
-}
+$db = Db_Mysql::getInstance();
+
+// всего новостей
+$all = $db->query('SELECT COUNT(1) FROM `news`')->fetchColumn();
+
+$paginatorConf = Helper::getPaginatorConf($all);
+
+// Постраничная навигация
+$template->assign('paginatorConf', $paginatorConf);
+
+
+$q = $db->prepare('
+    SELECT `news`.`id`,
+    ' . Language::buildNewsQuery() . ',
+    `news`.`time`,
+    COUNT(k.id) AS `count`
+    FROM `news`
+    LEFT JOIN `news_comments` AS k ON `news`.`id` = k.id_news
+    WHERE `news`.`id` > 0
+    GROUP BY `news`.`id`
+    ORDER BY `news`.`id` DESC
+    LIMIT ?, ?
+');
+$q->bindValue(1, $paginatorConf['start'], PDO::PARAM_INT);
+$q->bindValue(2, $paginatorConf['onpage'], PDO::PARAM_INT);
+
+$q->execute();
+
+$news = $q->fetchAll();
+
+$template->assign('news', $news);
+Http_Response::getInstance()->render();

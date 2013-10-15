@@ -34,33 +34,24 @@
  */
 
 
-require 'core/header.php';
+$im = imagecreate(100, 4);
+$c0 = imagecolorallocate($im, 0, 0, 0);
+$c1 = imagecolorallocate($im, 255, 128, 0);
+$c2 = imagecolorallocate($im, 100, 150, 225);
+$c3 = imagecolorallocate($im, 168, 175, 187);
+imagefill($im, 100, 0, $c2);
+imagefilledrectangle($im, 0, 0, Http_Request::get('i'), 4, $c1);
+imagerectangle($im, 0, 0, 99, 3, $c0);
 
-if (!Config::get('stat_change')) {
-    Http_Response::getInstance()->renderError(Language::get('not_available'));
-}
+ob_start();
+imagepng($im);
+$image = ob_get_contents();
+ob_end_clean();
 
-//Seo::addTitle(Language::get('statistics'));
-Breadcrumbs::add('stat', Language::get('statistics'));
+imagedestroy($im);
 
-$db = Db_Mysql::getInstance();
-
-$stat = $db->query('
-    SELECT COUNT(1) AS all_files, SUM(`loads`) AS total_downloads, SUM(`size`) AS total_volume
-    FROM `files`
-    WHERE `dir` = "0"
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
-)->fetch();
-
-$stat['total_new_files'] = $db->query('
-    SELECT COUNT(1)
-    FROM `files`
-    WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new'))) . '
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
-)->fetchColumn();
-
-Http_Response::getInstance()->getTemplate()
-    ->setTemplate('stat.tpl')
-    ->assign('stat', $stat);
-
-Http_Response::getInstance()->render();
+Http_Response::getInstance()
+    ->setHeader('Content-Type', 'image/png')
+    ->setNoCache()
+    ->setBody($image)
+    ->renderBinary();

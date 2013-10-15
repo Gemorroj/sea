@@ -34,42 +34,15 @@
  */
 
 
-require 'core/config.php';
-
-$id = intval(Http_Request::get('id') ? Http_Request::get('id') : Http_Request::post('id'));
-
-$v = Files::getFileInfo($id);
+$v = Files::getFileInfo(Http_Request::get('id'));
 if (!$v || !is_file($v['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
-$w = abs(Http_Request::get('w', 0));
-$h = abs(Http_Request::get('h', 0));
+$location = Media_Theme::getImage($v['path']);
 
-$marker = Config::get('marker');
-$resize = true;
-if (!$w || !$h) {
-    $resize = false;
-    list($w, $h) = explode('*', Config::get('prev_size'));
-} elseif ($marker) {
-    $marker = ($marker == 2 ? 0 : 1);
+if ($location !== null) {
+    Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $location, 301);
+} else {
+    Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
-
-
-$prev_pic = str_replace('/', '--', mb_substr(strstr($v['path'], '/'), 1));
-
-if ($resize) {
-    $prev_pic = $w . 'x' . $h . '_' . $prev_pic;
-    Files::updateFileLoad($id);
-}
-
-$cache = Config::get('picpath') . '/' . $prev_pic . '.png';
-if (!is_file($cache)) {
-    if (!Image::resize($v['path'], $cache, $w, $h, $marker)) {
-        Http_Response::getInstance()->renderError(Language::get('error'));
-    }
-}
-
-Http_Response::getInstance()
-    ->setCache()
-    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);

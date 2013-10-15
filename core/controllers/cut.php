@@ -34,7 +34,7 @@
  */
 
 
-require 'core/header.php';
+require_once CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('cut_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
