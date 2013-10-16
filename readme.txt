@@ -1,7 +1,7 @@
 ЗАГРУЗ-ЦЕНТР Sea mod Gemorroj
 
 Требования:
-Apache 2
+Apache 2, Nginx
 PHP 5.2.1 или выше
 PHP модули: mbstring, SimpleXML, GD2, FFMPEG (работает и без него, но не будет скриншотов видео)
 MySQL 5.0.7 или выше

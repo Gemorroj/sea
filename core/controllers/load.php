@@ -42,9 +42,7 @@ if (!$v || !is_file($v['path'])) {
 
 Files::updateFileLoad($id);
 
-$dir = dirname($_SERVER['PHP_SELF']);
-$dir = ($dir == DIRECTORY_SEPARATOR ? '' : $dir);
 Http_Response::getInstance()
     ->setCache()
-    ->redirect('http://' . $_SERVER['HTTP_HOST'] . $dir . '/' . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
+    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
 

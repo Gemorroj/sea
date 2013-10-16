@@ -34,14 +34,11 @@
  */
 
 
-define('CORE_DIRECTORY', dirname(__FILE__));
-if (defined('APANEL') === true) {
-    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname(dirname($_SERVER['PHP_SELF'])) . '/'));
-} else {
-    define('DIRECTORY', str_replace(array('\\', '//'), '/', dirname($_SERVER['PHP_SELF']) . '/'));
-}
-define('PCLZIP_TEMPORARY_DIR', CORE_DIRECTORY . '/tmp/');
+// внешняя директория с зц. по умолчанию корень сайта.
+define('DIRECTORY', '/');
 
+define('CORE_DIRECTORY', dirname(__FILE__));
+define('PCLZIP_TEMPORARY_DIR', CORE_DIRECTORY . '/tmp/');
 
 mb_internal_encoding('UTF-8');
 
