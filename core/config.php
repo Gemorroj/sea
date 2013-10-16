@@ -50,11 +50,6 @@ ini_set('session.use_trans_sid', '0');
 ini_set('session.use_cookies', '1');
 ini_set('session.use_only_cookies', '1');
 
-session_set_cookie_params(864000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
-session_save_path(CORE_DIRECTORY . '/tmp');
-session_name('sea');
-session_start() or die('Can not start session');
-
 
 // автозагрузчик классов
 require_once CORE_DIRECTORY . '/classes/Autoload.php';
@@ -113,6 +108,11 @@ Routing::init(array(
     'zip/(?P<action>down)/(?P<id>[0-9]+)/(?P<name>.+)' => 'zip.php',
 ));
 
+
+session_set_cookie_params(864000, DIRECTORY, Http_Request::getHost(), false, true);
+session_save_path(CORE_DIRECTORY . '/tmp');
+session_name('sea');
+session_start() or die('Can not start session');
 
 define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));
 

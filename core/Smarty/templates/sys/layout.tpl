@@ -17,7 +17,7 @@
                 {assign var='directory' value=Breadcrumbs::getBreadcrumbs()}
                 {assign var='file' value=$directory|array_pop}
                 {$file}{if $directory} | {' / '|implode:$directory}{/if}
-            {/if} | {$smarty.server.HTTP_HOST}
+            {/if} | {Http_Request::getHost()}
             *}
             {$setup.zag} - {if Breadcrumbs::getBreadcrumbs()}{' / '|implode:Breadcrumbs::getBreadcrumbs()} - {/if}{Seo::getTitle()|default:'sea downloads'}
         {/strip}</title>

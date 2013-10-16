@@ -64,7 +64,7 @@ if (Http_Request::isPost()) {
         Http_Response::getInstance()->renderError(Language::get('email_incorrect'));
     }
 
-    setcookie('sea_email', Http_Request::post('email'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
+    setcookie('sea_email', Http_Request::post('email'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, Http_Request::getHost(), false, true);
     if (mail(
         Http_Request::post('email'),
         '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], Language::get('link_to_file'))) . '?=',
@@ -73,7 +73,7 @@ if (Http_Request::isPost()) {
             array($v['name'], Config::get('site_url'), Helper::getUrl() . DIRECTORY . 'view/' . $id),
             Language::get('email_message')
         ),
-        "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+        "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
     )
     ) {
         Http_Response::getInstance()->renderMessage(Language::get('email_sent_successfully'));

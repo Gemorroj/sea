@@ -254,7 +254,7 @@ if (!Http_Request::get('level')) {
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countban', '2')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'autologin', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'timeban', '10')");
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', '" . $_SERVER['HTTP_HOST'] . "')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'site_url', '" . Http_Request::getHost() . "')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'anim_change', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_change', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'screen_file_change', '1')");
@@ -308,14 +308,14 @@ if (!Http_Request::get('level')) {
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy_change', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'online_time', '60')");
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy', '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'buy', '<strong><a href=\"/\">" . Http_Request::getHost() . "</a></strong>')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbuy', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbuy', '1')");
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'banner', '<strong><a href=\"/\">" . $_SERVER['HTTP_HOST'] . "</a></strong>')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'banner', '<strong><a href=\"/\">" . Http_Request::getHost() . "</a></strong>')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'randbanner', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'countbanner', '1')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_change', '1')");
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email', 'admin@" . $_SERVER['HTTP_HOST'] . "')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email', 'admin@" . Http_Request::getHost() . "')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'langpack', 'russian')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
 

@@ -1,7 +1,7 @@
 <?php
 $db = Db_Mysql::getInstance();
 
-$db->prepare('REPLACE INTO `online` (`ip`, `time`) VALUES (?, NOW())')->execute(array($_SERVER['REMOTE_ADDR']));
+$db->prepare('REPLACE INTO `online` (`ip`, `time`) VALUES (?, NOW())')->execute(array(Http_Request::getIp()));
 $db->exec('DELETE FROM `online` WHERE `time` < (NOW() - INTERVAL ' . intval(Config::get('online_time')) . ' SECOND)');
 
 $online = $db->query('SELECT COUNT(1) FROM online')->fetchColumn();

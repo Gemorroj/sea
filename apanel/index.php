@@ -79,14 +79,14 @@ if (!Http_Request::post('p') && !Http_Request::get('p')) {
 
 if ((Http_Request::post('p') && md5(Http_Request::post('p')) == Config::get('password')) ||
     Config::get('autologin') && (Http_Request::get('p') && md5(Http_Request::get('p')) == Config::get('password'))) {
-    $_SESSION['ipu'] = $_SERVER['REMOTE_ADDR'];
+    $_SESSION['ipu'] = Http_Request::getIp();
     $_SESSION['authorise'] = Config::get('password');
 
     $db->prepare('INSERT INTO loginlog SET time = ?, ua = ?, ip = ?')->execute(
         array(
-             $_SERVER['REQUEST_TIME'],
-             $_SERVER['HTTP_USER_AGENT'],
-             $_SERVER['REMOTE_ADDR']
+            $_SERVER['REQUEST_TIME'],
+            Http_Request::getUserAgent(),
+            Http_Request::getIp()
         )
     );
 

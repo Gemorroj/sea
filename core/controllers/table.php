@@ -61,7 +61,8 @@ if (Http_Request::isPost()) {
         '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=',
         'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\r\n" .
         'ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back'),
-        'Content-Type: text/plain; charset=UTF-8' . "\r\n" . 'From: robot@' . $_SERVER['HTTP_HOST']
+        'Content-Type: text/plain; charset=UTF-8' . "\r\n" .
+        'From: robot@' . Http_Request::getHost()
     );
 }
 

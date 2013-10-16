@@ -95,7 +95,7 @@
                     {$language.style}:<br/>
                     <select class="enter" name="style">
                         {foreach $styles as $loop_style}
-                            <option value="{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}{$loop_style}" {if $style|pathinfo:$smarty.const.PATHINFO_FILENAME == $loop_style|pathinfo:$smarty.const.PATHINFO_FILENAME}selected="selected"{/if}>{$loop_style|pathinfo:$smarty.const.PATHINFO_FILENAME}</option>
+                            <option value="{Http_Request::getHost()}{$smarty.const.DIRECTORY}{$loop_style}" {if $style|pathinfo:$smarty.const.PATHINFO_FILENAME == $loop_style|pathinfo:$smarty.const.PATHINFO_FILENAME}selected="selected"{/if}>{$loop_style|pathinfo:$smarty.const.PATHINFO_FILENAME}</option>
                         {/foreach}
                     </select>
                 </label>
@@ -111,7 +111,7 @@
             <div class="row">
                 <label>
                     {$language.service}:<br/>
-                    <input class="enter" type="url" value="{Helper::getUrl()}{$smarty.const.DIRECTORY}?url=somebody.com{if $setup.style_change}&amp;style={$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}style/{$setup.css}.css{/if}"/>
+                    <input class="enter" type="url" value="{Helper::getUrl()}{$smarty.const.DIRECTORY}?url=somebody.com{if $setup.style_change}&amp;style={Http_Request::getHost()}{$smarty.const.DIRECTORY}style/{$setup.css}.css{/if}"/>
                 </label>
 
                 <input class="buttom" type="submit" value="{$language.go}"/>

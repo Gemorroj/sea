@@ -136,9 +136,9 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
 
                 mail(
                     $mail,
-                    '=?utf-8?B?' . base64_encode('Registration in ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
+                    '=?utf-8?B?' . base64_encode('Registration in ' . Http_Request::getHost() . DIRECTORY) . '?=',
                     'Your password: ' . $pass . "\r\n" . 'ID: ' . $_SESSION['id'],
-                    'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+                    'From: robot@' . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
                 );
 
                 Http_Response::getInstance()->redirect(Helper::getUrl() . DIRECTORY . 'service');
@@ -158,9 +158,9 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
 
         mail(
             $mail,
-            '=?utf-8?B?' . base64_encode('Change Password ' . $_SERVER['HTTP_HOST'] . DIRECTORY) . '?=',
+            '=?utf-8?B?' . base64_encode('Change Password ' . Http_Request::getHost() . DIRECTORY) . '?=',
             'Your new password: ' . $pass . "\r\n" . 'ID: ' . Http_Request::get('id'),
-            'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+            'From: robot@' . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
         );
 
         Http_Response::getInstance()->renderMessage(Language::get('email_sent_successfully'));

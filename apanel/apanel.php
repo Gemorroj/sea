@@ -55,7 +55,7 @@ if (!$_SESSION) {
 if (!isset($_SESSION['authorise']) || !isset($_SESSION['ipu'])) {
     Http_Response::getInstance()->renderError('В сессии недостаточно данных для авторизации');
 }
-if ($_SESSION['authorise'] != Config::get('password') || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
+if ($_SESSION['authorise'] != Config::get('password') || $_SESSION['ipu'] != Http_Request::getIp()) {
     Http_Response::getInstance()->renderError('Авторизация не пройдена');
 }
 

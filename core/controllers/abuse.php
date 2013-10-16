@@ -58,9 +58,9 @@ if (mail(
     Config::get('zakaz_email'),
     '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
     'Получена жалоба на файл ' . Helper::getUrl() . DIRECTORY . 'view/' . $id . "\r\n" .
-    'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
-    'IP: ' . $_SERVER['REMOTE_ADDR'],
-    "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
+    'Браузер: ' . Http_Request::getUserAgent() . "\r\n" .
+    'IP: ' . Http_Request::getIp(),
+    "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
 )) {
     Http_Response::getInstance()->renderMessage(Language::get('complaint_sent_to_the_administration'));
 } else {

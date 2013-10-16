@@ -86,7 +86,7 @@ if (Http_Request::isPost()) {
     }
 
     //Если нет ошибок пишем в базу
-    setcookie('sea_name', Http_Request::post('name'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, $_SERVER['HTTP_HOST'], false, true);
+    setcookie('sea_name', Http_Request::post('name'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, Http_Request::getHost(), false, true);
 
     $q = $db->prepare('
         INSERT INTO `news_comments` (

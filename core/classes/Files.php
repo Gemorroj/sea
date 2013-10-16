@@ -248,7 +248,7 @@ class Files
         $message = array();
         $error = array();
 
-        ini_set('user_agent', $_SERVER['HTTP_USER_AGENT']);
+        ini_set('user_agent', Http_Request::getUserAgent());
         $q = $db->prepare('
             INSERT INTO `files` (
                 `dir`, `path`, `name`, `rus_name`, `aze_name`, `tur_name`, `infolder`, `size`, `timeupload`

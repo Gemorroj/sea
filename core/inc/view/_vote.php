@@ -5,12 +5,12 @@
 $eval = Http_Request::get('eval');
 
 if (Config::get('eval_change') && $eval) {
-    if (strpos($file['ips'], $_SERVER['REMOTE_ADDR']) === false) {
+    if (strpos($file['ips'], Http_Request::getIp()) === false) {
         $vote = true;
         if (!$file['ips']) {
-            $ipp = $_SERVER['REMOTE_ADDR'];
+            $ipp = Http_Request::getIp();
         } else {
-            $ipp = $file['ips'] . "\n" . $_SERVER['REMOTE_ADDR'];
+            $ipp = $file['ips'] . "\n" . Http_Request::getIp();
         }
 
         $db = Db_Mysql::getInstance();
