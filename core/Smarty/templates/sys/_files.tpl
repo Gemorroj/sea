@@ -95,7 +95,7 @@
             {/if}
 
             {* в категорию *}
-            {if $smarty.const.IS_P_NAME === true && $f.p_id}
+            {if $smarty.const.SEA_IS_P_NAME === true && $f.p_id}
                 <br/>{$language.go_to_the_category}: <strong><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}{$f.p_id}">{$f.p_name}</a></strong>
             {/if}
 

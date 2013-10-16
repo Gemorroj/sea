@@ -48,7 +48,7 @@ class Helper
         $items = intval($items);
         $page = abs(Http_Request::get('page', 1));
 
-        if (Config::get('ignore_index_pages') && defined('IS_INDEX') && IS_INDEX === true) {
+        if (Config::get('ignore_index_pages') && defined('SEA_IS_INDEX') && SEA_IS_INDEX === true) {
             // переопределяем пагинацию, если это главная
             return array(
                 'start' => 0,

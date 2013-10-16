@@ -34,7 +34,7 @@
  */
 
 
-define('IS_P_NAME', true);
+define('SEA_IS_P_NAME', true);
 
 require_once SEA_CORE_DIRECTORY . '/header.php';
 

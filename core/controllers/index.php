@@ -37,7 +37,7 @@
 require_once SEA_CORE_DIRECTORY . '/header.php';
 
 $id = intval(Http_Request::get('id'));
-define('IS_INDEX', !$id);
+define('SEA_IS_INDEX', !$id);
 
 $db = Db_Mysql::getInstance();
 

@@ -34,7 +34,6 @@
  */
 
 
-define('APANEL', true);
 require dirname(__FILE__) . '/../core/config.php';
 
 $HeadTime = microtime(true);

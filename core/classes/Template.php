@@ -79,7 +79,7 @@ class Template extends Smarty
      */
     public function send()
     {
-        $this->assign('pageTime', microtime(true) - START_TIME);
+        $this->assign('pageTime', microtime(true) - SEA_START_TIME);
         $this->display($this->_template);
         exit;
     }

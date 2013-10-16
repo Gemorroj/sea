@@ -7,8 +7,8 @@
         <link rel="stylesheet" type="text/css" href="{getStyle style=$style}"/>
         <title>{strip}
             {*
-            {if IS_INDEX|defined}
-                {if $smarty.const.IS_INDEX}
+            {if SEA_IS_INDEX|defined}
+                {if $smarty.const.SEA_IS_INDEX}
                     {$setup.zag}
                 {else}
                     {' / '|implode:Breadcrumbs::getBreadcrumbs()}

@@ -2,7 +2,7 @@
 
 {block header}
     {* только если это главная *}
-    {if $smarty.const.IS_INDEX}
+    {if $smarty.const.SEA_IS_INDEX}
         {* новости, поиск, топ *}
         <div class="iblock">
             {if $news}

@@ -34,7 +34,7 @@
  */
 
 
-define('START_TIME', microtime(true));
+define('SEA_START_TIME', microtime(true));
 require dirname(__FILE__) . '/core/config.php';
 
 if (1 !== Routing::getInstance()->handle()) {

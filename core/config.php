@@ -109,7 +109,7 @@ Routing::init(array(
 ));
 
 
-session_set_cookie_params(864000, SEA_DIRECTORY, Http_Request::getHost(), false, true);
+session_set_cookie_params(864000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
 session_save_path(SEA_CORE_DIRECTORY . '/tmp');
 session_name('sea');
 session_start() or die('Can not start session');
