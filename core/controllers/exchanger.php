@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('exchanger_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -74,7 +74,7 @@ if (Http_Request::isPost()) {
         FROM `files`
         WHERE `path` = ?
         AND `dir` = "1"
-        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+        ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
     $q->execute(array($path));
 
@@ -140,7 +140,7 @@ if (Http_Request::isPost()) {
         mail(
             Config::get('zakaz_email'),
             '=?utf-8?B?' . base64_encode('Новый файл') . '?=',
-            'Загружен новый файл: ' . Helper::getUrl() . DIRECTORY . 'apanel/apanel_view.php?id=' . $insertId . "\r\n" .
+            'Загружен новый файл: ' . Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'apanel/apanel_view.php?id=' . $insertId . "\r\n" .
             'Браузер: ' . Http_Request::getUserAgent() . "\r\n" .
             'IP: ' . Http_Request::getIp(),
             "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"

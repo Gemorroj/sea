@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('news.tpl');

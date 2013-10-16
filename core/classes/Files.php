@@ -468,7 +468,7 @@ class Files
             SELECT *, ' . Language::buildFilesQuery() . '
             FROM `files`
             WHERE `id` = ?
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+            ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
         );
         $q->execute(array($id));
         return $q->fetch();

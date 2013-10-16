@@ -36,7 +36,7 @@
 
 define('IS_P_NAME', true);
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('new_change') || !Config::get('day_new')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -61,7 +61,7 @@ $q = $db->prepare('
     FROM `files`
     WHERE `dir` = "0"
     AND `timeupload` >= ?
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+    ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
 );
 $q->bindValue(1, $new, PDO::PARAM_INT);
 $q->execute();
@@ -93,7 +93,7 @@ $query = $db->prepare('
     LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
     WHERE `f`.`dir` = "0"
     AND `f`.`timeupload` >= ?
-    ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
+    ' . (SEA_IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
     ORDER BY ' . Helper::getSortMode('f') . '
     LIMIT ?, ?
 ');
@@ -105,7 +105,7 @@ $query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
 
 $query->execute();
 
-require CORE_DIRECTORY . '/inc/_files.php';
+require SEA_CORE_DIRECTORY . '/inc/_files.php';
 
 $template->assign('directories', $directories);
 $template->assign('files', $files);

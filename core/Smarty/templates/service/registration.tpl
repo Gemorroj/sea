@@ -1,6 +1,6 @@
 {* регистрация в сервисе *}
 
-<form action="{$smarty.const.DIRECTORY}service?act=registration" method="post">
+<form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}service?act=registration" method="post">
     <div class="row">
         <table>
             <tr>
@@ -27,7 +27,7 @@
                 <td><input class="enter" type="password" name="pass" id="pass" style="width:96%;" required="required"/></td>
             </tr>
             <tr>
-                <th><img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.DIRECTORY}kcaptcha?{session_name()}={session_id()}" /></th>
+                <th><img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.SEA_PUBLIC_DIRECTORY}kcaptcha?{session_name()}={session_id()}" /></th>
                 <td><input class="enter" type="number" name="keystring" maxlength="4" required="required" style="width:96%;" min="1" max="9999"/></td>
             </tr>
             <tr>

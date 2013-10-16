@@ -1,6 +1,6 @@
 {* сервис *}
 
-<form action="{$smarty.const.DIRECTORY}service" method="get">
+<form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}service" method="get">
     <div class="row">
         <input type="hidden" name="act" value="enter"/>
         <label>
@@ -15,9 +15,9 @@
     </div>
 </form>
 <div class="iblock">
-    <a href="{$smarty.const.DIRECTORY}service?act=registration">{$language.registration}</a>
+    <a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}service?act=registration">{$language.registration}</a>
 </div>
-<form action="{$smarty.const.DIRECTORY}service?act=pass" method="post">
+<form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}service?act=pass" method="post">
     <div class="row">
         <label>
             {$language.lost_password}<br/>

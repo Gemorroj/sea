@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('stat_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -49,14 +49,14 @@ $stat = $db->query('
     SELECT COUNT(1) AS all_files, SUM(`loads`) AS total_downloads, SUM(`size`) AS total_volume
     FROM `files`
     WHERE `dir` = "0"
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+    ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
 )->fetch();
 
 $stat['total_new_files'] = $db->query('
     SELECT COUNT(1)
     FROM `files`
     WHERE `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new'))) . '
-    ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+    ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
 )->fetchColumn();
 
 Http_Response::getInstance()->getTemplate()

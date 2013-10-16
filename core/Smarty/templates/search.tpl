@@ -16,11 +16,11 @@
         {include file='sys/_files.tpl'}
 
         {* пагинация *}
-        {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.DIRECTORY}search" query=['word'=>$word]}
+        {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.SEA_PUBLIC_DIRECTORY}search" query=['word'=>$word]}
     {/if}
 
     {* поиск *}
-    <form action="{$smarty.const.DIRECTORY}search" method="get">
+    <form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}search" method="get">
         <div class="row">
             <label>
                 {$language.enter_the_name_of_the_file_you_are}<br/>
@@ -34,8 +34,8 @@
 
 {block footer}
     <ul class="iblock">
-        <li><a href="{$smarty.const.DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>
 {/block}

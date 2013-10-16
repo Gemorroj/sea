@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 
 if (!Config::get('service_change_advanced')) {
@@ -67,7 +67,7 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
         $_SESSION['mail'] = $assoc['mail'];
         $_SESSION['style'] = $assoc['style'];
 
-        Http_Response::getInstance()->redirect(Helper::getUrl() . DIRECTORY . 'service');
+        Http_Response::getInstance()->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'service');
     } else {
         Http_Response::getInstance()->renderError(Language::get('user_not_found'));
     }
@@ -136,12 +136,12 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
 
                 mail(
                     $mail,
-                    '=?utf-8?B?' . base64_encode('Registration in ' . Http_Request::getHost() . DIRECTORY) . '?=',
+                    '=?utf-8?B?' . base64_encode('Registration in ' . Http_Request::getHost() . SEA_PUBLIC_DIRECTORY) . '?=',
                     'Your password: ' . $pass . "\r\n" . 'ID: ' . $_SESSION['id'],
                     'From: robot@' . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
                 );
 
-                Http_Response::getInstance()->redirect(Helper::getUrl() . DIRECTORY . 'service');
+                Http_Response::getInstance()->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'service');
             } else {
                 Http_Response::getInstance()->renderError(Language::get('error'));
             }
@@ -158,7 +158,7 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
 
         mail(
             $mail,
-            '=?utf-8?B?' . base64_encode('Change Password ' . Http_Request::getHost() . DIRECTORY) . '?=',
+            '=?utf-8?B?' . base64_encode('Change Password ' . Http_Request::getHost() . SEA_PUBLIC_DIRECTORY) . '?=',
             'Your new password: ' . $pass . "\r\n" . 'ID: ' . Http_Request::get('id'),
             'From: robot@' . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
         );

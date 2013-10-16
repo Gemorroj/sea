@@ -34,7 +34,7 @@
  */
 
 
-$link = Helper::getUrl() . DIRECTORY . 'news';
+$link = Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'news';
 
 $rss = new Rss(Language::get('news'), $link, Language::get('news'));
 

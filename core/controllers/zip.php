@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('zip_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -117,7 +117,7 @@ switch ($action) {
             }
 
             $zipFileType = 'image';
-            $zipFileData = DIRECTORY . $f;
+            $zipFileData = SEA_PUBLIC_DIRECTORY . $f;
         } elseif ($mime == 'text/plain') {
             $content = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
             $content = Helper::str2utf8($content[0]['content']);

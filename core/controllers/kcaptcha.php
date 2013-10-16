@@ -36,7 +36,7 @@
 
 error_reporting(0);
 
-require_once CORE_DIRECTORY . '/kcaptcha/kcaptcha.php';
+require_once SEA_CORE_DIRECTORY . '/kcaptcha/kcaptcha.php';
 
 $captcha = new KCAPTCHA();
 

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta name="viewport" content="width=device-width"/>
-        <link rel="alternate" type="application/rss+xml" href="{$smarty.const.DIRECTORY}rss"/>
+        <link rel="alternate" type="application/rss+xml" href="{$smarty.const.SEA_PUBLIC_DIRECTORY}rss"/>
         <link rel="stylesheet" type="text/css" href="{getStyle style=$style}"/>
         <title>{strip}
             {*

@@ -44,7 +44,7 @@ class Autoload
     private function __construct()
     {
         set_include_path(
-            get_include_path() . PATH_SEPARATOR . CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
+            get_include_path() . PATH_SEPARATOR . SEA_CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
         );
 
         spl_autoload_register(array($this, '_classes'));
@@ -69,7 +69,7 @@ class Autoload
      */
     protected function _classes($class)
     {
-        $this->_include(CORE_DIRECTORY . '/classes/' . str_replace('_', '/', $class) . '.php');
+        $this->_include(SEA_CORE_DIRECTORY . '/classes/' . str_replace('_', '/', $class) . '.php');
     }
 
 
@@ -78,7 +78,7 @@ class Autoload
      */
     protected function _smarty($class)
     {
-        $this->_include(CORE_DIRECTORY . '/Smarty/libs/' . $class . '.class.php');
+        $this->_include(SEA_CORE_DIRECTORY . '/Smarty/libs/' . $class . '.class.php');
     }
 
 
@@ -87,7 +87,7 @@ class Autoload
      */
     protected function _pear($class)
     {
-        $this->_include(CORE_DIRECTORY . '/PEAR/' . str_replace('_', '/', $class) . '.php');
+        $this->_include(SEA_CORE_DIRECTORY . '/PEAR/' . str_replace('_', '/', $class) . '.php');
     }
 
 

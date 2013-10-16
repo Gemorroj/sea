@@ -23,9 +23,9 @@ foreach ($query as $v) {
 
     if ($v['dir']) {
         if (is_file($v['v'] . 'folder.png')) {
-            $v['ico'] = DIRECTORY . $v['v'] . 'folder.png';
+            $v['ico'] = SEA_PUBLIC_DIRECTORY . $v['v'] . 'folder.png';
         } else {
-            $v['ico'] = DIRECTORY . 'style/ext/dir.png';
+            $v['ico'] = SEA_PUBLIC_DIRECTORY . 'style/ext/dir.png';
         }
 
         $directories[] = $v;
@@ -40,42 +40,42 @@ foreach ($query as $v) {
         if ($prev) {
             if (Config::get('screen_change') && Media_Image::isSupported($ext)) {
                 if (is_file(Config::get('picpath') . '/' . $prev_pic . '.png')) {
-                    $v['pre'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.png';
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.png';
                 } elseif (is_file(Config::get('picpath') . '/' . $prev_pic . '.png.gif')) {
-                    $v['pre'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.png.gif';
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.png.gif';
                 } else {
-                    $v['pre'] = DIRECTORY . 'im/' . $v['id'];
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . 'im/' . $v['id'];
                 }
             } else {
                 if (Config::get('screen_change') && Media_Video::isSupported($ext)) {
                     if (is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.png')) {
-                        $v['pre'] = DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.png';
+                        $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.png';
                     } else {
-                        $v['pre'] = DIRECTORY . 'ffmpeg/' . $v['id'];
+                        $v['pre'] = SEA_PUBLIC_DIRECTORY . 'ffmpeg/' . $v['id'];
                     }
                 } else {
                     if (Config::get('screen_change') && Media_Theme::isSupported($ext)) {
                         if (is_file(Config::get('tpath') . '/' . $prev_pic . '.png')) {
-                            $v['pre'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
+                            $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
                         } else {
                             if (Config::get('swf_change') && is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
-                                $v['pre'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
+                                $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
                             } else {
                                 if (!is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
-                                    $v['pre'] = DIRECTORY . 'theme/' . $v['id'];
+                                    $v['pre'] = SEA_PUBLIC_DIRECTORY . 'theme/' . $v['id'];
                                 }
                             }
                         }
                     } else {
                         if (Config::get('jar_change') && Media_Jar::isSupported($ext)) {
                             if (is_file(Config::get('ipath') . '/' . $prev_pic . '.png')) {
-                                $v['pre'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
+                                $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
                             } else {
-                                $v['pre'] = DIRECTORY . 'jar/' . $v['id'];
+                                $v['pre'] = SEA_PUBLIC_DIRECTORY . 'jar/' . $v['id'];
                             }
                         } else {
                             if (Config::get('swf_change') && $ext == 'swf') {
-                                $v['pre'] = DIRECTORY . $v['v'];
+                                $v['pre'] = SEA_PUBLIC_DIRECTORY . $v['v'];
                             }
                         }
                     }
@@ -85,9 +85,9 @@ foreach ($query as $v) {
 
         //Иконка к файлу
         if (is_file('style/ext/' . $ext . '.png')) {
-            $v['ico'] = DIRECTORY . 'style/ext/' . $ext . '.png';
+            $v['ico'] = SEA_PUBLIC_DIRECTORY . 'style/ext/' . $ext . '.png';
         } else {
-            $v['ico'] = DIRECTORY . 'style/ext/stand.png';
+            $v['ico'] = SEA_PUBLIC_DIRECTORY . 'style/ext/stand.png';
         }
 
 
@@ -123,7 +123,7 @@ foreach ($query as $v) {
             }
 
             if ($th) {
-                $v['screen'] = DIRECTORY . $thumb;
+                $v['screen'] = SEA_PUBLIC_DIRECTORY . $thumb;
             }
         }
 

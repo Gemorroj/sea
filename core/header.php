@@ -34,10 +34,10 @@
  */
 
 
-require CORE_DIRECTORY . '/inc/_style.php';
-require CORE_DIRECTORY . '/inc/_buy.php';
-require CORE_DIRECTORY . '/inc/_online.php';
-require CORE_DIRECTORY . '/inc/_service.php';
+require SEA_CORE_DIRECTORY . '/inc/_style.php';
+require SEA_CORE_DIRECTORY . '/inc/_buy.php';
+require SEA_CORE_DIRECTORY . '/inc/_online.php';
+require SEA_CORE_DIRECTORY . '/inc/_service.php';
 
 
 Http_Response::getInstance()->getTemplate()

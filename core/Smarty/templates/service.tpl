@@ -21,10 +21,10 @@
 {block footer}
     <ul class="iblock">
         {if isset($smarty.session.id)}
-            <li><a href="{$smarty.const.DIRECTORY}service?act=exit">{$language.exit}</a></li>
+            <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}service?act=exit">{$language.exit}</a></li>
         {/if}
-        <li><a href="{$smarty.const.DIRECTORY}{Http_Request::get('id')}">{$language.back}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}{Http_Request::get('id')}">{$language.back}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>
 {/block}

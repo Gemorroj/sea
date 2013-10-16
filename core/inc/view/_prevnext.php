@@ -10,7 +10,7 @@ if (Config::get('prev_next')) {
         FROM `files`
         WHERE `infolder` = ?
         AND `dir` = "0"
-        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+        ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
     $q->execute(array($directory['path']));
     $prevNext['count'] = $q->fetchColumn();
@@ -22,7 +22,7 @@ if (Config::get('prev_next')) {
             WHERE `id` > ?
             AND `infolder` = ?
             AND `dir` = "0"
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+            ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
         );
         $q->execute(array($id, $directory['path']));
         $next = $q->fetch();
@@ -33,7 +33,7 @@ if (Config::get('prev_next')) {
             WHERE `id` < ?
             AND `infolder` = ?
             AND `dir` = "0"
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+            ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
         );
         $q->execute(array($id, $directory['path']));
         $prev = $q->fetch();

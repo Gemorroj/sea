@@ -36,7 +36,7 @@
 
 define('IS_P_NAME', true);
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('search_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -64,7 +64,7 @@ if ($word != '') {
         SELECT COUNT(1)
         FROM `files`
         WHERE `name` LIKE ? OR `rus_name` LIKE ? OR `aze_name` LIKE ? OR `tur_name` LIKE ?
-        ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
+        ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')
     );
     $q->execute(array($sqlLikeWord, $sqlLikeWord, $sqlLikeWord, $sqlLikeWord));
     $all = $q->fetchColumn();
@@ -95,14 +95,14 @@ if ($word != '') {
             FROM `files`
             WHERE `infolder` LIKE CONCAT(`v`, "%")
             AND `timeupload` > ?
-            ' . (IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
+            ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
         ) AS `count`,
         `p_files`.`id` AS `p_id`,
         ' . Language::buildFilesQuery('p_files', 'p_name') . '
         FROM `files` AS `f`
         LEFT JOIN `files` AS `p_files` ON `p_files`.`dir` = "1" AND `p_files`.`path` = `f`.`infolder`
         WHERE `f`.`name` LIKE ? OR `f`.`rus_name` LIKE ? OR `f`.`aze_name` LIKE ? OR `f`.`tur_name` LIKE ?
-        ' . (IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
+        ' . (SEA_IS_ADMIN !== true ? 'AND `f`.`hidden` = "0"' : '') . '
         ORDER BY ' . Helper::getSortMode('f') . '
         LIMIT ?, ?
     ');
@@ -116,7 +116,7 @@ if ($word != '') {
 
     $query->execute();
 
-    require CORE_DIRECTORY . '/inc/_files.php';
+    require SEA_CORE_DIRECTORY . '/inc/_files.php';
 }
 
 $template->assign('paginatorConf', $paginatorConf);

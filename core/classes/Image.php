@@ -217,8 +217,8 @@ class Image
 
                     $a = sizeof($arr);
                     for ($i = 0; $i < $a; ++$i) {
-                        $tmp1 = CORE_DIRECTORY . '/tmp/' . uniqid('img_') . '.gif';
-                        $tmp2 = CORE_DIRECTORY . '/tmp/' . uniqid('img_') . '.gif';
+                        $tmp1 = SEA_CORE_DIRECTORY . '/tmp/' . uniqid('img_') . '.gif';
+                        $tmp2 = SEA_CORE_DIRECTORY . '/tmp/' . uniqid('img_') . '.gif';
 
                         file_put_contents($tmp1, $arr[$i]);
                         $resize = imagecreatefromgif($tmp1);
@@ -232,7 +232,7 @@ class Image
 
 
                         if ($marker) {
-                            $image_p = self::marker($image_p, imagecreatefrompng(CORE_DIRECTORY . '/resources/marker.png'));
+                            $image_p = self::marker($image_p, imagecreatefrompng(SEA_CORE_DIRECTORY . '/resources/marker.png'));
                         }
 
                         imagegif($image_p, $tmp2);
@@ -289,7 +289,7 @@ class Image
 
             case IMAGETYPE_BMP:
                 // BMP
-                $old = Image_Bmp::imagecreatefrombmp($in, CORE_DIRECTORY . '/tmp');
+                $old = Image_Bmp::imagecreatefrombmp($in, SEA_CORE_DIRECTORY . '/tmp');
                 break;
 
 
@@ -307,7 +307,7 @@ class Image
         imagecopyresampled($new, $old, 0, 0, 0, 0, $w, $h, $wn, $hn);
 
         if ($marker) {
-            $new = self::marker($new, imagecreatefrompng(CORE_DIRECTORY . '/resources/marker.png'));
+            $new = self::marker($new, imagecreatefrompng(SEA_CORE_DIRECTORY . '/resources/marker.png'));
         }
 
 

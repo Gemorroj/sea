@@ -45,8 +45,8 @@ class Media_Video
      */
     public static function getInfo($id, $path)
     {
-        if (is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
-            return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
+        if (is_file(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
+            return unserialize(file_get_contents(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat'));
         }
 
         $tmpa = array();
@@ -59,7 +59,7 @@ class Media_Video
                 'getDuration' => $mov->getDuration(),
                 'getBitRate' => $mov->getBitRate()
             );
-            file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmpa));
+            file_put_contents(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmpa));
         }
 
         return $tmpa;

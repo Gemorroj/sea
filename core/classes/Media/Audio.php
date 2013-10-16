@@ -45,11 +45,11 @@ class Media_Audio
      */
     public static function getInfo($id, $path)
     {
-        if (is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
-            return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
+        if (is_file(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
+            return unserialize(file_get_contents(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat'));
         }
 
-        $path = CORE_DIRECTORY . '/../' . $path;
+        $path = SEA_CORE_DIRECTORY . '/../' . $path;
 
 
         switch (strtolower(pathinfo($path, PATHINFO_EXTENSION))) {
@@ -71,7 +71,7 @@ class Media_Audio
                 break;
         }
 
-        file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmp));
+        file_put_contents(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($tmp));
         return $tmp;
     }
 

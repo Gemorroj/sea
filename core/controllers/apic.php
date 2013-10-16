@@ -36,11 +36,11 @@
 
 $id = intval(Http_Request::get('id'));
 
-if (!$id || !is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
+if (!$id || !is_file(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat')) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
-$data = unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
+$data = unserialize(file_get_contents(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat'));
 if ($data && $data['tag']['apic']) {
     $im = imagecreatefromstring($data['tag']['apic']);
     if ($im) {

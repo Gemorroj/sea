@@ -12,7 +12,7 @@
             {/if}
         </div>
     {else}
-        <form method="post" action="{$smarty.const.DIRECTORY}table/{Http_Request::get('id')}">
+        <form method="post" action="{$smarty.const.SEA_PUBLIC_DIRECTORY}table/{Http_Request::get('id')}">
             <div class="row">
                 <label>
                     {$language.inform_administration}<br/>
@@ -25,7 +25,7 @@
 
                 {if $setup.comments_captcha}
                     <label>
-                        <img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.DIRECTORY}kcaptcha?{session_name()}={session_id()}" /><br/>
+                        <img onclick="this.src=this.src+'&amp;'" alt="" src="{$smarty.const.SEA_PUBLIC_DIRECTORY}kcaptcha?{session_name()}={session_id()}" /><br/>
                         {$language.code}: <input class="enter" type="number" min="0" max="9999" required="required" name="keystring" size="5" maxlength="4"/><br/>
                     </label>
                 {/if}
@@ -39,8 +39,8 @@
 
 {block footer}
     <ul class="iblock">
-        <li><a href="{$smarty.const.DIRECTORY}{Http_Request::get('id')}">{$language.back}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}{Http_Request::get('id')}">{$language.back}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>
 {/block}

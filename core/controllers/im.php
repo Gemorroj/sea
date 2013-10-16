@@ -70,4 +70,4 @@ if (!is_file($cache)) {
 
 Http_Response::getInstance()
     ->setCache()
-    ->redirect(Helper::getUrl() . DIRECTORY . $cache, 301);
+    ->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . $cache, 301);

@@ -8,11 +8,11 @@
             <span class="yes">{$language.file_successfully_added}</span>
 
             {if !$setup.exchanger_hidden}
-                <br/><a href="{$smarty.const.DIRECTORY}view/{$insertId}">{Helerp::getUrl()}{$smarty.const.DIRECTORY}view/{$insertId}</a>
+                <br/><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{$insertId}">{Helerp::getUrl()}{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{$insertId}</a>
             {/if}
         </div>
     {else}
-        <form action="{$smarty.const.DIRECTORY}exchanger/{Http_Request::get('id')}" method="post" enctype="multipart/form-data">
+        <form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}exchanger/{Http_Request::get('id')}" method="post" enctype="multipart/form-data">
             <div class="row">
                 <label>
                     {$language.save}
@@ -43,8 +43,8 @@
 
 {block footer}
     <ul class="iblock">
-        <li><a href="{$smarty.const.DIRECTORY}{Http_Request::get('id')}">{$language.back}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}{Http_Request::get('id')}">{$language.back}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>
 {/block}

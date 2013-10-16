@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('cut_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -132,7 +132,7 @@ if (Http_Request::isPost()) {
             Files::updateFileLoad($id);
 
             $cut = array(
-                'link' => DIRECTORY . $randintval,
+                'link' => SEA_PUBLIC_DIRECTORY . $randintval,
                 'size' => $ras,
             );
         } else {

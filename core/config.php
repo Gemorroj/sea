@@ -35,14 +35,14 @@
 
 
 // внешняя директория с зц. по умолчанию корень сайта.
-define('DIRECTORY', '/');
+define('SEA_PUBLIC_DIRECTORY', '/');
 // порт на котором работает зц по http
 define('SEA_PORT_HTTP', 80);
 // порт на котором работает зц по https
 define('SEA_PORT_HTTPS', 443);
 
-define('CORE_DIRECTORY', dirname(__FILE__));
-define('PCLZIP_TEMPORARY_DIR', CORE_DIRECTORY . '/tmp/');
+define('SEA_CORE_DIRECTORY', dirname(__FILE__));
+define('PCLZIP_TEMPORARY_DIR', SEA_CORE_DIRECTORY . '/tmp/');
 
 mb_internal_encoding('UTF-8');
 
@@ -52,7 +52,7 @@ ini_set('session.use_only_cookies', '1');
 
 
 // автозагрузчик классов
-require_once CORE_DIRECTORY . '/classes/Autoload.php';
+require_once SEA_CORE_DIRECTORY . '/classes/Autoload.php';
 Autoload::init();
 
 // данные для соединения с БД
@@ -109,12 +109,12 @@ Routing::init(array(
 ));
 
 
-session_set_cookie_params(864000, DIRECTORY, Http_Request::getHost(), false, true);
-session_save_path(CORE_DIRECTORY . '/tmp');
+session_set_cookie_params(864000, SEA_DIRECTORY, Http_Request::getHost(), false, true);
+session_save_path(SEA_CORE_DIRECTORY . '/tmp');
 session_name('sea');
 session_start() or die('Can not start session');
 
-define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));
+define('SEA_IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));
 
 // Подключаем модуль партнерки
 //require CORE_CORE_DIRECTORY '/../partner/inc.php';

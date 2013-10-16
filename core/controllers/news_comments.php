@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('comments_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -86,7 +86,7 @@ if (Http_Request::isPost()) {
     }
 
     //Если нет ошибок пишем в базу
-    setcookie('sea_name', Http_Request::post('name'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, Http_Request::getHost(), false, true);
+    setcookie('sea_name', Http_Request::post('name'), $_SERVER['REQUEST_TIME'] + 86400000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
 
     $q = $db->prepare('
         INSERT INTO `news_comments` (
@@ -109,7 +109,7 @@ if (Http_Request::isPost()) {
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('comments.tpl');
 $template->assign('comments_module', 'news_comments');
-$template->assign('comments_module_backlink', DIRECTORY . 'news');
+$template->assign('comments_module_backlink', SEA_PUBLIC_DIRECTORY . 'news');
 $template->assign('comments_module_backname', Language::get('news'));
 
 

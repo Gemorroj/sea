@@ -60,13 +60,13 @@ if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' 
     while (!$fr = $mov->getFrame($i)) {
         $i--;
         if ($i <= 0) {
-            copy(CORE_DIRECTORY . '/resources/video.png', $cache);
+            copy(SEA_CORE_DIRECTORY . '/resources/video.png', $cache);
             break;
         }
     }
 
     if ($fr) {
-        $tmp = CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.png';
+        $tmp = SEA_CORE_DIRECTORY . '/tmp/' . uniqid('ffmpeg_') . '.png';
         imagepng($fr->toGDImage(), $tmp);
         Image::resize($tmp, $cache, 0, 0, Config::get('marker'));
         unlink($tmp);
@@ -76,4 +76,4 @@ if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' 
 
 Http_Response::getInstance()
     ->setCache()
-    ->redirect(Helper::getUrl() . DIRECTORY . $cache, 301);
+    ->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . $cache, 301);

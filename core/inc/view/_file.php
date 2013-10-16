@@ -16,11 +16,11 @@ $file['flash_file'] = '';
 
 // Скриншот
 if (is_file(Config::get('spath') . $screen . '.png')) {
-    $file['screen'] = DIRECTORY . Config::get('spath') . $screen . '.png';
+    $file['screen'] = SEA_PUBLIC_DIRECTORY . Config::get('spath') . $screen . '.png';
 } elseif (is_file(Config::get('spath') . $screen . '.gif')) {
-    $file['screen'] = DIRECTORY . Config::get('spath') . $screen . '.gif';
+    $file['screen'] = SEA_PUBLIC_DIRECTORY . Config::get('spath') . $screen . '.gif';
 } elseif (is_file(Config::get('spath') . $screen . '.jpg')) {
-    $file['screen'] = DIRECTORY . Config::get('spath') . $screen . '.jpg';
+    $file['screen'] = SEA_PUBLIC_DIRECTORY . Config::get('spath') . $screen . '.jpg';
 }
 
 // Описание
@@ -40,7 +40,7 @@ if ($file['attach']) {
         foreach ($attach as $k => $val) {
             $file['attachments'][$k] = array(
                 'name' => $val,
-                'link' => DIRECTORY . $dir . $id . '_' . $k . '_' . $val,
+                'link' => SEA_PUBLIC_DIRECTORY . $dir . $id . '_' . $k . '_' . $val,
                 'size' => filesize($dir . $id . '_' . $k . '_' . $val)
             );
         }
@@ -52,9 +52,9 @@ if ($file['attach']) {
 if (Media_Image::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
         if (is_file(Config::get('picpath') . '/' . $prev_pic . '.png')) {
-            $file['screen_file'] = DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.png';
+            $file['screen_file'] = SEA_PUBLIC_DIRECTORY . Config::get('picpath') . '/' . $prev_pic . '.png';
         } else {
-            $file['screen_file'] = DIRECTORY . 'im/' . $id;
+            $file['screen_file'] = SEA_PUBLIC_DIRECTORY . 'im/' . $id;
         }
     }
 
@@ -64,9 +64,9 @@ if (Media_Image::isSupported($ext)) {
     foreach (explode(',', Config::get('view_size')) as $val) {
         $wh = explode('*', $val);
         if (is_file(Config::get('picpath') . '/' . $wh[0] . 'x' . $wh[1] . '_' . $prev_pic . '.png')) {
-            $file['imagelink'][$val] = DIRECTORY . Config::get('picpath') . '/' . $wh[0] . 'x' . $wh[1] . '_' . $prev_pic . '.png';
+            $file['imagelink'][$val] = SEA_PUBLIC_DIRECTORY . Config::get('picpath') . '/' . $wh[0] . 'x' . $wh[1] . '_' . $prev_pic . '.png';
         } else {
-            $file['imagelink'][$val] = DIRECTORY . 'im/' . $id . '?w=' . $wh[0] . '&h=' . $wh[1];
+            $file['imagelink'][$val] = SEA_PUBLIC_DIRECTORY . 'im/' . $id . '?w=' . $wh[0] . '&h=' . $wh[1];
         }
     }
 }
@@ -81,9 +81,9 @@ if (Media_Video::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
         $frame = abs(Http_Request::get('frame', Config::get('ffmpeg_frame')));
         if (is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png')) {
-            $file['screen_file'] = DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png';
+            $file['screen_file'] = SEA_PUBLIC_DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . $frame . '.png';
         } else {
-            $file['screen_file'] = DIRECTORY . 'ffmpeg/' . $id . '?frame=' . $frame;
+            $file['screen_file'] = SEA_PUBLIC_DIRECTORY . 'ffmpeg/' . $id . '?frame=' . $frame;
         }
     }
 }
@@ -91,11 +91,11 @@ if (Media_Video::isSupported($ext)) {
 if (Media_Theme::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
         if (is_file(Config::get('tpath') . '/' . $prev_pic . '.png')) {
-            $file['screen_file'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
+            $file['screen_file'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
         } elseif (is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
-            $file['flash_file'] = DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
+            $file['flash_file'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
         } else {
-            $file['screen_file'] = DIRECTORY . 'theme/' . $id;
+            $file['screen_file'] = SEA_PUBLIC_DIRECTORY . 'theme/' . $id;
         }
     }
 
@@ -103,13 +103,13 @@ if (Media_Theme::isSupported($ext)) {
 }
 
 if (Config::get('swf_file_change') && $ext == 'swf') {
-    $file['flash_file'] = DIRECTORY . $file['path'];
+    $file['flash_file'] = SEA_PUBLIC_DIRECTORY . $file['path'];
 }
 
 if (Config::get('jar_file_change') && Media_Jar::isSupported($ext)) {
     if (is_file(Config::get('ipath') . '/' . $prev_pic . '.png')) {
-        $file['screen_file'] = DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
+        $file['screen_file'] = SEA_PUBLIC_DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
     } else {
-        $file['screen_file'] = DIRECTORY . 'jar/' . $id;
+        $file['screen_file'] = SEA_PUBLIC_DIRECTORY . 'jar/' . $id;
     }
 }

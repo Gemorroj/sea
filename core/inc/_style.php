@@ -5,13 +5,13 @@ if (Config::get('style_change')) {
         $stylePost = Helper::removeSchema(Http_Request::post('style'));
         if ($stylePost && Helper::isValidStyle($stylePost)) {
             $style = $stylePost;
-            setcookie('style', $style, $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, Http_Request::getHost(), false, true);
+            setcookie('style', $style, $_SERVER['REQUEST_TIME'] + 86400000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
         }
     } elseif (Http_Request::get('style')) {
         $styleGet = Helper::removeSchema(Http_Request::get('style'));
         if ($styleGet && Helper::isValidStyle($styleGet)) {
             $style = $styleGet;
-            setcookie('style', $style, $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, Http_Request::getHost(), false, true);
+            setcookie('style', $style, $_SERVER['REQUEST_TIME'] + 86400000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
         }
     } elseif (Http_Request::cookie('style')) {
         $styleCookie = Helper::removeSchema(Http_Request::cookie('style'));
@@ -19,8 +19,8 @@ if (Config::get('style_change')) {
             $style = $styleCookie;
         }
     } else {
-        $style = isset($_SESSION['style']) ? $_SESSION['style'] : Http_Request::getHost() . DIRECTORY . 'style/' . Config::get('css') . '.css';
+        $style = isset($_SESSION['style']) ? $_SESSION['style'] : Http_Request::getHost() . SEA_PUBLIC_DIRECTORY . 'style/' . Config::get('css') . '.css';
     }
 } else {
-    $style = Http_Request::getHost() . DIRECTORY . 'style/' . Config::get('css') . '.css';
+    $style = Http_Request::getHost() . SEA_PUBLIC_DIRECTORY . 'style/' . Config::get('css') . '.css';
 }

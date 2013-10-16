@@ -85,7 +85,7 @@ class Language
         if ($langpack && in_array($langpack, self::getLangpacks())) {
             self::$_langpack = $langpack;
             $_SESSION['langpack'] = $langpack;
-            self::$_language = include CORE_DIRECTORY . '/resources/language/' . self::$_langpack . '.dat';
+            self::$_language = include SEA_CORE_DIRECTORY . '/resources/language/' . self::$_langpack . '.dat';
 
             return true;
         }
@@ -108,7 +108,7 @@ class Language
         } else {
             self::$_langpack = $_SESSION['langpack'];
         }
-        self::$_language = include CORE_DIRECTORY . '/resources/language/' . self::$_langpack . '.dat';
+        self::$_language = include SEA_CORE_DIRECTORY . '/resources/language/' . self::$_langpack . '.dat';
     }
 
 
@@ -117,7 +117,7 @@ class Language
      */
     private function _loadLangpacks()
     {
-        foreach (glob(CORE_DIRECTORY . '/resources/language/*.dat') as $v) {
+        foreach (glob(SEA_CORE_DIRECTORY . '/resources/language/*.dat') as $v) {
             self::$_langpacks[] = pathinfo($v, PATHINFO_FILENAME);
         }
     }

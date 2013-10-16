@@ -32,7 +32,7 @@
             <a href="{$link}">{$val}</a>
         {/foreach}
 
-        <form action="{$smarty.const.DIRECTORY}im/{Http_Request::get('id')}" method="get">
+        <form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}im/{Http_Request::get('id')}" method="get">
             <div class="row">
                 <input class="enter" type="number" size="5" name="w" required="required" min="1" max="65536"/>x<input class="enter" type="number" size="5" name="h" required="required" min="1" max="65536"/><br/>
                 <input class="buttom" type="submit" value="{$language.download}"/>
@@ -71,7 +71,7 @@
             {$language.comments}: {$file.info.tag.comment}<br/>
         {/if}
         {if $file.info.tag.apic}
-            <a href="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}?full=1"><img src="{$smarty.const.DIRECTORY}apic/{Http_Request::get('id')}" alt=""/></a><br/>
+            <a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}apic/{Http_Request::get('id')}?full=1"><img src="{$smarty.const.SEA_PUBLIC_DIRECTORY}apic/{Http_Request::get('id')}" alt=""/></a><br/>
         {/if}
     {/if}
 
@@ -79,7 +79,7 @@
     {if Media_Video::isSupported($file.ext)}
         {if $setup.screen_file_change}
             {foreach ','|explode:$setup.ffmpeg_frames as $i => $frame}
-                <a href="{$smarty.const.DIRECTORY}view/{Http_Request::get('id')}?frame={$frame}">[{$i + 1}]</a>{if !$frame@last}, {/if}
+                <a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{Http_Request::get('id')}?frame={$frame}">[{$i + 1}]</a>{if !$frame@last}, {/if}
             {/foreach}
             <br/>
         {/if}
@@ -117,16 +117,16 @@
     {if $file.attachments}
         <strong>{$language.attachments}:</strong><br/>
         {foreach $file.attachments as $key => $val}
-            <a href="{$val.link}">{$val.name}</a> ({$val.size|sizeFormatExtended}) <a href="{$smarty.const.DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=del_attach&amp;attach={$key}" title="Удалить" class="no" onclick="return window.confirm('Удалить вложение?');">[X]</a><br/>
+            <a href="{$val.link}">{$val.name}</a> ({$val.size|sizeFormatExtended}) <a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=del_attach&amp;attach={$key}" title="Удалить" class="no" onclick="return window.confirm('Удалить вложение?');">[X]</a><br/>
         {/foreach}
     {/if}
 </div>
 
 
 {* администрирование *}
-{if $smarty.const.IS_ADMIN}
+{if $smarty.const.SEA_IS_ADMIN}
 <div class="iblock">
-    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={Http_Request::get('id')}&amp;action=move" method="post">
+    <form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/apanel.php?id={Http_Request::get('id')}&amp;action=move" method="post">
         <div>
             <label for="topath">Директория:</label>
             {html_options class='buttom' id='topath' name='topath' options=$dirs selected=$file.infolder}
@@ -135,7 +135,7 @@
         </div>
     </form>
 
-    <form action="{$smarty.const.DIRECTORY}apanel/apanel.php?id={Http_Request::get('id')}&amp;action=add_attach" method="post" enctype="multipart/form-data">
+    <form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/apanel.php?id={Http_Request::get('id')}&amp;action=add_attach" method="post" enctype="multipart/form-data">
         <div>
             <label for="attach">Вложение:</label>
             <input id="attach" name="attach" type="file" class="buttom" required="required" /><br/>

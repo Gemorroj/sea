@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (Http_Request::post('lib')) {
     $_SESSION['lib'] = intval(Http_Request::post('lib'));

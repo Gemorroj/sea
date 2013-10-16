@@ -501,8 +501,8 @@ class Media_Theme
      */
     protected static function _getThmInfo($id, $path)
     {
-        if (is_file(CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
-            return unserialize(file_get_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat'));
+        if (is_file(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat') === true) {
+            return unserialize(file_get_contents(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat'));
         }
 
         $ver_thm = array(
@@ -582,7 +582,7 @@ class Media_Theme
             }
         }
 
-        file_put_contents(CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($out));
+        file_put_contents(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat', serialize($out));
         return $out;
     }
 

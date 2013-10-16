@@ -162,7 +162,7 @@ class Http_Response
      */
     public function renderMessage($str = '')
     {
-        include_once CORE_DIRECTORY . '/header.php';
+        include_once SEA_CORE_DIRECTORY . '/header.php';
         $template = $this->getTemplate();
 
         $template
@@ -178,7 +178,7 @@ class Http_Response
      */
     public function renderError($str = '')
     {
-        include_once CORE_DIRECTORY . '/header.php';
+        include_once SEA_CORE_DIRECTORY . '/header.php';
         $template = $this->getTemplate();
 
         $template

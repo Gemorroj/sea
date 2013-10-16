@@ -50,13 +50,13 @@ $tmp = Config::get('jpath') . '/' . str_replace('/', '--', mb_substr(strstr($v['
 if (!is_file($tmp)) {
     $f = Helper::str2utf8(file_get_contents($v['path']));
 
-    copy(CORE_DIRECTORY . '/resources/book.zip', $tmp);
-    copy(CORE_DIRECTORY . '/resources/props.ini', Config::get('jpath') . '/props.ini');
-    copy(CORE_DIRECTORY . '/resources/MANIFEST.MF', Config::get('jpath') . '/MANIFEST.MF');
+    copy(SEA_CORE_DIRECTORY . '/resources/book.zip', $tmp);
+    copy(SEA_CORE_DIRECTORY . '/resources/props.ini', Config::get('jpath') . '/props.ini');
+    copy(SEA_CORE_DIRECTORY . '/resources/MANIFEST.MF', Config::get('jpath') . '/MANIFEST.MF');
 
     $arr = str_split($f, 25600);
     $all = sizeof($arr);
-    $ar = file(CORE_DIRECTORY . '/resources/props.ini');
+    $ar = file(SEA_CORE_DIRECTORY . '/resources/props.ini');
 
     $ar[] = chr(0) . chr(10) . chr(0) . wordwrap('J/textfile.txt.label=1', 1, chr(0), true);
     for ($i = 1; $i < $all; ++$i) {
@@ -110,4 +110,4 @@ MIDlet-Delete-Confirm: GoodBye =)',
     unlink(Config::get('jpath') . '/props.ini');
 }
 
-Http_Response::getInstance()->setCache()->redirect(Helper::getUrl() . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
+Http_Response::getInstance()->setCache()->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);

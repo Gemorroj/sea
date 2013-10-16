@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 $id = intval(Http_Request::get('id'));
 $file = Files::getFileInfo($id);
@@ -46,7 +46,7 @@ if (!$file || !is_file($file['path'])) {
 
 // Система голосований
 $vote = null;
-require CORE_DIRECTORY . '/inc/view/_vote.php';
+require SEA_CORE_DIRECTORY . '/inc/view/_vote.php';
 
 // рейтинг
 $rate = $file['yes'] + $file['no'];
@@ -65,7 +65,7 @@ Seo::unserialize($file['seo']);
 Breadcrumbs::init($file['path']);
 
 // данные по файлам
-require CORE_DIRECTORY . '/inc/view/_file.php';
+require SEA_CORE_DIRECTORY . '/inc/view/_file.php';
 
 
 // Директория
@@ -81,15 +81,15 @@ $commentsCount = $q->fetchColumn();
 
 // Последние комментарии
 $comments = array();
-require CORE_DIRECTORY . '/inc/view/_comments.php';
+require SEA_CORE_DIRECTORY . '/inc/view/_comments.php';
 
 // предыдущий/следующий файл
 $prevNext = array('prev' => array(), 'next' => array());
-require CORE_DIRECTORY . '/inc/view/_prevnext.php';
+require SEA_CORE_DIRECTORY . '/inc/view/_prevnext.php';
 
 $template = Http_Response::getInstance()->getTemplate();
 $template->setTemplate('view.tpl');
-$template->assign('dirs', (IS_ADMIN === true ? Files::getAllDirs() : array()));
+$template->assign('dirs', (SEA_IS_ADMIN === true ? Files::getAllDirs() : array()));
 $template->assign('prevNext', $prevNext);
 $template->assign('file', $file);
 $template->assign('directory', $directory);

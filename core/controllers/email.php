@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('send_email')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -64,13 +64,13 @@ if (Http_Request::isPost()) {
         Http_Response::getInstance()->renderError(Language::get('email_incorrect'));
     }
 
-    setcookie('sea_email', Http_Request::post('email'), $_SERVER['REQUEST_TIME'] + 86400000, DIRECTORY, Http_Request::getHost(), false, true);
+    setcookie('sea_email', Http_Request::post('email'), $_SERVER['REQUEST_TIME'] + 86400000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
     if (mail(
         Http_Request::post('email'),
         '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], Language::get('link_to_file'))) . '?=',
         str_replace(
             array('%file%', '%url%', '%link%'),
-            array($v['name'], Config::get('site_url'), Helper::getUrl() . DIRECTORY . 'view/' . $id),
+            array($v['name'], Config::get('site_url'), Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'view/' . $id),
             Language::get('email_message')
         ),
         "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"

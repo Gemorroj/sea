@@ -95,13 +95,13 @@ class Routing
     {
         foreach ($this->getRules() as $regexp => $path) {
             $matches = null;
-            if (preg_match('#^' . DIRECTORY . $regexp . '/*$#', $this->_getPath(), $matches)) {
+            if (preg_match('#^' . SEA_PUBLIC_DIRECTORY . $regexp . '/*$#', $this->_getPath(), $matches)) {
                 foreach ($matches as $key => $value) {
                     if (false === is_int($key)) {
                         Http_Request::addGet($key, $value);
                     }
                 }
-                return include CORE_DIRECTORY . '/controllers/' . $path;
+                return include SEA_CORE_DIRECTORY . '/controllers/' . $path;
                 break;
             }
         }

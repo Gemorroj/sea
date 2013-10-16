@@ -80,7 +80,7 @@ switch (Http_Request::get('action')) {
             Http_Response::getInstance()->render();
         }
 
-        $tmp = CORE_DIRECTORY . '/tmp/attach_' . $attach['name'];
+        $tmp = SEA_CORE_DIRECTORY . '/tmp/attach_' . $attach['name'];
         if (move_uploaded_file($attach['tmp_name'], $tmp) === false) {
             $err = error_get_last();
             $template->assign('error', $err['message']);
@@ -472,7 +472,7 @@ switch (Http_Request::get('action')) {
             }
 
             $screen = Http_Request::file('screen');
-            $tmp = CORE_DIRECTORY . '/tmp/screen_' . $screen['name'];
+            $tmp = SEA_CORE_DIRECTORY . '/tmp/screen_' . $screen['name'];
             if (move_uploaded_file($screen['tmp_name'], $tmp) === false) {
                 $err = error_get_last();
                 $template->assign('error', $err['message']);
@@ -541,7 +541,7 @@ switch (Http_Request::get('action')) {
                 Http_Response::getInstance()->render();
             }
 
-            $tmp_file = CORE_DIRECTORY . '/tmp/' . uniqid('addico_') . '.png';
+            $tmp_file = SEA_CORE_DIRECTORY . '/tmp/' . uniqid('addico_') . '.png';
             if (!move_uploaded_file($ico['tmp_name'], $tmp_file)) {
                 $template->assign('error', 'Не удалось переместить иконку');
                 Http_Response::getInstance()->render();
@@ -733,7 +733,7 @@ switch (Http_Request::get('action')) {
         $template->assign('comment', Helper::str2utf8($tags->getComment()));
 
         if (Http_Request::isPost()) {
-            @unlink(CORE_DIRECTORY . '/cache/' . $id . '.dat');
+            @unlink(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat');
 
             $name = mb_convert_encoding(Http_Request::post('name'), 'windows-1251', 'utf-8');
             $artist = mb_convert_encoding(Http_Request::post('artists'), 'windows-1251', 'utf-8');
@@ -780,7 +780,7 @@ switch (Http_Request::get('action')) {
 
             $all = 0;
             $write = 0;
-            $cacheDir = CORE_DIRECTORY . '/cache';
+            $cacheDir = SEA_CORE_DIRECTORY . '/cache';
 
             $q = $db->query('SELECT * FROM `files` WHERE `dir` = "0" AND `path` LIKE("%.mp3")');
             foreach ($q as $f) {
@@ -875,7 +875,7 @@ switch (Http_Request::get('action')) {
                             ($w / 2) - ($textLen * 3),
                             $y,
                             $color,
-                            CORE_DIRECTORY . '/resources/font.ttf',
+                            SEA_CORE_DIRECTORY . '/resources/font.ttf',
                             Http_Request::post('text')
                         );
 
@@ -1163,7 +1163,7 @@ switch (Http_Request::get('action')) {
         }
 
         $styles = array();
-        foreach (glob(CORE_DIRECTORY . '/../style/*.css', GLOB_NOESCAPE) as $v) {
+        foreach (glob(SEA_CORE_DIRECTORY . '/../style/*.css', GLOB_NOESCAPE) as $v) {
             $styles[] = pathinfo($v, PATHINFO_FILENAME);
         }
 

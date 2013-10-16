@@ -58,4 +58,4 @@ if (!is_file($tmp)) {
     $zip->create($v['path'], PCLZIP_CB_PRE_ADD, 'cb');
 }
 
-Http_Response::getInstance()->setCache()->redirect(Helper::getUrl() . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
+Http_Response::getInstance()->setCache()->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);

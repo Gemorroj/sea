@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('abuse_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));
@@ -57,7 +57,7 @@ Breadcrumbs::add('abuse/' . $id, Language::get('complain_about_a_file'));
 if (mail(
     Config::get('zakaz_email'),
     '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
-    'Получена жалоба на файл ' . Helper::getUrl() . DIRECTORY . 'view/' . $id . "\r\n" .
+    'Получена жалоба на файл ' . Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'view/' . $id . "\r\n" .
     'Браузер: ' . Http_Request::getUserAgent() . "\r\n" .
     'IP: ' . Http_Request::getIp(),
     "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"

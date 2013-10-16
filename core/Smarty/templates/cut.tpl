@@ -21,7 +21,7 @@
         </div>
     {/if}
 
-    <form action="{$smarty.const.DIRECTORY}cut/{Http_Request::get('id')}" method="post">
+    <form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}cut/{Http_Request::get('id')}" method="post">
         <div class="row">
             {$language.method_slicing}:<br/>
             <label><input class="enter" type="radio" name="way" value="time" {(!$smarty.post || ($smarty.post && $smarty.post.way == 'time')) ? 'checked="checked"' : ''}/> {$language.time}</label>
@@ -45,9 +45,9 @@
 
 {block footer}
     <ul class="iblock">
-        <li><a href="{$smarty.const.DIRECTORY}view/{Http_Request::get('id')}">{$file.name}</li>
-        <li><a href="{$smarty.const.DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
-        <li><a href="{$smarty.const.DIRECTORY}">{$language.downloads}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{Http_Request::get('id')}">{$file.name}</li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}settings/{Http_Request::get('id')}">{$language.settings}</a></li>
+        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}">{$language.downloads}</a></li>
         <li><a href="http://{$setup.site_url}">{$language.home}</a></li>
     </ul>
 {/block}

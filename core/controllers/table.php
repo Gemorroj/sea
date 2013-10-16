@@ -34,7 +34,7 @@
  */
 
 
-require_once CORE_DIRECTORY . '/header.php';
+require_once SEA_CORE_DIRECTORY . '/header.php';
 
 if (!Config::get('zakaz_change')) {
     Http_Response::getInstance()->renderError(Language::get('not_available'));

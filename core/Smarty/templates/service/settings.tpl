@@ -1,6 +1,6 @@
 {* настройки сервиса *}
 
-<form action="{$smarty.const.DIRECTORY}service?act=save" method="post">
+<form action="{$smarty.const.SEA_PUBLIC_DIRECTORY}service?act=save" method="post">
     <div class="row">
         <table>
             <tr>
@@ -61,7 +61,7 @@
     <div class="row">
         <label>
             {$language.service}<br/>
-            <input class="enter" type="text" value="{Helper::getUrl()}{$smarty.const.DIRECTORY}?user={$smarty.session.id}"/>
+            <input class="enter" type="text" value="{Helper::getUrl()}{$smarty.const.SEA_PUBLIC_DIRECTORY}?user={$smarty.session.id}"/>
         </label>
     </div>
 </form>
