@@ -35,8 +35,8 @@
  */
 class Routing
 {
-    protected static $_instance;
-    protected static $_rules = array();
+    private static $_instance;
+    private static $_rules = array();
 
 
     private function __construct()
