@@ -73,13 +73,29 @@ class Routing
     }
 
     /**
+     * @return string
+     */
+    protected function _getPath()
+    {
+        $queryString = Http_Request::getQueryString();
+        $queryStringLength = strlen($queryString);
+        $requestUri = Http_Request::getRequestUri();
+
+        if ($queryStringLength > 0) {
+            $requestUri = substr($requestUri, 0, -($queryStringLength + 1));
+        }
+
+        return $requestUri;
+    }
+
+    /**
      * @return int
      */
     public function handle()
     {
         foreach ($this->getRules() as $regexp => $path) {
             $matches = null;
-            if (preg_match('#^' . DIRECTORY . $regexp . '/*$#', Http_Request::getRequestUri(), $matches)) {
+            if (preg_match('#^' . DIRECTORY . $regexp . '/*$#', $this->_getPath(), $matches)) {
                 foreach ($matches as $key => $value) {
                     if (false === is_int($key)) {
                         Http_Request::addGet($key, $value);
