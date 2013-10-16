@@ -54,8 +54,8 @@ MySQL 5.0.7 или выше
 
 Чтобы вывести общее количество файлов следует выполнить следующий код
 
-require_once 'path_to_sea/core/classes/Db_Mysql.php';
-Db_Mysql::setOptions(array(
+require_once 'path_to_sea/core/classes/Db/Mysql.php';
+Db_Mysql::init(array(
     'host' => 'localhost',
     'dbname' => 'sea',
     'username' => 'root',

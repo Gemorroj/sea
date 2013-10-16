@@ -60,7 +60,7 @@ require_once CORE_DIRECTORY . '/classes/Autoload.php';
 Autoload::init();
 
 // данные для соединения с БД
-Db_Mysql::setOptions(array(
+Db_Mysql::init(array(
     'host' => 'localhost',
     'username' => 'mysql',
     'password' => 'mysql',
@@ -74,6 +74,42 @@ Http_Request::init();
 Http_Response::init(new Template());
 // Инициализируем переводы
 Language::init();
+
+// Инициализируем маршрутизацию
+Routing::init(array(
+    '(?P<id>[0-9]*)' => 'index.php',
+    '(?P<id>[0-9]+)/(?P<page>[0-9]+)' => 'index.php',
+    'view/(?P<id>[0-9]+)' => 'view.php',
+    'view_comments/(?P<id>[0-9]+)/*(?P<page>[0-9]*)' => 'view_comments.php',
+    'news/*(?P<page>[0-9]*)' => 'news.php',
+    'news_comments/(?P<id>[0-9]+)/*(?P<page>[0-9]*)' => 'news_comments.php',
+    'rate/(?P<i>[0-9]+)' => 'rate.php',
+    'search/*(?P<page>[0-9]*)' => 'search.php',
+    'top/*(?P<page>[0-9]*)' => 'top.php',
+    'new/*(?P<page>[0-9]*)' => 'new.php',
+    'load/(?P<id>[0-9]+)' => 'load.php',
+    'ffmpeg/(?P<id>[0-9]+)' => 'ffmpeg.php',
+    'apic/(?P<id>[0-9]+)' => 'apic.php',
+    'email/(?P<id>[0-9]+)' => 'email.php',
+    'abuse/(?P<id>[0-9]+)' => 'abuse.php',
+    'im/(?P<id>[0-9]+)' => 'im.php',
+    'theme/(?P<id>[0-9]+)' => 'theme.php',
+    'jar/(?P<id>[0-9]+)' => 'jar.php',
+    'jad/(?P<id>[0-9]+)' => 'jad.php',
+    'cut/(?P<id>[0-9]+)' => 'cut.php',
+    'txt_zip/(?P<id>[0-9]+)' => 'txt_zip.php',
+    'txt_jar/(?P<id>[0-9]+)' => 'txt_jar.php',
+    'settings/*(?P<id>[0-9]*)' => 'settings.php',
+    'stat/*(?P<id>[0-9]*)' => 'stat.php',
+    'table/*(?P<id>[0-9]*)' => 'table.php',
+    'exchanger/*(?P<id>[0-9]*)' => 'exchanger.php',
+    'service/*(?P<id>[0-9]*)' => 'service.php',
+    'rss' => 'rss.php',
+    'read/(?P<id>[0-9]+)/*(?P<page>[0-9]*)' => 'read.php',
+    'zip/(?P<id>[0-9]+)/*(?P<page>[0-9]*)' => 'zip.php',
+    'zip/(?P<action>preview)/(?P<id>[0-9]+)/(?P<name>.+)/(?P<page>[0-9]*)' => 'zip.php',
+    'zip/(?P<action>down)/(?P<id>[0-9]+)/(?P<name>.+)' => 'zip.php',
+));
 
 
 define('IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));

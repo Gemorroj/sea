@@ -85,7 +85,7 @@ class Db_Mysql extends PDO
     /**
      * @param array $options
      */
-    public static function setOptions(array $options)
+    public static function init(array $options)
     {
         self::$_options = $options;
     }

@@ -40,6 +40,7 @@ class Http_Request
     protected static $_cookies = array();
     protected static $_files = array();
     protected static $_queryString;
+    protected static $_requestUri;
     protected static $_ip;
     protected static $_host;
     protected static $_userAgent;
@@ -55,6 +56,7 @@ class Http_Request
         self::$_cookies = $_COOKIE;
         self::$_files = $_FILES;
         self::$_queryString = $_SERVER['QUERY_STRING'];
+        self::$_requestUri = $_SERVER['REQUEST_URI'];
         self::$_ip = $_SERVER['REMOTE_ADDR'];
         self::$_host = $_SERVER['HTTP_HOST'];
         self::$_userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -177,6 +179,14 @@ class Http_Request
     public static function getQueryString()
     {
         return self::$_queryString;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getRequestUri()
+    {
+        return self::$_requestUri;
     }
 
     /**
