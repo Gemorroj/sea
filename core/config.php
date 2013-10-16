@@ -36,6 +36,10 @@
 
 // внешняя директория с зц. по умолчанию корень сайта.
 define('DIRECTORY', '/');
+// порт на котором работает зц по http
+define('SEA_PORT_HTTP', 80);
+// порт на котором работает зц по https
+define('SEA_PORT_HTTPS', 443);
 
 define('CORE_DIRECTORY', dirname(__FILE__));
 define('PCLZIP_TEMPORARY_DIR', CORE_DIRECTORY . '/tmp/');

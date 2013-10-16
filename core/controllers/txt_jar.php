@@ -74,7 +74,7 @@ MIDlet-Name: ' . $nm . '
 MIDlet-Vendor: Gemor Reader
 MIDlet-1: ' . $nm . ', /icon.png, br.BookReader
 MIDlet-Version: 1.6
-MIDlet-Info-URL: http://' . $_SERVER['HTTP_HOST'] . '
+MIDlet-Info-URL: ' . Helper::getUrl() . '
 MIDlet-Delete-Confirm: GoodBye =)',
         FILE_APPEND
     );
@@ -110,4 +110,4 @@ MIDlet-Delete-Confirm: GoodBye =)',
     unlink(Config::get('jpath') . '/props.ini');
 }
 
-Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);
+Http_Response::getInstance()->setCache()->redirect(Helper::getUrl() . DIRECTORY . str_replace('%2F', '/', rawurlencode($tmp)), 301);

@@ -52,6 +52,7 @@ class Template extends Smarty
             ->registerPlugin('modifier', 'sizeFormatExtended', array($this, 'sizeFormatExtended'))
             ->registerPlugin('modifier', 'bbcode', array($this, 'bbcode'))
             ->registerPlugin('function', 'paginationExtended', array($this, 'paginationExtended'))
+            ->registerPlugin('function', 'getStyle', array($this, 'getStyle'))
             ->loadFilter('variable', 'htmlspecialchars');
 
         $this->compile_check = false;
@@ -128,6 +129,25 @@ class Template extends Smarty
                     return round($int / 1073741824, 2) . 'Gb';
                 }
             }
+        }
+    }
+
+
+    /**
+     * CSS стиль (костыль для поддержки различных протоколов)
+     * функция получения CSS стиля для Smarty
+     *
+     * @param array                    $params   parameters (style - путь к CSS стилю без http://)
+     * @param Smarty_Internal_Template $template template object
+     *
+     * @return string      путь к CSS стилю
+     */
+    public function getStyle($params, $template)
+    {
+        if (parse_url('http://' . $params['style'], PHP_URL_HOST) === Http_Request::getHost()) {
+            return substr($params['style'], strlen(Http_Request::getHost()));
+        } else {
+            return 'http://' . $params['style'];
         }
     }
 

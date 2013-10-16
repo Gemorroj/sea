@@ -54,5 +54,5 @@ Http_Response::getInstance()
     ->setCache()
     ->setHeader('Content-Type', 'text/vnd.sun.j2me.app-descriptor')
     ->setHeader('Content-Disposition', 'attachment; filename="' . rawurlencode(basename($v['path'])) . '.jad"')
-    ->setBody(trim($content[0]['content']) . "\n" . 'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" . 'MIDlet-Jar-URL: http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $v['path'])
+    ->setBody(trim($content[0]['content']) . "\n" . 'MIDlet-Jar-Size: ' . filesize($v['path']) . "\n" . 'MIDlet-Jar-URL: ' . Helper::getUrl() . DIRECTORY . $v['path'])
     ->renderBinary();

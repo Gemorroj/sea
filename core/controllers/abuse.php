@@ -57,7 +57,7 @@ Breadcrumbs::add('abuse/' . $id, Language::get('complain_about_a_file'));
 if (mail(
     Config::get('zakaz_email'),
     '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
-    'Получена жалоба на файл http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id . "\r\n" .
+    'Получена жалоба на файл ' . Helper::getUrl() . DIRECTORY . 'view/' . $id . "\r\n" .
     'Браузер: ' . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
     'IP: ' . $_SERVER['REMOTE_ADDR'],
     "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"

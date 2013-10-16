@@ -254,6 +254,19 @@ class Helper
 
 
     /**
+     * @return string
+     */
+    public static function getUrl()
+    {
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) {
+            return 'https://' . $_SERVER['HTTP_HOST'] . (SEA_PORT_HTTPS != 443 ? ':' . SEA_PORT_HTTPS : '');
+        }
+
+        return 'http://' . $_SERVER['HTTP_HOST'] . (SEA_PORT_HTTP != 80 ? ':' . SEA_PORT_HTTP : '');
+    }
+
+
+    /**
      * Проверяем расширение по черному списку
      *
      * @param string $ext

@@ -90,7 +90,7 @@ if ((Http_Request::post('p') && md5(Http_Request::post('p')) == Config::get('pas
         )
     );
 
-    Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'apanel/apanel.php');
+    Http_Response::getInstance()->redirect(Helper::getUrl() . DIRECTORY . 'apanel/apanel.php');
 } else {
     $db->exec('UPDATE loginlog SET access_num = access_num + 1 WHERE id = 1');
     Http_Response::getInstance()->renderError('Пароль введен неверно. Осталось попыток до блокировки: ' . (Config::get('countban') - $info['access_num']));

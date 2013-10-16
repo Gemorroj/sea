@@ -70,4 +70,4 @@ if (!is_file($cache)) {
 
 Http_Response::getInstance()
     ->setCache()
-    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);
+    ->redirect(Helper::getUrl() . DIRECTORY . $cache, 301);

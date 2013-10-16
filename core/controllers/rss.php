@@ -34,7 +34,7 @@
  */
 
 
-$link = 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'news';
+$link = Helper::getUrl() . DIRECTORY . 'news';
 
 $rss = new Rss(Language::get('news'), $link, Language::get('news'));
 

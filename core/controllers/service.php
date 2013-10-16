@@ -67,7 +67,7 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
         $_SESSION['mail'] = $assoc['mail'];
         $_SESSION['style'] = $assoc['style'];
 
-        Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
+        Http_Response::getInstance()->redirect(Helper::getUrl() . DIRECTORY . 'service');
     } else {
         Http_Response::getInstance()->renderError(Language::get('user_not_found'));
     }
@@ -141,7 +141,7 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
                     'From: robot@' . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
                 );
 
-                Http_Response::getInstance()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'service');
+                Http_Response::getInstance()->redirect(Helper::getUrl() . DIRECTORY . 'service');
             } else {
                 Http_Response::getInstance()->renderError(Language::get('error'));
             }

@@ -111,7 +111,7 @@
             <div class="row">
                 <label>
                     {$language.service}:<br/>
-                    <input class="enter" type="url" value="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}?url=somebody.com{if $setup.style_change}&amp;style={$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}style/{$setup.css}.css{/if}"/>
+                    <input class="enter" type="url" value="{Helper::getUrl()}{$smarty.const.DIRECTORY}?url=somebody.com{if $setup.style_change}&amp;style={$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}style/{$setup.css}.css{/if}"/>
                 </label>
 
                 <input class="buttom" type="submit" value="{$language.go}"/>

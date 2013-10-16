@@ -44,5 +44,5 @@ Files::updateFileLoad($id);
 
 Http_Response::getInstance()
     ->setCache()
-    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
+    ->redirect(Helper::getUrl() . DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
 

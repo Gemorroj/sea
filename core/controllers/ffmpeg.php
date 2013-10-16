@@ -76,4 +76,4 @@ if (substr($v['path'], 0, 1) != '.' && !is_file(Config::get('ffmpegpath') . '/' 
 
 Http_Response::getInstance()
     ->setCache()
-    ->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $cache, 301);
+    ->redirect(Helper::getUrl() . DIRECTORY . $cache, 301);

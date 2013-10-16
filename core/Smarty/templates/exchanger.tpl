@@ -8,7 +8,7 @@
             <span class="yes">{$language.file_successfully_added}</span>
 
             {if !$setup.exchanger_hidden}
-                <br/><a href="{$smarty.const.DIRECTORY}view/{$insertId}">http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}view/{$insertId}</a>
+                <br/><a href="{$smarty.const.DIRECTORY}view/{$insertId}">{Helerp::getUrl()}{$smarty.const.DIRECTORY}view/{$insertId}</a>
             {/if}
         </div>
     {else}

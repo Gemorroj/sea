@@ -42,7 +42,7 @@ if (!$v || !is_file($v['path'])) {
 $location = Media_Jar::getImage($v['path']);
 
 if ($location !== null) {
-    Http_Response::getInstance()->setCache()->redirect('http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . $location, 301);
+    Http_Response::getInstance()->setCache()->redirect(Helper::getUrl() . DIRECTORY . $location, 301);
 } else {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }

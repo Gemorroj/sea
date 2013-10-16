@@ -124,7 +124,7 @@
             <strong><a href="{$smarty.const.DIRECTORY}jad/{Http_Request::get('id')}">{$language.download} [JAD]</a></strong><br/>
         {/if}
 
-        <input class="enter" size="50" type="url" value="http://{$smarty.server.HTTP_HOST}{$smarty.const.DIRECTORY}{$file.path}"/><br/>
+        <input class="enter" size="50" type="url" value="{Helper::getUrl()}{$smarty.const.DIRECTORY}{$file.path}"/><br/>
         {if $setup.send_email}
             <a href="{$smarty.const.DIRECTORY}email/{Http_Request::get('id')}">{$language.send_a_link_to_email}</a><br/>
         {/if}

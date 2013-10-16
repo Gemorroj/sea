@@ -70,7 +70,7 @@ if (Http_Request::isPost()) {
         '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], Language::get('link_to_file'))) . '?=',
         str_replace(
             array('%file%', '%url%', '%link%'),
-            array($v['name'], Config::get('site_url'), 'http://' . $_SERVER['HTTP_HOST'] . DIRECTORY . 'view/' . $id),
+            array($v['name'], Config::get('site_url'), Helper::getUrl() . DIRECTORY . 'view/' . $id),
             Language::get('email_message')
         ),
         "From: robot@" . $_SERVER['HTTP_HOST'] . "\r\nContent-type: text/plain; charset=UTF-8"
