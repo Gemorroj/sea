@@ -50,13 +50,13 @@ $db = Db_Mysql::getInstance();
 
 $db->exec('REPLACE INTO `loginlog` SET `time` = UNIX_TIMESTAMP(), `access_num` = 0, `id` = 1');
 if (!$_SESSION) {
-    exit('Не запущена сессия');
+    Http_Response::getInstance()->renderError('Не запущена сессия');
 }
 if (!isset($_SESSION['authorise']) || !isset($_SESSION['ipu'])) {
-    exit('В сессии недостаточно данных для авторизации');
+    Http_Response::getInstance()->renderError('В сессии недостаточно данных для авторизации');
 }
 if ($_SESSION['authorise'] != Config::get('password') || $_SESSION['ipu'] != $_SERVER['REMOTE_ADDR']) {
-    exit('Авторизация не пройдена');
+    Http_Response::getInstance()->renderError('Авторизация не пройдена');
 }
 
 

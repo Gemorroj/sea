@@ -101,6 +101,7 @@ Routing::init(array(
     'table/*(?P<id>[0-9]*)' => 'table.php',
     'exchanger/*(?P<id>[0-9]*)' => 'exchanger.php',
     'service/*(?P<id>[0-9]*)' => 'service.php',
+    'kcaptcha' => 'kcaptcha.php',
     'rss' => 'rss.php',
     'read/(?P<id>[0-9]+)/*(?P<page>[0-9]*)' => 'read.php',
     'zip/(?P<id>[0-9]+)/*(?P<page>[0-9]*)' => 'zip.php',
