@@ -96,30 +96,32 @@ foreach ($query as $v) {
             $thumb = Config::get('spath') . $screen . '.thumb.png';
             $th = is_file($thumb) || is_file($thumb . '.gif');
 
-            if (!$th && is_file(Config::get('spath') . $screen . '.png')) {
-                $th = Image::resize(
-                    Config::get('spath') . $screen . '.png',
-                    $thumb,
-                    0,
-                    0,
-                    Config::get('marker')
-                );
-            } elseif (!$th && is_file(Config::get('spath') . $screen . '.gif')) {
-                $th = Image::resize(
-                    Config::get('spath') . $screen . '.gif',
-                    $thumb,
-                    0,
-                    0,
-                    Config::get('marker')
-                );
-            } elseif (!$th && is_file(Config::get('spath') . $screen . '.jpg')) {
-                $th = Image::resize(
-                    Config::get('spath') . $screen . '.jpg',
-                    $thumb,
-                    0,
-                    0,
-                    Config::get('marker')
-                );
+            if (!$th) {
+                if (is_file(Config::get('spath') . $screen . '.png')) {
+                    $th = Image::resize(
+                        Config::get('spath') . $screen . '.png',
+                        $thumb,
+                        0,
+                        0,
+                        Config::get('marker')
+                    );
+                } elseif (is_file(Config::get('spath') . $screen . '.gif')) {
+                    $th = Image::resize(
+                        Config::get('spath') . $screen . '.gif',
+                        $thumb,
+                        0,
+                        0,
+                        Config::get('marker')
+                    );
+                } elseif (is_file(Config::get('spath') . $screen . '.jpg')) {
+                    $th = Image::resize(
+                        Config::get('spath') . $screen . '.jpg',
+                        $thumb,
+                        0,
+                        0,
+                        Config::get('marker')
+                    );
+                }
             }
 
             if ($th) {
