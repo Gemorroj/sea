@@ -129,7 +129,7 @@
     </div>
 
     <div data-role="fieldcontain">
-        <label for="day_new">Время новых файлов (дней, 0 - выключено):</label>
+        <label for="day_new">Время новых файлов (в днях, 0 - выключено. влияет на производительность):</label>
         <input required="required" id="day_new" name="day_new" type="number" value="{$setup.day_new}"/>
     </div>
 

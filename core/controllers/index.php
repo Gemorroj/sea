@@ -98,7 +98,6 @@ if (SEA_IS_INDEX) {
 }
 
 
-
 $query = $db->prepare('
     SELECT
     `id`,
@@ -112,23 +111,24 @@ $query = $db->prepare('
     `yes`,
     `no`,
     `hidden`,
+    ' . (Config::get('day_new') ? '
     (
         SELECT COUNT(1)
         FROM `files`
         WHERE `infolder` LIKE CONCAT(`v`, "%")
-        AND `timeupload` > ?
+        AND `timeupload` > ' . ($_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new'))) . '
         ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
-    ) AS `count`
+    )' : 'NULL') . ' AS `count`
     FROM `files`
     WHERE `infolder` = ?
     ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '') . '
     ORDER BY ' . Helper::getSortMode() . '
     LIMIT ?, ?
 ');
-$query->bindValue(1, $_SERVER['REQUEST_TIME'] - (86400 * Config::get('day_new')), PDO::PARAM_INT);
-$query->bindValue(2, $d['path']);
-$query->bindValue(3, $paginatorConf['start'], PDO::PARAM_INT);
-$query->bindValue(4, $paginatorConf['onpage'], PDO::PARAM_INT);
+
+$query->bindValue(1, $d['path']);
+$query->bindValue(2, $paginatorConf['start'], PDO::PARAM_INT);
+$query->bindValue(3, $paginatorConf['onpage'], PDO::PARAM_INT);
 
 $query->execute();
 

@@ -34,9 +34,8 @@
  */
 
 
+define('SEA_START_TIME', microtime(true));
 require dirname(__FILE__) . '/../core/config.php';
-
-$HeadTime = microtime(true);
 $db = Db_Mysql::getInstance();
 
 $info = $db->query('SELECT * FROM loginlog WHERE id = 1')->fetch();

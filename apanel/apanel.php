@@ -33,10 +33,9 @@
  * @license http://www.opensource.org/licenses/bsd-license.php New BSD License
  */
 
-
+define('SEA_START_TIME', microtime(true));
 @set_time_limit(99999);
 ignore_user_abort(true);
-$HeadTime = microtime(true);
 chdir('../');
 
 require dirname(__FILE__) . '/../core/config.php';
