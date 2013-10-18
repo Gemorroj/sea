@@ -84,15 +84,19 @@ $template->assign('paginatorConf', $paginatorConf);
 Breadcrumbs::init($d['path'], true);
 
 
-/// новости
-$news = $db->query('
-    SELECT *, ' . Language::buildNewsQuery() . '
-    FROM `news`
-    ORDER BY `id` DESC
-    LIMIT 1
-')->fetch();
+// только если главная
+if (SEA_IS_INDEX) {
+    // новости
+    $news = $db->query('
+        SELECT *, ' . Language::buildNewsQuery() . '
+        FROM `news`
+        ORDER BY `id` DESC
+        LIMIT 1
+    ')->fetch();
 
-$template->assign('news', $news);
+    $template->assign('news', $news);
+}
+
 
 
 $query = $db->prepare('
