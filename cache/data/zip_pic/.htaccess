@@ -1,6 +1,6 @@
-deny from all
+Deny from all
 
 <Files ~ "\.png$|\.gif$|\.jpg$|\.jpe$|\.jpeg$|\.bmp$">
-Order deny,allow
-allow from All
+    Order deny,allow
+    Allow from all
 </Files>

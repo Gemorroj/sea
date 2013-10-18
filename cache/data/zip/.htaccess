@@ -1,6 +1,6 @@
-deny from all
+Deny from all
 
 <Files ~ "\.zip$">
-Order deny,allow
-allow from All
+    Order deny,allow
+    Allow from all
 </Files>
