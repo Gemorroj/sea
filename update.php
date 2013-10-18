@@ -34,6 +34,7 @@
  */
 
 
+define('SEA_START_TIME', microtime(true));
 require dirname(__FILE__) . '/core/config.php';
 
 set_time_limit(1000);

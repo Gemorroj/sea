@@ -34,10 +34,12 @@
  */
 
 error_reporting(0);
+define('SEA_START_TIME', microtime(true));
 require dirname(__FILE__) . '/core/config.php';
 
 set_time_limit(1000);
 ignore_user_abort(true);
+
 
 $body = '<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
@@ -49,40 +51,71 @@ $body = '<!DOCTYPE html>
         <div>
 ';
 
+
 if (!Http_Request::get('level')) {
+    $ok = '<span style="font-weight: bold; color: green">OK</span>';
+    $fail = '<span style="font-weight: bold; color: red">Fail</span>';
     $body .= '
-    <fieldset><legend>Введите ваши данные</legend>
+    <fieldset><legend>Проверка</legend>
         <form action="' . $_SERVER['PHP_SELF'] . '?level=1" method="post">
             <div>
-                Пароль админа: <input required="required" name="pass" type="text" value="1234" maxlength="255"/><br/>
-                <input type="submit" value="Установка"/>
+                PHP ' . PHP_VERSION . ' - ' .(version_compare(PHP_VERSION, '5.2.1', '>=') ? $ok : $fail) . '<br/>
+                Mbstring: ' . (extension_loaded('mbstring') && function_exists('mb_split') ? $ok : $fail) . '<br/>
+                SimpleXML: ' . (extension_loaded('SimpleXML') ? $ok : $fail) . '<br/>
+                GD: ' . (extension_loaded('gd') ? $ok : $fail) . '<br/>
+                PDO: ' . (extension_loaded('pdo_mysql') ? $ok : $fail) . '<br/>
+                CURL: ' . (extension_loaded('curl') ? $ok : $fail) . '<br/>
+                Filter: ' . (extension_loaded('filter') ? $ok : $fail) . '<br/>
+                FFmpeg (не обязательно): ' . (extension_loaded('ffmpeg') ? $ok : $fail) . '<br/>
+                PHP акселератор (не обязательно): ' . ((extension_loaded('eaccelerator') && ini_get('eaccelerator.enable')) || (extension_loaded('apc') && ini_get('apc.enabled')) || (extension_loaded('Zend OPcache') && ini_get('opcache.enable')) || (extension_loaded('xcache') && ini_get('xcache.cacher')) || (extension_loaded('wincache') && ini_get('wincache.ocenabled')) ? $ok : $fail) . '<br/>
+                session_start: ' . (function_exists('session_start') && session_start() && session_destroy() ? $ok : $fail) . '<br/>
+                magic_quotes_gpc: ' . (!ini_get('magic_quotes_gpc') ? $ok : $fail) . '<br/>
+                register_globals: ' . (!ini_get('register_globals') ? $ok : $fail) . '<br/>
             </div>
+            <hr/>
+            <div>
+                files/ - ' . (is_writable('files/') ? $ok : $fail) . '<br/>
+                core/cache/ - ' . (is_writable('core/cache/') ? $ok : $fail) . '<br/>
+                core/tmp/ - ' . (is_writable('core/tmp/') ? $ok : $fail) . '<br/>
+                core/Smarty/templates_c/ - ' . (is_writable('core/Smarty/templates_c/') ? $ok : $fail) . '<br/>
+                core/Smarty/cache/ - ' . (is_writable('core/Smarty/cache/') ? $ok : $fail) . '<br/>
+                cache/about/ - ' . (is_writable('cache/about/') ? $ok : $fail) . '<br/>
+                cache/attach/ - ' . (is_writable('cache/attach/') ? $ok : $fail) . '<br/>
+                cache/screen/ - ' . (is_writable('cache/screen/') ? $ok : $fail) . '<br/>
+                cache/data/mp3/ - ' . (is_writable('cache/data/mp3/') ? $ok : $fail) . '<br/>
+                cache/data/zip/ - ' . (is_writable('cache/data/zip/') ? $ok : $fail) . '<br/>
+                cache/data/zip_pic/ - ' . (is_writable('cache/data/zip_pic/') ? $ok : $fail) . '<br/>
+                cache/data/jar/ - ' . (is_writable('cache/data/jar/') ? $ok : $fail) . '<br/>
+                cache/data/jar_ico/ - ' . (is_writable('cache/data/jar_ico/') ? $ok : $fail) . '<br/>
+                cache/data/theme/ - ' . (is_writable('cache/data/theme/') ? $ok : $fail) . '<br/>
+                cache/data/ffmpeg/ - ' . (is_writable('cache/data/ffmpeg/') ? $ok : $fail) . '<br/>
+                cache/data/pic/ - ' . (is_writable('cache/data/pic/') ? $ok : $fail) . '<br/>
+            </div>
+            <div><input type="submit" value="Продолжить"/></div>
         </form>
     </fieldset>
     ';
-} else {
+} elseif (Http_Request::get('level') == '1') {
+    $body .= '
+    <fieldset><legend>Введите ваши данные</legend>
+        <form action="' . $_SERVER['PHP_SELF'] . '?level=2" method="post">
+            <div>
+                Пароль админа: <input required="required" name="pass" type="text" value="1234" maxlength="255"/><br/>
+                Тип таблиц: <select name="engine"><option value="innodb" selected="selected">InnoDB</option><option value="myisam">MyISAM</option></select><br/>
+            </div>
+            <div><input type="submit" value="Установка"/></div>
+        </form>
+    </fieldset>
+    ';
+} elseif (Http_Request::get('level') == '2') {
     $db = Db_Mysql::getInstance();
     $errors = array();
-
-    chmod('files/', 0777);
-    chmod('core/cache/', 0777);
-    chmod('core/tmp/', 0777);
-    chmod('cache/about/', 0777);
-    chmod('cache/attach/', 0777);
-    chmod('cache/screen/', 0777);
-    chmod('cache/data/mp3/', 0777);
-    chmod('cache/data/zip/', 0777);
-    chmod('cache/data/zip_pic/', 0777);
-    chmod('cache/data/jar/', 0777);
-    chmod('cache/data/jar_ico/', 0777);
-    chmod('cache/data/theme/', 0777);
-    chmod('cache/data/ffmpeg/', 0777);
-    chmod('cache/data/pic/', 0777);
+    $pass = md5(Http_Request::post('pass'));
+    $engine = Http_Request::post('engine') !== 'innodb' ? 'myisam' : 'innodb';
 
     $db->exec('DROP TABLE IF EXISTS `files`,`comments`,`online`,`setting`,`loginlog`,`news`,`news_comments`,`users_profiles`,`users_settings`');
 
-    $sql
-        = "CREATE TABLE `files` (
+    $sql = "CREATE TABLE `files` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `dir` enum('0','1') NOT NULL default '0',
       `dir_count` int(11) unsigned NOT NULL default '0',
@@ -109,14 +142,13 @@ if (!Http_Request::get('level')) {
       KEY `yes` (`yes`),
       KEY `infolder` (`infolder`),
       KEY `infolder_timeupload` (`infolder`,`timeupload`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $sql
-        = "CREATE TABLE `comments` (
+    $sql = "CREATE TABLE `comments` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `file_id` int(11) unsigned NOT NULL,
       `name` varchar(255) NOT NULL,
@@ -124,14 +156,13 @@ if (!Http_Request::get('level')) {
       `time` int(11) unsigned NOT NULL,
       PRIMARY KEY (`id`),
       KEY `file_id` (`file_id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $sql
-        = "CREATE TABLE `online` (
+    $sql = "CREATE TABLE `online` (
       `ip` varchar(23) NOT NULL,
       `time` datetime NOT NULL,
       UNIQUE KEY `ip` (`ip`)
@@ -141,33 +172,30 @@ if (!Http_Request::get('level')) {
     }
 
 
-    $sql
-        = "CREATE TABLE `setting` (
+    $sql = "CREATE TABLE `setting` (
       `name` varchar(32) NOT NULL,
       `value` varchar(1023) NOT NULL,
       UNIQUE KEY `name` (`name`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $sql
-        = "CREATE TABLE IF NOT EXISTS `loginlog` (
+    $sql = "CREATE TABLE IF NOT EXISTS `loginlog` (
       `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `ua` varchar(255) NOT NULL,
       `ip` varchar(23) NOT NULL,
       `time` int(10) unsigned NOT NULL,
       `access_num` tinyint(3) unsigned NOT NULL,
       PRIMARY KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=1 ;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=1 ;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $sql
-        = "CREATE TABLE `news` (
+    $sql = "CREATE TABLE `news` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `news` text NOT NULL,
       `rus_news` text NOT NULL,
@@ -175,14 +203,13 @@ if (!Http_Request::get('level')) {
       `tur_news` text NOT NULL,
       `time` int(11) unsigned NOT NULL default '0',
       PRIMARY KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $sql
-        = "CREATE TABLE `news_comments` (
+    $sql = "CREATE TABLE `news_comments` (
       `id` int(11) unsigned NOT NULL auto_increment,
       `id_news` int(11) unsigned NOT NULL,
       `text` text NOT NULL,
@@ -190,14 +217,13 @@ if (!Http_Request::get('level')) {
       `time` int(11) unsigned NOT NULL default '0',
       PRIMARY KEY (`id`),
       KEY `id_news` (`id_news`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $sql
-        = "CREATE TABLE `users_profiles` (
+    $sql = "CREATE TABLE `users_profiles` (
       `id` int(10) unsigned NOT NULL auto_increment,
       `url` varchar(255) NOT NULL COMMENT 'ссылка на главную партнера',
       `name` varchar(255) NOT NULL COMMENT 'название ссылки',
@@ -205,27 +231,26 @@ if (!Http_Request::get('level')) {
       `mail` varchar(255) NOT NULL,
       `style` varchar(255) NOT NULL,
       PRIMARY KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=8 ;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED AUTO_INCREMENT=8 ;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $sql
-        = "CREATE TABLE `users_settings` (
+    $sql = "CREATE TABLE `users_settings` (
       `parent_id` int(10) unsigned NOT NULL,
       `position` enum('0','1') NOT NULL default '0' COMMENT 'позиция ссылки. 0 - верх, 1 - низ',
       `name` varchar(255) NOT NULL COMMENT 'название ссылки',
       `value` varchar(255) default NULL COMMENT 'текст ссылки',
       KEY `parent_id` (`parent_id`),
       KEY `parent_id_position` (`parent_id`,`position`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;";
+    ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;";
     if ($db->exec($sql) === false) {
         $errors[] = $db->errorInfo();
     }
 
 
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . md5(trim(Http_Request::post('pass'))) . "')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'password','" . $pass . "')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'path', 'files')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'opath', 'cache/about')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'apath', 'cache/attach')");
@@ -343,6 +368,8 @@ if (!Http_Request::get('level')) {
         </p>
     </fieldset>
     ';
+} else {
+    $body .= 'Ошибка';
 }
 
 
