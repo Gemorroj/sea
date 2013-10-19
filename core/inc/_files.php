@@ -94,7 +94,11 @@ foreach ($query as $v) {
         // скриншот
         if (Config::get('screen_change')) {
             $thumb = Config::get('spath') . $screen . '.thumb.png';
-            $th = is_file($thumb) || is_file($thumb . '.gif');
+            $th = is_file($thumb);
+            if (!$th) {
+                $thumb = $thumb . '.gif';
+                $th = is_file($thumb);
+            }
 
             if (!$th) {
                 if (is_file(Config::get('spath') . $screen . '.png')) {
