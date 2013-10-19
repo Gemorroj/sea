@@ -44,7 +44,7 @@ class Autoload
     private function __construct()
     {
         set_include_path(
-            get_include_path() . PATH_SEPARATOR . SEA_CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR'
+            SEA_CORE_DIRECTORY . DIRECTORY_SEPARATOR . 'PEAR' . PATH_SEPARATOR . get_include_path()
         );
 
         spl_autoload_register(array($this, '_classes'));
