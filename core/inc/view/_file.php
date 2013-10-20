@@ -96,7 +96,7 @@ if (Media_Image::isSupported($ext)) {
     }
 
     $file['info'] = Media_Theme::getInfo($id, $file['path']);
-} elseif (Config::get('swf_file_change') && $ext == 'swf') {
+} elseif (Config::get('swf_file_change') && Media_Flash::isSupported($ext)) {
     $file['flash_file'] = SEA_PUBLIC_DIRECTORY . $file['path'];
 } elseif (Config::get('jar_file_change') && Media_Jar::isSupported($ext)) {
     if (is_file(Config::get('ipath') . '/' . $prev_pic . '.png')) {

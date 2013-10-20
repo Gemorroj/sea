@@ -68,7 +68,7 @@ foreach ($query as $v) {
                 } else {
                     $v['pre'] = SEA_PUBLIC_DIRECTORY . 'jar/' . $v['id'];
                 }
-            } elseif (Config::get('swf_change') && $ext == 'swf') {
+            } elseif (Config::get('swf_change') && Media_Flash::isSupported($ext)) {
                 $v['pre'] = SEA_PUBLIC_DIRECTORY . $v['v'];
             }
         }
