@@ -69,13 +69,9 @@ if (Media_Image::isSupported($ext)) {
             $file['imagelink'][$val] = SEA_PUBLIC_DIRECTORY . 'im/' . $id . '?w=' . $wh[0] . '&h=' . $wh[1];
         }
     }
-}
-
-if (Media_Audio::isSupported($ext)) {
+} elseif (Media_Audio::isSupported($ext)) {
     $file['info'] = Media_Audio::getInfo($id, $file['path']);
-}
-
-if (Media_Video::isSupported($ext)) {
+} elseif (Media_Video::isSupported($ext)) {
     $file['info'] = Media_Video::getInfo($id, $file['path']);
 
     if (Config::get('screen_file_change')) {
@@ -86,12 +82,12 @@ if (Media_Video::isSupported($ext)) {
             $file['screen_file'] = SEA_PUBLIC_DIRECTORY . 'ffmpeg/' . $id . '?frame=' . $frame;
         }
     }
-}
-
-if (Media_Theme::isSupported($ext)) {
+} elseif (Media_Theme::isSupported($ext)) {
     if (Config::get('screen_file_change')) {
         if (is_file(Config::get('tpath') . '/' . $prev_pic . '.png')) {
             $file['screen_file'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
+        } elseif (is_file(Config::get('tpath') . '/' . $prev_pic . '.png.gif')) {
+            $file['screen_file'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.gif';
         } elseif (is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
             $file['flash_file'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
         } else {
@@ -100,13 +96,9 @@ if (Media_Theme::isSupported($ext)) {
     }
 
     $file['info'] = Media_Theme::getInfo($id, $file['path']);
-}
-
-if (Config::get('swf_file_change') && $ext == 'swf') {
+} elseif (Config::get('swf_file_change') && $ext == 'swf') {
     $file['flash_file'] = SEA_PUBLIC_DIRECTORY . $file['path'];
-}
-
-if (Config::get('jar_file_change') && Media_Jar::isSupported($ext)) {
+} elseif (Config::get('jar_file_change') && Media_Jar::isSupported($ext)) {
     if (is_file(Config::get('ipath') . '/' . $prev_pic . '.png')) {
         $file['screen_file'] = SEA_PUBLIC_DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
     } else {

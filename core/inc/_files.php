@@ -46,40 +46,30 @@ foreach ($query as $v) {
                 } else {
                     $v['pre'] = SEA_PUBLIC_DIRECTORY . 'im/' . $v['id'];
                 }
-            } else {
-                if (Config::get('screen_change') && Media_Video::isSupported($ext)) {
-                    if (is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.png')) {
-                        $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.png';
-                    } else {
-                        $v['pre'] = SEA_PUBLIC_DIRECTORY . 'ffmpeg/' . $v['id'];
-                    }
+            } elseif (Config::get('screen_change') && Media_Video::isSupported($ext)) {
+                if (is_file(Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.png')) {
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('ffmpegpath') . '/' . $prev_pic . '_frame_' . Config::get('ffmpeg_frame') . '.png';
                 } else {
-                    if (Config::get('screen_change') && Media_Theme::isSupported($ext)) {
-                        if (is_file(Config::get('tpath') . '/' . $prev_pic . '.png')) {
-                            $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
-                        } else {
-                            if (Config::get('swf_change') && is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
-                                $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
-                            } else {
-                                if (!is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
-                                    $v['pre'] = SEA_PUBLIC_DIRECTORY . 'theme/' . $v['id'];
-                                }
-                            }
-                        }
-                    } else {
-                        if (Config::get('jar_change') && Media_Jar::isSupported($ext)) {
-                            if (is_file(Config::get('ipath') . '/' . $prev_pic . '.png')) {
-                                $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
-                            } else {
-                                $v['pre'] = SEA_PUBLIC_DIRECTORY . 'jar/' . $v['id'];
-                            }
-                        } else {
-                            if (Config::get('swf_change') && $ext == 'swf') {
-                                $v['pre'] = SEA_PUBLIC_DIRECTORY . $v['v'];
-                            }
-                        }
-                    }
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . 'ffmpeg/' . $v['id'];
                 }
+            } elseif (Config::get('screen_change') && Media_Theme::isSupported($ext)) {
+                if (is_file(Config::get('tpath') . '/' . $prev_pic . '.png')) {
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
+                } elseif (is_file(Config::get('tpath') . '/' . $prev_pic . '.png.gif')) {
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.gif';
+                } elseif (Config::get('swf_change') && is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
+                } else {
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . 'theme/' . $v['id'];
+                }
+            } elseif (Config::get('jar_change') && Media_Jar::isSupported($ext)) {
+                if (is_file(Config::get('ipath') . '/' . $prev_pic . '.png')) {
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('ipath') . '/' . $prev_pic . '.png';
+                } else {
+                    $v['pre'] = SEA_PUBLIC_DIRECTORY . 'jar/' . $v['id'];
+                }
+            } elseif (Config::get('swf_change') && $ext == 'swf') {
+                $v['pre'] = SEA_PUBLIC_DIRECTORY . $v['v'];
             }
         }
 

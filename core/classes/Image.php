@@ -259,8 +259,10 @@ class Image
 
                     unset($frames, $framed);
 
+                    $f = (bool)file_put_contents($out . '.gif', $gif->GetAnimation());
+                    @unlink($out);
                     $out = $out . '.gif';
-                    return file_put_contents($out, $gif->GetAnimation());
+                    return $f;
                     break;
                 } else {
                     $old = imagecreatefromgif($in);
