@@ -31,7 +31,7 @@
     {include file='sys/_files.tpl'}
 
     {* пагинация *}
-    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.SEA_PUBLIC_DIRECTORY}{Http_Request::get('id')}"}
+    {paginationExtended page=$paginatorConf.page pages=$paginatorConf.pages url="{$smarty.const.SEA_PUBLIC_DIRECTORY}{Http_Request::get('id')|default:'0'}"}
 {/block}
 
 
