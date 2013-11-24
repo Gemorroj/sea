@@ -100,7 +100,9 @@ class Language
     private function _load()
     {
         // заменяем языковой пакет
-        Language::setLangpack(Http_Request::post('langpack', Http_Request::get('langpack', Config::get('langpack'))));
+        if (Language::setLangpack(Http_Request::post('langpack', Http_Request::get('langpack')))) {
+            return;
+        }
 
         if (!isset($_SESSION['langpack']) || !in_array($_SESSION['langpack'], self::getLangpacks())) {
             // язык по умолчанию

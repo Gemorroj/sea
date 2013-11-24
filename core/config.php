@@ -68,6 +68,13 @@ Config::init();
 // Инициализируем прослойку над HTTP
 Http_Request::init();
 Http_Response::init(new Template());
+
+// стартуем сессию
+session_set_cookie_params(864000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
+session_save_path(SEA_CORE_DIRECTORY . '/tmp');
+session_name('sea');
+session_start() or die('Can not start session');
+
 // Инициализируем переводы
 Language::init();
 
@@ -107,12 +114,6 @@ Routing::init(array(
     'zip/(?P<action>preview)/(?P<id>[0-9]+)/(?P<name>.+)/(?P<page>[0-9]*)' => 'zip.php',
     'zip/(?P<action>down)/(?P<id>[0-9]+)/(?P<name>.+)' => 'zip.php',
 ));
-
-
-session_set_cookie_params(864000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
-session_save_path(SEA_CORE_DIRECTORY . '/tmp');
-session_name('sea');
-session_start() or die('Can not start session');
 
 define('SEA_IS_ADMIN', (isset($_SESSION['authorise']) && $_SESSION['authorise'] == Config::get('password')));
 

@@ -46,7 +46,7 @@ Breadcrumbs::add('settings', Language::get('settings'));
 $sort = isset($_SESSION['sort']) ? $_SESSION['sort'] : '';
 $onpage = isset($_SESSION['onpage']) ? $_SESSION['onpage'] : '';
 $prev = isset($_SESSION['prev']) ? $_SESSION['prev'] : '';
-$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] :Config::get('lib');
+$lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');
 
 Http_Response::getInstance()->getTemplate()
     ->setTemplate('settings.tpl')
