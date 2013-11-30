@@ -140,7 +140,7 @@ if (Http_Request::isPost()) {
         mail(
             Config::get('zakaz_email'),
             '=?utf-8?B?' . base64_encode('Новый файл') . '?=',
-            'Загружен новый файл: ' . Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'apanel/apanel_view.php?id=' . $insertId . "\r\n" .
+            'Загружен новый файл: ' . Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'view/' . $insertId . "\r\n" .
             'Браузер: ' . Http_Request::getUserAgent() . "\r\n" .
             'IP: ' . Http_Request::getIp(),
             "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
