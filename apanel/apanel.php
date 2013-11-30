@@ -1244,22 +1244,42 @@ switch (Http_Request::get('action')) {
 
 
     case 'cleantrash':
-        $d = 0;
+        $del = array(
+            'files' => 0,
+            'file_comments' => 0,
+            'news_comments' => 0,
+            'user_settings' => 0,
+        );
 
-        $q1 = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
-        $q2 = $db->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
+        // файлы
+        $qFile = $db->prepare('DELETE FROM `files` WHERE `id` = ?');
+        $qComments = $db->prepare('DELETE FROM `comments` WHERE `file_id` = ?');
         foreach ($db->query('SELECT `id`, `path` FROM `files`') as $row) {
-            if (!is_file($row['path'])) {
-                $q1->execute(array($row['id']));
-                $q2->execute(array($row['id']));
+            if (!file_exists($row['path'])) {
+                $qFile->execute(array($row['id']));
+                $qComments->execute(array($row['id']));
 
                 Files::updateDirCount($row['path'], false);
 
-                $d++;
+                $del['files']++;
             }
         }
 
-        $template->assign('message', 'Удалено неверных записей: ' . $d);
+        // комментарии к файлам
+        $del['file_comments'] = $db->exec('DELETE FROM `comments` WHERE `file_id` NOT IN (SELECT `id` FROM `files`)');
+
+        // комментарии к новостям
+        $del['news_comments'] = $db->exec('DELETE FROM `news_comments` WHERE `id_news` NOT IN (SELECT `id` FROM `news`)');
+
+        // профили пользователей
+        $del['user_settings'] = $db->exec('DELETE FROM `users_settings` WHERE `parent_id` NOT IN (SELECT `id` FROM `users_profiles`)');
+
+        $template->assign('message',
+            'Удалено неверных записей о файлах: ' . $del['files'] . "\n" .
+            'Удалено комментариев к несуществующим файлам: ' . $del['file_comments'] . "\n" .
+            'Удалено комментариев к несуществующим новостям: ' . $del['news_comments'] . "\n" .
+            'Удалено настроек несуществующих пользователей: ' . $del['user_settings']
+        );
         break;
 
 
