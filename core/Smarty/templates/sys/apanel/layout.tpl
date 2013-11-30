@@ -66,7 +66,7 @@
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'buy'}data-theme="a"{/if}><a href="apanel.php?action=buy">Реклама</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'id3'}data-theme="a"{/if}><a href="apanel.php?action=id3">MP3 теги</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'mark'}data-theme="a"{/if}><a href="apanel.php?action=mark">Маркер картинок</a></li>
-                    <li {if isset($smarty.get.action) && $smarty.get.action == 'optm'}data-theme="a"{/if}><a href="apanel.php?action=optm">Оптимизация БД</a></li>
+                    <li {if isset($smarty.get.action) && $smarty.get.action == 'optim'}data-theme="a"{/if}><a href="apanel.php?action=optim">Оптимизация БД</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'scan'}data-theme="a"{/if}><a href="apanel.php?action=scan">Полное обновление БД</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action|truncate:5:'' == 'clean'}data-theme="a"{/if}><a href="apanel.php?action=clean">Очистка</a></li>
                 </ul>

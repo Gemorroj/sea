@@ -110,4 +110,16 @@ class Db_Mysql extends PDO
     {
         return str_replace(array('%', '_'), array('\%', '\_'), $str);
     }
+
+
+    /**
+     * Фильтрация данных для имен таблиц
+     *
+     * @param string $str
+     * @return string
+     */
+    public function quoteTable ($str)
+    {
+        return '`' . str_replace('`', '``', $str) . '`';
+    }
 }

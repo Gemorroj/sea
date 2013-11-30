@@ -1229,11 +1229,31 @@ switch (Http_Request::get('action')) {
         break;
 
 
-    case 'optm':
-        if ($db->exec('OPTIMIZE TABLE `comments`, `files`, `loginlog`, `news`, `news_comments`, `online`, `setting`, `users_profiles`, `users_settings`') !== false) {
+    case 'optim':
+        $result = true;
+
+        // для InnoDB таблиц
+        foreach ($db->query('SHOW TABLE STATUS') as $row) {
+            if ($row['Engine'] === 'InnoDB') {
+                if ($db->exec('ALTER TABLE ' . $db->quoteTable($row['Name']) . ' ENGINE=InnoDB') === false) {
+                    $result = false;
+                }
+            }
+        }
+
+        // для MyISAM таблиц
+        if ($db->exec('OPTIMIZE TABLE `comments`, `files`, `loginlog`, `news`, `news_comments`, `setting`, `users_profiles`, `users_settings`') !== false) {
             $template->assign('message', 'Таблицы оптимизированы');
         } else {
-            $template->assign('error', 'Ошибка при оптимизации таблиц');
+            $result = false;
+            $template->assign('error', 'Ошибка при оптимизации таблиц' . implode("\n", $db->errorInfo()));
+        }
+
+
+        if ($result) {
+            $template->assign('message', 'Таблицы оптимизированы');
+        } else {
+            $template->assign('error', 'Ошибка при оптимизации таблиц' . implode("\n", $db->errorInfo()));
         }
         break;
 
@@ -1285,36 +1305,54 @@ switch (Http_Request::get('action')) {
 
     case 'cleandb':
         if ($db->exec('TRUNCATE TABLE `files`') !== false && $db->exec('TRUNCATE TABLE `comments`') !== false) {
-            $template->assign('message', 'Таблицы очищены');
+            $template->assign('message', 'Таблицы файлов очищены');
         } else {
-            $template->assign('error', 'Ошибка при очистке таблиц');
+            $template->assign('error', 'Ошибка при очистке таблиц файлов');
+        }
+        break;
+
+
+    case 'cleanonline':
+        if ($db->exec('TRUNCATE TABLE `online`') !== false) {
+            $template->assign('message', 'Таблицы онлайн очищены');
+        } else {
+            $template->assign('error', 'Ошибка при очистке таблиц онлайн');
+        }
+        break;
+
+
+    case 'cleanusers':
+        if ($db->exec('TRUNCATE TABLE `users_profiles`') !== false && $db->exec('TRUNCATE TABLE `users_settings`') !== false) {
+            $template->assign('message', 'Таблицы пользователей очищены');
+        } else {
+            $template->assign('error', 'Ошибка при очистке таблиц пользователей');
         }
         break;
 
 
     case 'cleannews':
         if ($db->exec('TRUNCATE TABLE `news`') !== false && $db->exec('TRUNCATE TABLE `news_comments`') !== false) {
-            $template->assign('message', 'Таблицы очищены');
+            $template->assign('message', 'Таблицы новостей очищены');
         } else {
-            $template->assign('error', 'Ошибка при очистке таблиц');
+            $template->assign('error', 'Ошибка при очистке таблиц новостей');
         }
         break;
 
 
     case 'cleancomm':
         if ($db->exec('TRUNCATE TABLE `comments`') !== false) {
-            $template->assign('message', 'Все комментарии к файлам удалены');
+            $template->assign('message', 'Таблицы комментариев к файлам очищены');
         } else {
-            $template->assign('error', 'Ошибка при удалении комментариев к файлам');
+            $template->assign('error', 'Ошибка при очистке таблиц комментариев к файлам');
         }
         break;
 
 
     case 'cleancomm_news':
         if ($db->exec('TRUNCATE TABLE `news_comments`') !== false) {
-            $template->assign('message', 'Все комментарии к новостям удалены');
+            $template->assign('message', 'Таблицы комментариев к новостям очищены');
         } else {
-            $template->assign('error', 'Ошибка при удалении комментариев к новостям');
+            $template->assign('error', 'Ошибка при очистке таблиц комментариев к новостям');
         }
         break;
 
