@@ -465,7 +465,7 @@ class Files
     public static function getFileInfo ($id)
     {
         $q = Db_Mysql::getInstance()->prepare('
-            SELECT *, ' . Language::buildFilesQuery() . '
+            SELECT *, `name` AS `eng_name`, ' . Language::buildFilesQuery() . '
             FROM `files`
             WHERE `id` = ?
             ' . (SEA_IS_ADMIN !== true ? 'AND `hidden` = "0"' : '')

@@ -8,7 +8,7 @@
     {foreach $langpacks as $langpack}
         <div data-role="fieldcontain">
             <label for="new_{$langpack}">{$langpack}:</label>
-            <input type="text" required="required" name="new[{$langpack}]" id="new_{$langpack}" value="{if $langpack == 'english'}{$info.name}{else}{$info.{$langpack|truncate:3:''|cat:'_name'}}{/if}" />
+            <input type="text" required="required" name="new[{$langpack}]" id="new_{$langpack}" value="{$info.{$langpack|truncate:3:''|cat:'_name'}}" />
         </div>
     {/foreach}
 
