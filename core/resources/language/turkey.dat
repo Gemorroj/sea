@@ -153,4 +153,5 @@ return array(
     'attachments' => 'Eklentiler',
     'not_available' => 'Mevcut değil',
     'not_found' => 'Bulunamadı',
+    'incorrect_referer' => 'Geçersiz yönlendirme. Tarayıcı ayarlarında yönlendirme meşgul, ya da site %url% gidin',
 );

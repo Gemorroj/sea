@@ -158,7 +158,49 @@ class Http_Response
     }
 
     /**
+     * Вывод в браузер
+     *
+     * @param array $file
+     */
+    public function renderFile(array $file)
+    {
+        $realpath = realpath($file['path']);
+
+        $this->setHeader('Content-Type', $this->_getFileMime($realpath));
+        $this->setHeader('Content-Disposition', 'inline; filename="' . rawurlencode(basename($realpath)) . '"');
+        $this->setHeader('Content-Length', $file['size']);
+
+        $this->_renderHeaders();
+
+        readfile($realpath);
+        exit;
+    }
+
+    /**
+     * @param string $realpath
+     * @return string
+     */
+    protected function _getFileMime($realpath)
+    {
+        $defaultMime = 'application/octet-stream';
+
+        if (true === class_exists('finfo')) {
+            $f = new finfo(FILEINFO_MIME);
+            $mime = $f->file($realpath);
+            if (false === $mime) {
+                $mime = $defaultMime;
+            }
+
+            return $mime;
+        }
+
+        return $defaultMime;
+    }
+
+    /**
      * Отображение сообщений
+     *
+     * @param array|string $str
      */
     public function renderMessage($str = '')
     {
@@ -175,6 +217,8 @@ class Http_Response
 
     /**
      * Отображение ошибок
+     *
+     * @param array|string $str
      */
     public function renderError($str = '')
     {

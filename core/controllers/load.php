@@ -40,9 +40,20 @@ if (!$v || !is_file($v['path'])) {
     Http_Response::getInstance()->renderError(Language::get('not_found'));
 }
 
+
+if (Config::get('check_referer') && null !== Http_Request::getReferer()) {
+    $host = parse_url(Http_Request::getReferer(), PHP_URL_HOST);
+    if (Http_Request::getHost() !== $host) {
+        Http_Response::getInstance()->renderError(str_replace('%url%', Config::get('site_url'), Language::get('incorrect_referer')));
+    }
+}
+
+
 Files::updateFileLoad($id);
 
-Http_Response::getInstance()
-    ->setCache()
-    ->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
-
+$response = Http_Response::getInstance()->setCache();
+if (Config::get('hide_real_path')) {
+    $response->renderFile($v);
+} else {
+    $response->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . str_replace('%2F', '/', rawurlencode($v['path'])), 301);
+}

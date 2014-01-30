@@ -83,7 +83,7 @@ if ((Http_Request::post('p') && md5(Http_Request::post('p')) == Config::get('pas
     $db->prepare('INSERT INTO loginlog SET time = ?, ua = ?, ip = ?')->execute(
         array(
             $_SERVER['REQUEST_TIME'],
-            Http_Request::getUserAgent(),
+            (string)Http_Request::getUserAgent(),
             Http_Request::getIp()
         )
     );

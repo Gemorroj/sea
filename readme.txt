@@ -3,7 +3,7 @@
 Требования:
 Apache 2, Nginx
 PHP 5.2.1 или выше
-PHP модули: PDO, Mbstring, CURL, Filter, SimpleXML, GD, FFmpeg (работает и без него, но не будет скриншотов видео)
+PHP модули: PDO, Mbstring, CURL, Filter, SimpleXML, GD, Fileinfo (при скачивании файлов не всегда будет точный MIME тип), FFmpeg (не будет скриншотов видео)
 MySQL 5.0.7 или выше
 
 Установка:

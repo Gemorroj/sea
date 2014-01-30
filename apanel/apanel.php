@@ -1128,6 +1128,8 @@ switch (Http_Request::get('action')) {
             $post['send_email'] = $post['send_email'] ? 1 : 0;
             $post['ignore_index_breadcrumbs'] = $post['ignore_index_breadcrumbs'] ? 1 : 0;
             $post['ignore_index_pages'] = $post['ignore_index_pages'] ? 1 : 0;
+            $post['check_referer'] = $post['check_referer'] ? 1 : 0;
+            $post['hide_real_path'] = $post['hide_real_path'] ? 1 : 0;
 
             $q = $db->prepare('REPLACE INTO `setting`(`name`, `value`) VALUES (?, ?)');
             foreach ($post as $key => $value) {

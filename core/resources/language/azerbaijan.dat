@@ -157,4 +157,5 @@ return array(
     'attachments' => 'Əlavələr',
     'not_available' => 'Mövcud deyil',
     'not_found' => 'Tapılmadı',
+    'incorrect_referer' => 'Yanlış yönlendirme. Brauzerinizin ayarlarını yönlendirme məşğul, və ya site %url% gedin',
 );

@@ -43,6 +43,8 @@
         {html_checkboxes name="send_email" selected=$setup.send_email options=[1=>'Отправка ссылки на Email']}
         {html_checkboxes name="ignore_index_breadcrumbs" selected=$setup.ignore_index_breadcrumbs options=[1=>'Не отображать бредкрамбсы на главной']}
         {html_checkboxes name="ignore_index_pages" selected=$setup.ignore_index_pages options=[1=>'Отображать все директории/файлы на главной']}
+        {html_checkboxes name="check_referer" selected=$setup.check_referer options=[1=>'Проверять реферер перед скачиванием файлов']}
+        {html_checkboxes name="hide_real_path" selected=$setup.hide_real_path options=[1=>'Скрывать реальный путь к скачиваемым файлам (не работает докачка и скачивание в несколько потоков)']}
     </fieldset>
 
     <input type="submit" value="Сохранить"/>

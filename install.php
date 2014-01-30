@@ -343,6 +343,8 @@ if (!Http_Request::get('level')) {
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'zakaz_email', 'admin@" . Http_Request::getHost() . "')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'langpack', 'russian')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'importpath', 'import')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'check_referer', '0')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'hide_real_path', '0')");
 
     $db->exec("INSERT INTO `loginlog` (`ua`, `ip`, `time`) VALUES ('', '', '')");
 

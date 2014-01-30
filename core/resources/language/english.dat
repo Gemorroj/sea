@@ -158,4 +158,5 @@ return array(
     'attachments' => 'Attachments',
     'not_available' => 'Not available',
     'not_found' => 'Not found',
+    'incorrect_referer' => 'Invalid referrer. Enable the referrer in your browser settings, or go to the site %url%',
 );

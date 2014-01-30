@@ -44,6 +44,7 @@ class Http_Request
     protected static $_ip;
     protected static $_host;
     protected static $_userAgent;
+    protected static $_referer;
 
 
     /**
@@ -58,8 +59,9 @@ class Http_Request
         self::$_queryString = $_SERVER['QUERY_STRING'];
         self::$_requestUri = $_SERVER['REQUEST_URI'];
         self::$_ip = $_SERVER['REMOTE_ADDR'];
-        self::$_host = $_SERVER['HTTP_HOST'];
-        self::$_userAgent = $_SERVER['HTTP_USER_AGENT'];
+        self::$_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
+        self::$_userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+        self::$_referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
     }
 
 
@@ -190,11 +192,19 @@ class Http_Request
     }
 
     /**
-     * @return static string
+     * @return static string|null
      */
     public static function getUserAgent()
     {
         return self::$_userAgent;
+    }
+
+    /**
+     * @return static string|null
+     */
+    public static function getReferer()
+    {
+        return self::$_referer;
     }
 
     /**
