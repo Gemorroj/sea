@@ -12,10 +12,22 @@
     {assign var="audio_player" value=($setup.audio_player_change && Media_Audio::isPlayerSupported($file.ext))}
     {assign var="video_player" value=($setup.video_player_change && Media_Video::isPlayerSupported($file.ext))}
 
-    {if $audio_player}
+    {if $audio_player || $video_player}
         <script type="text/javascript" src="{$smarty.const.SEA_PUBLIC_DIRECTORY}style/jwplayer/jwplayer.js"></script>
         <script type="text/javascript">
-            window.onload = function () {
+            function seaAddLoadEvent(func) {
+                if (window.addEventListener) {
+                    window.addEventListener('load', func, false);
+                } else if (window.attachEvent) {
+                    window.attachEvent('onload', func);
+                }
+            }
+        </script>
+    {/if}
+
+    {if $audio_player}
+        <script type="text/javascript">
+            seaAddLoadEvent(function () {
                 jwplayer("audio_player").setup({
                     'file': "{$smarty.const.SEA_PUBLIC_DIRECTORY}{$file.path}",
                     'title': "{$file.name}",
@@ -26,12 +38,11 @@
                         cookies: false
                     }
                 });
-            };
+            });
         </script>
     {elseif $video_player}
-        <script type="text/javascript" src="{$smarty.const.SEA_PUBLIC_DIRECTORY}style/jwplayer/jwplayer.js"></script>
         <script type="text/javascript">
-            window.onload = function () {
+            seaAddLoadEvent(function () {
                 jwplayer("video_player").setup({
                     {if extension_loaded('ffmpeg')}'image': "{$smarty.const.SEA_PUBLIC_DIRECTORY}ffmpeg/{Http_Request::get('id')}",{/if}
                     'file': "{$smarty.const.SEA_PUBLIC_DIRECTORY}{$file.path}",
@@ -43,7 +54,7 @@
                         cookies: false
                     }
                 });
-            };
+            });
         </script>
     {/if}
 {/block}
