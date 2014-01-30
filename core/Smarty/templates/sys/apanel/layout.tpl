@@ -50,7 +50,7 @@
 
         <div class="content-secondary">
             {block header}
-                <ul data-role="listview">
+                <ul data-role="listview" data-inset="true">
                     <li data-role="list-divider">Admin Panel</li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'add_news'}data-theme="a"{/if}><a href="apanel.php?action=add_news">Создать новость</a></li>
                     <li {if isset($smarty.get.action) && $smarty.get.action == 'add_dir'}data-theme="a"{/if}><a href="apanel.php?action=add_dir">Создать директорию</a></li>
