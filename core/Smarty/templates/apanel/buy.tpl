@@ -5,7 +5,7 @@
 <h3>Реклама</h3>
 
 <form action="apanel.php?action=buy" method="post">
-    <div class="ui-body ui-body-c">
+    <div class="ui-body ui-body-a">
         <div data-role="fieldcontain">
             <label for="buy">XHTML код отображаемый сверху:</label>
             <textarea cols="32" rows="5" name="buy" id="buy">{$setup.buy}</textarea>
@@ -24,7 +24,7 @@
 
     <p></p>
 
-    <div class="ui-body ui-body-c">
+    <div class="ui-body ui-body-a">
         <div data-role="fieldcontain">
             <label for="banner">XHTML код отображаемый снизу:</label>
             <textarea id="banner" cols="32" rows="5" name="banner">{$setup.banner}</textarea>

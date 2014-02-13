@@ -12,13 +12,13 @@
 
     <div data-role="fieldcontain">
         <label for="realname">Реальное имя [A-Za-z0-9_-]:</label>
-        <input name="realname" type="text" pattern="^[A-Za-z0-9_\-]+$" required="required" id="realname" />
+        <input placeholder="Реальное имя директории" name="realname" type="text" pattern="^[A-Za-z0-9_\-]+$" required="required" id="realname" />
     </div>
 
     {foreach $langpacks as $langpack}
         <div data-role="fieldcontain">
             <label for="dir_{$langpack}">{$langpack}:</label>
-            <input type="text" required="required" name="dir[{$langpack}]" id="dir_{$langpack}" />
+            <input placeholder="Отображаемое имя директории" type="text" required="required" name="dir[{$langpack}]" id="dir_{$langpack}" />
         </div>
     {/foreach}
 

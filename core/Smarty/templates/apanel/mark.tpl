@@ -4,7 +4,7 @@
 {block content}
 <h3>Маркер картинок</h3>
 
-<div class="ui-body ui-body-c">
+<div class="ui-body ui-body-a">
     <form action="apanel.php?action=mark" method="post">
         <fieldset data-role="controlgroup" data-type="horizontal">
             {html_radios name="marker" options=[1=>'Вкл.',0=>'Выкл.',2=>'Только в общем просмотре'] selected=$setup.marker}
@@ -24,7 +24,7 @@
 
 <p></p>
 
-<div class="ui-body ui-body-c">
+<div class="ui-body ui-body-a">
     <form action="apanel.php?action=mark" method="post">
         <div data-role="fieldcontain">
             <label for="text">На картинки будет нанесена указанная надпись, удалить ее будет невозможно:</label>

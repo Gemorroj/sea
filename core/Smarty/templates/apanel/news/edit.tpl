@@ -8,7 +8,7 @@
     {foreach $langpacks as $langpack}
         <div data-role="fieldcontain">
             <label for="new_{$langpack}">{$langpack}:</label>
-            <textarea required="required" cols="70" rows="10" name="new[{$langpack}]" id="new_{$langpack}">{if $langpack == 'english'}{$news.news}{else}{$news.{$langpack|truncate:3:''|cat:'_news'}}{/if}</textarea>
+            <textarea placeholder="Текст новости" required="required" cols="70" rows="10" name="new[{$langpack}]" id="new_{$langpack}">{if $langpack == 'english'}{$news.news}{else}{$news.{$langpack|truncate:3:''|cat:'_news'}}{/if}</textarea>
         </div>
     {/foreach}
 

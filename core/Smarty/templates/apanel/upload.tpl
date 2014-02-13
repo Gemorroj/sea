@@ -4,7 +4,7 @@
 {block content}
 <h3>Загрузка файлов</h3>
 
-<div class="ui-body ui-body-c">
+<div class="ui-body ui-body-a">
     <form action="apanel.php?action=upload&amp;type=file" method="post" enctype="multipart/form-data" data-ajax="false">
         <div data-role="fieldcontain">
             <label for="topath">Сохранить в:</label>
@@ -22,7 +22,7 @@
 
 <p></p>
 
-<div class="ui-body ui-body-c">
+<div class="ui-body ui-body-a">
     <form action="apanel.php?action=upload&amp;type=url" method="post">
         <div data-role="fieldcontain">
             <label for="topath">Сохранить в:</label>

@@ -14,6 +14,6 @@
 </em>
 
 <form action="apanel.php?action=import" method="post">
-    <input data-icon="refresh" type="submit" name="send" value="Импортировать"/>
+    <input data-icon="action" type="submit" name="send" value="Импортировать"/>
 </form>
 {/block}

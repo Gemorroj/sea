@@ -3,9 +3,12 @@
 
 {block content}
 <h3>Сервис</h3>
-<p>Всего пользователей: {$users}</p>
 
-<div class="ui-body ui-body-c">
+<ul data-role="listview" data-inset="true">
+    <li>Всего пользователей <span class="ui-li-count">{$users}</span></li>
+</ul>
+
+<div class="ui-body ui-body-a">
     <form action="apanel.php?action=service" method="post">
         <div data-role="fieldcontain">
             <label for="service_head">Ссылок вверху:</label>
@@ -23,7 +26,7 @@
 
 <p></p>
 
-<div class="ui-body ui-body-c">
+<div class="ui-body ui-body-a">
     <form action="apanel.php?action=service&amp;mode=del" method="post">
         <div data-role="fieldcontain">
             <label for="user">ID:</label>
