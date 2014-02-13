@@ -174,7 +174,7 @@ if (!Http_Request::get('level')) {
 
     $sql = "CREATE TABLE `setting` (
       `name` varchar(32) NOT NULL,
-      `value` varchar(1023) NOT NULL,
+      `value` varchar(4095) NOT NULL,
       UNIQUE KEY `name` (`name`)
     ) ENGINE=" . $engine . " DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;";
     if ($db->exec($sql) === false) {
