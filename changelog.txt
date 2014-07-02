@@ -641,5 +641,7 @@ jQuery обновлен до версии 1.11.0, jQuery Mobile обновлен
 
 -------
 xx.xx.2014
-jQuery Mobile обновлен до версии 1.4.2
-Smarty обновлен до версии 3.1.18
+jQuery и jQuery Mobile подключаются через CDN
+jQuery обновлен до версии 1.11.1
+jQuery Mobile обновлен до версии 1.4.3
+Smarty обновлен до версии 3.1.19

@@ -52,9 +52,15 @@ class Language
             'tur_news' => 'turkey',
         );
 
+    /**
+     * @var Language
+     */
     static private $_instance;
 
 
+    /**
+     * Конструктор
+     */
     private function __construct()
     {
         $this->_loadLangpacks();

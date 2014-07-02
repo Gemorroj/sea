@@ -35,6 +35,9 @@
  */
 class Breadcrumbs
 {
+    /**
+     * @var array
+     */
     protected static $_breadcrumbs = array();
 
     /**

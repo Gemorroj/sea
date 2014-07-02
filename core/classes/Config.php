@@ -35,6 +35,9 @@
  */
 class Config
 {
+    /**
+     * @var array
+     */
     private static $_setup = array();
 
 

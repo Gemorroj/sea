@@ -35,6 +35,9 @@
  */
 class Autoload
 {
+    /**
+     * @var Autoload
+     */
     private static $_autoload;
 
 

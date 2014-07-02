@@ -35,10 +35,19 @@
  */
 class Routing
 {
+    /**
+     * @var Routing
+     */
     private static $_instance;
+    /**
+     * @var array
+     */
     private static $_rules = array();
 
 
+    /**
+     * Конструктор
+     */
     private function __construct()
     {
 
@@ -105,6 +114,7 @@ class Routing
                 break;
             }
         }
+
         return 0;
     }
 }

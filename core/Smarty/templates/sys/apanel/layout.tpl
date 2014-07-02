@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" type="text/css" href="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/jquery/jquery.mobile-1.4.2.min.css"/>
-    <script src="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/jquery/jquery-1.11.0.min.js"></script>
-    <script src="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/jquery/jquery.mobile-1.4.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css"/>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="//code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
     <title>Admin panel</title>
     <style type="text/css">
         .content-primary {
