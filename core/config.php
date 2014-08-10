@@ -58,8 +58,8 @@ Autoload::init();
 // данные для соединения с БД
 Db_Mysql::init(array(
     'host' => 'localhost',
-    'username' => 'mysql',
-    'password' => 'mysql',
+    'username' => 'root',
+    'password' => '',
     'dbname' => 'sea3',
 ));
 
