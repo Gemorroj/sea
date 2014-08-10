@@ -640,7 +640,7 @@ jQuery обновлен до версии 1.11.0, jQuery Mobile обновлен
 
 
 -------
-xx.xx.2014
+10.08.2014
 jQuery, jQuery Mobile и Jwplayer подключаются через CDN
 jQuery обновлен до версии 1.11.1
 jQuery Mobile обновлен до версии 1.4.3
