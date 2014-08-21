@@ -56,6 +56,8 @@ class Http_Response
 
     /**
      * Конструктор
+     *
+     * @param Template $template
      */
     private function __construct(Template $template)
     {
@@ -65,6 +67,8 @@ class Http_Response
 
     /**
      * Инициализация
+     *
+     * @param Template $template
      */
     public static function init(Template $template)
     {
