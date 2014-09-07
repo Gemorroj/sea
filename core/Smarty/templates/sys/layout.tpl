@@ -33,7 +33,9 @@
             {/block}
 
             {block reklama}
-                {include file='./reklama.tpl'}
+                {*{if !Http_Request::isCrawler()}*}
+                    {include file='./reklama.tpl'}
+                {*{/if}*}
             {/block}
 
             {block header}{/block}
@@ -43,7 +45,9 @@
             {block footer}{/block}
 
             {block banner}
-                {include file='./banner.tpl'}
+                {*{if !Http_Request::isCrawler()}*}
+                    {include file='./banner.tpl'}
+                {*{/if}*}
             {/block}
 
             {if $setup.online}

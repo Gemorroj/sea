@@ -215,4 +215,49 @@ class Http_Request
     {
         self::$_get[$key] = $value;
     }
+
+
+    /**
+     * Определяем бот это или нет
+     *
+     * @return bool
+     */
+    public static function isCrawler()
+    {
+        $engines = array(
+            'Aport', //Aport
+            'Google', //Google
+            'msnbot', //MSN
+            'Rambler', //Rambler
+            'Yahoo', //Yahoo
+            'Yandex', //Yandex
+            'AbachoBOT', //AbachoBOT
+            'accoona', //Accoona
+            'AcoiRobot', //AcoiRobot
+            'ASPSeek', //ASPSeek
+            'CrocCrawler', //CrocCrawler
+            'Dumbot', //Dumbot
+            'FAST-WebCrawler', //FAST-WebCrawler
+            'GeonaBot', //GeonaBot
+            'Gigabot', //Gigabot
+            'Lycos', //Lycos spider
+            'MSRBOT', //MSRBOT
+            'Scooter', //Altavista robot
+            'AltaVista', //Altavista robot
+            'WebAlta', //WebAlta
+            'IDBot', //ID-Search Bot
+            'eStyle', //eStyle Bot
+            'Mail.Ru', //Mail.Ru Bot
+            'Scrubby', //Scrubby robot
+        );
+
+        $userAgent = self::getUserAgent();
+        foreach ($engines as $engine) {
+            if (stristr($userAgent, $engine)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
