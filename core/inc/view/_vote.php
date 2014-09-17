@@ -4,7 +4,7 @@
 // $vote = null;
 $eval = Http_Request::get('eval');
 
-if (Config::get('eval_change') && $eval) {
+if (Config::get('eval_change') && $eval !== null) {
     if (strpos($file['ips'], Http_Request::getIp()) === false) {
         $vote = true;
         if (!$file['ips']) {
