@@ -13,7 +13,7 @@
     {assign var="video_player" value=($setup.video_player_change && Media_Video::isPlayerSupported($file.ext))}
 
     {if $audio_player || $video_player}
-        <script type="text/javascript" src="//p.jwpcdn.com/6/9/jwplayer.js"></script>
+        <script type="text/javascript" src="//p.jwpcdn.com/6/10/jwplayer.js"></script>
         <script type="text/javascript">
             function seaAddLoadEvent(func) {
                 if (window.addEventListener) {
