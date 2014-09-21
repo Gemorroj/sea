@@ -54,13 +54,12 @@ Seo::unserialize($v['seo']);
 Breadcrumbs::init($v['path']);
 Breadcrumbs::add('abuse/' . $id, Language::get('complain_about_a_file'));
 
-if (mail(
+if (Helper::sendEmail(
     Config::get('zakaz_email'),
-    '=?utf-8?B?' . base64_encode('Жалоба на файл') . '?=',
+    'Жалоба на файл',
     'Получена жалоба на файл ' . Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'view/' . $id . "\r\n" .
     'Браузер: ' . Http_Request::getUserAgent() . "\r\n" .
-    'IP: ' . Http_Request::getIp(),
-    "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
+    'IP: ' . Http_Request::getIp()
 )) {
     Http_Response::getInstance()->renderMessage(Language::get('complaint_sent_to_the_administration'));
 } else {

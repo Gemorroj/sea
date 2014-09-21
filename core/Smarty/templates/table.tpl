@@ -5,7 +5,7 @@
 {block content}
     {if $smarty.post}
         <div class="row">
-            {if $sended}
+            {if $sentEmail}
                 <span class="yes">{$language.message_sent_successfully}</span>
             {else}
                 <span class="no">{$language.message_not_sent}</span>

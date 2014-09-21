@@ -134,11 +134,10 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
                 $_SESSION['mail'] = $mail;
                 $_SESSION['style'] = $style;
 
-                mail(
+                Helper::sendEmail(
                     $mail,
-                    '=?utf-8?B?' . base64_encode('Registration in ' . Http_Request::getHost() . SEA_PUBLIC_DIRECTORY) . '?=',
-                    'Your password: ' . $pass . "\r\n" . 'ID: ' . $_SESSION['id'],
-                    'From: robot@' . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
+                    'Registration in ' . Http_Request::getHost() . SEA_PUBLIC_DIRECTORY,
+                    'Your password: ' . $pass . "\r\n" . 'ID: ' . $_SESSION['id']
                 );
 
                 Http_Response::getInstance()->redirect(Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'service');
@@ -156,11 +155,10 @@ if ($act == 'enter' && Http_Request::get('id') && Http_Request::get('pass')) {
         $pass = Helper::getRandPass();
         $db->prepare('UPDATE `users_profiles` SET `pass` = MD5(?) WHERE `id` = ?')->execute(array($pass, Http_Request::post('id')));
 
-        mail(
+        Helper::sendEmail(
             $mail,
-            '=?utf-8?B?' . base64_encode('Change Password ' . Http_Request::getHost() . SEA_PUBLIC_DIRECTORY) . '?=',
-            'Your new password: ' . $pass . "\r\n" . 'ID: ' . Http_Request::get('id'),
-            'From: robot@' . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
+            'Change Password ' . Http_Request::getHost() . SEA_PUBLIC_DIRECTORY,
+            'Your new password: ' . $pass . "\r\n" . 'ID: ' . Http_Request::get('id')
         );
 
         Http_Response::getInstance()->renderMessage(Language::get('email_sent_successfully'));

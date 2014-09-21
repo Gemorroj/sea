@@ -65,17 +65,15 @@ if (Http_Request::isPost()) {
     }
 
     setcookie('sea_email', Http_Request::post('email'), $_SERVER['REQUEST_TIME'] + 86400000, SEA_PUBLIC_DIRECTORY, Http_Request::getHost(), false, true);
-    if (mail(
+    if (Helper::sendEmail(
         Http_Request::post('email'),
-        '=?utf-8?B?' . base64_encode(str_replace('%file%', $v['name'], Language::get('link_to_file'))) . '?=',
+        str_replace('%file%', $v['name'], Language::get('link_to_file')),
         str_replace(
             array('%file%', '%url%', '%link%'),
             array($v['name'], Config::get('site_url'), Helper::getUrl() . SEA_PUBLIC_DIRECTORY . 'view/' . $id),
             Language::get('email_message')
-        ),
-        "From: robot@" . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
-    )
-    ) {
+        )
+    )) {
         Http_Response::getInstance()->renderMessage(Language::get('email_sent_successfully'));
     } else {
         Http_Response::getInstance()->renderError(Language::get('sending_email_error_occurred'));

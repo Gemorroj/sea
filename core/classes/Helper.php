@@ -177,6 +177,26 @@ class Helper
         return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
+
+    /**
+     * Отправка email
+     *
+     * @param string $to
+     * @param string $subject
+     * @param string $message
+     *
+     * @return bool
+     */
+    public static function sendEmail($to, $subject, $message)
+    {
+        return mail(
+            $to,
+            '=?utf-8?B?' . base64_encode($subject) . '?=',
+            $message,
+            'From: robot@' . Http_Request::getHost() . "\r\nContent-type: text/plain; charset=UTF-8"
+        );
+    }
+
     /**
      * @param string $url
      *

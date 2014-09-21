@@ -43,7 +43,7 @@ if (!Config::get('zakaz_change')) {
 //Seo::addTitle(Language::get('orders'));
 Breadcrumbs::add('table', Language::get('orders'));
 
-$sended = false;
+$sentEmail = false;
 if (Http_Request::isPost()) {
     if (!Http_Request::post('back') || !Http_Request::post('text')) {
         Http_Response::getInstance()->renderError(Language::get('do_not_fill_in_the_required_fields'));
@@ -56,18 +56,15 @@ if (Http_Request::isPost()) {
         unset($_SESSION['captcha_keystring']);
     }
 
-    $sended = mail(
+    $sentEmail = Helper::sendEmail(
         Config::get('zakaz_email'),
-        '=?utf-8?B?' . base64_encode('Заказ из загруз центра') . '?=',
-        'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\r\n" .
-        'ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back'),
-        'Content-Type: text/plain; charset=UTF-8' . "\r\n" .
-        'From: robot@' . Http_Request::getHost()
+        'Заказ из загруз-центра',
+        'СООБЩЕНИЕ: ' . Http_Request::post('text') . "\r\n" . 'ОБРАТНЫЙ АДРЕС: ' . Http_Request::post('back')
     );
 }
 
 Http_Response::getInstance()->getTemplate()
     ->setTemplate('table.tpl')
-    ->assign('sended', $sended);
+    ->assign('sentEmail', $sentEmail);
 
 Http_Response::getInstance()->render();
