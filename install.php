@@ -66,7 +66,7 @@ if (!Http_Request::get('level')) {
                 PDO: ' . (extension_loaded('pdo_mysql') ? $ok : $fail) . '<br/>
                 CURL: ' . (extension_loaded('curl') ? $ok : $fail) . '<br/>
                 Filter: ' . (extension_loaded('filter') ? $ok : $fail) . '<br/>
-                FFmpeg (не обязательно): ' . (extension_loaded('ffmpeg') ? $ok : $fail) . '<br/>
+                PHP FFmpeg (не обязательно): ' . (extension_loaded('ffmpeg') ? $ok : $fail) . '<br/>
                 PHP акселератор (не обязательно): ' . ((extension_loaded('eaccelerator') && ini_get('eaccelerator.enable')) || (extension_loaded('apc') && ini_get('apc.enabled')) || (extension_loaded('Zend OPcache') && ini_get('opcache.enable')) || (extension_loaded('xcache') && ini_get('xcache.cacher')) || (extension_loaded('wincache') && ini_get('wincache.ocenabled')) ? $ok : $fail) . '<br/>
                 session_start: ' . (function_exists('session_start') && session_start() && session_destroy() ? $ok : $fail) . '<br/>
                 magic_quotes_gpc: ' . (!ini_get('magic_quotes_gpc') ? $ok : $fail) . '<br/>
