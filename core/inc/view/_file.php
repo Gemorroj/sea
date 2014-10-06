@@ -27,8 +27,8 @@ if (is_file(Config::get('spath') . $screen . '.png')) {
 if (is_file(Config::get('opath') . '/' . $screen . '.txt')) {
     $file['description'] = trim(file_get_contents(Config::get('opath') . '/' . $screen . '.txt'));
 } elseif (Config::get('lib_desc') && $ext == 'txt') {
-    $fp = fopen($file['path'], 'r');
-    $file['description'] = trim(fgets($fp, 1024));
+    $fp = fopen($file['path'], 'rb');
+    $file['description'] = trim(Helper::str2utf8(Helper::rtrimLibText(fgets($fp, 1024))));
     fclose($fp);
 }
 

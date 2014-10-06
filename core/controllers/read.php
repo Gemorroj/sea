@@ -69,32 +69,34 @@ Seo::addTitle($paginatorConf['page']);
 
 $lib = isset($_SESSION['lib']) ? $_SESSION['lib'] : Config::get('lib');
 
-
-// UTF-8
-$fp = fopen($v['path'], 'rb');
-if ($paginatorConf['page'] > 1) {
-    fseek($fp, $paginatorConf['page'] * $lib - $lib);
-}
-$content = fread($fp, $lib) . fgets($fp, 1024);
-fclose($fp);
-
-if ($paginatorConf['page'] > 1) {
-    $i = 0;
-    foreach (str_split($content, 1) as $f) {
-        if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
-            break;
-        }
-        $i++;
-    }
-    $content = substr($content, $i);
-}
-
-$content = Helper::str2utf8($content);
+// сколько всего страниц
 $paginatorConf['pages'] = ceil(filesize($v['path']) / $lib);
 if ($paginatorConf['page'] > $paginatorConf['pages']) {
     $paginatorConf['page'] = 1;
 }
 
+// Читаем побайтово
+$fp = fopen($v['path'], 'rb');
+if ($paginatorConf['page'] > 1) {
+    fseek($fp, $paginatorConf['page'] * $lib - $lib);
+}
+$content = fread($fp, $lib) . fgets($fp, 512);
+fclose($fp);
+
+// Чистим от некорректно порезанного UTF-8
+if ($paginatorConf['page'] == 1) {
+    $content = Helper::rtrimLibText($content);
+} else if ($paginatorConf['page'] >= $paginatorConf['pages']) {
+    $content = Helper::ltrimLibText($content);
+} else {
+    $content = Helper::trimLibText($content);
+}
+
+// Конвертируем в UTF-8
+$content = Helper::str2utf8($content);
+
+// trim только после конвертирования в UTF-8
+$content = trim($content);
 
 $template->assign('content', $content);
 $template->assign('file', $v);
