@@ -57,8 +57,10 @@ foreach ($query as $v) {
                     $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png';
                 } elseif (is_file(Config::get('tpath') . '/' . $prev_pic . '.png.gif')) {
                     $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.gif';
-                } elseif (Config::get('swf_change') && is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
-                    $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
+                } elseif (is_file(Config::get('tpath') . '/' . $prev_pic . '.png.swf')) {
+                    if (Config::get('swf_change')) {
+                        $v['pre'] = SEA_PUBLIC_DIRECTORY . Config::get('tpath') . '/' . $prev_pic . '.png.swf';
+                    }
                 } else {
                     $v['pre'] = SEA_PUBLIC_DIRECTORY . 'theme/' . $v['id'];
                 }
