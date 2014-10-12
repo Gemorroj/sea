@@ -50,7 +50,7 @@
         <div class="{cycle values="row,row2"}">
             {* превью *}
             {if $prev && $f.pre}
-                {if $f.ext == 'swf'}
+                {if $f.ext == 'swf' || $f.pre|pathinfo:$smarty.const.PATHINFO_EXTENSION == 'swf'}
                     <object style="width: 128px; height: 128px;"><param name="movie" value="{$f.pre}"><embed src="{$f.pre}" style="width: 128px; height: 128px;"></embed></param></object>
                 {else}
                     {* gif,png,jpg *}

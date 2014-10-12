@@ -270,8 +270,8 @@ if (!Http_Request::get('level')) {
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'pagehand', '10')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'view_size', '128*128,120*160,132*176,240*320')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_desc', '1')");
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib', '1024')");
-    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_str', '160')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib', '4096')");
+    $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'lib_str', '180')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'desc', '50')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker', '2')");
     $db->exec("INSERT INTO `setting` (`name`,`value`) VALUES ( 'marker_where', 'foot')");

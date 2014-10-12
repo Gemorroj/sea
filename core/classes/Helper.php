@@ -233,6 +233,64 @@ class Helper
         return $str;
     }
 
+    /**
+     * Удаляем лишнее слева и справа для резанного UTF-8 текста
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    public static function trimLibText($str)
+    {
+        $str = self::ltrimLibText($str);
+        $str = self::rtrimLibText($str);
+
+        return $str;
+    }
+
+    /**
+     * Удаляем лишнее слева для резанного UTF-8 текста
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    public static function ltrimLibText($str)
+    {
+        $i = 0;
+        foreach (str_split($str, 1) as $f) {
+            if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
+                break;
+            }
+            $i++;
+        }
+        $str = substr($str, $i);
+
+        return $str;
+    }
+
+    /**
+     * Удаляем лишнее справа для резанного UTF-8 текста
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    public static function rtrimLibText($str)
+    {
+        $i = 0;
+        foreach (array_reverse(str_split($str, 1)) as $f) {
+            if ($f == ' ' || $f == "\n" || $f == "\r" || $f == "\t") {
+                break;
+            }
+            $i++;
+        }
+        if ($i > 0) {
+            $str = substr($str, 0, -$i);
+        }
+
+        return $str;
+    }
 
     /**
      * Возвращает случайный пароль
