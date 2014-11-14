@@ -8,7 +8,7 @@
             <span class="yes">{$language.file_successfully_added}</span>
 
             {if !$setup.exchanger_hidden}
-                <br/><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{$insertId}">{Helerp::getUrl()}{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{$insertId}</a>
+                <br/><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{$insertId}">{Helper::getUrl()}{$smarty.const.SEA_PUBLIC_DIRECTORY}view/{$insertId}</a>
             {/if}
         </div>
     {else}
