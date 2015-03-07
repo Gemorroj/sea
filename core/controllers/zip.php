@@ -86,11 +86,11 @@ switch ($action) {
         $zipFileName = rtrim(Http_Request::get('name'), '/');
         $mime = Helper::ext2mime(pathinfo($zipFileName, PATHINFO_EXTENSION));
 
-        $f = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
+        $content = $zip->extract(PCLZIP_OPT_BY_NAME, $zipFileName, PCLZIP_OPT_EXTRACT_AS_STRING);
         if ($mime == 'text/plain') {
-            Http_Response::getInstance()->setBody(Helper::str2utf8($f[0]['content']));
+            Http_Response::getInstance()->setBody(Helper::str2utf8($content[0]['content']));
         } else {
-            Http_Response::getInstance()->setBody($f[0]['content']);
+            Http_Response::getInstance()->setBody($content[0]['content']);
         }
         Http_Response::getInstance()
             ->setHeader('Content-Type', $mime)
