@@ -52,10 +52,10 @@ class Template extends Smarty
             ->registerPlugin('modifier', 'sizeFormatExtended', array($this, 'sizeFormatExtended'))
             ->registerPlugin('modifier', 'bbcode', array($this, 'bbcode'))
             ->registerPlugin('function', 'paginationExtended', array($this, 'paginationExtended'))
-            ->registerPlugin('function', 'getStyle', array($this, 'getStyle'))
-            ->loadFilter('variable', 'htmlspecialchars');
+            ->registerPlugin('function', 'getStyle', array($this, 'getStyle'));
 
         $this->compile_check = false;
+        $this->default_modifiers = array('escape:"htmlall"');
     }
 
 
