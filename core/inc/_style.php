@@ -1,5 +1,6 @@
 <?php
 
+$style = null;
 if (Config::get('style_change')) {
     if (Http_Request::post('style')) {
         $stylePost = Helper::removeSchema(Http_Request::post('style'));
@@ -21,6 +22,8 @@ if (Config::get('style_change')) {
     } else {
         $style = isset($_SESSION['style']) ? $_SESSION['style'] : Http_Request::getHost() . SEA_PUBLIC_DIRECTORY . 'style/' . Config::get('css') . '.css';
     }
-} else {
+}
+
+if (!$style) {
     $style = Http_Request::getHost() . SEA_PUBLIC_DIRECTORY . 'style/' . Config::get('css') . '.css';
 }
