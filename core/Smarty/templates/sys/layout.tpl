@@ -4,7 +4,7 @@
     <head>
         <meta name="viewport" content="width=device-width"/>
         <link rel="alternate" type="application/rss+xml" href="{$smarty.const.SEA_PUBLIC_DIRECTORY}rss"/>
-        <link rel="stylesheet" type="text/css" href="{getStyle style=$style}"/>
+        <link rel="stylesheet" type="text/css" href="//{$style}"/>
         <title>{strip}
             {*
             {if SEA_IS_INDEX|defined}
