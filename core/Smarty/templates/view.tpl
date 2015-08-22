@@ -13,7 +13,7 @@
     {assign var="video_player" value=($setup.video_player_change && Media_Video::isPlayerSupported($file.ext))}
 
     {if $audio_player || $video_player}
-        <script type="text/javascript" src="//p.jwpcdn.com/6/12/jwplayer.js"></script>
+        <script type="text/javascript" src="//content.jwplatform.com/libraries/aZNPD7oe.js"></script>
         <script type="text/javascript">
             function seaAddLoadEvent(func) {
                 if (window.addEventListener) {
@@ -30,13 +30,9 @@
             seaAddLoadEvent(function () {
                 jwplayer("audio_player").setup({
                     'file': "{$smarty.const.SEA_PUBLIC_DIRECTORY}{$file.path}",
-                    'title': "{$file.name}",
+                    //'title': "{$file.name}",
                     'height': 40,
-                    'width': 320,
-                    'analytics': {
-                        'enabled': false,
-                        'cookies': false
-                    }
+                    'width': 320
                 });
             });
         </script>
@@ -48,11 +44,7 @@
                     'file': "{$smarty.const.SEA_PUBLIC_DIRECTORY}{$file.path}",
                     'title': "{$file.name}",
                     'height': 180,
-                    'width': 320,
-                    analytics: {
-                        enabled: false,
-                        cookies: false
-                    }
+                    'width': 320
                 });
             });
         </script>
