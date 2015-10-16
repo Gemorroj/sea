@@ -117,7 +117,11 @@
     {if $file.attachments}
         <strong>{$language.attachments}:</strong><br/>
         {foreach $file.attachments as $key => $val}
-            <a href="{$val.link}">{$val.name}</a> ({$val.size|sizeFormatExtended}) <a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=del_attach&amp;attach={$key}" title="Удалить" class="no" onclick="return window.confirm('Удалить вложение?');">[X]</a><br/>
+            <a href="{$val.link}">{$val.name}</a> ({$val.size|sizeFormatExtended})
+            {if $smarty.const.SEA_IS_ADMIN}
+                <a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}apanel/apanel.php?id={$file.id}&amp;action=del_attach&amp;attach={$key}" title="Удалить" class="no" onclick="return window.confirm('Удалить вложение?');">[X]</a>
+            {/if}
+            <br/>
         {/foreach}
     {/if}
 </div>
