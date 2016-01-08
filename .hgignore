@@ -1,4 +1,4 @@
-syntax: glob
 .idea
 files/
-moduls/cache/
+core/cache/
+core/tmp/
