@@ -195,7 +195,7 @@ class Image_GIFEncoder {
                                          */
                                         if ( $this->SIG == 1 ) {
                                                 $Locals_img { 1 } = chr ( $this->OFS [ $i ] [ 0 ] & 0xFF );
-                                                $Locals_img { 2 } = chr ( ( $$this->OFS [ $i ] [ 0 ] & 0xFF00 ) >> 8 );
+                                                $Locals_img { 2 } = chr ( ( $this->OFS [ $i ] [ 0 ] & 0xFF00 ) >> 8 );
                                                 $Locals_img { 3 } = chr ( $this->OFS [ $i ] [ 1 ] & 0xFF );
                                                 $Locals_img { 4 } = chr ( ( $this->OFS [ $i ] [ 1 ] & 0xFF00 ) >> 8 );
                                         }
@@ -215,7 +215,7 @@ class Image_GIFEncoder {
                                  */
                                 if ( $this->SIG == 1 ) {
                                         $Locals_img { 1 } = chr ( $this->OFS [ $i ] [ 0 ] & 0xFF );
-                                        $Locals_img { 2 } = chr ( ( $$this->OFS [ $i ] [ 0 ] & 0xFF00 ) >> 8 );
+                                        $Locals_img { 2 } = chr ( ( $this->OFS [ $i ] [ 0 ] & 0xFF00 ) >> 8 );
                                         $Locals_img { 3 } = chr ( $this->OFS [ $i ] [ 1 ] & 0xFF );
                                         $Locals_img { 4 } = chr ( ( $this->OFS [ $i ] [ 1 ] & 0xFF00 ) >> 8 );
                                 }
@@ -284,5 +284,3 @@ class Image_GIFEncoder {
                 return ( $this->GIF );
         }
 }
-
-?>

@@ -248,5 +248,3 @@ class Image_GIFDecoder {
         return ( $this->GIF_delays ); 
     } 
 }
-
-?>

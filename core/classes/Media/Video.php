@@ -54,8 +54,8 @@ class Media_Video
         if ($mov) {
             $tmpa = array(
                 'getVideoCodec' => $mov->getVideoCodec(),
-                'GetFrameWidth' => $mov->GetFrameWidth(),
-                'GetFrameHeight' => $mov->GetFrameHeight(),
+                'GetFrameWidth' => $mov->getFrameWidth(),
+                'GetFrameHeight' => $mov->getFrameHeight(),
                 'getDuration' => $mov->getDuration(),
                 'getBitRate' => $mov->getBitRate()
             );

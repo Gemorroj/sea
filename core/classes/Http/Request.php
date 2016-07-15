@@ -249,6 +249,8 @@ class Http_Request
             'eStyle', //eStyle Bot
             'Mail.Ru', //Mail.Ru Bot
             'Scrubby', //Scrubby robot
+            'Baiduspider', //Baidu
+            'bingbot', //Bing
         );
 
         $userAgent = self::getUserAgent();
