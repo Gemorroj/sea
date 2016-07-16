@@ -102,9 +102,11 @@ class Routing
      */
     public function handle()
     {
+        $requestPath = $this->_getPath();
+
         foreach ($this->getRules() as $regexp => $path) {
             $matches = null;
-            if (preg_match('#^' . SEA_PUBLIC_DIRECTORY . $regexp . '/*$#', $this->_getPath(), $matches)) {
+            if (preg_match('#^' . SEA_PUBLIC_DIRECTORY . $regexp . '/*$#', $requestPath, $matches)) {
                 foreach ($matches as $key => $value) {
                     if (false === is_int($key)) {
                         Http_Request::addGet($key, $value);
