@@ -42,7 +42,9 @@
         {if $setup.stat_change}
             <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}stat/{Http_Request::get('id')}">{$language.statistics}</a></li>
         {/if}
-        <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}table/{Http_Request::get('id')}">{$language.orders}</a></li>
+        {if $setup.zakaz_change}
+            <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}table/{Http_Request::get('id')}">{$language.orders}</a></li>
+        {/if}
         {if $setup.exchanger_change}
             <li><a href="{$smarty.const.SEA_PUBLIC_DIRECTORY}exchanger/{Http_Request::get('id')}">{$language.add_file}</a></li>
         {/if}
