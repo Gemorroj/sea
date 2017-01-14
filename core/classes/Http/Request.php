@@ -192,7 +192,7 @@ class Http_Request
     }
 
     /**
-     * @return static string|null
+     * @return string|null
      */
     public static function getUserAgent()
     {
@@ -200,7 +200,7 @@ class Http_Request
     }
 
     /**
-     * @return static string|null
+     * @return string|null
      */
     public static function getReferer()
     {

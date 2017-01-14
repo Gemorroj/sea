@@ -734,7 +734,7 @@ switch (Http_Request::get('action')) {
             @unlink(SEA_CORE_DIRECTORY . '/cache/' . $id . '.dat');
 
             $name = mb_convert_encoding(Http_Request::post('name'), 'windows-1251', 'utf-8');
-            $artist = mb_convert_encoding(Http_Request::post('artists'), 'windows-1251', 'utf-8');
+            $artists = mb_convert_encoding(Http_Request::post('artists'), 'windows-1251', 'utf-8');
             $album = mb_convert_encoding(Http_Request::post('album'), 'windows-1251', 'utf-8');
             $year = mb_convert_encoding(Http_Request::post('year'), 'windows-1251', 'utf-8');
             $track = mb_convert_encoding(Http_Request::post('track'), 'windows-1251', 'utf-8');
@@ -742,7 +742,7 @@ switch (Http_Request::get('action')) {
             $comment = mb_convert_encoding(Http_Request::post('comment'), 'windows-1251', 'utf-8');
 
             $tags->setTrackTitle($name);
-            $tags->setArtistName($artist);
+            $tags->setArtistName($artists);
             $tags->setAlbumTitle($album);
             $tags->setYear($year);
             $tags->setTrackNumber($track);
@@ -788,7 +788,7 @@ switch (Http_Request::get('action')) {
                 $id3 = new MP3_Id3($f['path']);
                 $tags = $id3->getTags();
                 $tags->setTrackTitle($name);
-                $tags->setArtistName($artist);
+                $tags->setArtistName($artists);
                 $tags->setAlbumTitle($album);
                 $tags->setYear($year);
                 $tags->setTrackNumber($track);

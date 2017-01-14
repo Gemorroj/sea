@@ -45,8 +45,6 @@ class Breadcrumbs
      *
      * @param array $path
      * @param bool $isDir
-     *
-     * @return array
      */
     public static function init($path, $isDir = false)
     {
