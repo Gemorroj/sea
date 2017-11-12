@@ -44,13 +44,13 @@ class File_Ogg_Speex extends File_Ogg_Media
         $this->_decodeHeader();
         $this->_decodeCommentsHeader();
         $endSec =
-            (( '0x' . substr( $this->_lastGranulePos, 0, 8 ) ) * pow(2, 32) 
-            + ( '0x' . substr( $this->_lastGranulePos, 8, 8 ) ))
+            (intval(substr( $this->_lastGranulePos, 0, 8 ), 16 ) * pow(2, 32)
+            + intval( substr( $this->_lastGranulePos, 8, 8 ), 16 ))
             / $this->_header['rate'];
      
          $startSec	 =        
-            (( '0x' . substr( $this->_firstGranulePos, 0, 8 ) ) * pow(2, 32) 
-            + ( '0x' . substr( $this->_firstGranulePos, 8, 8 ) ))
+            (intval(substr( $this->_firstGranulePos, 0, 8 ), 16 ) * pow(2, 32)
+            + intval(substr( $this->_firstGranulePos, 8, 8 ), 16 ))
             / $this->_header['rate'];
             
          //make sure the offset is worth taking into account oggz_chop related hack
@@ -80,7 +80,7 @@ class File_Ogg_Speex extends File_Ogg_Media
         fseek($this->_filePointer, $this->_streamData['pages'][0]['body_offset'], SEEK_SET);
         // The first 8 characters should be "Speex   ".
         if (fread($this->_filePointer, 8) != 'Speex   ')
-            throw new PEAR_Exception("Stream is undecodable due to a malformed header.", OGG_ERROR_UNDECODABLE);
+            throw new OggException("Stream is undecodable due to a malformed header.", OGG_ERROR_UNDECODABLE);
 
         $this->_version = fread($this->_filePointer, 20);
         $this->_header = File_Ogg::_readLittleEndian($this->_filePointer, array(
